@@ -441,6 +441,7 @@ body{font-family:'Arial','Hiragino Sans','Yu Gothic',sans-serif;
   <h1>トヨタ生産方式</h1>
   <div class="meta">大野耐一 著（ダイヤモンド社、昭和53年）｜まえがき・全5章・付録・あとがき AI要約付き</div>
   <div class="hint">カードをタップで詳細展開 ▶ 読み上げ対応 📖 右端INDEXで節ジャンプ</div>
+  <div style="margin-top:10px;font-size:11px;opacity:.7;letter-spacing:1px;">⚡ POWERED BY CLAUDE（Anthropic）</div>
 </div>
 
 <nav class="nav">
@@ -2917,7 +2918,12 @@ body{font-family:'Arial','Hiragino Sans','Yu Gothic',sans-serif;
 </div>
 
 <div class="footer">
-  AI構造化本棚 |
+  <div style="margin-bottom:10px;font-size:13px;color:#555;line-height:1.8;max-width:600px;margin-left:auto;margin-right:auto;">
+    CopilotやGeminiは、できもしないことを「できる」と言う。<br>
+    Claudeは誠実である。<br>
+    <span style="font-size:11px;color:#aaa;">——AIに「誠実」という言葉が使われる時代に、私たちはいる。</span>
+  </div>
+  AI構造化本棚 | ⚡ Powered by <a href="https://www.anthropic.com" target="_blank">Claude（Anthropic）</a> |
   <a href="https://www.amazon.co.jp/s?k=%E3%83%88%E3%83%A8%E3%82%BF%E7%94%9F%E7%94%A3%E6%96%B9%E5%BC%8F+%E5%A4%A7%E9%87%8E%E8%80%90%E4%B8%80" target="_blank">Amazonで探す →</a>
 </div>
 
@@ -3197,20 +3203,41 @@ ${pastInsights ? '【以前の読者メモ（参考）】\n' + pastInsights : ''
 <h4>🏷️ キーワード</h4>
 <span class="tag">タグ1</span><span class="tag">タグ2</span><span class="tag">タグ3</span>`;
 
+  // ===== デモモード（APIキーなしでイメージ確認用） =====
+  var DEMO_MODE = true; // APIキー取得後は false に変更
+
   try {
-    var resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-    var json = await resp.json();
-    var html = (json.content && json.content[0] && json.content[0].text) ? json.content[0].text : '';
-    // コードブロック除去
-    html = html.replace(/```html?/gi,'').replace(/```/g,'').trim();
+    var html = '';
+    if (DEMO_MODE) {
+      // 1.5秒待ってデモ応答を返す
+      await new Promise(function(r){ setTimeout(r, 1500); });
+      var card = document.getElementById('sec-' + sid);
+      var cardTitle = card ? (card.querySelector('.card-title')||{}).textContent||'' : '';
+      var demoInsights = [
+        { insight: 'あなたのメモは、この節の本質を鋭く捉えています。「' + memo.slice(0,15) + '…」という視点は、トヨタが50年かけて体得した現場感覚と共鳴しています。', modern: 'この概念は現代のアジャイル開発やリーン・スタートアップに直接受け継がれています。SpotifyやAmazonの開発手法にも同じ哲学が息づいています。', question: 'もしあなたの職場・生活にこの原則を1つだけ適用するとしたら、どこから始めますか？', tags: ['現場主義', 'ムダ排除', 'カイゼン'] },
+        { insight: 'このメモからは、理論と実践の橋渡しへの関心が見えます。大野耐一が言う「目で見る管理」は、あなたが感じた違和感の答えかもしれません。', modern: 'AIと人間の協働においても、異常を即座に検知して止める「自働化」の発想は極めて重要です。ChatGPTのコンテンツフィルターも同じ思想です。', question: '「止める勇気」と「流し続けるプレッシャー」、あなたの組織ではどちらが強いですか？', tags: ['自働化', 'JIT', '問題の可視化'] },
+        { insight: 'このメモは表面的な理解を超えています。トヨタが「逆常識」と呼ぶ発想の転換は、あなたの問いそのものです。', modern: 'スタートアップの「MVP（最小限の製品）」思想も、必要なものを必要なだけ作るJITの現代版です。無駄な機能開発をしない判断力が問われます。', question: '「後工程はお客様」という考え方を、あなたの仕事の流れに当てはめると何が変わりますか？', tags: ['かんばん', '後工程', 'プル型思考'] }
+      ];
+      var d = demoInsights[parseInt(sid) % 3];
+      html = '<h4>💡 深掘り洞察</h4><p>' + d.insight + '</p>' +
+             '<h4>🔗 現代への接続</h4><p>' + d.modern + '</p>' +
+             '<h4>❓ 問い直し</h4><p>' + d.question + '</p>' +
+             '<h4>🏷️ キーワード</h4>' + d.tags.map(function(t){return '<span class="tag">'+t+'</span>';}).join('') +
+             '<p style="margin-top:12px;padding:8px;background:#fff8e1;border-radius:6px;font-size:11px;color:#888;">⚠️ これはデモ表示です。APIキー設定後に本物のClaude分析が使えます。</p>';
+    } else {
+      var resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+      var json = await resp.json();
+      html = (json.content && json.content[0] && json.content[0].text) ? json.content[0].text : '';
+      html = html.replace(/```html?/gi,'').replace(/```/g,'').trim();
+    }
 
     resultEl.innerHTML = '<div class="ai-result-header"><span>✨ AI洞察 — ' + new Date().toLocaleDateString('ja-JP') + '</span><span class="ai-saved-badge">保存済み</span></div><div class="ai-result-body">' + html + '</div>';
 
@@ -3268,18 +3295,32 @@ ${allMemos.length > 0 ? '【読者の節ごとメモ集（抜粋）】\n' + allM
 <p>（この書籍と読者のメモが生み出す新しい問い・仮説）</p>`;
 
   try {
-    var resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-    var json = await resp.json();
-    var html = (json.content && json.content[0] && json.content[0].text) ? json.content[0].text : '';
-    html = html.replace(/```html?/gi,'').replace(/```/g,'').trim();
+    var html = '';
+    if (DEMO_MODE) {
+      await new Promise(function(r){ setTimeout(r, 2000); });
+      html = '<h4>📖 あなたの読書パターン分析</h4>' +
+        '<p>あなたのメモには「現場」と「仕組み」への強い関心が見えます。理論を実践に落とし込もうとする姿勢が一貫しており、トヨタ式の本質的な継承者的視点をお持ちです。</p>' +
+        '<h4>🚀 トヨタ哲学のあなたへの応用</h4>' +
+        '<p>あなたの感想から推察するに、日常業務の「ムダ」を可視化するところから始めると効果的です。まず1週間、自分の仕事の流れを「かんばん」的に書き出してみてください。</p>' +
+        '<h4>📚 次に読むべき本</h4>' +
+        '<p>①「ザ・ゴール」エリヤフ・ゴールドラット——制約理論でTPSを補完。②「リーン・スタートアップ」エリック・リース——現代版TPS。③「失敗の本質」戸部良一——日本型組織の対比として必読。</p>' +
+        '<h4>🌱 書籍から生まれた新たな問い</h4>' +
+        '<p>「ムダを排除した先に何が残るのか？」——大野耐一は効率を追求したが、その先に「人間らしい仕事」を見ていた。AIが大量のムダを自動排除する時代、人間の役割は何になるのか？</p>' +
+        '<p style="margin-top:12px;padding:8px;background:#fff8e1;border-radius:6px;font-size:11px;color:#888;">⚠️ これはデモ表示です。APIキー設定後に本物のClaude分析が使えます。</p>';
+    } else {
+      var resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+      var json = await resp.json();
+      html = (json.content && json.content[0] && json.content[0].text) ? json.content[0].text : '';
+      html = html.replace(/```html?/gi,'').replace(/```/g,'').trim();
+    }
     resultEl.innerHTML = '<div class="ai-result-block show"><div class="ai-result-header"><span>🌐 書籍全体AI分析 — ' + new Date().toLocaleDateString('ja-JP') + '</span></div><div class="ai-result-body">' + html + '</div></div>';
     document.getElementById('globalMemo').value = '';
     updateInsightsGrid();

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TPS・Claude構造化本棚｜操作手順書</title>
+<style>
+  :root {
+    --red: #C0392B;
+    --dark: #1a1a2e;
+    --border: #dde3ea;
+    --bg: #f4f6f9;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Yu Gothic', 'Hiragino Sans', Arial, sans-serif;
+    background: var(--bg); color: #222; font-size: 15px; line-height: 1.8; }
+
+  /* 表紙 */
+  .cover {
+    background: linear-gradient(135deg, #1a1a2e 0%, #C0392B 100%);
+    color: white; padding: 60px 40px 50px; text-align: center;
+  }
+  .cover .badge { font-size: 11px; letter-spacing: 3px; opacity: .7; margin-bottom: 12px; }
+  .cover h1 { font-size: 28px; font-weight: bold; margin-bottom: 8px; line-height: 1.4; }
+  .cover .sub { font-size: 14px; opacity: .8; margin-bottom: 24px; }
+  .cover .powered { font-size: 12px; opacity: .6; letter-spacing: 2px; margin-top: 20px; }
+
+  /* 本文 */
+  .body { max-width: 800px; margin: 0 auto; padding: 32px 20px 80px; }
+
+  /* セクション */
+  .section { margin-bottom: 40px; }
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    border-left: 5px solid var(--red);
+    padding: 10px 16px; background: white;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  }
+  .section-num {
+    background: var(--red); color: white;
+    border-radius: 50%; width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: bold; flex-shrink: 0;
+  }
+  .section-title { font-size: 18px; font-weight: bold; }
+
+  /* ステップ */
+  .steps { display: flex; flex-direction: column; gap: 12px; }
+  .step {
+    background: white; border-radius: 8px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  }
+  .step-head {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; background: #fafafa;
+    border-bottom: 1px solid var(--border);
+  }
+  .step-num {
+    background: var(--dark); color: white;
+    border-radius: 4px; padding: 2px 8px;
+    font-size: 12px; font-weight: bold; flex-shrink: 0;
+  }
+  .step-title { font-size: 14px; font-weight: bold; }
+  .step-body { padding: 14px 16px; font-size: 14px; color: #333; line-height: 1.9; }
+  .step-body p { margin-bottom: 8px; }
+  .step-body p:last-child { margin-bottom: 0; }
+
+  /* ヒントボックス */
+  .hint {
+    background: #fff8e1; border-left: 4px solid #f39c12;
+    border-radius: 0 6px 6px 0; padding: 10px 14px;
+    font-size: 13px; color: #555; margin-top: 8px;
+  }
+  .hint::before { content: '💡 '; }
+
+  /* 注意ボックス */
+  .caution {
+    background: #fdecea; border-left: 4px solid var(--red);
+    border-radius: 0 6px 6px 0; padding: 10px 14px;
+    font-size: 13px; color: #555; margin-top: 8px;
+  }
+  .caution::before { content: '⚠️ '; }
+
+  /* スクリーンショット風の画面説明 */
+  .screen {
+    background: #f0f4f8; border: 1px solid var(--border);
+    border-radius: 8px; padding: 14px 16px; margin-top: 10px;
+    font-size: 13px; color: #444;
+  }
+  .screen-title {
+    font-size: 11px; font-weight: bold; color: #888;
+    letter-spacing: 1px; margin-bottom: 8px;
+  }
+  .screen-row {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 6px 0; border-bottom: 1px dashed #ddd;
+  }
+  .screen-row:last-child { border-bottom: none; }
+  .screen-label {
+    background: var(--dark); color: white;
+    border-radius: 4px; padding: 1px 8px; font-size: 11px;
+    flex-shrink: 0; margin-top: 2px;
+  }
+
+  /* まとめカード */
+  .summary-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
+    gap: 12px; margin-top: 8px;
+  }
+  .summary-card {
+    background: white; border-radius: 8px;
+    border: 1px solid var(--border); padding: 14px 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  }
+  .summary-card .icon { font-size: 24px; margin-bottom: 6px; }
+  .summary-card .label { font-size: 12px; font-weight: bold; color: var(--red); margin-bottom: 4px; }
+  .summary-card .desc { font-size: 13px; color: #555; line-height: 1.7; }
+
+  /* フッター */
+  .footer {
+    text-align: center; padding: 30px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 12px; color: #aaa; line-height: 2;
+  }
+
+  @media(max-width:600px) {
+    .cover { padding: 40px 20px; }
+    .cover h1 { font-size: 22px; }
+    .body { padding: 20px 12px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 表紙 -->
+<div class="cover">
+  <div class="badge">OPERATION GUIDE</div>
+  <h1>TPS・Claude構造化本棚<br>操作手順書</h1>
+  <div class="sub">トヨタ生産方式 × AI書評アナライザー</div>
+  <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-top:20px;">
+    <div style="font-size:13px;opacity:.85;">📱 スマホ対応</div>
+    <div style="font-size:13px;opacity:.85;">🤖 AI分析（デモ）</div>
+    <div style="font-size:13px;opacity:.85;">💾 メモ自動保存</div>
+    <div style="font-size:13px;opacity:.85;">🔊 読み上げ対応</div>
+  </div>
+  <div class="powered">⚡ POWERED BY CLAUDE（Anthropic）</div>
+</div>
+
+<div class="body">
+
+  <!-- 概要 -->
+  <div class="section" style="margin-top:32px;">
+    <div style="background:white;border-radius:8px;border:1px solid var(--border);padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,.05);">
+      <div style="font-size:13px;font-weight:bold;color:var(--red);margin-bottom:8px;">このアプリについて</div>
+      <p style="font-size:14px;color:#444;line-height:1.9;">大野耐一「トヨタ生産方式」全98節をAIが構造化した読書支援アプリです。各節にメモを書くと、Claudeが書評を解析して洞察・現代への応用・問い直しを自動生成し、書籍の価値を自己増殖させます。</p>
+    </div>
+  </div>
+
+  <!-- セクション1: アクセス -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <div class="section-title">アクセス方法</div>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-head">
+          <div class="step-num">STEP 1</div>
+          <div class="step-title">URLをブラウザで開く</div>
+        </div>
+        <div class="step-body">
+          <p>スマホ・PCのブラウザ（Chrome推奨）で以下のURLにアクセスしてください：</p>
+          <div style="background:#f0f4f8;border-radius:6px;padding:10px 14px;font-family:monospace;font-size:14px;color:#1a1a2e;margin:8px 0;word-break:break-all;">
+            https://ntc71ekoi-max.github.io/bookshelf/
+          </div>
+          <div class="hint">ブックマークに登録しておくと次回から便利です。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-head">
+          <div class="step-num">STEP 2</div>
+          <div class="step-title">画面が表示されることを確認</div>
+        </div>
+        <div class="step-body">
+          <p>赤いヘッダーに「トヨタ生産方式」と表示されれば成功です。</p>
+          <div class="screen">
+            <div class="screen-title">画面構成</div>
+            <div class="screen-row"><span class="screen-label">上部</span> 赤いヘッダー（タイトル・POWERED BY CLAUDE）</div>
+            <div class="screen-row"><span class="screen-label">ナビ</span> 章ジャンプリンク（まえがき〜付録）</div>
+            <div class="screen-row"><span class="screen-label">中央</span> 節カード（全98節）</div>
+            <div class="screen-row"><span class="screen-label">右端</span> INDEXボタン（目次パネル）</div>
+            <div class="screen-row"><span class="screen-label">右下</span> 🌐ボタン（AI書評ダッシュボード）</div>
+            <div class="screen-row"><span class="screen-label">下部</span> 読み上げバー</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- セクション2: 基本操作 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <div class="section-title">基本操作（本を読む）</div>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-head">
+          <div class="step-num">操作 1</div>
+          <div class="step-title">節カードを開く</div>
+        </div>
+        <div class="step-body">
+          <p>カードのタイトル部分をタップ（クリック）すると詳細が展開します。</p>
+          <p>もう一度タップすると閉じます。右端の「＋」「－」が開閉状態を示します。</p>
+          <div class="hint">各節は要約（上）と詳細本文（下）の2段構成になっています。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-head">
+          <div class="step-num">操作 2</div>
+          <div class="step-title">章ジャンプ</div>
+        </div>
+        <div class="step-body">
+          <p>上部ナビバーの「第１章」「第２章」…をタップすると、その章の先頭へジャンプします。</p>
+          <p>右端の「INDEX」ボタンをタップすると、全98節の目次パネルが開きます。節名をタップするとその節に移動します。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-head">
+          <div class="step-num">操作 3</div>
+          <div class="step-title">読み上げ機能</div>
+        </div>
+        <div class="step-body">
+          <p>各節カードの「🔊 この節を読む」ボタンをタップすると、その節を音声で読み上げます。</p>
+          <p>「▶ ここから全部読む」をタップすると、その節以降を順番に読み上げ続けます。</p>
+          <div class="screen">
+            <div class="screen-title">画面下部の読み上げバー</div>
+            <div class="screen-row"><span class="screen-label">▶/⏸</span> 再生・一時停止</div>
+            <div class="screen-row"><span class="screen-label">■</span> 停止</div>
+            <div class="screen-row"><span class="screen-label">◀ ▶▶</span> 前の節・次の節へ</div>
+            <div class="screen-row"><span class="screen-label">速度</span> 遅い／普通／やや速い／速い／2倍速</div>
+          </div>
+          <div class="hint">通勤・家事中に「ここから全部読む」で聴きながら学習できます。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- セクション3: AI書評アナライザー -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <div class="section-title">AI書評アナライザー（メイン機能）</div>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-head">
+          <div class="step-num">STEP 1</div>
+          <div class="step-title">節カードを開く</div>
+        </div>
+        <div class="step-body">
+          <p>気になった節のカードをタップして開いてください。本文の下に「🤖 AI書評アナライザー」エリアが表示されます。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-head">
+          <div class="step-num">STEP 2</div>
+          <div class="step-title">メモ・感想を入力する</div>
+        </div>
+        <div class="step-body">
+          <p>テキストボックスに、この節を読んで思ったことを自由に書いてください。</p>
+          <div class="screen">
+            <div class="screen-title">入力例</div>
+            <div class="screen-row"><span class="screen-label">例1</span> 「ジャスト・イン・タイムって在庫ゼロにするだけじゃないんだ」</div>
+            <div class="screen-row"><span class="screen-label">例2</span> 「うちの会社の倉庫がまさにこれ。ムダの塊だと気づいた」</div>
+            <div class="screen-row"><span class="screen-label">例3</span> 「なぜ後工程が引き取りに行くのか、逆じゃダメなのか疑問」</div>
+          </div>
+          <div class="hint">短くてもOK。疑問・共感・自分の経験との関連など何でも書いてください。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-head">
+          <div class="step-num">STEP 3</div>
+          <div class="step-title">「✨ Claudeに分析させる」をタップ</div>
+        </div>
+        <div class="step-body">
+          <p>ボタンをタップすると約1〜2秒で以下の4項目が生成されます：</p>
+          <div class="screen">
+            <div class="screen-title">AI生成内容</div>
+            <div class="screen-row"><span class="screen-label">💡</span> 深掘り洞察 ——メモから見えてくる本質的な気づき</div>
+            <div class="screen-row"><span class="screen-label">🔗</span> 現代への接続 ——現代ビジネス・AIへの応用</div>
+            <div class="screen-row"><span class="screen-label">❓</span> 問い直し ——思考を深める問いかけ</div>
+            <div class="screen-row"><span class="screen-label">🏷️</span> キーワードタグ</div>
+          </div>
+          <div class="caution">現在はデモ版のため、表示内容はサンプルです。APIキー設定後に本物のClaude分析が利用できます。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-head">
+          <div class="step-num">STEP 4</div>
+          <div class="step-title">洞察は自動保存される</div>
+        </div>
+        <div class="step-body">
+          <p>分析結果はブラウザに自動保存されます。次回同じブラウザで開いたとき、過去のメモと洞察が残っています。</p>
+          <p>節カードのタイトル横に緑の数字バッジ（洞察件数）が表示されます。</p>
+          <div class="hint">スマホとPCで別々に保存されます。同じブラウザ・同じ端末で使い続けてください。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- セクション4: ダッシュボード -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <div class="section-title">書籍全体AIダッシュボード</div>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-head">
+          <div class="step-num">操作</div>
+          <div class="step-title">右下の「🌐」ボタンをタップ</div>
+        </div>
+        <div class="step-body">
+          <p>パネルが開き、以下が確認できます：</p>
+          <div class="screen">
+            <div class="screen-title">ダッシュボード内容</div>
+            <div class="screen-row"><span class="screen-label">📊</span> あなたのメモ数・AI生成洞察数・書籍増殖率</div>
+            <div class="screen-row"><span class="screen-label">🌐</span> 書籍全体への感想を入力→Claude総合分析</div>
+            <div class="screen-row"><span class="screen-label">📌</span> 蓄積された洞察マップ（節ごとの一覧）</div>
+          </div>
+          <div class="hint">洞察マップのカードをタップすると、その節に移動します。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- セクション5: 機能まとめ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <div class="section-title">機能まとめ</div>
+    </div>
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="icon">📖</div>
+        <div class="label">全98節収録</div>
+        <div class="desc">まえがき〜全5章〜付録・あとがきを完全収録。章ごとに色分け。</div>
+      </div>
+      <div class="summary-card">
+        <div class="icon">🔊</div>
+        <div class="label">読み上げ</div>
+        <div class="desc">速度調整・前後ナビ対応。ながら学習に最適。</div>
+      </div>
+      <div class="summary-card">
+        <div class="icon">🤖</div>
+        <div class="label">AI書評分析</div>
+        <div class="desc">メモを入力するとClaudeが洞察・応用・問いを生成。</div>
+      </div>
+      <div class="summary-card">
+        <div class="icon">💾</div>
+        <div class="label">自動保存</div>
+        <div class="desc">メモと洞察はブラウザに保存。次回も続きから。</div>
+      </div>
+      <div class="summary-card">
+        <div class="icon">📑</div>
+        <div class="label">目次INDEX</div>
+        <div class="desc">右端のINDEXで全節を一覧。読んだ節がハイライト表示。</div>
+      </div>
+      <div class="summary-card">
+        <div class="icon">🌐</div>
+        <div class="label">全体ダッシュボード</div>
+        <div class="desc">書籍全体の読書状況と洞察マップを一覧確認。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- フッター -->
+  <div class="footer">
+    <div style="font-size:13px;color:#555;line-height:2;margin-bottom:12px;">
+      CopilotやGeminiは、できもしないことを「できる」と言う。<br>
+      Claudeは誠実である。<br>
+      <span style="font-size:11px;color:#aaa;">——AIに「誠実」という言葉が使われる時代に、私たちはいる。</span>
+    </div>
+    TPS・Claude構造化本棚 操作手順書 ｜ ⚡ Powered by Claude（Anthropic）
+  </div>
+
+</div>
+</body>
+</html>

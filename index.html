@@ -2985,6 +2985,21 @@ body{font-family:'Arial','Hiragino Sans','Yu Gothic',sans-serif;
 
 <script>
 var synth=window.speechSynthesis,queue=[],qIdx=0,isPaused=false;
+var ttsVoice=null;
+
+// Android Chrome対応: voicesをonvoiceschangedで確実に取得
+function loadVoices(){
+  var voices=synth.getVoices();
+  // ja-JPを優先、なければ最初の音声を使う
+  ttsVoice = voices.find(function(v){return v.lang==='ja-JP';})
+           || voices.find(function(v){return v.lang.startsWith('ja');})
+           || voices[0]
+           || null;
+}
+loadVoices();
+if(speechSynthesis.onvoiceschanged!==undefined){
+  speechSynthesis.onvoiceschanged=loadVoices;
+}
 function openIndex(){document.getElementById('indexPanel').classList.add('open');document.getElementById('indexOverlay').classList.add('show');document.getElementById('indexToggle').textContent='✕';}
 function closeIndex(){document.getElementById('indexPanel').classList.remove('open');document.getElementById('indexOverlay').classList.remove('show');document.getElementById('indexToggle').textContent='INDEX';}
 document.getElementById('indexToggle').addEventListener('click',function(e){e.preventDefault();document.getElementById('indexPanel').classList.contains('open')?closeIndex():openIndex();},{passive:false});
@@ -3082,10 +3097,12 @@ function startQueue(){
   if(synth.speaking) synth.cancel();
   isPaused=false;
   document.getElementById('ttsBar').classList.add('show');
-  var unlock=new SpeechSynthesisUtterance('');
-  unlock.volume=0;
-  synth.speak(unlock);
-  setTimeout(playItem,100);
+  // voicesが未ロードなら再取得してから再生
+  if(!ttsVoice) loadVoices();
+  setTimeout(function(){
+    if(!ttsVoice) loadVoices();
+    playItem();
+  }, 200);
 }
 function playItem(){
   if(qIdx>=queue.length){ttsStop();return;}
@@ -3098,7 +3115,9 @@ function playItem(){
   document.getElementById('ttsProgress').style.width=(qIdx/queue.length*100)+'%';
   document.getElementById('ttsPlayBtn').innerHTML='&#9646;&#9646;';
   var u=new SpeechSynthesisUtterance(item.text);
-  u.lang='ja-JP';u.rate=parseFloat(document.getElementById('ttsSpeed').value);
+  if(ttsVoice){u.voice=ttsVoice;u.lang=ttsVoice.lang;}else{u.lang='ja-JP';}
+  u.rate=parseFloat(document.getElementById('ttsSpeed').value);
+  u.volume=1;u.pitch=1;
   u.onend=function(){if(!isPaused){qIdx++;playItem();}};
   u.onerror=function(){qIdx++;playItem();};
   synth.speak(u);

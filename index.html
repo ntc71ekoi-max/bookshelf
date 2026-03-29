@@ -103,11 +103,12 @@ body{font-family:'Arial','Hiragino Sans','Yu Gothic',sans-serif;
 .index-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:139;}
 .index-overlay.show{display:block;}
 /* 読み上げバー */
-.tts-bar{display:none;position:fixed;bottom:0;left:0;right:0;background:white;
+.tts-bar{display:flex;position:fixed;bottom:-120px;left:0;right:0;background:white;
   border-top:2px solid var(--blue);padding:8px 16px;
   flex-wrap:wrap;align-items:center;gap:10px;z-index:200;
-  box-shadow:0 -3px 16px rgba(0,0,0,.12);}
-.tts-bar.show{display:flex;}
+  box-shadow:0 -3px 16px rgba(0,0,0,.12);
+  transition:bottom 0.3s ease;}
+.tts-bar.show{bottom:0;}
 .tts-title{font-size:12px;font-weight:bold;color:var(--blue);flex:1;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
 .tts-btn{border:none;border-radius:50%;width:42px;height:42px;
@@ -3103,7 +3104,7 @@ function playItem(){
   synth.speak(u);
 }
 function ttsToggle(){if(synth.speaking&&!synth.paused){synth.pause();isPaused=true;document.getElementById('ttsPlayBtn').innerHTML='&#9654;';}else if(synth.paused){synth.resume();isPaused=false;document.getElementById('ttsPlayBtn').innerHTML='&#9646;&#9646;';}else if(queue.length>0){playItem();}}
-function ttsStop(){synth.cancel();isPaused=false;queue=[];document.querySelectorAll('.card.speaking').forEach(function(c){c.classList.remove('speaking');});document.getElementById('ttsBar').classList.remove('show');document.getElementById('ttsProgress').style.width='0%';}
+function ttsStop(){synth.cancel();isPaused=false;queue=[];document.querySelectorAll('.card.speaking').forEach(function(c){c.classList.remove('speaking');});document.getElementById('ttsBar').classList.remove('show');document.getElementById('ttsTitle').textContent='—';document.getElementById('ttsProgress').style.width='0%';document.getElementById('ttsPlayBtn').innerHTML='&#9654;';}
 function ttsNext(){synth.cancel();isPaused=false;qIdx=Math.min(qIdx+1,queue.length-1);playItem();}
 function ttsPrev(){synth.cancel();isPaused=false;qIdx=Math.max(qIdx-1,0);playItem();}
 document.getElementById('ttsPlayBtn').addEventListener('click',function(e){e.preventDefault();ttsToggle();},{passive:false});

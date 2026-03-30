@@ -76,8 +76,9 @@ body{font-family:'Arial','Hiragino Sans','Yu Gothic',sans-serif;
   -webkit-tap-highlight-color:transparent;touch-action:manipulation;}
 .index-panel{display:none;position:fixed;right:0;top:0;
   width:min(300px,92vw);height:100%;background:white;
-  border-left:2px solid var(--blue);z-index:140;overflow-y:auto;flex-direction:column;}
+  border-left:2px solid var(--blue);z-index:140;flex-direction:column;}
 .index-panel.open{display:flex;}
+.index-panel-scroll{flex:1;overflow-y:scroll;-webkit-overflow-scrolling:touch;}
 .index-head{background:var(--blue);color:white;padding:12px 16px;
   display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
 .index-head h3{font-size:13px;font-weight:bold;}
@@ -87,7 +88,8 @@ body{font-family:'Arial','Hiragino Sans','Yu Gothic',sans-serif;
 .index-tab{flex:1;min-width:50px;padding:7px 3px;text-align:center;font-size:11px;
   font-weight:bold;cursor:pointer;color:var(--sub);background:white;border:none;
   border-bottom:3px solid transparent;
-  -webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  pointer-events:auto;position:relative;z-index:1;}
 .index-tab.active{color:#333;background:#F8F8F8;}
 .index-ch-panel{display:none;}
 .index-ch-panel.active{display:block;}
@@ -297,6 +299,7 @@ body{font-family:'Arial','Hiragino Sans','Yu Gothic',sans-serif;
 <button class="index-tab" data-tab="7" style="border-bottom-color:#0B5563">付録<br><small>24節</small></button>
 <button class="index-tab" data-tab="8" style="border-bottom-color:#4A4A4A">あとがき<br><small>1節</small></button>
   </div>
+<div class="index-panel-scroll">
 <div class="index-ch-panel active" id="idx-panel-1">
 <div class="index-ch-label" style="background:#4A4A4A;">まえがき まえがき</div>
 <ul class="index-list">
@@ -435,7 +438,8 @@ body{font-family:'Arial','Hiragino Sans','Yu Gothic',sans-serif;
 <li><a href="#sec-97" data-close-index="1"><span class="index-num">1.</span>あとがきを読む</a></li>
 </ul>
 </div>
-</div>
+</div><!-- /.index-panel-scroll -->
+</div><!-- /.index-panel -->
 
 <div class="header">
   <div class="label">AI構造化本棚</div>
@@ -3006,20 +3010,15 @@ document.getElementById('indexToggle').addEventListener('click',function(e){e.pr
 document.getElementById('indexClose').addEventListener('click',function(e){e.preventDefault();closeIndex();},{passive:false});
 document.getElementById('indexOverlay').addEventListener('click',function(e){e.preventDefault();closeIndex();},{passive:false});
 document.getElementById('navIndexBtn').addEventListener('click',function(e){e.preventDefault();openIndex();},{passive:false});
-// タブ切替：イベント委譲（Android Chrome display:none内でも確実）
-document.addEventListener('click', function(e) {
-  var tab = e.target.closest('.index-tab');
-  if (tab) {
-    e.preventDefault();
-    var t = tab.getAttribute('data-tab');
-    if (!t) return;
-    document.querySelectorAll('.index-tab').forEach(function(x){ x.classList.remove('active'); });
-    document.querySelectorAll('.index-ch-panel').forEach(function(x){ x.classList.remove('active'); });
-    tab.classList.add('active');
-    var panel = document.getElementById('idx-panel-' + t);
-    if (panel) panel.classList.add('active');
-  }
-}, false);
+document.querySelectorAll('.index-tab').forEach(function(tab){
+  tab.addEventListener('click',function(e){
+    e.preventDefault();var t=this.getAttribute('data-tab');
+    document.querySelectorAll('.index-tab').forEach(function(x){x.classList.remove('active');});
+    document.querySelectorAll('.index-ch-panel').forEach(function(x){x.classList.remove('active');});
+    this.classList.add('active');
+    document.getElementById('idx-panel-'+t).classList.add('active');
+  },{passive:false});
+});
 // イベント委譲でINDEXジャンプ（display:none内でも確実）
 document.addEventListener('click', function(e) {
   var a = e.target.closest('[data-close-index]');

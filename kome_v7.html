@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI構造化本棚｜コメの価格と供給を安定させる最善策</title>
+<style>
+:root {
+  --blue:#C0392B; --blue2:#E74C3C;
+  --border:#D0DCE8; --text:#222; --sub:#555;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Arial','Hiragino Sans','Yu Gothic',sans-serif;
+  background:#F0F4F8;color:var(--text);font-size:15px;line-height:1.7;}
+.header{background:var(--blue);color:white;padding:20px 40px 16px;}
+.header .label{font-size:11px;letter-spacing:2px;opacity:.7;margin-bottom:4px;}
+.header h1{font-size:22px;font-weight:bold;margin-bottom:3px;}
+.header .meta{font-size:12px;opacity:.75;}
+.header .hint{margin-top:10px;font-size:13px;opacity:.88;
+  background:rgba(255,255,255,0.12);padding:8px 12px;border-radius:5px;
+  border-left:3px solid rgba(255,255,255,0.4);}
+.nav{background:white;border-bottom:1px solid var(--border);
+  padding:10px 20px;display:flex;gap:8px;flex-wrap:wrap;
+  position:sticky;top:0;z-index:100;align-items:center;}
+.nav a{font-size:13px;padding:5px 12px;border-radius:20px;text-decoration:none;
+  border:1px solid var(--border);color:var(--sub);
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.nav a:hover,.nav a:active{background:var(--blue);color:white;border-color:var(--blue);}
+.nav-index-btn{margin-left:auto;background:var(--blue);color:white!important;
+  border-color:var(--blue)!important;font-weight:bold;}
+.main{max-width:960px;margin:0 auto;padding:24px 16px 140px;}
+.chapter{margin-bottom:40px;}
+.chapter-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;
+  padding-bottom:10px;border-bottom:2px solid #ccc;}
+.chapter-num{font-size:11px;font-weight:bold;letter-spacing:1px;
+  padding:3px 10px;border-radius:3px;color:white;}
+.chapter-title{font-size:17px;font-weight:bold;}
+.chapter-sub{font-size:12px;margin-top:2px;color:var(--sub);}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:10px;}
+.card{background:white;border-radius:8px;border:1px solid var(--border);overflow:hidden;}
+.card-bar{height:3px;}
+.card-head{padding:14px 16px 12px;display:flex;justify-content:space-between;
+  align-items:flex-start;gap:8px;background:white;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  user-select:none;-webkit-user-select:none;}
+.card-title{font-size:14px;font-weight:bold;line-height:1.5;flex:1;}
+.toggle-btn{font-size:20px;color:var(--sub);flex-shrink:0;min-width:28px;text-align:center;}
+.card-summary{font-size:13px;color:var(--sub);line-height:1.65;padding:0 16px 10px;}
+.card-tts{font-size:13px;color:var(--blue2);background:none;
+  border:1px solid var(--border);border-radius:6px;padding:8px 12px;min-height:40px;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;cursor:pointer;}
+.card-detail{display:none;}
+.card.open .card-detail{display:block;}
+.detail-summary{font-size:13px;font-weight:500;padding:10px 16px;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);line-height:1.7;}
+.detail-body{font-size:14px;color:var(--sub);padding:13px 16px 15px;line-height:1.9;}
+.intro-card{background:white;border-radius:8px;border-left:4px solid var(--blue);
+  padding:14px 18px;margin-bottom:24px;}
+.intro-card h2{font-size:14px;color:var(--blue);margin-bottom:8px;font-weight:bold;}
+.intro-card p{font-size:14px;color:var(--sub);line-height:1.9;}
+/* 章カラー */
+.ch0 .card-bar,.ch0_ato .card-bar{background:#4A4A4A;}
+.ch0 .detail-summary,.ch0_ato .detail-summary{background:#F5F5F5;color:#4A4A4A;border-left:4px solid #4A4A4A;}
+.ch0-ato .card-bar{background:#4A4A4A;}
+.ch1 .card-bar{background:#C0392B;} .ch1 .detail-summary{background:#FDECEA;color:#C0392B;border-left:4px solid #C0392B;}
+.ch2 .card-bar{background:#1A5276;} .ch2 .detail-summary{background:#EAF2FB;color:#1A5276;border-left:4px solid #1A5276;}
+.ch3 .card-bar{background:#1A6B3C;} .ch3 .detail-summary{background:#E8F5EE;color:#1A6B3C;border-left:4px solid #1A6B3C;}
+.ch4 .card-bar{background:#7B3200;} .ch4 .detail-summary{background:#FBF0E8;color:#7B3200;border-left:4px solid #7B3200;}
+.ch5 .card-bar{background:#5C2D91;} .ch5 .detail-summary{background:#F2EDF9;color:#5C2D91;border-left:4px solid #5C2D91;}
+.ch_app .card-bar{background:#0B5563;} .ch_app .detail-summary{background:#E0F4F7;color:#0B5563;border-left:4px solid #0B5563;}
+/* INDEX */
+.index-toggle{position:fixed;right:0;top:50%;transform:translateY(-50%);
+  background:var(--blue);color:white;border:none;border-radius:6px 0 0 6px;
+  padding:14px 8px;cursor:pointer;z-index:150;font-size:13px;min-height:80px;
+  writing-mode:vertical-rl;letter-spacing:2px;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.index-panel{display:none;position:fixed;right:0;top:0;
+  width:min(300px,92vw);height:100%;background:white;
+  border-left:2px solid var(--blue);z-index:140;overflow-y:auto;flex-direction:column;}
+.index-panel.open{display:flex;}
+.index-head{background:var(--blue);color:white;padding:12px 16px;
+  display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+.index-head h3{font-size:13px;font-weight:bold;}
+.index-close{background:none;border:none;color:white;font-size:22px;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.index-tabs{display:flex;flex-wrap:wrap;border-bottom:2px solid var(--border);flex-shrink:0;}
+.index-tab{flex:1;min-width:50px;padding:7px 3px;text-align:center;font-size:11px;
+  font-weight:bold;cursor:pointer;color:var(--sub);background:white;border:none;
+  border-bottom:3px solid transparent;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.index-tab.active{color:#333;background:#F8F8F8;}
+.index-ch-panel{display:none;}
+.index-ch-panel.active{display:block;}
+.index-ch-label{padding:7px 14px;font-size:11px;font-weight:bold;
+  letter-spacing:1px;color:white;}
+.index-list{list-style:none;padding:0;margin:0;}
+.index-list li a{display:block;padding:8px 16px 8px 18px;font-size:13px;
+  color:#333;text-decoration:none;border-bottom:1px solid #F0F4F8;line-height:1.4;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.index-list li a.active{font-weight:bold;border-left:3px solid var(--blue);
+  padding-left:15px;background:#FFF0EE;color:var(--blue);}
+.index-num{font-size:10px;color:#aaa;margin-right:5px;}
+.index-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:139;}
+.index-overlay.show{display:block;}
+/* 読み上げバー */
+.tts-bar{display:none;position:fixed;bottom:0;left:0;right:0;background:white;
+  border-top:2px solid var(--blue);padding:8px 16px;
+  flex-wrap:wrap;align-items:center;gap:10px;z-index:200;
+  box-shadow:0 -3px 16px rgba(0,0,0,.12);}
+.tts-bar.show{display:flex;}
+.tts-title{font-size:12px;font-weight:bold;color:var(--blue);flex:1;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+.tts-btn{border:none;border-radius:50%;width:42px;height:42px;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.tts-play{background:var(--blue);color:white;}
+.tts-stop-btn{background:#eee;color:#555;}
+.tts-speed{font-size:12px;border:1px solid var(--border);border-radius:4px;padding:4px 8px;background:white;}
+.tts-progress{height:3px;background:var(--border);border-radius:2px;flex:1;min-width:60px;}
+.tts-progress-fill{height:100%;background:var(--blue);border-radius:2px;width:0%;}
+.footer{text-align:center;padding:20px;font-size:12px;color:#999;border-top:1px solid var(--border);}
+.footer a{color:var(--blue2);text-decoration:none;}
+.card.speaking{outline:2px solid var(--blue);outline-offset:2px;}
+@media(max-width:600px){
+  .header{padding:14px 16px;}
+  .nav{padding:8px 12px;}
+  .cards{grid-template-columns:1fr;}
+  .tts-title{display:none;}
+}
+
+  .card-back { background:none; border:none; font-size:15px; cursor:pointer;
+    padding:2px 4px; opacity:0.5; flex-shrink:0;
+    -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+  .card-back:hover,.card-back:active { opacity:1; }
+
+</style>
+</head>
+<body>
+
+<button class="index-toggle" id="indexToggle">INDEX</button>
+<div class="index-overlay" id="indexOverlay"></div>
+<div class="index-panel" id="indexPanel">
+  <div class="index-head">
+    <h3>📖 目次（全13節）</h3>
+    <button class="index-close" id="indexClose">×</button>
+  </div>
+  <div class="index-tabs">
+<button class="index-tab active" data-tab="1" style="border-bottom-color:#1A6B3C">第１章<br><small>2節</small></button>
+<button class="index-tab" data-tab="2" style="border-bottom-color:#1A5276">第２章<br><small>3節</small></button>
+<button class="index-tab" data-tab="3" style="border-bottom-color:#7B3200">第３章<br><small>3節</small></button>
+<button class="index-tab" data-tab="4" style="border-bottom-color:#5C2D91">第４章<br><small>5節</small></button>
+  </div>
+<div class="index-ch-panel active" id="idx-panel-1">
+<div class="index-ch-label" style="background:#1A6B3C;">第１章 農家の実態と誤解</div>
+<ul class="index-list">
+<li><a href="#sec-0" data-close-index="1"><span class="index-num">1.</span>時給10円か、儲かっているのか</a></li>
+<li><a href="#sec-1" data-close-index="1"><span class="index-num">2.</span>実際の米農家の収入と根拠</a></li>
+</ul>
+</div>
+<div class="index-ch-panel" id="idx-panel-2">
+<div class="index-ch-label" style="background:#1A5276;">第２章 大規模化の限界と可能性</div>
+<ul class="index-list">
+<li><a href="#sec-2" data-close-index="1"><span class="index-num">3.</span>大規模化すれば解決するのか</a></li>
+<li><a href="#sec-3" data-close-index="1"><span class="index-num">4.</span>中山間地域の農家が担う役割</a></li>
+<li><a href="#sec-4" data-close-index="1"><span class="index-num">5.</span>米価高騰でコメ農家は儲かったか</a></li>
+</ul>
+</div>
+<div class="index-ch-panel" id="idx-panel-3">
+<div class="index-ch-label" style="background:#7B3200;">第３章 農家の多様性と差の構造</div>
+<ul class="index-list">
+<li><a href="#sec-5" data-close-index="1"><span class="index-num">6.</span>農家の収入差はどこで生まれるか</a></li>
+<li><a href="#sec-6" data-close-index="1"><span class="index-num">7.</span>農業の他産業とは異なる側面</a></li>
+<li><a href="#sec-7" data-close-index="1"><span class="index-num">8.</span>環境保全・食料安全保障の視点</a></li>
+</ul>
+</div>
+<div class="index-ch-panel" id="idx-panel-4">
+<div class="index-ch-label" style="background:#5C2D91;">第４章 価格安定への処方箋</div>
+<ul class="index-list">
+<li><a href="#sec-8" data-close-index="1"><span class="index-num">9.</span>成長農家への積極支援</a></li>
+<li><a href="#sec-9" data-close-index="1"><span class="index-num">10.</span>社会的役割への対価という発想</a></li>
+<li><a href="#sec-10" data-close-index="1"><span class="index-num">11.</span>支援の透明化・目的明確化</a></li>
+<li><a href="#sec-11" data-close-index="1"><span class="index-num">12.</span>市場と保護の両立こそが最善策</a></li>
+<li><a href="#sec-12" data-close-index="1"><span class="index-num">13.</span>著者プロフィール・SITO.の視点</a></li>
+</ul>
+</div>
+</div></div>
+
+<nav class="nav">
+  <a href="#ch1">第１章</a>
+  <a href="#ch2">第２章</a>
+  <a href="#ch3">第３章</a>
+  <a href="#ch4">第４章</a>
+  <a href="#" id="navIndexBtn" class="nav-index-btn">📖 目次</a>
+</nav>
+
+<div class="main">
+<div class="intro-card">
+  <h2>この記事について</h2>
+  <p>「農家は時給10円」「農家は補助金で儲けている」——正反対の言説が同じ年に飛び交うコメ農業の議論。現役農家・農業ライターのSITO.氏が、統計データと現場の実態から、コメ農業の真実と価格・供給安定への処方箋を論じる。出典：PRESIDENT Online 2026年3月25日</p>
+</div>
+
+<div class="chapter ch1" id="ch1">
+  <div class="chapter-header">
+    <span class="chapter-num" style="background:#1A6B3C;">第１章</span>
+    <div><div class="chapter-title">農家の実態と誤解</div><div class="chapter-sub">「時給10円」と「儲けている」——両極端の言説の真実</div></div>
+  </div>
+  <div class="cards">
+    <div class="card ch1" id="sec-0">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">時給10円か、儲かっているのか</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">📖</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">「令和の百姓一揆」と米価高騰が同じ年に起きた。「農家は時給10円」と「農家は儲けている」という正反対の言説——どちらが正しいのか。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="0">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">両極端の言説が同年に飛び交うという異常事態。まず実態を正確に把握することが出発点。</div>
+        <div class="detail-body">2025年春、農業機械でデモ行進する「令和の百姓一揆」が東京で行われた。「農家は時給10円！日本農業が潰されようとしています！」という主張で一律の所得補償を訴えた。一方でその同じ年、米価高騰が起き「農家は補助金で守られながら儲けている」という正反対の批判も噴出した。この両極端が同じ年に出るというのは農業議論の混乱を象徴している。正確な実態把握なしに正しい政策は立てられない。</div>
+      
+      </div>
+    </div>
+    <div class="card ch1" id="sec-1">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">実際の米農家の収入と根拠</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">📖</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">「時給10円」は兼業農家や年金受給者を含む特定年の稲作統計。20ha超の農家では時給1765円の実態も。規模によって収益性は大きく異なる。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="1">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「時給10円」は誇張・誤用された統計。実態は規模によって大きく異なる。</div>
+        <div class="detail-body">「農家は時給10円」は令和4年農水省統計の稲作部門が根拠だが、専業・兼業・年金受給者を含み他品目収入も含めていない。令和5年の同統計では時給約95円に改善。実際、全国の過半数の稲作農家は時給1500円以上をキープ。20ha以上の農家では2023年データで時給1765円。20ha前後から「中核的農家」として経営が安定するとされる。</div>
+      
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="chapter ch2" id="ch2">
+  <div class="chapter-header">
+    <span class="chapter-num" style="background:#1A5276;">第２章</span>
+    <div><div class="chapter-title">大規模化の限界と可能性</div><div class="chapter-sub">「大規模化すれば解決」論への反証</div></div>
+  </div>
+  <div class="cards">
+    <div class="card ch2" id="sec-2">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">大規模化すれば解決するのか</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">📖</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">大規模化は効率化に有効だが全てを解決するわけではない。日本は平野が少なく山の多い国。中山間地の農地は地形的に大規模化が困難。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="2">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">大規模化は必要だが万能ではない。地形的制約と社会的役割を無視した議論は危険。</div>
+        <div class="detail-body">大規模化は機械化・労働効率を高め生産コストを下げる。しかし日本の農地の多くは中山間地域に存在し地形的に大規模化が難しい。小規模農家が水田を維持することで農地の荒廃・耕作放棄地の拡大を防ぎ里山の景観・環境を守っている。「攻めるところは攻め、守るところは守る」——多様な経営体が共存する構造こそ日本の水田農業を持続させる現実的な形。</div>
+      
+      </div>
+    </div>
+    <div class="card ch2" id="sec-3">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">中山間地域の農家が担う役割</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">📖</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">中山間地の農家は洪水防止・土砂災害抑制・里山管理という「市場価格に反映されない社会的機能」を担っている。効率だけで評価してはならない理由。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="3">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">農業は「市場競争の産業」と「社会基盤」の二面性を持つ。中山間地農家の価値は市場に現れない。</div>
+        <div class="detail-body">農村地域は水路・農道の管理・田畑の維持を通じて洪水防止・土砂災害抑制に貢献。水田には雨水を一時的に貯める機能があり都市部の治水にも間接的に貢献している。耕作が続くことで雑草・害獣の拡大を防ぎ地域の景観・環境・生態系が保たれる。これらは市場価格に十分反映されないが社会全体の維持において非常に重要な機能。</div>
+      
+      </div>
+    </div>
+    <div class="card ch2" id="sec-4">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">米価高騰でコメ農家は儲かったか</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">📖</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">販売価格が上がった一方、肥料・農薬・燃料コストも急増。大規模農家と小規模農家で影響は大きく異なる。令和8年産には早くも米価下落の兆候。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="4">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">高騰は一時的。手元に残る利益が大きく増えているとは限らない。農業は本質的に不安定な産業。</div>
+        <div class="detail-body">スーパーのコメ価格・取引価格は上昇したが肥料・農薬・資材・燃料・電気コストも同時に大きく上昇。大規模農家は販売量が多い分価格上昇の恩恵を受けやすいが小規模農家は販売量が限られ影響が小さい。農業は天候次第で収穫量が大きく変動し一時的な高価格が安定した産業になったことを意味しない。令和8年産はすでに米価下落の兆候が見えている。</div>
+      
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="chapter ch3" id="ch3">
+  <div class="chapter-header">
+    <span class="chapter-num" style="background:#7B3200;">第３章</span>
+    <div><div class="chapter-title">農家の多様性と差の構造</div><div class="chapter-sub">「農家」を一括りにしてはいけない理由</div></div>
+  </div>
+  <div class="cards">
+    <div class="card ch3" id="sec-5">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">農家の収入差はどこで生まれるか</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">📖</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">自給的農家・家族経営・農業法人、コメ・野菜・果樹・畜産と規模も品目も多様。農業だけ「みんな守られるべき」は市場原理と合わない。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="5">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">農家の多様性を理解せずに「農家」を一括りに論じることが議論の混乱の根本原因。</div>
+        <div class="detail-body">農家はコメ農家だけでなく穀物・野菜・果樹・畜産と品目も多様。規模も自給的農家から大規模法人まで幅広い。経営努力や工夫・判断の違いで結果に差が出るのは資本主義社会では当然。規模拡大・コスト削減・販路工夫・ブランド化・輸出挑戦で利益を上げている農家もいる一方、高齢化・人手不足・地理的条件の厳しさで苦しむ農家もいる。</div>
+      
+      </div>
+    </div>
+    <div class="card ch3" id="sec-6">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">農業の他産業とは異なる側面</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">📖</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">農業は「市場で競争する産業」と「社会全体を支える基盤」の二面性を持つ。この二面性こそが農業政策を単純な市場原理論では語れない理由。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="6">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">農業は「個人の商売」にとどまらない。この認識が政策設計の出発点。</div>
+        <div class="detail-body">農村地域は水路・農道管理・田畑維持を通じて洪水防止・土砂災害抑制を担う。水田には雨水貯留機能があり都市部の治水にも貢献。耕作継続により雑草・害獣拡大を防ぎ地域の景観・環境・生態系を保全する。これらの機能は市場価格に反映されないが社会全体の維持に不可欠。</div>
+      
+      </div>
+    </div>
+    <div class="card ch3" id="sec-7">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">環境保全・食料安全保障の視点</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">📖</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">世界情勢が不安定化すれば輸入が滞る。国内に一定の生産基盤を持つことは「いざという時の保険」。これは個々の農家の利益とは別の国家的視点。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="7">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">食料安全保障は農家の利益論とは別次元の国家的課題。農業政策にはこの視点が不可欠。</div>
+        <div class="detail-body">農業には食料安全保障という観点がある。世界情勢が不安定化すれば輸入が滞るリスクがある。国内に一定の生産基盤があることはいざという時の保険として機能する。これは個々の農家の利益とは別の国家的な視点。そのため農業政策は「農家を守るか否か」ではなく役割に応じた支援をどう設計するかが重要になる。</div>
+      
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="chapter ch4" id="ch4">
+  <div class="chapter-header">
+    <span class="chapter-num" style="background:#5C2D91;">第４章</span>
+    <div><div class="chapter-title">価格安定への処方箋</div><div class="chapter-sub">「市場か保護か」を超えた現実的な解</div></div>
+  </div>
+  <div class="cards">
+    <div class="card ch4" id="sec-8">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">成長農家への積極支援</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">📖</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">競争力があり成長が見込める農家には投資支援・輸出支援を積極的に行い、さらに力を伸ばしてもらうべき。攻めるべきところには攻める。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="8">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">役割に応じた支援設計が必要。まずは成長部門への投資から。</div>
+        <div class="detail-body">著者SITO.氏の提言：競争力があって成長が見込める農家には積極的に投資支援・輸出支援などを行いさらに力を伸ばしてもらうべき。大規模化・効率化・ブランド化・輸出に挑戦している農家は市場で勝負できる。この部門には市場原理を十分に活かす政策環境が必要。</div>
+      
+      </div>
+    </div>
+    <div class="card ch4" id="sec-9">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">社会的役割への対価という発想</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">📖</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">中山間地域などの農家には「赤字だから助ける」のではなく「社会的役割を担っているから対価を支払う」という発想の転換が必要。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="9">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「赤字補填」から「社会的機能への対価」への発想転換が農業政策の正当化に不可欠。</div>
+        <div class="detail-body">条件が厳しい中山間地域の農家では生産効率だけで評価するのではなく環境保全や地域維持への貢献に対して支援を行う。「赤字だから助ける」のではなく「社会的役割を担っているから対価を支払う」。この違いが明確でなければ「農業は補助金漬けだ」という批判につながる。</div>
+      
+      </div>
+    </div>
+    <div class="card ch4" id="sec-10">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">支援の透明化・目的明確化</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">📖</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">環境保全・水源管理といった具体的活動への支払い、一定条件・期間での見直し、成果の数値化——「慣例」ではなく「目的に基づく政策」であることを示すことが重要。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="10">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">農業支援の正当性は「目的の透明化」「成果の可視化」によって担保される。</div>
+        <div class="detail-body">具体的な制度設計として①環境保全・水源管理などの具体的活動に対して支払う仕組みにする、②一定の条件・期間を設けて見直しを行う、③成果をできるだけ数字・データで示す——これらの工夫が考えられる。支援が「慣例」ではなく「目的に基づく政策」であることを示すことが重要。</div>
+      
+      </div>
+    </div>
+    <div class="card ch4" id="sec-11">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">市場と保護の両立こそが最善策</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">📖</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">「市場に任せるべきだ」対「農家を守るべきだ」という二元論を超えて——現実には両方の視点を持つことでコメの安定的な価格と供給が実現できる。著者の結論。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="11">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">どちらか一方ではなく農業の二面性を認めたうえで役割に応じた政策設計が「最善策」。</div>
+        <div class="detail-body">農業をめぐる議論は「市場に任せるべきだ」と「農家を守るべきだ」が対立しがち。しかし現実にはそのどちらか一方ではなく両方の視点を持って政策を進めることで農産物の安定的な価格と供給を実現できるのではないか——というのが著者の結論。成長農家には市場競争を、中山間地農家には社会的機能への対価を。</div>
+      
+      </div>
+    </div>
+    <div class="card ch4" id="sec-12">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">著者プロフィール・SITO.の視点</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">📖</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">1993年愛知県生まれ。キャベツ・タマネギを栽培する露地野菜農家兼農業ライター。学術的知見と実践的経験の両面から農業の誤情報・デマと戦い正確な情報発信を使命とする。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="12">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">現役農家として現場を知りながら、メディアに蔓延する農業の誤情報に立ち向かう稀有な書き手。</div>
+        <div class="detail-body">SITO.（シト）氏は1993年愛知県生まれ。キャベツとタマネギを栽培する露地野菜農家で農業ライター。就農前から日本農業の諸課題に関心を持ち生産現場の知見と幅広い農業情報を融合しながら「農業とそれに携わる人たちの持続可能な社会」を模索し続けている。農業分野の誤情報・デマと戦う姿勢を貫き学術的知見と実践的経験の両面から正確な情報発信に努めている。</div>
+      
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="footer">
+  AI構造化本棚 &#x7c;
+  <a href="https://www.amazon.co.jp/s?k=%E3%83%88%E3%83%A8%E3%82%BF%E7%94%9F%E7%94%A3%E6%96%B9%E5%BC%8F+%E5%A4%A7%E9%87%8E%E8%80%90%E4%B8%80" target="_blank">Amazonで探す &#8594;</a>
+</div>
+
+<div class="tts-bar" id="ttsBar">
+  <button class="tts-btn tts-play" id="ttsPlayBtn">&#9654;</button>
+  <button class="tts-btn tts-stop-btn" id="ttsStopBtn">&#9632;</button>
+  <div class="tts-title" id="ttsTitle">—</div>
+  <div class="tts-progress"><div class="tts-progress-fill" id="ttsProgress"></div></div>
+  <select class="tts-speed" id="ttsSpeed">
+    <option value="0.8">遅い</option>
+    <option value="1.0" selected>普通</option>
+    <option value="1.3">やや速い</option>
+    <option value="1.6">速い</option>
+    <option value="2.0">2倍速</option>
+  </select>
+  <button class="tts-btn tts-stop-btn" id="ttsPrevBtn" style="font-size:14px;">&#9664;</button>
+  <button class="tts-btn tts-stop-btn" id="ttsNextBtn" style="font-size:14px;">&#9654;&#9654;</button>
+</div>
+
+<script>
+var synth=window.speechSynthesis,queue=[],qIdx=0,isPaused=false;
+function openIndex(){document.getElementById('indexPanel').classList.add('open');document.getElementById('indexOverlay').classList.add('show');document.getElementById('indexToggle').textContent='✕';}
+function closeIndex(){document.getElementById('indexPanel').classList.remove('open');document.getElementById('indexOverlay').classList.remove('show');document.getElementById('indexToggle').textContent='INDEX';}
+document.getElementById('indexToggle').addEventListener('click',function(e){e.preventDefault();document.getElementById('indexPanel').classList.contains('open')?closeIndex():openIndex();},{passive:false});
+document.getElementById('indexClose').addEventListener('click',function(e){e.preventDefault();closeIndex();},{passive:false});
+document.getElementById('indexOverlay').addEventListener('click',function(e){e.preventDefault();closeIndex();},{passive:false});
+document.getElementById('navIndexBtn').addEventListener('click',function(e){e.preventDefault();openIndex();},{passive:false});
+document.querySelectorAll('.index-tab').forEach(function(tab){
+  tab.addEventListener('click',function(e){
+    e.preventDefault();var t=this.getAttribute('data-tab');
+    document.querySelectorAll('.index-tab').forEach(function(x){x.classList.remove('active');});
+    document.querySelectorAll('.index-ch-panel').forEach(function(x){x.classList.remove('active');});
+    this.classList.add('active');
+    document.getElementById('idx-panel-'+t).classList.add('active');
+  },{passive:false});
+});
+// イベント委譲でINDEXジャンプ（display:none内でも確実）
+document.addEventListener('click', function(e) {
+  var a = e.target.closest('[data-close-index]');
+  if (a) {
+    e.preventDefault();
+    var href = a.getAttribute('href');
+    closeIndex();
+    setTimeout(function() {
+      var el = document.querySelector(href);
+      if (el) {
+        var top = el.getBoundingClientRect().top + window.pageYOffset - 60;
+        window.scrollTo({ top: top, behavior: 'smooth' });
+      }
+    }, 350);
+  }
+  var backBtn = e.target.closest('[data-action="back-top"]');
+  if (backBtn) {
+    e.preventDefault();
+    openIndex();
+    var card = backBtn.closest('.card');
+    if (card) {
+      // アクティブ節に対応するタブを自動選択
+      var cardClass = Array.from(card.classList).find(function(c){ return c.startsWith('ch'); });
+      var chMap = {'ch0':1,'ch1':2,'ch2':3,'ch3':4,'ch4':5,'ch5':6,'ch_app':7,'ch0_ato':8};
+      var tabNum = chMap[cardClass];
+      if (tabNum) {
+        document.querySelectorAll('.index-tab').forEach(function(t){ t.classList.remove('active'); });
+        document.querySelectorAll('.index-ch-panel').forEach(function(p){ p.classList.remove('active'); });
+        var tab = document.querySelector('[data-tab="'+tabNum+'"]');
+        var panel = document.getElementById('idx-panel-'+tabNum);
+        if (tab) tab.classList.add('active');
+        if (panel) panel.classList.add('active');
+      }
+      // 現在の節リンクをハイライト
+      var secId = card.id;
+      setTimeout(function(){
+        var link = document.querySelector('.index-list a[href="#'+secId+'"]');
+        if (link) {
+          link.classList.add('active');
+          link.scrollIntoView({ block:'center' });
+        }
+      }, 100);
+    }
+  }
+}, false);
+window.addEventListener('scroll',function(){
+  var current='';
+  document.querySelectorAll('.card[id^="sec-"]').forEach(function(c){
+    if(c.getBoundingClientRect().top<window.innerHeight*0.45)current=c.id;
+  });
+  document.querySelectorAll('.index-list a').forEach(function(a){
+    a.classList.toggle('active',a.getAttribute('href')==='#'+current);
+  });
+});
+document.querySelectorAll('[data-action="toggle"]').forEach(function(head){
+  head.addEventListener('click',function(e){
+    e.preventDefault();
+    var card=this.closest('.card');if(!card)return;
+    var isOpen=card.classList.contains('open');
+    card.classList.toggle('open');
+    var btn=card.querySelector('.toggle-btn');if(btn)btn.textContent=isOpen?'＋':'－';
+  },{passive:false});
+});
+function getCardData(card){
+  var title=(card.querySelector('.card-title')||{}).textContent||'';
+  var summary=(card.querySelector('.card-summary')||{}).textContent||'';
+  var body=(card.querySelector('.detail-body')||{}).textContent||'';
+  return{title:title.trim(),text:title.trim()+'。'+summary.trim()+'。'+body.trim(),el:card};
+}
+function readOne(idx){var c=document.getElementById('sec-'+idx);if(!c)return;queue=[getCardData(c)];qIdx=0;startQueue();}
+function readAllFrom(idx){
+  queue=[];
+  document.querySelectorAll('.card[id^="sec-"]').forEach(function(c){
+    var i=parseInt(c.id.replace('sec-',''));if(i>=idx)queue.push(getCardData(c));
+  });
+  queue.sort(function(a,b){return parseInt(a.el.id.replace('sec-',''))-parseInt(b.el.id.replace('sec-',''));});
+  qIdx=0;startQueue();
+}
+function startQueue(){synth.cancel();isPaused=false;document.getElementById('ttsBar').classList.add('show');playItem();}
+function playItem(){
+  if(qIdx>=queue.length){ttsStop();return;}
+  var item=queue[qIdx];
+  document.querySelectorAll('.card.speaking').forEach(function(c){c.classList.remove('speaking');});
+  item.el.classList.add('speaking');
+  item.el.scrollIntoView({behavior:'smooth',block:'center'});
+  if(!item.el.classList.contains('open')){item.el.classList.add('open');var btn=item.el.querySelector('.toggle-btn');if(btn)btn.textContent='－';}
+  document.getElementById('ttsTitle').textContent='('+(qIdx+1)+'/'+queue.length+') '+item.title;
+  document.getElementById('ttsProgress').style.width=(qIdx/queue.length*100)+'%';
+  document.getElementById('ttsPlayBtn').innerHTML='&#9646;&#9646;';
+  var u=new SpeechSynthesisUtterance(item.text);
+  u.lang='ja-JP';u.rate=parseFloat(document.getElementById('ttsSpeed').value);
+  u.onend=function(){if(!isPaused){qIdx++;playItem();}};
+  u.onerror=function(){qIdx++;playItem();};
+  synth.speak(u);
+}
+function ttsToggle(){if(synth.speaking&&!synth.paused){synth.pause();isPaused=true;document.getElementById('ttsPlayBtn').innerHTML='&#9654;';}else if(synth.paused){synth.resume();isPaused=false;document.getElementById('ttsPlayBtn').innerHTML='&#9646;&#9646;';}else if(queue.length>0){playItem();}}
+function ttsStop(){synth.cancel();isPaused=false;queue=[];document.querySelectorAll('.card.speaking').forEach(function(c){c.classList.remove('speaking');});document.getElementById('ttsBar').classList.remove('show');document.getElementById('ttsProgress').style.width='0%';}
+function ttsNext(){synth.cancel();isPaused=false;qIdx=Math.min(qIdx+1,queue.length-1);playItem();}
+function ttsPrev(){synth.cancel();isPaused=false;qIdx=Math.max(qIdx-1,0);playItem();}
+document.getElementById('ttsPlayBtn').addEventListener('click',function(e){e.preventDefault();ttsToggle();},{passive:false});
+document.getElementById('ttsStopBtn').addEventListener('click',function(e){e.preventDefault();ttsStop();},{passive:false});
+document.getElementById('ttsNextBtn').addEventListener('click',function(e){e.preventDefault();ttsNext();},{passive:false});
+document.getElementById('ttsPrevBtn').addEventListener('click',function(e){e.preventDefault();ttsPrev();},{passive:false});
+document.getElementById('ttsSpeed').addEventListener('change',function(){if(synth.speaking){var i=qIdx;synth.cancel();isPaused=false;qIdx=i;setTimeout(playItem,80);}});
+document.querySelectorAll('[data-readone]').forEach(function(btn){btn.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();readOne(parseInt(this.getAttribute('data-readone')));},{passive:false});});
+document.querySelectorAll('[data-readall]').forEach(function(btn){btn.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();readAllFrom(parseInt(this.getAttribute('data-readall')));},{passive:false});});
+</script>
+</body>
+</html>

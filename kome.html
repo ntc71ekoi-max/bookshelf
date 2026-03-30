@@ -160,28 +160,28 @@ body{font-family:'Arial','Hiragino Sans','Yu Gothic',sans-serif;
   <div style="padding:8px 0;">
     <div class="index-ch-label" style="background:#1A6B3C;">第１章 農家の実態と誤解</div>
     <ul class="index-list">
-      <li><a href="#sec-0" onclick="closeIndex()"><span class="index-num">1.</span>時給10円か、儲かっているのか</a></li>
-      <li><a href="#sec-1" onclick="closeIndex()"><span class="index-num">2.</span>実際の米農家の収入と根拠</a></li>
+      <li><a href="#sec-0" data-close-index="1"><span class="index-num">1.</span>時給10円か、儲かっているのか</a></li>
+      <li><a href="#sec-1" data-close-index="1"><span class="index-num">2.</span>実際の米農家の収入と根拠</a></li>
     </ul>
     <div class="index-ch-label" style="background:#1A5276;">第２章 大規模化の限界と可能性</div>
     <ul class="index-list">
-      <li><a href="#sec-2" onclick="closeIndex()"><span class="index-num">3.</span>大規模化すれば解決するのか</a></li>
-      <li><a href="#sec-3" onclick="closeIndex()"><span class="index-num">4.</span>中山間地域の農家が担う役割</a></li>
-      <li><a href="#sec-4" onclick="closeIndex()"><span class="index-num">5.</span>米価高騰でコメ農家は儲かったか</a></li>
+      <li><a href="#sec-2" data-close-index="1"><span class="index-num">3.</span>大規模化すれば解決するのか</a></li>
+      <li><a href="#sec-3" data-close-index="1"><span class="index-num">4.</span>中山間地域の農家が担う役割</a></li>
+      <li><a href="#sec-4" data-close-index="1"><span class="index-num">5.</span>米価高騰でコメ農家は儲かったか</a></li>
     </ul>
     <div class="index-ch-label" style="background:#7B3200;">第３章 農家の多様性と差の構造</div>
     <ul class="index-list">
-      <li><a href="#sec-5" onclick="closeIndex()"><span class="index-num">6.</span>農家の収入差はどこで生まれるか</a></li>
-      <li><a href="#sec-6" onclick="closeIndex()"><span class="index-num">7.</span>農業の他産業とは異なる側面</a></li>
-      <li><a href="#sec-7" onclick="closeIndex()"><span class="index-num">8.</span>環境保全・食料安全保障の視点</a></li>
+      <li><a href="#sec-5" data-close-index="1"><span class="index-num">6.</span>農家の収入差はどこで生まれるか</a></li>
+      <li><a href="#sec-6" data-close-index="1"><span class="index-num">7.</span>農業の他産業とは異なる側面</a></li>
+      <li><a href="#sec-7" data-close-index="1"><span class="index-num">8.</span>環境保全・食料安全保障の視点</a></li>
     </ul>
     <div class="index-ch-label" style="background:#5C2D91;">第４章 価格安定への処方箋</div>
     <ul class="index-list">
-      <li><a href="#sec-8" onclick="closeIndex()"><span class="index-num">9.</span>成長農家への積極支援</a></li>
-      <li><a href="#sec-9" onclick="closeIndex()"><span class="index-num">10.</span>社会的役割への対価という発想</a></li>
-      <li><a href="#sec-10" onclick="closeIndex()"><span class="index-num">11.</span>支援の透明化・目的明確化</a></li>
-      <li><a href="#sec-11" onclick="closeIndex()"><span class="index-num">12.</span>市場と保護の両立こそが最善策</a></li>
-      <li><a href="#sec-12" onclick="closeIndex()"><span class="index-num">13.</span>著者プロフィール・SITO.の視点</a></li>
+      <li><a href="#sec-8" data-close-index="1"><span class="index-num">9.</span>成長農家への積極支援</a></li>
+      <li><a href="#sec-9" data-close-index="1"><span class="index-num">10.</span>社会的役割への対価という発想</a></li>
+      <li><a href="#sec-10" data-close-index="1"><span class="index-num">11.</span>支援の透明化・目的明確化</a></li>
+      <li><a href="#sec-11" data-close-index="1"><span class="index-num">12.</span>市場と保護の両立こそが最善策</a></li>
+      <li><a href="#sec-12" data-close-index="1"><span class="index-num">13.</span>著者プロフィール・SITO.の視点</a></li>
     </ul>
   </div>
 </div>
@@ -624,15 +624,30 @@ function loadVoices(){
 loadVoices();
 if(speechSynthesis.onvoiceschanged!==undefined){speechSynthesis.onvoiceschanged=loadVoices;}
 
-// INDEX
-document.getElementById('indexToggle').addEventListener('click',function(){
-  document.getElementById('indexPanel').classList.toggle('open');
-  document.getElementById('indexOverlay').classList.toggle('show');
-});
-document.getElementById('indexClose').addEventListener('click',function(){closeIndex();});
-document.getElementById('indexOverlay').addEventListener('click',function(){closeIndex();});
-document.getElementById('navIndexBtn').addEventListener('click',function(e){e.preventDefault();document.getElementById('indexPanel').classList.add('open');document.getElementById('indexOverlay').classList.add('show');});
+// INDEX（TPS v4実績版）
+function openIndex(){document.getElementById('indexPanel').classList.add('open');document.getElementById('indexOverlay').classList.add('show');}
 function closeIndex(){document.getElementById('indexPanel').classList.remove('open');document.getElementById('indexOverlay').classList.remove('show');}
+document.getElementById('indexToggle').addEventListener('click',function(e){e.preventDefault();document.getElementById('indexPanel').classList.contains('open')?closeIndex():openIndex();},{passive:false});
+document.getElementById('indexClose').addEventListener('click',function(e){e.preventDefault();closeIndex();},{passive:false});
+document.getElementById('indexOverlay').addEventListener('click',function(e){e.preventDefault();closeIndex();},{passive:false});
+document.getElementById('navIndexBtn').addEventListener('click',function(e){e.preventDefault();openIndex();},{passive:false});
+
+// イベント委譲でINDEXジャンプ（display:none内でも確実）
+document.addEventListener('click', function(e) {
+  var a = e.target.closest('[data-close-index]');
+  if (a) {
+    e.preventDefault();
+    var href = a.getAttribute('href');
+    closeIndex();
+    setTimeout(function() {
+      var el = document.querySelector(href);
+      if (el) {
+        var top = el.getBoundingClientRect().top + window.pageYOffset - 60;
+        window.scrollTo({ top: top, behavior: 'smooth' });
+      }
+    }, 350);
+  }
+}, false);
 
 // Card toggle
 document.querySelectorAll('[data-action="toggle"]').forEach(function(head){

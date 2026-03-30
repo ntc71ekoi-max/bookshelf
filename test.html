@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>動作テスト</title>
+<style>
+body{font-family:sans-serif;padding:20px;background:#f0f4f8;}
+button{display:block;width:100%;padding:20px;margin:10px 0;font-size:18px;
+  background:#1A6B3C;color:white;border:none;border-radius:8px;cursor:pointer;}
+#result{margin-top:20px;padding:15px;background:white;border-radius:8px;
+  font-size:14px;line-height:1.8;min-height:100px;}
+</style>
+</head>
+<body>
+<h2>スマホ動作テスト</h2>
+
+<button onclick="testIndex()">① 目次テスト（タップ）</button>
+<button onclick="testVoice()">② 音声テスト（タップ）</button>
+<button onclick="testTouch()">③ タッチイベントテスト</button>
+
+<div id="result">ここに結果が表示されます</div>
+
+<div id="panel" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,0.8);color:white;font-size:24px;
+  display:none;align-items:center;justify-content:center;flex-direction:column;gap:20px;">
+  <div>✅ 目次パネル開きました！</div>
+  <button onclick="closePanel()" style="background:#c0392b;width:auto;padding:15px 30px;">閉じる</button>
+</div>
+
+<script>
+var log = document.getElementById('result');
+
+function addLog(msg){
+  log.innerHTML += '<div>▶ ' + msg + '</div>';
+}
+
+function testIndex(){
+  var panel = document.getElementById('panel');
+  panel.style.display = 'flex';
+  addLog('目次ボタンタップ: OK → パネル表示');
+}
+
+function closePanel(){
+  document.getElementById('panel').style.display = 'none';
+  addLog('パネル閉じた: OK');
+}
+
+function testVoice(){
+  addLog('音声テスト開始...');
+  if(!window.speechSynthesis){
+    addLog('❌ speechSynthesis 未対応');
+    return;
+  }
+  var voices = speechSynthesis.getVoices();
+  addLog('voices数: ' + voices.length);
+  
+  var jaVoice = voices.find(function(v){return v.lang.startsWith('ja');});
+  addLog('日本語voice: ' + (jaVoice ? jaVoice.name + ' / ' + jaVoice.lang : 'なし'));
+  
+  var u = new SpeechSynthesisUtterance('テスト、聞こえますか');
+  if(jaVoice){ u.voice = jaVoice; u.lang = jaVoice.lang; }
+  else { u.lang = 'ja-JP'; }
+  u.rate = 1.0;
+  u.onstart = function(){ addLog('✅ 音声再生開始'); };
+  u.onend = function(){ addLog('✅ 音声再生完了'); };
+  u.onerror = function(e){ addLog('❌ 音声エラー: ' + e.error); };
+  speechSynthesis.speak(u);
+  addLog('speak()呼び出し完了');
+}
+
+function testTouch(){
+  addLog('タッチイベント: ' + ('ontouchstart' in window ? '✅ 対応' : '❌ 非対応'));
+  addLog('UserAgent: ' + navigator.userAgent.slice(0,80));
+}
+
+// voiceschanged
+if(speechSynthesis.onvoiceschanged !== undefined){
+  speechSynthesis.onvoiceschanged = function(){
+    addLog('onvoiceschanged発火: voices=' + speechSynthesis.getVoices().length + '件');
+  };
+}
+
+addLog('ページ読み込み完了');
+addLog('speechSynthesis: ' + (window.speechSynthesis ? '✅ あり' : '❌ なし'));
+</script>
+</body>
+</html>

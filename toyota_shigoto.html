@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<!-- v-chrome-fix-2026-0331 -->
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI構造化本棚｜「トヨタ流」自分を伸ばす仕事術</title>
+<style>
+:root {
+  --red:#C0392B; --red2:#E74C3C;
+  --border:#D0DCE8; --text:#222; --sub:#555;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Arial','Hiragino Sans','Yu Gothic',sans-serif;
+  background:#F0F4F8;color:var(--text);font-size:15px;line-height:1.7;}
+.header{background:var(--red);color:white;padding:20px 40px 16px;}
+.header .label{font-size:11px;letter-spacing:2px;opacity:.7;margin-bottom:4px;}
+.header h1{font-size:20px;font-weight:bold;margin-bottom:3px;line-height:1.4;}
+.header .meta{font-size:12px;opacity:.75;}
+.header .hint{margin-top:10px;font-size:13px;opacity:.88;
+  background:rgba(255,255,255,0.12);padding:8px 12px;border-radius:5px;
+  border-left:3px solid rgba(255,255,255,0.4);}
+.header .powered{margin-top:10px;font-size:11px;opacity:.6;letter-spacing:1px;}
+.nav{background:white;border-bottom:1px solid var(--border);
+  padding:10px 20px;display:flex;gap:8px;flex-wrap:wrap;
+  position:sticky;top:0;z-index:100;align-items:center;}
+.nav a{font-size:13px;padding:5px 12px;border-radius:20px;text-decoration:none;
+  border:1px solid var(--border);color:var(--sub);
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.nav a:hover,.nav a:active{background:var(--red);color:white;border-color:var(--red);}
+.nav-index-btn{margin-left:auto;background:var(--red);color:white!important;
+  border-color:var(--red)!important;font-weight:bold;}
+.main{max-width:960px;margin:0 auto;padding:24px 16px 140px;}
+.chapter{margin-bottom:40px;}
+.chapter-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;
+  padding-bottom:10px;border-bottom:2px solid #ccc;}
+.chapter-num{font-size:11px;font-weight:bold;letter-spacing:1px;
+  padding:3px 10px;border-radius:3px;color:white;}
+.chapter-title{font-size:17px;font-weight:bold;}
+.chapter-sub{font-size:12px;color:var(--sub);margin-top:2px;}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:10px;}
+.card{background:white;border-radius:8px;border:1px solid var(--border);overflow:hidden;}
+.card-bar{height:3px;}
+.card-head{padding:14px 16px 12px;display:flex;justify-content:space-between;
+  align-items:flex-start;gap:8px;background:white;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  user-select:none;-webkit-user-select:none;cursor:pointer;}
+.card-title{font-size:14px;font-weight:bold;line-height:1.5;flex:1;}
+.toggle-btn{font-size:20px;color:var(--sub);flex-shrink:0;min-width:28px;text-align:center;}
+.card-summary{font-size:13px;color:var(--sub);line-height:1.65;padding:0 16px 10px;}
+.card-tts{font-size:13px;color:var(--red2);background:none;
+  border:1px solid var(--border);border-radius:6px;padding:8px 12px;min-height:40px;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;cursor:pointer;}
+.card-detail{display:none;}
+.card.open .card-detail{display:block;}
+.detail-summary{font-size:13px;font-weight:500;padding:10px 16px;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);line-height:1.7;}
+.detail-body{font-size:14px;color:var(--sub);padding:13px 16px 15px;line-height:1.9;}
+.intro-card{background:white;border-radius:8px;border-left:4px solid var(--red);
+  padding:14px 18px;margin-bottom:24px;}
+.intro-card h2{font-size:14px;color:var(--red);margin-bottom:8px;font-weight:bold;}
+.intro-card p{font-size:14px;color:var(--sub);line-height:1.9;}
+/* 章カラー */
+.ch1 .card-bar{background:#C0392B;} .ch1 .detail-summary{background:#FDECEA;color:#C0392B;border-left:4px solid #C0392B;}
+.ch2 .card-bar{background:#1A5276;} .ch2 .detail-summary{background:#EAF2FB;color:#1A5276;border-left:4px solid #1A5276;}
+.ch3 .card-bar{background:#1A6B3C;} .ch3 .detail-summary{background:#E8F5EE;color:#1A6B3C;border-left:4px solid #1A6B3C;}
+.ch4 .card-bar{background:#7B3200;} .ch4 .detail-summary{background:#FBF0E8;color:#7B3200;border-left:4px solid #7B3200;}
+.ch5 .card-bar{background:#5C2D91;} .ch5 .detail-summary{background:#F2EDF9;color:#5C2D91;border-left:4px solid #5C2D91;}
+.ch6 .card-bar{background:#0B5563;} .ch6 .detail-summary{background:#E0F4F7;color:#0B5563;border-left:4px solid #0B5563;}
+.ch7 .card-bar{background:#4A4A4A;} .ch7 .detail-summary{background:#F5F5F5;color:#4A4A4A;border-left:4px solid #4A4A4A;}
+/* INDEX */
+.index-toggle{position:fixed;right:0;top:50%;transform:translateY(-50%);
+  background:var(--red);color:white;border:none;border-radius:6px 0 0 6px;
+  padding:14px 8px;cursor:pointer;z-index:150;font-size:13px;min-height:80px;
+  writing-mode:vertical-rl;letter-spacing:2px;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.index-panel{display:none;position:fixed;right:0;top:0;
+  width:min(300px,92vw);height:100%;background:white;
+  border-left:2px solid var(--red);z-index:140;flex-direction:column;}
+.index-panel.open{display:flex;}
+.index-panel-scroll{flex:1;overflow-y:scroll;-webkit-overflow-scrolling:touch;}
+.index-head{background:var(--red);color:white;padding:12px 16px;
+  display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+.index-close{background:none;border:none;color:white;font-size:22px;cursor:pointer;}
+.index-list{list-style:none;padding:0;margin:0;}
+.index-list li a{display:block;padding:8px 16px;font-size:13px;color:#333;
+  text-decoration:none;border-bottom:1px solid #F0F4F8;line-height:1.4;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.index-ch-label{padding:7px 14px;font-size:11px;font-weight:bold;letter-spacing:1px;color:white;}
+.index-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:139;}
+.index-overlay.show{display:block;}
+.index-num{font-size:10px;color:#aaa;margin-right:5px;}
+/* 読み上げバー */
+.tts-bar{display:flex;position:fixed;bottom:-120px;left:0;right:0;background:white;
+  border-top:2px solid var(--red);padding:8px 16px;
+  flex-wrap:wrap;align-items:center;gap:10px;z-index:200;
+  box-shadow:0 -3px 16px rgba(0,0,0,.12);transition:bottom .3s ease;}
+.tts-bar.show{bottom:0;}
+.tts-title{font-size:12px;font-weight:bold;color:var(--red);flex:1;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+.tts-btn{border:none;border-radius:50%;width:42px;height:42px;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.tts-play{background:var(--red);color:white;}
+.tts-stop-btn{background:#eee;color:#555;}
+.tts-speed{font-size:12px;border:1px solid var(--border);border-radius:4px;padding:4px 8px;background:white;}
+.tts-progress{height:3px;background:var(--border);border-radius:2px;flex:1;min-width:60px;}
+.tts-progress-fill{height:100%;background:var(--red);border-radius:2px;width:0%;}
+.footer{text-align:center;padding:20px;font-size:12px;color:#999;
+  border-top:1px solid var(--border);line-height:2;}
+.card.speaking{outline:2px solid var(--red);outline-offset:2px;}
+@media(max-width:600px){
+  .header{padding:14px 16px;}
+  .nav{padding:8px 12px;}
+  .cards{grid-template-columns:1fr;}
+  .tts-title{display:none;}
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<button class="index-toggle" id="indexToggle">INDEX</button>
+<div class="index-overlay" id="indexOverlay"></div>
+<div class="index-panel" id="indexPanel">
+  <div class="index-head">
+    <h3>📖 目次（全42節）</h3>
+    <button class="index-close" id="indexClose">×</button>
+  </div>
+  <div class="index-panel-scroll">
+    <div class="index-ch-label" style="background:#C0392B;">第１章 「平均点」で満足するな</div>
+    <ul class="index-list">
+      <li><a href="#sec-0" data-close-index="1"><span class="index-num">1.</span>最短が最楽という考え方</a></li>
+      <li><a href="#sec-1" data-close-index="1"><span class="index-num">2.</span>会社の仕事が自分の仕事になるとき</a></li>
+      <li><a href="#sec-2" data-close-index="1"><span class="index-num">3.</span>大切なのは解説より解決</a></li>
+      <li><a href="#sec-3" data-close-index="1"><span class="index-num">4.</span>横並び意識の落とし穴</a></li>
+      <li><a href="#sec-4" data-close-index="1"><span class="index-num">5.</span>信任と放任をごっちゃにするな</a></li>
+      <li><a href="#sec-5" data-close-index="1"><span class="index-num">6.</span>テキストを閉じたとき見えるもの</a></li>
+    </ul>
+    <div class="index-ch-label" style="background:#1A5276;">第２章 「できる」と思えば何でもできる</div>
+    <ul class="index-list">
+      <li><a href="#sec-6" data-close-index="1"><span class="index-num">7.</span>思い込みをどう活かすか</a></li>
+      <li><a href="#sec-7" data-close-index="1"><span class="index-num">8.</span>成功者は自分への問いかけが鋭い</a></li>
+      <li><a href="#sec-8" data-close-index="1"><span class="index-num">9.</span>なぜ成功体験をゼロベースにすべきか</a></li>
+      <li><a href="#sec-9" data-close-index="1"><span class="index-num">10.</span>評論は評価されない</a></li>
+      <li><a href="#sec-10" data-close-index="1"><span class="index-num">11.</span>変化とは新しい変わり方に直面すること</a></li>
+      <li><a href="#sec-11" data-close-index="1"><span class="index-num">12.</span>リスクが同じなら新方式を選ぶ</a></li>
+    </ul>
+    <div class="index-ch-label" style="background:#1A6B3C;">第３章 楽にやるな、楽しくやれ</div>
+    <ul class="index-list">
+      <li><a href="#sec-12" data-close-index="1"><span class="index-num">13.</span>一見むちゃな目標が人生を面白くする</a></li>
+      <li><a href="#sec-13" data-close-index="1"><span class="index-num">14.</span>突破口は時間の量よりも質</a></li>
+      <li><a href="#sec-14" data-close-index="1"><span class="index-num">15.</span>階段を少しずつ上る楽しさ</a></li>
+      <li><a href="#sec-15" data-close-index="1"><span class="index-num">16.</span>しなくてよいことを見つけるのが自己啓発</a></li>
+      <li><a href="#sec-16" data-close-index="1"><span class="index-num">17.</span>他人の体験で自分の未来をはかるな</a></li>
+      <li><a href="#sec-17" data-close-index="1"><span class="index-num">18.</span>成功地図は目的地から描き起こせ</a></li>
+    </ul>
+    <div class="index-ch-label" style="background:#7B3200;">第４章 倍々ゲームで「時間」は増える</div>
+    <ul class="index-list">
+      <li><a href="#sec-18" data-close-index="1"><span class="index-num">19.</span>探す・運ぶで浪費をするな</a></li>
+      <li><a href="#sec-19" data-close-index="1"><span class="index-num">20.</span>ムダも仕事のうちは正しいか</a></li>
+      <li><a href="#sec-20" data-close-index="1"><span class="index-num">21.</span>仕事は山あり谷ありでないほうがいい</a></li>
+      <li><a href="#sec-21" data-close-index="1"><span class="index-num">22.</span>忙しさの中身を点検してみると</a></li>
+      <li><a href="#sec-22" data-close-index="1"><span class="index-num">23.</span>機械の仕事と人の仕事を分けて考える</a></li>
+      <li><a href="#sec-23" data-close-index="1"><span class="index-num">24.</span>予防にまさる節約なし</a></li>
+      <li><a href="#sec-24" data-close-index="1"><span class="index-num">25.</span>ムダはヒマから生まれる</a></li>
+    </ul>
+    <div class="index-ch-label" style="background:#5C2D91;">第５章 「今」こそがカベの超え時</div>
+    <ul class="index-list">
+      <li><a href="#sec-25" data-close-index="1"><span class="index-num">26.</span>ダメモトでいいことから始めよう</a></li>
+      <li><a href="#sec-26" data-close-index="1"><span class="index-num">27.</span>原因の向こうに真因が隠れている</a></li>
+      <li><a href="#sec-27" data-close-index="1"><span class="index-num">28.</span>トラブルを失敗と思うな</a></li>
+      <li><a href="#sec-28" data-close-index="1"><span class="index-num">29.</span>伸びないのはわかっていても正さないから</a></li>
+      <li><a href="#sec-29" data-close-index="1"><span class="index-num">30.</span>○年目のカベのつくられ方</a></li>
+      <li><a href="#sec-30" data-close-index="1"><span class="index-num">31.</span>まったく異なるやり方にヒントはごろごろある</a></li>
+      <li><a href="#sec-31" data-close-index="1"><span class="index-num">32.</span>自分をわざと少し困った状態におけるか</a></li>
+    </ul>
+    <div class="index-ch-label" style="background:#0B5563;">第６章 「組織の力」を味方につけよ</div>
+    <ul class="index-list">
+      <li><a href="#sec-32" data-close-index="1"><span class="index-num">33.</span>お互いに刺激的な人になる方法</a></li>
+      <li><a href="#sec-33" data-close-index="1"><span class="index-num">34.</span>組織は頭でなく足で動かせ</a></li>
+      <li><a href="#sec-34" data-close-index="1"><span class="index-num">35.</span>知らんことは知らんで人が心服するか</a></li>
+      <li><a href="#sec-35" data-close-index="1"><span class="index-num">36.</span>失敗・問題を言わなければ時間による解決はない</a></li>
+      <li><a href="#sec-36" data-close-index="1"><span class="index-num">37.</span>自分だけは思考に陥るな</a></li>
+      <li><a href="#sec-37" data-close-index="1"><span class="index-num">38.</span>すぐに腰砕けになる人の共通点</a></li>
+      <li><a href="#sec-38" data-close-index="1"><span class="index-num">39.</span>結果の出ない努力をどう考えるか</a></li>
+    </ul>
+    <div class="index-ch-label" style="background:#4A4A4A;">第７章 「知恵の出どころ」を深く掘れ</div>
+    <ul class="index-list">
+      <li><a href="#sec-39" data-close-index="1"><span class="index-num">40.</span>たとえば作家の才能は長時間机に向かえること</a></li>
+      <li><a href="#sec-40" data-close-index="1"><span class="index-num">41.</span>ハンデを埋めるとき知恵が深まる</a></li>
+      <li><a href="#sec-41" data-close-index="1"><span class="index-num">42.</span>考えることが仕事では足りない、習慣にせよ</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="header">
+  <div class="label">AI構造化本棚｜製造業向けビジネス書</div>
+  <h1>「トヨタ流」自分を伸ばす仕事術<br>発想法で人はここまで伸びる！</h1>
+  <div class="meta">若松義人 著（元トヨタ自動車購買課長・カルマン社長）｜成美文庫｜全42節</div>
+  <div class="hint">カードをタップで詳細展開 ▶ 読み上げ対応 📖 右端INDEXで節ジャンプ</div>
+  <div class="powered">⚡ POWERED BY CLAUDE（Anthropic）｜奈良高専野球部OB会 編集</div>
+</div>
+
+<nav class="nav">
+  <a href="#ch1">第１章</a>
+  <a href="#ch2">第２章</a>
+  <a href="#ch3">第３章</a>
+  <a href="#ch4">第４章</a>
+  <a href="#ch5">第５章</a>
+  <a href="#ch6">第６章</a>
+  <a href="#ch7">第７章</a>
+  <a href="#" id="navIndexBtn" class="nav-index-btn">📖 目次</a>
+</nav>
+
+<div class="main">
+<div class="intro-card">
+  <h2>この本について</h2>
+  <p>「トヨタ生産方式は、人の知恵を活かす、人を真ん中においたモノづくりである」——大野耐一氏に直接薫陶を受けた著者が、現場で磨かれたトヨタ流の仕事術・発想法・改善の哲学を全7章42節で解説。製造業の現場リーダーから管理職まで、今日から使える知恵が詰まった一冊。</p>
+</div>
+
+<!-- 第１章 -->
+<div class="chapter ch1" id="ch1">
+  <div class="chapter-header">
+    <span class="chapter-num" style="background:#C0392B;">第１章</span>
+    <div>
+      <div class="chapter-title">「平均点」で満足するな</div>
+      <div class="chapter-sub">平均でものを見ない。バラツキこそ本当の意味がある</div>
+    </div>
+  </div>
+  <div class="cards">
+
+    <div class="card ch1" id="sec-0">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">「最短が最楽」という考え方</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">作業の標準を決めるとき「10回の平均値」を出そうとするのは間違い。「一番短い時間が一番楽なやり方だ」というのがトヨタ流。ベストを本当の実力にしよう。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="0">🔊 この節を読む</button>
+        <button class="card-tts" data-readall="0" style="color:#C0392B;border-color:#f5b7b1;">▶ ここから全部読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">平均でなくベストを標準にする。ベストに届かない部分こそがムダであり改善の種。</div>
+        <div class="detail-body">作業の標準を決めるとき、ほとんどの人は同じ作業を10回やってその平均値を出そうとする。しかしトヨタ流は「何回もやった中で一番短い時間こそが標準である」と考える。一番短い時間が一番楽なやり方だという発想。それより時間がかかるのはまちがいやムダがあるから。「なぜその時間でできないのか。どうすればできるようになるのか」を必死に考え創意工夫を凝らすことで初めて進歩は生まれる。大きな成果があがったとき「なぜうまくいったのか」を真剣に検討しよう。バラツキの中の「ベストを本当の実力にしよう」と努力すれば、きっとベストが「普通」になる。</div>
+      </div>
+    </div>
+
+    <div class="card ch1" id="sec-1">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">「会社の仕事」が「自分の仕事」になるとき</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">「仕事をやらされている」意識を「自分で知恵を出し、自分で作り出す」意識に変えると仕事は楽しくなる。「決められたことを守る」ではなく「決めたことを守る」。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="1">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">自分のアイデアが採用されることで「決められたこと」が「自分で決めたこと」になる。</div>
+        <div class="detail-body">仕事の基本は「決められたことを守る」。まず決められたことをきちんとやってみる。やってみると不都合や問題が起きて、決められたとおりに行かないケースが発見できる。ここで「守れないのはお前が悪いからだ」と決めつけないこと。「守れないのは、どこかまずいところがあるのでは」と考える。真因を追究した上で問題があれば「ここをこう直したらどうか」と各自が考えればいい。とりあえずやってみる。うまくいけばそれが新しいやり方として採用される。自分のアイデアが採用されることで「決められたこと」が「自分で決めたこと」になる。仕事でも勉強でも人間関係でも、いつも「新しいやり方は、ないか」と知恵を絞ってほしい。</div>
+      </div>
+    </div>
+
+    <div class="card ch1" id="sec-2">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">大切なのは解説より解決</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">過去のデータをもとに将来を予測するのは当然だが、大野氏は「過去の実績には多くのムダが含まれており、ムダを省けば数字は変わってくる」と言う。大切なのはデータ集めではなく行動。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="2">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">過去実績の踏襲でなく、どう改善できるかを考えることの方が生産性が高い。</div>
+        <div class="detail-body">過去の実績をそのまま踏襲するのではなく、過去の実績をどうすれば改善できるかを考えるほうがはるかに生産性が高い。データや事例から過去の傾向を探り成功のヒントを見つけようとするのは悪くはない。しかし変化の時代にはデータや事例どおり行かないことのほうが多い。大切なのはデータ集めではない。データをもとにどう判断し、どう行動するか。「流行でロボットを入れるな。3年先に、そのとき一番進んだロボットを入れればよい」。機械を入れた分だけ原価が上がる。多少古い機械でも改善に改善を重ねて使えば充分な働きが可能。つねに「なんのために」「なにに使うのか」「費用に見合う効果は得られるのか」をきちんと考える。</div>
+      </div>
+    </div>
+
+    <div class="card ch1" id="sec-3">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">「横並び意識」の落とし穴</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">「IT時代」と言われればみんながIT化に走る。古いものをギリギリまで使うと知恵が出る。その知恵が新しいものを最高に生かす。マニュアルと標準作業は大違い。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="3">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">標準作業は知恵をつけることで改善を加えていくための基礎。マニュアルとは根本的に違う。</div>
+        <div class="detail-body">「IT時代」と言われればみんながIT化に走る。古いものをギリギリまで使うと知恵が出る。その知恵が新しいものを最高に生かす。仕事の進め方に迷いがあれば早めに上司に相談するに限る。しかし「自分の考え」なしの相談ではアドバイスのしようがない。標準作業とマニュアルは大違い。標準作業とは誰でもムダのない仕事ができるように決まっているだけ。知恵をつけることで次々と改善を加えていくための基礎にすぎない。標準がなければ改善も改悪も判断しようがないので決めているのである。そこにマニュアルとの違いがある。仕事をするときにはどんなときにでも「なぜこれをやるのか」「どうすればもっとうまくできるのか」と自分の頭で考える習慣をつけたほうがいい。</div>
+      </div>
+    </div>
+
+    <div class="card ch1" id="sec-4">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">信任と放任をごっちゃにするな</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">自分たちの使いやすさを第一に考えるから「メーカーに任せきり」はあり得ない。根拠もなしに値切るのではなく、協力企業と一緒に知恵を絞り「どうすれば安くできるのか」を考えるのがトヨタ流。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="4">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">外部業者との知恵比べができてはじめて「仕事をしている」と言える。任せることと放任は全く違う。</div>
+        <div class="detail-body">仮に外部に任せるにしても、相手以上に仕事の中身を熟知している。根拠もなしに値切るのではなく、協力企業と一緒に知恵を絞り「どうすれば安くできるのか」を考えるのがトヨタ流。外部業者に「よろしく」と仕事を任せるのではなく、外部業者との知恵比べができてはじめて「仕事をしている」と自慢すべき。終身雇用制や長期で経営を見る日本のやり方にはアメリカの経営にはないよさもある。豊田佐吉は「日本人の絶対の力のみを以って一大発明を遂げよう」と考え、数々の自働織機を発明。その伝統が今もトヨタに根づいている。自分の人生を大きく成長させるには、結局は自力の知恵が頼り。</div>
+      </div>
+    </div>
+
+    <div class="card ch1" id="sec-5">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">「テキスト」を閉じたとき見えるもの</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">トヨタの生産ラインは工場によって大きく違っている。つくる車が違うからではない。同じモノをつくっていても工場によって工夫の仕方が大きく違う。これが「自力の知恵」の証明。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="5">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「アメリカがすべて正しい」と考えたり、どこかのものまねばかりをしているのはA社と同じ失敗。</div>
+        <div class="detail-body">トヨタの生産ラインは工場によって大きく違っている。つくる車がちがうからという理由ではない。同じモノをつくっていても工場によって、生産ラインによって、工夫の仕方が大きく違っている。経営不振に陥った流通業A社では本社の指示が絶対で地域の特性を無視して同じような品揃えをしていた。現在では社員のアイデアを活かしながら地域特性を考慮した店づくりをしようとしている。「アメリカがすべて正しい」と考えたり、どこかのものまねばかりをしているのは結局このA社と同じことをしているようなもの。自分の人生を大きく成長させるには結局は自力の知恵が頼り。</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 第２章 -->
+<div class="chapter ch2" id="ch2">
+  <div class="chapter-header">
+    <span class="chapter-num" style="background:#1A5276;">第２章</span>
+    <div>
+      <div class="chapter-title">「できる」と思えば何でもできる</div>
+      <div class="chapter-sub">「やれるんだ」と思うとなんとかやれてしまう</div>
+    </div>
+  </div>
+  <div class="cards">
+
+    <div class="card ch2" id="sec-6">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">「思い込み」をどう活かすか</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">トヨタ流は、とてもできそうもない目標も平気で掲げる。「ムリです」と言おうものなら「やる前からなぜできないと分かる？易者にでもなったつもりか」と叱責が飛んでくる。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="6">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「できない」と思うと、やれることすらできなくなる。まず「やれる」と思ってやってみるのがトヨタ流。</div>
+        <div class="detail-body">かつてトヨタの海外工場で1日2台の車をつくっていたベテラン工員に「これからは8台つくってくれ」と指示。そのベテラン工員は「2台で精一杯なのに8台なんてできるはずがない」と精神的に参ってしまい退社。まったくのしろうとを雇って「このやり方でやってくれ」とやらせたところ8台つくっても平気でキョトンとしている。とくに未経験のことに挑戦するとき、はなから「ムリだろう」とメンタル面で敗北していてはならない。トヨタ流は「まずやれると思ってやってみる」。世の中には「やれるんだ」と思うとなんとかやれてしまうことが少なくない。</div>
+      </div>
+    </div>
+
+    <div class="card ch2" id="sec-7">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">成功者は「自分への問いかけ」が必ず鋭い</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">新しい地位や環境で「これまでのやり方が通用しないぞ」と頭では分かっても「悪いのは周囲だ」とつい考えてしまう。どれほどうまくいっているやり方であっても「これでいい」がないのがトヨタ流。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="7">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「これでいい」と満足した瞬間から進歩は止まってしまう。仕事のやり方は時代・場所・立場とともに変化する。</div>
+        <div class="detail-body">「昔はすごかったのにね」と言われる人がいる。今では面影がどこにもない。問題は新しい地位に着いたにもかかわらず、成功をもたらしたかつての仕事のやり方をそのまま続けたところにある。仕事のやり方や求められる能力は時代や場所、立場とともに変化していく。新しい地位や環境で「これまでのやり方が通用しないぞ」と頭では分かっても「悪いのは自分ではなく周囲の理解や能力の不足だ」とついてしまう。どれほどうまくいっているやり方であっても、決して「これでいい」がないのがトヨタ流。「これでいい」と満足した瞬間から進歩はとまってしまう。</div>
+      </div>
+    </div>
+
+    <div class="card ch2" id="sec-8">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">なぜ成功体験をもゼロベースにすべきか</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">「昨日のことは忘れてしまえ。明日のことも考えるな。今日が悪いんだ」——今日に集中するからこそ知恵も出るし、仕事のやり方を少しずつ考えていくこともできる。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="8">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">トヨタ流は「改善の後には次の改善の芽がある」と考える。改善は毎日の仕事。</div>
+        <div class="detail-body">ビジネスの世界は「これでいい」と思った瞬間から進歩が止まり変化に取り残されていく。トヨタ流は「改善の後には次の改善の芽がある」と考える。改善は「毎日の仕事」。昨日と比較して「倍もできるようになった」と満足してしまったらそれ以上改善する気にはなれない。「明日があるさ」と思ってしまったら安易に先延ばしをして今日のやり方を必死に変えようという気になれない。「今日」に集中するからこそ知恵も出るし仕事のやり方を少しずつ考えていくこともできる。時代が変化していくときには「変わること」を日常化していくのが一番うまいやり方。</div>
+      </div>
+    </div>
+
+    <div class="card ch2" id="sec-9">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">評論は評価されない</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">「あれこれ言いわけを考える暇があれば、どうすれば実行できるかを考えろ」。「前にやって失敗した」という言いわけには「俺の目の前でもう一度失敗をやってみせてくれ。そうすれば納得する」。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="9">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「やろう」と提案してもできない理由を並べ立てる人は、要は本人にやる気がない。実行することを考えよ。</div>
+        <div class="detail-body">本当にやる人は言いわけを考える前にやっている。「ものごとができない理由はいつも百ある」。「やろう」と提案しても「前にやって失敗した」「上司の了解が得られない」「業界の常識では考えられない」などとできない理由を並べ立てる人。要は本人にやる気がない。「あれこれ言いわけを考える暇があれば、どうすれば実行できるかを考えろ」。「前にやって失敗した」という言いわけには「自分はその失敗を見ていない。俺の目の前でもう一度失敗をやってみせてくれ。そうすれば納得する」という返事。とくにこれからの時代はお手本とするテキストがないだけに失敗を恐れずに積極的に挑戦していく姿勢が求められる。</div>
+      </div>
+    </div>
+
+    <div class="card ch2" id="sec-10">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">変化とは「新しい変わり方」に直面すること</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">今経験していることの多くはまさに前例のないことだらけ。慣れたやり方や前例踏襲主義で行くといつのまにか取り残されてしまう。しつこいほどに改善していく。変化を日常化する。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="10">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「喜一郎がどういうことからヒントを得てトヨタ生産方式を考えだしたか——大切なことはできないと思われたことをやろうとしたことである」（豊田英二氏）</div>
+        <div class="detail-body">「喜一郎がどういうことからヒントをえて、トヨタ生産方式を考えだしたのかを本人の口から聞いていないが、突き詰めて考えれば当然ムダを省いた生産方式に帰着する。大切なことは、そんな理想的なことができるか、できないかを考えずに、一般的にはできないと思われたことをやろうとしたことである。なにかアイデアを思いついたり、疑問があれば、ともかく現場に行って目で確かめ、実際にやってみる。そうすれば正しいかどうかや、他の問題が見えてくる。」（豊田英二氏）何か思いついたなら「ダメもとで、気楽に、すぐに実行」が大切。</div>
+      </div>
+    </div>
+
+    <div class="card ch2" id="sec-11">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">リスクが同じなら新方式を選ぶ</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">新しい方法と慣れた方法を比較すれば慣れた方がいいに決まっている。しかし「新しい方法には無限の可能性がある」と積極的に取り組んでいくのとでは姿勢がまるで違う。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="11">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「既存の方法と新しい方法を比較すれば、新しい方法のほうがはるかに改良の余地がある」という考え方。</div>
+        <div class="detail-body">転職がうまくいくかどうかは最初の1ヶ月で決まる。新しいやり方と慣れたやり方を比較すれば慣れたやり方のほうがいいに決まっている。たとえば「パソコンと英会話は必須項目」といわれても多くの中高年は「この年になっていまさら」というのが正直な気持ち。比較をすれば慣れたやり方へと戻ろうとする。だがそれでは改善は進まない。「既存の方法と新しい方法を比較すれば新しい方法のほうがはるかに改良の余地、改善の余地がある」という考え方。「新しい方法は、リスクが高くて嫌だなあ」と考えるのと「新しい方法には無限の可能性がある」と積極的に取り組んでいくのとでは姿勢がまるで違う。</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 第３章 -->
+<div class="chapter ch3" id="ch3">
+  <div class="chapter-header">
+    <span class="chapter-num" style="background:#1A6B3C;">第３章</span>
+    <div>
+      <div class="chapter-title">楽にやるな、楽しくやれ</div>
+      <div class="chapter-sub">なんでも半分。ゼロをひとつとって考えろ</div>
+    </div>
+  </div>
+  <div class="cards">
+
+    <div class="card ch3" id="sec-12">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">「一見むちゃな目標」が人生を面白くする</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">大野耐一氏から「1時間かかっている段取り替えを3分間にしろ」と言われた。必死に知恵を絞ってムダをひとつひとつ潰していった。すると何ヶ月か後には実現できてしまった。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="12">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「とてもムリだ」と思える目標の達成には今までとは根本的に異なった発想が必要になる。未知のテーマを解決していく過程は楽しい。</div>
+        <div class="detail-body">目標の立て方はさまざま。なんとなくできそうな数字を掲げるケースもあれば「とてもムリだろう」という目標を大胆に掲げる場合もある。かつて大野耐一氏から「1時間かかっている段取り替えを3分間にしろ」と言われたことがある。必死に知恵を絞ってムダをひとつひとつ潰していった。すると不思議なもので何ヶ月か後には実現できてしまった。少し頑張れば達成できそうな目標は従来の延長線で解決できる。だが「とてもムリだ」と思える目標の達成には今までとは根本的に異なった発想が必要になる。たとえ未達成に終わっても「その目標を掲げなかったときよりもはるかによい結果がもたらされる」。自分の能力がどこまで伸びるかは自分にも分からない。安易な目標設定は自分で自分の能力に限界をひくようなもの。</div>
+      </div>
+    </div>
+
+    <div class="card ch3" id="sec-13">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">突破口は時間の量よりも質</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">「向こうが10人でやっている仕事だったらこっちはなんとか1人でやることを考えなくてはいけない」——多能工としての能力を身につけムダを排した仕事をせよ。そうすれば韓国や中国にも負けない。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="13">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">努力を面白がる。競争力がつく。ますます工夫する。そういうよいサイクルが大切。</div>
+        <div class="detail-body">日本の人件費は世界一高い。しかし「中国でのモノづくりのむずかしさ」と「人件費はたしかに安いが日本から人が行って指導したり機械を運んだり間接コストを考えれば本当に安いかどうか疑問が残る」。「向こうが10人でやっている仕事だったらこっちはなんとか1人でやることを考えなくてはいけない。はじめから10分の1の人間ではできっこないと諦めて1人も減らさなかったら、これはもう早いとこつぶしたほうがいい」。1人の人が1つの作業しかできない単能工ではダメ。いくつもの作業をこなせる多能工としての能力を身につけムダを排した仕事をせよ。そうすれば韓国や中国にも負けない。「できっこない」と今までと同じやり方を続けていれば競争には勝てない。努力を面白がる。競争力がつく。ますます工夫する。そういうよいサイクルが大切。</div>
+      </div>
+    </div>
+
+    <div class="card ch3" id="sec-14">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">階段を「少しずつ上る」楽しさ</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">「時間はかかっても目標は必ず達成できる」。少しずつ段階を踏まないと本当の実力は身につかない。目標を達成したとき、また新たな目標を見つけて挑戦することを続けていれば達成のスピードは自然に上ってくる。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="14">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">トヨタは戦後まもなくの頃、倒産寸前に追い込まれ社長辞任と社員の大量解雇を経験している。その危機感こそが改善の原動力。</div>
+        <div class="detail-body">昭和38年当時トヨタを1とすればGMは60という差があった。両社の原価を比較して差額をバランスシートに表現する。ある部品の原価がトヨタ1万円に対しGM6千円とすれば6千円を「基準原価」とする。差額の4千円はある種の「ムダ遣い」としてバランスシートに乗せる。「なんでもいいからとにかく4千円下げろ」と丼勘定・精神論でやっては具体性を欠く。あくまでも部品ひとつひとつ部門ごとに少しずつの積み上げをしていくことに意味がある。「時間はかかっても目標は必ず達成できる」。少しずつ段階を踏まないと本当の実力は身につかない。トヨタは連結決算で1兆円近い経常利益があるにもかかわらず、いつも新しいライバルや新しい目標を見つけ「ここが負けている。これが不足している」と必死になって改善を続けている。</div>
+      </div>
+    </div>
+
+    <div class="card ch3" id="sec-15">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">しなくてよいことを見つけるのが自己啓発</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">「業績に結びつくか」「原価が安くなるか」という結果が大切で、結果をともなわないような改善はただの「思いつき改善」にすぎない。覚悟があれば難しい改善でもやり遂げられるもの。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="15">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「やむにやまれず、やらなければ会社が潰れてしまう」という危機感をもって取り組む。覚悟があれば難しい改善でもやり遂げられる。</div>
+        <div class="detail-body">「思いつき改善は改善にあらず。やらなければという改善はむずかしくてもやれる」。「業績に結びつくか」「原価が安くなるか」という結果が大切で結果をともなわないような改善はただの「思いつき改善」にすぎない。「やむにやまれず、やらなければ会社が潰れてしまう」という危機感をもって取り組む。覚悟があれば難しい改善でもやり遂げられるもの。ものごとをやるには漫然とやってはダメ。すべてはニーズがあっての話。そのためには危機感を持つことが必要。なんとなくではなくきちんとした自分なりの目標を掲げる。</div>
+      </div>
+    </div>
+
+    <div class="card ch3" id="sec-16">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">他人の体験で自分の未来をはかるな</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">アイデアを思いついたら、とにかくやってみる。もしうまくいかなかった場合も失敗を自分の目でたしかめる。当時と今とで条件が違えば成功するかもしれない。人が違えばうまくいくことも多い。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="16">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「撤退屋の忠告を真に受けるな」（中村修二氏）。遠回りしてもいい。時間がかかっても「完成」まで到達してみること。</div>
+        <div class="detail-body">「撤退屋の忠告を真に受けるな」（青色発光ダイオードの発明で有名な中村氏）。開発をしていると壁にぶちあたるのが当然だが壁にぶち当たるたびに引き返していたのでは壁は突破できない。遠回りしてもいい。時間がかかっても下手でもかまわない。とにかく「完成」まで到達してみること。アイデアを思いついたらとにかくやってみる。もしうまくいかなかった場合も失敗を自分の目でたしかめる。当時と今とで条件が違えば成功するかもしれない。人が違えばうまくいくことも多い。こうした違いを無視して過去の失敗話を鵜呑みにしてはいけない。</div>
+      </div>
+    </div>
+
+    <div class="card ch3" id="sec-17">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">成功地図は常に「目的地」から描き起こせ</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">「5＋4＝□」の答えは9しかない。「□＋□＝9」の答えはいくらでもある。なにかをやろうとするときにはまず考えられる案を多くあげてみる。トヨタ流の仕事術は「目的はなにか」を明らかにすることから始まる。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="17">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">いつも「目的はなにか」を問う。手段や方法はいくつもあり最善はそのとき、その場で変わっていく。</div>
+        <div class="detail-body">ITブームのとき全社員にパソコンを持たせあらゆる業務をコンピュータ化して「これでうちも一人前だ」と安心した会社が少なくなかった。パソコンを持たせるためにコストアップし業務が遅滞するようでは本末転倒。出世ゲームに夢中になっていい仕事をすることを忘れている人。コストをかけさえすれば「いい仕事」ができると勘違いをしている人。トヨタ流の仕事術は「目的はなにか」を明らかにすることから始まる。いつも「目的はなにか」を問う。手段や方法はいくつもありその最善はそのとき、その場で変わっていく。</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 第４章 -->
+<div class="chapter ch4" id="ch4">
+  <div class="chapter-header">
+    <span class="chapter-num" style="background:#7B3200;">第４章</span>
+    <div>
+      <div class="chapter-title">倍々ゲームで「時間」は増える</div>
+      <div class="chapter-sub">いらないモノを処分することが整理であり、欲しいモノをいつでも取り出せることを整頓という</div>
+    </div>
+  </div>
+  <div class="cards">
+
+    <div class="card ch4" id="sec-18">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">「探す、運ぶ」で浪費をするな</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">トヨタ流では「探す、運ぶ」は仕事とは呼ばない。何がどこにいくつあるかが一目で分かりさっと取り出せてこそ整理と整頓。「必要なもの、必要なとき、必要なだけ」はモノ・情報・時間・人間関係にも応用できる。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="18">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「徹底的にムダを排除していくと最後には自分がやっている仕事がムダと気づかされることがあります」（あるトヨタの社員）</div>
+        <div class="detail-body">机の上に山のように書類を積み上げて狭いスペースで窮屈そうに仕事をしている人。なにがどこにあるかをいちいち探さなければならないようではとても仕事をしているとはいえない。トヨタ流では「探す、運ぶ」は仕事とは呼ばない。何がどこにいくつあるのかが一目で分かりさっと取り出せてこそ整理と整頓。整理と整頓を日常化する。イベントではなく常日頃から整理と整頓を心がけたい。トヨタ流の「必要なもの、必要なとき、必要なだけ」はモノ・情報だけではなく時間・人間関係などあらゆることについても応用したい。</div>
+      </div>
+    </div>
+
+    <div class="card ch4" id="sec-19">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">「ムダも仕事のうち」は正しいか</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">「ムダも仕事のうちだよ」と言う人がいる。本当だろうか。ただの遊びや時間つぶしを「仕事の活力だ」と言い張っていないだろうか。ムラがあるからムリをして、ムダが出る。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="19">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">本当のムダは仕事のやり方の中に無数に隠れている。ムラがムダを生んでいることに気づこう。</div>
+        <div class="detail-body">本当のムダは仕事のやり方の中に無数に隠れている。多くの仕事には波がある。極端に忙しい時期、暇になる時期。個人の仕事も月や日の中でバラツキがある。ムラがムダを生んでいることに気づこう。会社を例にとれば仕事の山や谷が大きすぎると山にあわせるために設備や人を多めに持つことになる。そうすると谷のときには設備や人が遊ぶことになる。山と谷をできるだけつくらない「平準化」。複数の商品を手がけ複数の仕事ができる「多能工」。毎日コンスタントにムラなく仕事ができれば余計な設備も人も必要ない。「仕事にムラがあるのは仕方ない」ではなく「ムラを少しでもなくすには、どうすればいいか」を考える。</div>
+      </div>
+    </div>
+
+    <div class="card ch4" id="sec-20">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">仕事は「山あり谷あり」でないほうがいい</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">「今日のことは今日片付けろ。やり仕舞いだ」——先延ばしをして習慣にしていると、そのときはよくとも、あとになって手がつけられないほどの問題が生じがち。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="20">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「今日の仕事は今日片付ける」という「やり仕舞い」は最初は大変。しかしこれがもっとも効果的な時間の使い方。</div>
+        <div class="detail-body">トヨタ生産方式を導入してしばらく問題ばかりが起きてくる。問題を抱えたままで翌日の業務に入るとさらに新しい問題が起きてくる。そうならないためには業務を終えた夜改善を進めるしかない。問題の箇所を夜のうちに改善する。翌日には前日までの問題はほぼ解消している。「今日の仕事は今日片付ける」という「やり仕舞い」は最初は大変。これがもっとも効果的な時間の使い方。先延ばしをして習慣にしていると後になって手がつけられないほどの問題が生じがち。軽い約束でもすぐにアクションを起こすに限る。期日を切った約束は守って当然。期日のない約束であればこそ約束したときの相手の喜び、驚きは大きくなる。</div>
+      </div>
+    </div>
+
+    <div class="card ch4" id="sec-21">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">「忙しさ」の中身を点検してみると？</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">「勤めている時間」と「働いている時間」を分けて考える。機械が仕事をしている時間は人間は別のところで人間がやれる仕事をすればいい。人の動作を「仕事」と「ムダ」に分けて考える。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="21">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">会社に来て動いていれば仕事をしたことになるのか。上司に忠実ならば「いい社員」と思われるのか。当たり前と思っていたことに疑問の目を向ける。</div>
+        <div class="detail-body">仕事の中身一つ一つに厳しい目を向ける。「勤めている時間」と「働いている時間」を分けて考える。機械が仕事をしている時間は人間は別のところで人間がやれる仕事をすればいい。会社に来て動いていれば仕事をしたことになるのか。上司に忠実ならば「いい社員」と思われるのか。これまで「当たり前と思っていたことに「それでいいのか」と疑問の目を向ける必要がある。人の動作を「仕事」と「ムダ」に分けて考える。ムダな作業をすることは人にとってもっとも大切な時間の浪費につながると考える。大切なのは日々の仕事のやり方について「もっといいやり方はないか」といつも問い続け新しいやり方に積極的に挑戦していくこと。それが知恵を使って仕事をするということ。</div>
+      </div>
+    </div>
+
+    <div class="card ch4" id="sec-22">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">機械の仕事と人の仕事を分けて考える</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">重いものを運んだりねじを強く締めるといった作業は機械のほうが得意。機械が人の補助をすることで作業は簡単になる。人と機械をうまく組み合わせることで生産性も上るし人は人の仕事ができる。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="22">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">採用の世界では「資格を採るか実務経験を採るか」と言われれば間違いなく実務経験のほうが強い。資格取得に血道を上げるのは努力の仕方がまちがっている。</div>
+        <div class="detail-body">スピードが勝負を決める時代には自動化ラインで対応できない面がある。そこから人を中心とする生産ラインが見直されることになった。重いものを運んだりねじを強く締めるといった作業は機械のほうが得意。機械が人の補助をすることで作業は簡単になる。人と機械をうまく組み合わせることで生産性も上るし何より人は人の仕事ができることになる。大切なのは日々の仕事のやり方について「もっといいやり方はないか」といつも問い続け新しいやり方に積極的に挑戦していくこと。それが知恵を使って仕事をするということ。機械は壊れるのではなく、壊すことのほうが多い——予防保全が大切。</div>
+      </div>
+    </div>
+
+    <div class="card ch4" id="sec-23">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">予防にまさる「節約」なし</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">機械の故障を未然に防ぐ工夫。毎日機械に油をさし切り粉をはらうのはもちろん、日々の定期点検で音の異常や微妙な振動の変化にも注意する。予防保全さえ怠らなければ機械はそう壊れるものではない。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="23">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">注文がなくなるには必ず前兆がある。お客様の話、お店の雰囲気、工場の様子などに注意を払っていれば変化は察知できる。大きな変化が起きてから慌てて治療に走るのではなく予防保全の発想で。</div>
+        <div class="detail-body">機械が壊れて修理するのは病気になって医者にかかるのに似ている。機械の故障を未然に防ぐ工夫。毎日機械に油をさし切り粉をはらうのはもちろん日々の定期点検で音の異常や微妙な振動の変化にも注意する。少しでも異常を感じればすぐに手を打つ。予防保全さえ怠らなければ機械はそう壊れるものではない。よく「急に注文がなくなって困っている」という人がいる。実際には注文は急になくならない。売れなくなるとか注文がなくなるには必ず前兆がある。じわじわと変化している。お客様の話、お店の雰囲気、工場の様子などに注意を払っていれば変化は察知できる。大きな変化が起きて慌てて治療に走るのではなく予防保全の発想でいれば小さな変化のときにいくらでも対処できる。</div>
+      </div>
+    </div>
+
+    <div class="card ch4" id="sec-24">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">ムダはヒマから生まれる</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">遅いのはダメだが早すぎるのはもっとダメ。モノが早くできすぎるのは余裕があるせい。言い換えれば暇だから余計な仕事をしてしまう。「仕事は忙しい人に頼め」——忙しい人は時間をうまくコントロールできる。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="24">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「モノ作りの世界で職人とか熟練工と呼ばれる人がいる。しかしトヨタ流は、職人の腕に頼る仕事を許さない。基本は現場の作業は誰でもできるようにしないといけない」</div>
+        <div class="detail-body">モノ作りを例にとれば予定よりも早くできれば在庫として保管することになる。材料費や電気代、人件費、倉庫の管理費など余計なコストがかかってしまう。納期ちょうどにできればかからないものばかり。モノが早くできすぎるのは余裕があるせいである。言い換えれば暇だから余計な仕事をしてしまう。納期に遅れるのはもちろんダメだが納期よりも早すぎるのもどこかで時間の使い方がまちがっている。よく「仕事は忙しい人に頼め」と言う。忙しい人は時間をうまくコントロールできる。調整は悪と思え。ムダを省けば調整をほとんどゼロにできる。成功を成し遂げた経営者は本人はいつも万全の準備をしてことに臨んでいた。仕事の成否は事前準備で決まる。</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 第５章 -->
+<div class="chapter ch5" id="ch5">
+  <div class="chapter-header">
+    <span class="chapter-num" style="background:#5C2D91;">第５章</span>
+    <div>
+      <div class="chapter-title">「今」こそがカベの超え時</div>
+      <div class="chapter-sub">改善が改悪になったら、元に戻さず、さらに改善しよう</div>
+    </div>
+  </div>
+  <div class="cards">
+
+    <div class="card ch5" id="sec-25">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">「ダメモトでいい」ことから始めよう</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">新しい生産方式を導入して2〜3年して再訪すると効果が持続している会社と元のやり方に戻っている会社とに分かれる。ムダだらけの従前のやり方に戻すことは時代が変化している分、以前よりも後退したことになる。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="25">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「不幸にして改悪になってしまったなら、またすぐに直せばいい。元に戻すのではなく、もうひとつ直せばいい」——大切なのは「変わっていかなければ」という意識。</div>
+        <div class="detail-body">新しい生産方式を導入した当初はトップをはじめみんなが「一生懸命に変えていこう」という熱意にあふれている。それまでのやり方に大きなムダがあっただけに効果はてきめん。ところが2〜3年して再訪すると効果が持続している会社と元のやり方に戻っている会社とに分かれる。ある程度の効果が出たところでカベにぶつかる。「どうも新しいやり方だと仕事がやりにくい」などと不満が出始める。いつのまにか元のやり方に帰ってしまうらしい。ムダだらけの従前のやり方に戻すことは時代が変化している分以前よりも後退したことになる。「不幸にして改悪になってしまったなら、またすぐに直せばいい。元に戻すのではなくもうひとつ直せばいい」。大切なのは「変わっていかなければ」という意識。</div>
+      </div>
+    </div>
+
+    <div class="card ch5" id="sec-26">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">原因の向こうに真因が隠れている——「なぜ」を5回繰り返せ</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">機械が故障した。応急処置ですぐに動かすほうが利口に思える。しかし「本当の原因が分かるまでは動かしてはいけない」がトヨタ流。ここで「5回のなぜ」を繰り返す。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="26">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">応急処置を繰り返していると同じトラブルが起きたり、もっと大きなトラブルにつながる。真の原因を発見しきちんとした対策を行なうことで次のトラブルが防げる。</div>
+        <div class="detail-body">機械が故障してラインが止まってしまった。調べてみたところちょっとした部品の交換ですぐに動かすことが可能だった。「応急処置でうごかせるなら、すぐに動かすのが当然」と思うのではないか。ところが「本当の原因が分かるまでは動かしてはいけない」がトヨタ流。ここで「5回のなぜ」を繰り返す。「なぜ部品が壊れてしまったのだろう」に始まって原因を次々とさかのぼっていく。この本質的な原因を「真因」と呼び真因に行き当たるまで「なぜ」を徹底的に繰り返す。応急処置ですませてすぐに機械を動かすほうが利口に思える。しかし長い目で見れば真因をつかまないまま応急処置を繰り返していると同じトラブルが起きたりもっと大きなトラブルにつながる。多少の時間はかかっても真の原因を発見しきちんとした対策を行なうことで次のトラブルが防ぐことができ信頼もはぐくまれる。</div>
+      </div>
+    </div>
+
+    <div class="card ch5" id="sec-27">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">トラブルを失敗と思うな</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">「5回のなぜ」は何よりも「事実を重視し白紙でものごとを見る」こと。「トラブルは起きるものだしトラブルを解決することで仕事の質が高まっていく」——「なぜ起きたのか」をひとつひとつ検証する習慣をつける。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="27">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「5回のなぜ」はうまくいったときも使ってみるといい。問題が起きたときも成功したときも「なぜ」を繰り返すことが仕事や人生のカベをなくす王道。</div>
+        <div class="detail-body">「5回のなぜ」は何よりも「事実を重視し白紙でものごとを見る」こと。問題が起きたとき臨機応変の応急処置も必要。だが多くの場合その場さえしのいでしまえばすべてオーケーになっている。「なぜトラブルが起きたのか」をきちんと検証して対策を練ること。「トラブルは起きるものだしトラブルを解決することで仕事の質が高まっていく」。「なぜ起きたのか」をひとつひとつ検証する習慣をつける。それが仕事や人生のカベをなくす王道。ちなみに「5回のなぜ」はものごとがうまくいかなかったときはもちろん、うまくいったときも使ってみるといい。</div>
+      </div>
+    </div>
+
+    <div class="card ch5" id="sec-28">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">伸びないのは「わかっているけど」正さないから</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">エリート街道まっしぐらでくると「自分が悪い」とは考えないらしい。悪いのはいつも他人で自分には何の責任もない。「俺がまちがっていた」と素直に言えるかどうか。失敗は目で確かめること。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="28">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「間違いは素直に認める」ことはビジネスでも人生でも大切な心構え。まちがったと思えばすぐに修正する柔軟さが必要。</div>
+        <div class="detail-body">上司の「こうしなさい」という指示のとおりにやったら結果がまるでちがっているということも当然ある。そんなとき「俺がまちがっていた」と素直に言えるかどうか。やって結果が思わしくなければ間違いは素直に認める。その上で元に戻すのではなくさらに改善を重ねていく。失敗は目で確かめること。「間違いは素直に認める」ことはビジネスでも人生でも大切な心構え。日本には無理に推し進めた結果多額の赤字を抱えた橋や道路や空港などがたくさんある。まちがったと思えばすぐに修正する柔軟さが必要。</div>
+      </div>
+    </div>
+
+    <div class="card ch5" id="sec-29">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">「○年目のカベ」のつくられ方</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">「目標を達成したときこそ、更なるチェックが必要」——「なぜ目標が達成できたのか」をきちんと分析して成功のプロセスを標準として採用していく。失敗したからと落ち込んで終わり、成功したからと慢心して終わりでは得るものはない。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="29">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「チェックとは反省である。なぜ達成できたかを突っ込んで調べて活用することが大切」——問題点は隠すことなくすべて表に出す。</div>
+        <div class="detail-body">「失敗とかトラブルは進歩のために欠かせないもの」と考える。問題点は隠すことなくすべて表に出す。表面だけを取り繕わない。「目標を達成したときこそ更なるチェックが必要」「なぜ目標が達成できたのか」をきちんと分析して成功のプロセスを標準として採用していく。失敗したからと落ち込んで終わり成功したからと慢心して終わりでは得るものはなにもない。</div>
+      </div>
+    </div>
+
+    <div class="card ch5" id="sec-30">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">「まったく異なるやり方」にヒントはごろごろある</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">つくる側の都合ではなく「お客様はひとつずつちがうモノを買う」という発想。ある工場はあえて壁や床を白くしている——「どうすれば汚れないようになるかを工夫するし、少しでも汚れればすぐに掃除をするようになります」。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="30">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「前工程が後工程へモノを供給する」ではなく「後工程が必要に応じて前工程にモノを買いにいく」という発想の転換がトヨタ流の核心。</div>
+        <div class="detail-body">ものごとをひっくり返して考える脱常識をはたらかす。消費者はつくる側の思惑どおりにはモノを買ってくれない。つくる側の都合ではなく「お客様はひとつずつちがうモノを買う」という発想。一般的な「前工程が後工程へモノを供給する」ではない。「後工程が必要に応じて前工程にモノを買いにいく」「前工程は注文に応じてモノを生産している」関係。ある工場はあえて壁や床を白くしている。「どうすれば汚れないようになるかを工夫するし、少しでも汚れればすぐに掃除をするようになります」。常識と思っている慣れたやり方を離れときにちがうアプローチをしてみるといい。</div>
+      </div>
+    </div>
+
+    <div class="card ch5" id="sec-31">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">自分をわざと「少し困った状態」におけるか</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">本来は会社も個人も少し余裕のあるときに進んで自分を困った状況において知恵を出す習慣をつけておくほうがいい。だからトラブルが起きれば「知恵を出すチャンスだ」ととらえる。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="31">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「原価というものは下げるためにあるわけで、計算するためにあるんじゃない」——売り値はお客様が決めるもの。メーカーの利益は原価を下げることで生まれる。</div>
+        <div class="detail-body">人は苦しまなければよい知恵は出ない。お金もない、人もいない、設備もない、材料もない状態で「さあモノをつくってみなさい」といわれると困ったことになる。本来は会社も個人も少し余裕のあるときに進んで自分を困った状況において知恵を出す習慣をつけておくほうがいい。だからトラブルが起きれば「知恵を出すチャンスだ」ととらえる。「原価というものは下げるためにあるわけで計算するためにあるんじゃない」。トヨタ流のモノづくりとサービスは「売り値はお客様が決めるもの。メーカーの利益は原価を下げることで生まれる」を徹底していた。日本が国際競争力を失った原因のひとつは「原価＋利益」に慣れきってしまったこと。</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 第６章 -->
+<div class="chapter ch6" id="ch6">
+  <div class="chapter-header">
+    <span class="chapter-num" style="background:#0B5563;">第６章</span>
+    <div>
+      <div class="chapter-title">「組織の力」を味方につけよ</div>
+      <div class="chapter-sub">後ろ向きの言葉は使わない。経費は改善するが、削減はしない</div>
+    </div>
+  </div>
+  <div class="cards">
+
+    <div class="card ch6" id="sec-32">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">お互いに「刺激的な人」になる方法</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">「できない」から出発してしまうと何事もできはしない。「デキナイ」「ムリだ」は使わないと決めれば後はやってみるしかない。まずは言葉から変えていけばいい。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="32">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">ある会社が売上が3分の1もダウンすることになった。新しく就任した社長は「まだ3分の2が残っているじゃないか。そこでどうすれば利益が出せるかを必死に考えよう」と生産改革に着手。</div>
+        <div class="detail-body">ある会社が主力商品が中国に移管されることになり売上が3分の1もダウンすることになった。会社は経費の大幅削減や人員削減に乗り出そうとした。ところが新しく就任した社長は「まだ3分の2が残っているじゃないか。そこでどうすれば利益が出せるかを必死に考えよう」と生産改革に着手。「できない」から出発してしまうと何事もできはしない。個人としてでなく皆で「デキナイ」「ムリだ」は使わないと決めれば後はやってみるしかない。「プラス思考でいこう」と言われてもなかなかむずかしい。まずは言葉から変えていけばいい。内心では「ムリだろうな」と思っても口では「できる」と言ってみる。</div>
+      </div>
+    </div>
+
+    <div class="card ch6" id="sec-33">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">組織は頭でなく足で動かせ</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">大野耐一氏は指導をする人に「トヨタへ来て、作業者と同じように朝から晩までラインの中に入って作業をする」ことをすすめていた。自分の提案に自信があるなら自分自身も現場に立つ覚悟が生まれて当然。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="33">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「感情を無視して理屈で入ると失敗する」——管理職にとってラインの中に入るのはつらい。しかし我慢をして続けていると徐々に慣れてきて作業のコツも分かるし食欲も沸いてくる。</div>
+        <div class="detail-body">大野耐一氏は指導をする人に対して「トヨタへ来て、作業者と同じように朝から晩までラインの中に入って作業をする」ことをすすめていた。管理職にとってはつらい。ところが我慢をして続けていると徐々に慣れてきて作業のコツも分かるし食欲も沸いてくる。そうなってから自分の会社に戻ったらまず社員の前で新しい方法を実際にやってみせる。1日たっぷりやってみせる。「このやり方でやれば自分でもこれだけのことができる。一緒にやってみよう」というわけ。自分の提案に自信があるのなら自分自身も現場に立つ覚悟が生まれて当然ではないだろうか。現場は「こんなの使いものにならないよ」と思いアイデアを考えたほうは「ちっとも言うことを聞いてくれない」と嘆いているだけでは何も始まらない。仕事は権力ではない。理解と納得が必要。</div>
+      </div>
+    </div>
+
+    <div class="card ch6" id="sec-34">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">「知らんことは知らん」で人が心服するか</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">「離れ小島をつくるな」「バトンタッチゾーンを活かせ」——自分の隣の人の作業が遅れていれば持分を少し手伝ってあげればいい。自分の能率だけでなく全体の能率を考えた仕事が求められる。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="34">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">人と人のネットワークも大切。ネットワークは仕事で何か困ったことや分からないことが起きたとき大いに力になってくれる。チームで仕事をし日ごろから他のメンバーの仕事への気配り・心配りも欠かせない。</div>
+        <div class="detail-body">「離れ小島をつくるな」とか「バトンタッチゾーンを活かせ」という言葉がある。仕事に熟練している人がいればまだ慣れていない人もいる。自分の隣の人の作業が遅れていれば持分を少し手伝ってあげればいい。自分の能率だけでなく全体の能率を考えた仕事が求められる。人と人のネットワークも大切。ネットワークは仕事で何か困ったことや分からないことが起きたとき大いに力になってくれる。チームで仕事をしネットワークを活用するには自分の役割を全うするのはもちろん日ごろから他のメンバーの仕事への気配り・心配りも欠かせない。</div>
+      </div>
+    </div>
+
+    <div class="card ch6" id="sec-35">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">失敗・問題を言わなければ「時間による解決」はほとんどない</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">「いいことをした人は大きな声で自慢しなさい。失敗した人もめいるのではなく『しまった』と大きな声で言いなさい。そうすれば周りの人が『馬鹿だなあ』と言いながらもきっと助けてくれる」。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="35">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">トヨタ流は「不良はみんなの見えるところに出す。作業の途中で少しでも不良が出たり何かトラブルが起きたときには躊躇なく機械をとめる」。不良を隠すと後で大きなトラブルになる。</div>
+        <div class="detail-body">トヨタ流は「不良はみんなの見えるところに出す。作業の途中で少しでも不良が出たり何かトラブルが起きたときには躊躇なく機械をとめる」。不良を隠してしまうとそのときはスムーズに作業が進むものの、どこかで大きなトラブルになったり大量の不良をつくってしまう。失敗をしたり問題が生じたときには何よりも「失敗しました」と堂々と口に出す勇気が必要。その上でトラブルから逃げることなく解決に努力すれば言い。そうすれば仕事をする能力は確実に成長する。</div>
+      </div>
+    </div>
+
+    <div class="card ch6" id="sec-36">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">「自分だけは」思考に陥るな</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">「自分のところだけ」「自分の仕事さえちゃんとやれば」という発想では決して全体のパワーにはつながらない。設計は生産のしやすさを考え、生産も物流のことを考えて仕事をするといった次工程への思いやりが大切。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="36">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「問題に対して代案を考えないのは遠慮ではなく責任転嫁」——常に「全体の能率」を頭にいれて仕事に臨む。</div>
+        <div class="detail-body">「自分のところはちゃんとしているのに、うまくいかないのはあそこが悪いからだ」とか他の部署からのアドバイスに対して「うちのことには口出ししないでくれ」といった縄張り意識になってしまうと実に結末が悪い。設計は生産のしやすさを考え生産も物流のことを考えて仕事をするといった次工程への思いやりを持った仕事の仕方をしていないと本当の強さは生まれない。常に「全体の能率」を頭にいれて仕事に臨む。</div>
+      </div>
+    </div>
+
+    <div class="card ch6" id="sec-37">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">すぐに腰砕けになる人の共通点</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">「百聞は一見にしかず。百見は一行（行動）にしかず」——「思い切ってやってみなければ何にもならない。シミュレーションや計画に多くの時間を費やすくらいなら、まずやってみるにかぎる」。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="37">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">図表を多用しながらポイントポイントを説明するようにしないとなかなか相手に意図が伝わらない。行動なしの説明だけでは人は動かない。</div>
+        <div class="detail-body">「思い切ってやってみなければ何にもならない。何か思いついたり迷ったり壁にぶつかったときはいつも現場に戻ってやってみる。シミュレーションや計画に多くの時間を費やすくらいならまずやってみるにかぎる」。すべての判断は「実際に原価が安くなるか」「実際に業績に結びつくか」でなされなければならない。目標の達成度合いを重視するあまり社員が達成しやすい目標ばかりを設定して高い目標に挑戦する意欲を失いつつあるのではという反省。大野耐一氏の「評価の対象は結果だけであり途中の努力を評価の対象にしてはいけない」は「企業は結果だけだ。へたに変なことをやらされて会社が儲からないなら遊んでいてくれるほうがいい」という答えが返ってきた。</div>
+      </div>
+    </div>
+
+    <div class="card ch6" id="sec-38">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">「結果の出ない努力」をどう考えるか</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">世の中には業績や結果と関係のない仕事をしている人が多い。会社にどれだけの利益をもたらしたのかが大切。そのためにはどんな些細な仕事であれ常にコスト意識を持って仕事に取り組む必要がある。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="38">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「教えすぎはいかん」——知識のある人は「何も知らない人に考えさせるより自分がすべてお膳立てするほうがよい」と考えてしまいがち。しかしそれでは現場の知恵は育たない。</div>
+        <div class="detail-body">「現場で働く人の知恵をいかに引き出すかが最も大切である。知識のある人は『何も知らない人に考えさせるよりは自分がすべてお膳立てするほうがよい』と考えてしまいがち。多少時間はかかったとしても方向性を示して現場の声を聞き現場の知恵を活かしながらやるほうが実際には大きな力になっていく。なにもかも自分でやるのではなくいかに他人の力・知恵を引き出すかも大切な能力。」世の中には業績や結果と関係のない仕事をしている人が多い。会社にどれだけの貢献をしたのか利益をもたらしたのかが大切になる。そのためにはどんな些細な仕事であれ常にコスト意識を持って仕事に取り組む必要がある。結果に対する厳しさが仕事の質を高めていく。</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 第７章 -->
+<div class="chapter ch7" id="ch7">
+  <div class="chapter-header">
+    <span class="chapter-num" style="background:#4A4A4A;">第７章</span>
+    <div>
+      <div class="chapter-title">「知恵の出どころ」を深く掘れ</div>
+      <div class="chapter-sub">創意工夫はひらめきではなく科学であって、根気さえあればだれでもできる</div>
+    </div>
+  </div>
+  <div class="cards">
+
+    <div class="card ch7" id="sec-39">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">たとえば作家の才能は長時間机に向かえること</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">松下幸之助氏は誰もが使っていたソケットに改良を加えることで有名な二股ソケットを開発。本田宗一郎氏も自転車にエンジンをつけた「バタバタ」を改良するところから。本当にものになるアイデアは身近にある。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="39">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">突然アイデアがひらめくこともある。背景には問題への絶え間ない関心がある。困り抜いたあげく仕事と関係のないことをしているときにアイデアがひらめいているだけ。</div>
+        <div class="detail-body">松下幸之助氏は誰もが使っていたソケットに改良を加えることで有名な二股ソケットを開発。本田技研工業の始まりも本田宗一郎氏が自転車にエンジンをつけたような「バタバタ」を改良していくところから。いずれもが既存のものに創意工夫を凝らし改良を重ねることで大きな成功を収めている。本当にものになるアイデアは身近にありまことになにげない。なにか困ったことや問題が生じたときには事実をひとつひとつしっかりとおさえて「なぜ」「なぜ」を根気よく繰り返す。そうすることで素晴らしい創意工夫が生まれてくる。突然アイデアがひらめくこともある。背景には問題への絶え間ない関心がある。問題について困り抜いたあげく仕事と関係のないことをしているときアイデアがひらめいているだけ。「絶え間ない問題への関心」なしにはビジネスの成功は望めない。</div>
+      </div>
+    </div>
+
+    <div class="card ch7" id="sec-40">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">ハンデを埋めるとき知恵が深まる</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">「改良」はお金を使ってよくすること。「改善」は知恵を使ってよくすること——仕事をするときにハンデ（金が無いなど）があるくらいがちょうどいい。「ここが知恵の発揮しどころだ」くらいの気持ちで仕事には取り組んだほうがいい。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="40">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">改善のほとんどは現場で作業をしている人の提案によって進められていく。スタッフが頭で考えた提案は案外と役に立たない。実際に現場で作業をしている人が仕事のやりやすさを追及したほうがはるかに役に立つ。</div>
+        <div class="detail-body">「こういう作業をもっとうまくやりたい」と考えれば便利な機械が結構出ている。新しい機械を買ったり設備メーカーにお願いすればたいていのことはできてしまう。確かに仕事は楽になるかもしれないがその分だけ原価が上ってしまうこともある。「改善」したつもりでも「原価を下げる」という目的から見れば必ずしも成功とは言えない。仕事をするときにハンデがあるくらいがちょうどいい。「ここが知恵の発揮しどころだ」くらいの気持ちで仕事には取り組んだほうがいい。改善のほとんどは現場で作業をしている人の提案によって進められていく。スタッフが頭で考えた提案は案外と役に立たない。実際に現場で作業をしている人が仕事のやりやすさ・機械のつかいやすさなどを追及したほうがはるかに役に立つ。</div>
+      </div>
+    </div>
+
+    <div class="card ch7" id="sec-41">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">考えることが「仕事」では足りない、「習慣」にせよ</div>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">「小さい提案」「小さい改善」をおろそかにしてはいけない。本人が問題意識を持ち知恵を絞る環境さえ整えればアイデアはいくらでも沸いてくる。「カタログエンジニアになるな。機械に人間の知恵をつけろ」。</div>
+      <div style="padding:4px 16px 10px;">
+        <button class="card-tts" data-readone="41">🔊 この節を読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「仕事に行く」ではなく「知恵を出しに行く」へ——「楽にやれる商売はないが、楽しくやれる商売はある」（本田宗一郎氏）</div>
+        <div class="detail-body">命じられたこと指示されたことをただ素直にやるだけでは変化の激しい時代には対応できない。機械にカタログをはるかに上回る知恵をつけてカタログに書いてある何倍もの生産性があがるようにして、はじめて競争に勝てる。「仕事に行く」ではなく「知恵を出しに行く」へ。「楽にやれる商売はないが楽しくやれる商売はある」は本田宗一郎氏の名文句。「もっといいやり方を」と求め続ければずっと成長していくことが可能になる。朝のスタートは「会社へ知恵を出しに行くか」で始める。これからの日本のモノづくりを支えていく若い人たちに、トヨタ生産方式に流れている「ものの見方、考え方、仕事の進め方」をなんとか理解していただきたい。</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /.main -->
+
+<div class="tts-bar" id="ttsBar">
+  <button class="tts-btn tts-play" id="ttsPlayBtn">▶</button>
+  <button class="tts-btn tts-stop-btn" id="ttsStopBtn">■</button>
+  <div class="tts-title" id="ttsTitle">—</div>
+  <div class="tts-progress"><div class="tts-progress-fill" id="ttsProgress"></div></div>
+  <select class="tts-speed" id="ttsSpeed">
+    <option value="0.8">遅い</option>
+    <option value="1.0" selected>普通</option>
+    <option value="1.3">やや速い</option>
+    <option value="1.6">速い</option>
+    <option value="2.0">2倍速</option>
+  </select>
+  <button class="tts-btn tts-stop-btn" id="ttsPrevBtn" style="font-size:14px;">◀</button>
+  <button class="tts-btn tts-stop-btn" id="ttsNextBtn" style="font-size:14px;">▶▶</button>
+</div>
+
+<div class="footer">
+  AI構造化本棚｜奈良高専野球部OB会 編集<br>
+  Powered by Claude（Anthropic）｜Android Chrome・Firefox対応<br>
+  本サービスの収益は奈良工業高等専門学校野球部の支援に充てられます
+</div>
+
+<script>
+var synth=window.speechSynthesis,queue=[],qIdx=0,isPaused=false;
+var ttsVoice=null;
+function loadVoices(){
+  var voices=synth.getVoices();
+  ttsVoice=voices.find(function(v){return v.lang==='ja-JP';})
+          ||voices.find(function(v){return v.lang.startsWith('ja');})
+          ||voices[0]||null;
+}
+loadVoices();
+if(speechSynthesis.onvoiceschanged!==undefined){speechSynthesis.onvoiceschanged=loadVoices;}
+
+function openIndex(){document.getElementById('indexPanel').classList.add('open');document.getElementById('indexOverlay').classList.add('show');document.getElementById('indexToggle').textContent='✕';}
+function closeIndex(){document.getElementById('indexPanel').classList.remove('open');document.getElementById('indexOverlay').classList.remove('show');document.getElementById('indexToggle').textContent='INDEX';}
+document.getElementById('indexToggle').onclick=function(){document.getElementById('indexPanel').classList.contains('open')?closeIndex():openIndex();};
+document.getElementById('indexClose').onclick=function(){closeIndex();};
+document.getElementById('indexOverlay').onclick=function(){closeIndex();};
+document.getElementById('navIndexBtn').onclick=function(e){e.preventDefault();openIndex();};
+
+document.addEventListener('click',function(e){
+  var a=e.target.closest('[data-close-index]');
+  if(a){e.preventDefault();var href=a.getAttribute('href');closeIndex();setTimeout(function(){var el=document.querySelector(href);if(el){var top=el.getBoundingClientRect().top+window.pageYOffset-60;window.scrollTo({top:top,behavior:'smooth'});}},350);}
+},false);
+
+document.querySelectorAll('[data-action="toggle"]').forEach(function(head){
+  head.addEventListener('click',function(){
+    var card=this.closest('.card');if(!card)return;
+    card.classList.toggle('open');
+    var btn=card.querySelector('.toggle-btn');
+    if(btn)btn.textContent=card.classList.contains('open')?'－':'＋';
+  });
+});
+
+function getCardData(card){
+  var title=(card.querySelector('.card-title')||{}).textContent||'';
+  var summary=(card.querySelector('.card-summary')||{}).textContent||'';
+  var body=(card.querySelector('.detail-body')||{}).textContent||'';
+  return{title:title.trim(),text:title.trim()+'。'+summary.trim()+'。'+body.trim(),el:card};
+}
+function readOne(idx){var c=document.getElementById('sec-'+idx);if(!c)return;queue=[getCardData(c)];qIdx=0;startQueue();}
+function readAllFrom(idx){
+  queue=[];
+  document.querySelectorAll('.card[id^="sec-"]').forEach(function(c){
+    var i=parseInt(c.id.replace('sec-',''));if(i>=idx)queue.push(getCardData(c));
+  });
+  queue.sort(function(a,b){return parseInt(a.el.id.replace('sec-',''))-parseInt(b.el.id.replace('sec-',''));});
+  qIdx=0;startQueue();
+}
+function startQueue(){
+  if(synth.speaking)synth.cancel();
+  isPaused=false;
+  document.getElementById('ttsBar').classList.add('show');
+  if(!ttsVoice)loadVoices();
+  setTimeout(function(){if(!ttsVoice)loadVoices();playItem();},200);
+}
+function playItem(){
+  if(qIdx>=queue.length){ttsStop();return;}
+  var item=queue[qIdx];
+  document.querySelectorAll('.card.speaking').forEach(function(c){c.classList.remove('speaking');});
+  item.el.classList.add('speaking');
+  item.el.scrollIntoView({behavior:'smooth',block:'center'});
+  if(!item.el.classList.contains('open')){item.el.classList.add('open');var btn=item.el.querySelector('.toggle-btn');if(btn)btn.textContent='－';}
+  document.getElementById('ttsTitle').textContent='('+(qIdx+1)+'/'+queue.length+') '+item.title;
+  document.getElementById('ttsProgress').style.width=(qIdx/queue.length*100)+'%';
+  document.getElementById('ttsPlayBtn').innerHTML='&#9646;&#9646;';
+  var u=new SpeechSynthesisUtterance(item.text);
+  if(ttsVoice){u.voice=ttsVoice;u.lang=ttsVoice.lang;}else{u.lang='ja-JP';}
+  u.rate=parseFloat(document.getElementById('ttsSpeed').value);
+  u.volume=1;u.pitch=1;
+  u.onend=function(){if(!isPaused){qIdx++;playItem();}};
+  u.onerror=function(){qIdx++;playItem();};
+  synth.speak(u);
+}
+function ttsToggle(){if(synth.speaking&&!synth.paused){synth.pause();isPaused=true;document.getElementById('ttsPlayBtn').innerHTML='&#9654;';}else if(synth.paused){synth.resume();isPaused=false;document.getElementById('ttsPlayBtn').innerHTML='&#9646;&#9646;';}else if(queue.length>0){playItem();}}
+function ttsStop(){synth.cancel();isPaused=false;queue=[];document.querySelectorAll('.card.speaking').forEach(function(c){c.classList.remove('speaking');});document.getElementById('ttsBar').classList.remove('show');document.getElementById('ttsTitle').textContent='—';document.getElementById('ttsProgress').style.width='0%';document.getElementById('ttsPlayBtn').innerHTML='&#9654;';}
+function ttsNext(){synth.cancel();isPaused=false;qIdx=Math.min(qIdx+1,queue.length-1);playItem();}
+function ttsPrev(){synth.cancel();isPaused=false;qIdx=Math.max(qIdx-1,0);playItem();}
+document.getElementById('ttsPlayBtn').onclick=function(e){e.preventDefault();ttsToggle();};
+document.getElementById('ttsStopBtn').onclick=function(e){e.preventDefault();ttsStop();};
+document.getElementById('ttsNextBtn').onclick=function(e){e.preventDefault();ttsNext();};
+document.getElementById('ttsPrevBtn').onclick=function(e){e.preventDefault();ttsPrev();};
+document.getElementById('ttsSpeed').addEventListener('change',function(){if(synth.speaking){var i=qIdx;synth.cancel();isPaused=false;qIdx=i;setTimeout(playItem,80);}});
+document.querySelectorAll('[data-readone]').forEach(function(btn){btn.onclick=function(e){e.preventDefault();e.stopPropagation();readOne(parseInt(this.getAttribute('data-readone')));};});
+document.querySelectorAll('[data-readall]').forEach(function(btn){btn.onclick=function(e){e.preventDefault();e.stopPropagation();readAllFrom(parseInt(this.getAttribute('data-readall')));};});
+</script>
+</body>
+</html>

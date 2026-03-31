@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>AI構造化本棚｜キャノン高収益復活の秘密</title>
+<style>
+:root {
+  --blue:#C0392B; --blue2:#E74C3C;
+  --border:#D0DCE8; --text:#222; --sub:#555;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Arial','Hiragino Sans','Yu Gothic',sans-serif;
+  background:#F0F4F8;color:var(--text);font-size:15px;line-height:1.7;}
+.header{background:var(--blue);color:white;padding:20px 40px 16px;}
+.header .label{font-size:11px;letter-spacing:2px;opacity:.7;margin-bottom:4px;}
+.header h1{font-size:22px;font-weight:bold;margin-bottom:3px;}
+.header .meta{font-size:12px;opacity:.75;}
+.header .hint{margin-top:10px;font-size:13px;opacity:.88;
+  background:rgba(255,255,255,0.12);padding:8px 12px;border-radius:5px;
+  border-left:3px solid rgba(255,255,255,0.4);}
+.nav{background:white;border-bottom:1px solid var(--border);
+  padding:10px 20px;display:flex;gap:8px;flex-wrap:wrap;
+  position:sticky;top:0;z-index:100;align-items:center;}
+.nav a{font-size:13px;padding:5px 12px;border-radius:20px;text-decoration:none;
+  border:1px solid var(--border);color:var(--sub);
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.nav a:hover,.nav a:active{background:var(--blue);color:white;border-color:var(--blue);}
+.nav-index-btn{margin-left:auto;background:var(--blue);color:white!important;
+  border-color:var(--blue)!important;font-weight:bold;}
+.main{max-width:960px;margin:0 auto;padding:24px 16px 140px;}
+.chapter{margin-bottom:40px;}
+.chapter-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;
+  padding-bottom:10px;border-bottom:2px solid #ccc;}
+.chapter-num{font-size:11px;font-weight:bold;letter-spacing:1px;
+  padding:3px 10px;border-radius:3px;color:white;}
+.chapter-title{font-size:17px;font-weight:bold;}
+.chapter-sub{font-size:12px;margin-top:2px;color:var(--sub);}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:10px;}
+.card{background:white;border-radius:8px;border:1px solid var(--border);overflow:hidden;pointer-events:auto;}
+.card-bar{height:3px;}
+.card-head{padding:14px 16px 12px;display:flex;justify-content:space-between;
+  align-items:flex-start;gap:8px;background:white;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  user-select:none;-webkit-user-select:none;
+  cursor:pointer;pointer-events:auto;}
+.card-title{font-size:14px;font-weight:bold;line-height:1.5;flex:1;}
+.toggle-btn{font-size:20px;color:var(--sub);flex-shrink:0;min-width:28px;text-align:center;}
+.card-summary{font-size:13px;color:var(--sub);line-height:1.65;padding:0 16px 10px;}
+.card-tts{font-size:13px;color:var(--blue2);background:none;
+  border:1px solid var(--border);border-radius:6px;padding:8px 12px;min-height:40px;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;cursor:pointer;}
+.card-detail{display:none;}
+.card.open .card-detail{display:block;}
+.detail-summary{font-size:13px;font-weight:500;padding:10px 16px;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);line-height:1.7;}
+.detail-body{font-size:14px;color:var(--sub);padding:13px 16px 15px;line-height:1.9;}
+.intro-card{background:white;border-radius:8px;border-left:4px solid var(--blue);
+  padding:14px 18px;margin-bottom:24px;}
+.intro-card h2{font-size:14px;color:var(--blue);margin-bottom:8px;font-weight:bold;}
+.intro-card p{font-size:14px;color:var(--sub);line-height:1.9;}
+/* 章カラー */
+.ch0 .card-bar,.ch0_ato .card-bar{background:#4A4A4A;}
+.ch0 .detail-summary,.ch0_ato .detail-summary{background:#F5F5F5;color:#4A4A4A;border-left:4px solid #4A4A4A;}
+.ch0-ato .card-bar{background:#4A4A4A;}
+.ch1 .card-bar{background:#C0392B;} .ch1 .detail-summary{background:#FDECEA;color:#C0392B;border-left:4px solid #C0392B;}
+.ch2 .card-bar{background:#1A5276;} .ch2 .detail-summary{background:#EAF2FB;color:#1A5276;border-left:4px solid #1A5276;}
+.ch3 .card-bar{background:#1A6B3C;} .ch3 .detail-summary{background:#E8F5EE;color:#1A6B3C;border-left:4px solid #1A6B3C;}
+.ch4 .card-bar{background:#7B3200;} .ch4 .detail-summary{background:#FBF0E8;color:#7B3200;border-left:4px solid #7B3200;}
+.ch5 .card-bar{background:#5C2D91;} .ch5 .detail-summary{background:#F2EDF9;color:#5C2D91;border-left:4px solid #5C2D91;}
+.ch_app .card-bar{background:#0B5563;} .ch_app .detail-summary{background:#E0F4F7;color:#0B5563;border-left:4px solid #0B5563;}
+/* INDEX */
+.index-toggle{position:fixed;right:0;top:50%;transform:translateY(-50%);
+  background:var(--blue);color:white;border:none;border-radius:6px 0 0 6px;
+  padding:14px 8px;cursor:pointer;z-index:150;font-size:13px;min-height:80px;
+  writing-mode:vertical-rl;letter-spacing:2px;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.index-panel{display:none;position:fixed;right:0;top:0;
+  width:min(300px,92vw);height:100%;background:white;
+  border-left:2px solid var(--blue);z-index:140;flex-direction:column;}
+.index-panel.open{display:flex;}
+.index-panel-scroll{flex:1;overflow-y:scroll;-webkit-overflow-scrolling:touch;}
+.index-head{background:var(--blue);color:white;padding:12px 16px;
+  display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+.index-head h3{font-size:13px;font-weight:bold;}
+.index-close{background:none;border:none;color:white;font-size:22px;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.index-tabs{display:flex;flex-wrap:wrap;border-bottom:2px solid var(--border);flex-shrink:0;}
+.index-tab{flex:1;min-width:50px;padding:7px 3px;text-align:center;font-size:11px;
+  font-weight:bold;cursor:pointer;color:var(--sub);background:white;border:none;
+  border-bottom:3px solid transparent;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  pointer-events:auto;position:relative;z-index:1;}
+.index-tab.active{color:#333;background:#F8F8F8;}
+.index-ch-panel{display:none;}
+.index-ch-panel.active{display:block;}
+.index-ch-label{padding:7px 14px;font-size:11px;font-weight:bold;
+  letter-spacing:1px;color:white;}
+.index-list{list-style:none;padding:0;margin:0;}
+.index-list li a{display:block;padding:8px 16px 8px 18px;font-size:13px;
+  color:#333;text-decoration:none;border-bottom:1px solid #F0F4F8;line-height:1.4;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.index-list li a.active{font-weight:bold;border-left:3px solid var(--blue);
+  padding-left:15px;background:#FFF0EE;color:var(--blue);}
+.index-num{font-size:10px;color:#aaa;margin-right:5px;}
+.index-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:139;}
+.index-overlay.show{display:block;}
+/* 読み上げバー */
+.tts-bar{display:none;position:fixed;bottom:0;left:0;right:0;background:white;
+  border-top:2px solid var(--blue);padding:8px 16px;
+  flex-wrap:wrap;align-items:center;gap:10px;z-index:200;
+  box-shadow:0 -3px 16px rgba(0,0,0,.12);}
+.tts-bar.show{display:flex;}
+.tts-title{font-size:12px;font-weight:bold;color:var(--blue);flex:1;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+.tts-btn{border:none;border-radius:50%;width:42px;height:42px;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.tts-play{background:var(--blue);color:white;}
+.tts-stop-btn{background:#eee;color:#555;}
+.tts-speed{font-size:12px;border:1px solid var(--border);border-radius:4px;padding:4px 8px;background:white;}
+.tts-progress{height:3px;background:var(--border);border-radius:2px;flex:1;min-width:60px;}
+.tts-progress-fill{height:100%;background:var(--blue);border-radius:2px;width:0%;}
+.footer{text-align:center;padding:20px;font-size:12px;color:#999;border-top:1px solid var(--border);}
+.footer a{color:var(--blue2);text-decoration:none;}
+.card.speaking{outline:2px solid var(--blue);outline-offset:2px;}
+@media(max-width:600px){
+  .header{padding:14px 16px;}
+  .nav{padding:8px 12px;}
+  .cards{grid-template-columns:1fr;}
+  .tts-title{display:none;}
+}
+
+  .card-back { background:none; border:none; font-size:15px; cursor:pointer;
+    padding:2px 4px; opacity:0.5; flex-shrink:0;
+    -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+  .card-back:hover,.card-back:active { opacity:1; }
+
+
+.ch0 .card-bar{background:#4A4A4A;} .ch0 .detail-summary{background:#F5F5F5;color:#4A4A4A;border-left:4px solid #4A4A4A;}
+.ch1 .card-bar{background:#C0392B;} .ch1 .detail-summary{background:#FDECEA;color:#C0392B;border-left:4px solid #C0392B;}
+.ch2 .card-bar{background:#1A5276;} .ch2 .detail-summary{background:#EAF2FB;color:#1A5276;border-left:4px solid #1A5276;}
+.ch3 .card-bar{background:#1A6B3C;} .ch3 .detail-summary{background:#E8F5EE;color:#1A6B3C;border-left:4px solid #1A6B3C;}
+.ch4 .card-bar{background:#7B3200;} .ch4 .detail-summary{background:#FBF0E8;color:#7B3200;border-left:4px solid #7B3200;}
+</style>
+</head>
+<body>
+
+<button class="index-toggle" id="indexToggle">INDEX</button>
+<div class="index-overlay" id="indexOverlay"></div>
+<div class="index-panel" id="indexPanel">
+  <div class="index-head">
+    <h3>&#128214; 目次（全22節）</h3>
+    <button class="index-close" id="indexClose">×</button>
+  </div>
+  <div class="index-tabs">
+<button class="index-tab active" data-tab="1" style="border-bottom-color:#4A4A4A">序章<br><small>3節</small></button>
+<button class="index-tab" data-tab="2" style="border-bottom-color:#C0392B">第１章<br><small>4節</small></button>
+<button class="index-tab" data-tab="3" style="border-bottom-color:#1A5276">第２章<br><small>6節</small></button>
+<button class="index-tab" data-tab="4" style="border-bottom-color:#1A6B3C">第３章<br><small>6節</small></button>
+<button class="index-tab" data-tab="5" style="border-bottom-color:#7B3200">第４章<br><small>3節</small></button>
+  </div>
+<div class="index-panel-scroll">
+<div class="index-ch-panel active" id="idx-panel-1">
+<div class="index-ch-label" style="background:#4A4A4A;">序章 事業撤退の衝撃</div>
+<ul class="index-list">
+<li><a href="#sec-0" data-close-index="1"><span class="index-num">1.</span>パソコンをあきらめろ</a></li>
+<li><a href="#sec-1" data-close-index="1"><span class="index-num">2.</span>FLCディスプレーからも退却</a></li>
+<li><a href="#sec-2" data-close-index="1"><span class="index-num">3.</span>財務が語るキャノン改革の成果</a></li>
+</ul>
+</div>
+<div class="index-ch-panel" id="idx-panel-2">
+<div class="index-ch-label" style="background:#C0392B;">第１章 改革への序曲</div>
+<ul class="index-list">
+<li><a href="#sec-3" data-close-index="1"><span class="index-num">1.</span>見えざる危機——事業部制の弊害</a></li>
+<li><a href="#sec-4" data-close-index="1"><span class="index-num">2.</span>「米国育ちのクマ」が舞い降りた</a></li>
+<li><a href="#sec-5" data-close-index="1"><span class="index-num">3.</span>財務を第一の突破口に</a></li>
+<li><a href="#sec-6" data-close-index="1"><span class="index-num">4.</span>ターニングポイント——1995年9月</a></li>
+</ul>
+</div>
+<div class="index-ch-panel" id="idx-panel-3">
+<div class="index-ch-label" style="background:#1A5276;">第２章 ものづくりの常識解体</div>
+<ul class="index-list">
+<li><a href="#sec-7" data-close-index="1"><span class="index-num">1.</span>ベルトコンベアよ、さらば</a></li>
+<li><a href="#sec-8" data-close-index="1"><span class="index-num">2.</span>生産革新の上からの仕掛け人</a></li>
+<li><a href="#sec-9" data-close-index="1"><span class="index-num">3.</span>「トップ」と「現場」</a></li>
+<li><a href="#sec-10" data-close-index="1"><span class="index-num">4.</span>ライバルは中国</a></li>
+<li><a href="#sec-11" data-close-index="1"><span class="index-num">5.</span>キャノン式SCMへ</a></li>
+<li><a href="#sec-12" data-close-index="1"><span class="index-num">6.</span>ブラックボックスで稼ぐ</a></li>
+</ul>
+</div>
+<div class="index-ch-panel" id="idx-panel-4">
+<div class="index-ch-label" style="background:#1A6B3C;">第３章 イノベーションへの再挑戦</div>
+<ul class="index-list">
+<li><a href="#sec-13" data-close-index="1"><span class="index-num">1.</span>技術を深く耕す</a></li>
+<li><a href="#sec-14" data-close-index="1"><span class="index-num">2.</span>技術の棚卸し</a></li>
+<li><a href="#sec-15" data-close-index="1"><span class="index-num">3.</span>実験室改革は整理整頓から</a></li>
+<li><a href="#sec-16" data-close-index="1"><span class="index-num">4.</span>3つの道具——KI・3次元CAD・品質工学</a></li>
+<li><a href="#sec-17" data-close-index="1"><span class="index-num">5.</span>キーテクを共有し、使い回す</a></li>
+<li><a href="#sec-18" data-close-index="1"><span class="index-num">6.</span>技術の全体最適経営</a></li>
+</ul>
+</div>
+<div class="index-ch-panel" id="idx-panel-5">
+<div class="index-ch-label" style="background:#7B3200;">第４章 企業の「根っこ」は変えない</div>
+<ul class="index-list">
+<li><a href="#sec-19" data-close-index="1"><span class="index-num">1.</span>終身雇用維持——御手洗は語る</a></li>
+<li><a href="#sec-20" data-close-index="1"><span class="index-num">2.</span>企業文化の源流——初代社長の理想主義</a></li>
+<li><a href="#sec-21" data-close-index="1"><span class="index-num">3.</span>企業文化ルネサンス——人事・賃金制度の革新</a></li>
+</ul>
+</div>
+</div><!-- /.index-panel-scroll -->
+</div><!-- /.index-panel -->
+
+<nav class="nav">
+  <a href="#ch0">序章</a>
+  <a href="#ch1">第１章</a>
+  <a href="#ch2">第２章</a>
+  <a href="#ch3">第３章</a>
+  <a href="#ch4">第４章</a>
+  <a href="#" id="navIndexBtn" class="nav-index-btn">&#128214; 目次</a>
+</nav>
+
+<div class="main">
+<div class="intro-card">
+  <h2>この書籍について</h2>
+  <p>1990年代の不況を乗り越え連続最高益を達成したキャノン（キヤノン）。御手洗冨士夫社長のもとで進めた「グローバル優良企業グループ構想」の全貌を日本経済新聞社が取材・編集。セル生産方式・キャッシュフロー経営・技術の全体最適・終身雇用と実力主義の両立——日本型経営の可能性を問い直す。</p>
+</div>
+<div class="chapter ch0" id="ch0">
+  <div class="chapter-header">
+    <span class="chapter-num" style="background:#4A4A4A;">序章</span>
+    <div><div class="chapter-title">事業撤退の衝撃</div><div class="chapter-sub">パソコン・FLCディスプレーからの大胆撤退と財務改革の成果（3節）</div></div>
+  </div>
+  <div class="cards">
+    <div class="card ch0" id="sec-0">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">パソコンをあきらめろ</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">&#128214;</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">1996年、キャノンはパソコン事業からの完全撤退を決断。御手洗社長就任直後の最初の大ナタ——利益を生まない事業は全部やめる。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="0">&#128266; この節を読む</button>
+        <button class="card-tts" data-readall="0" style="color:#1A6B3C;border-color:#b2d8be;">&#9654; ここから全部読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">不採算事業からの撤退は「水漏れしたバケツの穴をなくす」作業。御手洗改革の原点。</div>
+        <div class="detail-body">1996年1月、米国カリフォルニア州メンロパークのファイアーパワーの本社。キヤノン本社から伝えられてきた撤収指令。ファイアーパワーはキヤノンの全額出資子会社で、パソコンの心臓部となるボードなどを設計・開発していたベンチャー企業。同年7月、米半導体大手メーカーのモトローラへ会社そのものを売却。 トップの決断 ファイアーパワーからの撤収を決断したのは、キヤノンの社長に就任した御手洗。御手洗はこれを皮切りに、パソコン事業からの完全撤退となる策を次々と打ち出した。 キヤノンのコンピューター関連事業の歴史は1974年に始まる。この年にオフコンの「キャノナック」を発売、82年にパソコン「AS-100」を商品化。 パソコン事業へのこだわり 89年の米ネクストコンピュータへの資本参加。ネクストの経営は振るわず、93年にはハードウェアの部門とソフトウェアの部門を分社する。ソフト部門であるネクストソフトウェアに出資する一方、ハード部門については丸ごと引き取る方針を決め、同年8月にキヤノン全額出資の子会社として再出発させた。当時はすでにOS（基本ソフト）ウィンドウズで躍進したマイクロソフト、MPU（超小型演算処理装置）の分野で成長したインテルの2社による「ウィンテル連合」がパソコンの世界を牛耳り始めていた。ウィンテルの実績の前に、パワーPC陣営、そしてファイアーパワーは屈した。 撤収－そして社員への説得工作 日本人部隊に対するキヤノン本社からの極秘撤収命令が届いた。ファイアーパワーに派遣されていた日本人スタッフは猛者ばかり。川端が面接すると、ほとんどが米国残留を望んだ。 不採算事業は要らない 日本人</div>
+      
+      </div>
+    </div>
+    <div class="card ch0" id="sec-1">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">FLCディスプレーからも退却</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">&#128214;</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">壁掛けテレビを夢見てFLC液晶に13年投資したが撤退。投資の75%が独自装置という「独自技術信仰」の罠にはまった。SEDへの転換が次の一手。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="1">&#128266; この節を読む</button>
+        <button class="card-tts" data-readall="1" style="color:#1A6B3C;border-color:#b2d8be;">&#9654; ここから全部読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">技術的優位性があっても市場で勝てなければ意味がない。独自技術へのこだわりと現実の折り合い。</div>
+        <div class="detail-body">。 「壁掛けテレビ」への期待 液晶は、液体と固体の中間のような物質で、普段は分子が規則正しく並んでいるが、電圧をかけたりすると、形がねじれる。液晶をガラス板の間に挟み込むと、電圧の操作により光を通したり、通さなかったりするようにできる。現在のテレビに使われているブラウン管のディスプレーに比べ、薄く小型にでき、しかも電力消費量は少なくてすむ。液晶ディスプレーの分野ではシャープが先行。シャープが力を入れていたのはTFT（薄膜トランジスタ）と呼ばれるタイプで、液晶の裏側にトランジスタを張りつけて光を通す・通さないという動作を高速かつ確実にする。キヤノンは液晶分野で出遅れていたが、TFTとは異なる方式であるFLC（強誘電性液晶）に目をつけ、83年に研究開発をスタート。FLCは、液晶材料そのものに「記憶力」があるのが特徴。通常の液晶は画面表示を維持するため、データを常時読み書きし続けていなければならない。FLCは画面を記憶しているのでその必要がない。このため、画面のちらつきがほとんどない。 カメラに代表されるように、得意とする製品は映像を取り込む入力装置がが多い。動画の出力装置としてディスプレーを持てば、デジタル時代の映像の入力、出力の両方を押さえる形になる。 孤独な戦い 95年5月には14.5インチサイズのカラーFLCディスプレーを製品化して発売。ところが、その3年後の98年12月、キヤノンはFLCディスプレーの生産中止を発表、撤退する。 量産化では何よりもコスト低減を重視する。それなのに、「世の中にない装置が目白押しになった」。結果、投資、コストがべらぼうな水準になってしまっていた。</div>
+      
+      </div>
+    </div>
+    <div class="card ch0" id="sec-2">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">財務が語るキャノン改革の成果</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">&#128214;</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">95年〜2000年の5年間で連結純利益が2.7倍、有利子負債依存度が35%→14%へ。フリーキャッシュフローが大幅黒字化。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="2">&#128266; この節を読む</button>
+        <button class="card-tts" data-readall="2" style="color:#1A6B3C;border-color:#b2d8be;">&#9654; ここから全部読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">財務数字が雄弁に語る改革の実績。売上1.4倍・利益2.7倍・借金半減。</div>
+        <div class="detail-body">95年の御手洗の社長就任以来、キヤノンは企業改革に取り込んできた。まず91年から95年の平均連結売上高は1兆9,000億だったが、96年から2000年は2兆7,000億円と約1.4倍になった。製品別に見ると、91年には複写機の売上高は約7,000億円で全体の38.6％。2000年には約8,000億円と複写機の売上高自体は10年間で1,000億円以上増えたにもかかわらず、売上高比率は29.6％に低下。この間、大きく成長したのがインクジェットプリンターなどのコンピュータ周辺機器。91年に約4千億円で売上高に占める比率は22.6％。2000年には1兆４00億円に成長、売上高比率も37.6％に高まった。利益水準も91年から95年までの5年間の平均の連結純利益は383億円。これが96年から2000年の5年間は1,054億円と2.7倍に膨らんだ。財務体質や経営効率もよくなった。有利子負債依存度（使用総資本に対する有利子負債の比率）は、91年は35.2％だったが、2000年には13.8％に低下。インタレスト・カバレッジ・レシオ（営業利益と受取利息・配当金の合計額を支払利息割引料で割ったもの）は、91年の3.6倍から17.1倍に高まった。棚卸し資産回転率は、91年の3.9倍（94日）から2000年には5.8倍（63日）に改善。91年は営業活動で生み出すキャッシュフローは約889億円あったが、投資活動のキャッシュフローは約1,425億円の赤字で、差し引きマイナスとなっていた。2000年には営業キャッシュフローが、約3,466億円に膨らんだ。これが投資キャッシュフローの赤字2,128億円をカバーし</div>
+      
+      </div>
+    </div>
+  </div>
+</div>
+<div class="chapter ch1" id="ch1">
+  <div class="chapter-header">
+    <span class="chapter-num" style="background:#C0392B;">第１章</span>
+    <div><div class="chapter-title">改革への序曲</div><div class="chapter-sub">事業部制の弊害から御手洗改革始動まで（4節）</div></div>
+  </div>
+  <div class="cards">
+    <div class="card ch1" id="sec-3">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">見えざる危機——事業部制の弊害</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">&#128214;</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">80年代後半、事業部制が「企業内企業」化し全体最適が失われた。同じ国に別事業部が別々に工場を作るなど弊害が噴出。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="3">&#128266; この節を読む</button>
+        <button class="card-tts" data-readall="3" style="color:#1A6B3C;border-color:#b2d8be;">&#9654; ここから全部読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">成功した仕組みが腐敗の温床になる。事業部制の行き過ぎが改革の出発点。</div>
+        <div class="detail-body">－事業部制の弊害 キヤノンの歴史を振り返ると、大きく分けて3つの時代に区分。まず初代社長であり、カリスマでもあった御手洗毅の時代。次は賀来龍三郎を中心にした時代。そして御手洗冨士夫がトップとしてグループ全体を引っ張る95年以降。 産婦人科医の社長 「日本の造船、紡績は世界に誇れる。しかし、日本には精密工業がない。これでは日本は世界に遅れる」。1933年、昭和に入ってまだ間もない頃。産婦人科医だった御手洗毅は、友人の吉田吾郎らとビールを飲みながら、議論を交わした。戦争が終結した45年10月、各地に散っていた元社員156人を東京・目黒の精機光学工業目黒工場に集め、御手洗毅はこう宣言した。「カメラで必ずや世界を制覇する日が参ります」。 高級カメラへのこだわり 「私どもは、あのライカを念頭に置き、『打倒ライカ』を標榜しながらやっております」。49年に全米カメラ展示会で「キヤノンⅡB型」が一等賞を受賞した。御手洗毅は実力主義、健康第一主義、新家族主義の3つを社是、自発、自治、自覚を3つの柱とする「3自の精神」を行動指針として、機会あるごとに強調。「社是の背後に一貫して流れるものは人間主義。とにかく人間が大事だということ。これは口でそう言っているだけはなく、結核の集団検診のほか、週休2日制を日本で最初に取り入れたり、あるいは持ち家制度を導入したりして、実際に実行している」。60年8月、キヤノンは低価格カメラ「キャノネット」の発売を予告。中級機で価格は19,800円。「キヤノンはダンピングで業界の秩序を乱している」などと大騒ぎ。この大騒ぎのおかげで「キャノネット」の評判は日本国中に知れ渡り、</div>
+      
+      </div>
+    </div>
+    <div class="card ch1" id="sec-4">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">「米国育ちのクマ」が舞い降りた</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">&#128214;</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">23年間米国で過ごした御手洗冨士夫が89年帰国。「定期預金の金利以上の利益が出なければビジネスをやる価値はない」——米国で培われた利益哲学。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="4">&#128266; この節を読む</button>
+        <button class="card-tts" data-readall="4" style="color:#1A6B3C;border-color:#b2d8be;">&#9654; ここから全部読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">外から見た目で日本型経営の矛盾を直視できた御手洗の強み。</div>
+        <div class="detail-body">御手洗冨士夫は、キヤノン初代社長 御手洗毅の甥に当たる。89年にキヤノン本体の専務に就任して帰国するまでの23年間、米国で過ごした。72年にベル・アンドハウエルとの契約がついに終了した。米国でのカメラ販売事業をスタートさせた。以後、米国でのカメラ販売を育てたという自負はある。 税務署から経営を教わる 66年の初めての決算のとき。売り上げは300万ドルで赤字は間違いなかったが、なんとなく赤字にするのは恥のように思った。それで最後に来た広告宣伝費の請求を翌年1月に伸ばしてもらったおかげで6,000ドルの利益が出た。税務署の人が来て『300万ドルの売り上げがあって6,000ドルの利益では少ない。脱税の疑いがある』と言って、調べに入った。調査官は『お前はなんという男だ。無理に利益を出そうとしている。全部調べたら、本当は赤字だった可能性があることがわかった。そんなことをするのなら、売り掛け金を全部、回収して、それを定期預金にして日本に帰れ。仕事も何もしないでも、確実に5％程度の利子が稼げるぞ。』その話を聞いて、米国では定期預金の金利以上の利益が出なければ、ビジネスをやっている価値はないのだという教訓を得た。御手洗流の利益追求哲学は、米国時代に培われた。プラスチックの取引などを通じて知り合ったGEのジャック・ウェルチら現地の第1線経営者との交友もある。 数少ない事務系出身者 技術系出身者が多い「技術者天国」のキヤノンでは、数少ない事務系出身者同士。そんな関係もあって賀来と御手洗の間には一種の仲間意識があった。89年3月、御手洗は帰国。話好きで性格は陽性。だが、東京本社に舞い降りた後の振る舞</div>
+      
+      </div>
+    </div>
+    <div class="card ch1" id="sec-5">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">財務を第一の突破口に</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">&#128214;</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">本社から人事・経理担当者を各事業部に送り込む「人事・経理社員制度」を考案。最初は「スパイ」扱いされたが時間とともに溶け込み情報収集に成功。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="5">&#128266; この節を読む</button>
+        <button class="card-tts" data-readall="5" style="color:#1A6B3C;border-color:#b2d8be;">&#9654; ここから全部読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">権力がないナンバー2が改革を仕掛けるには人を送り込んで実態を把握するしかなかった。</div>
+        <div class="detail-body">の財務・経理部門では、最も基本的な仕事である予算作成が、ままならない。 事業部に経理・人事担当者を送り込む ところが、事業部が「企業内企業」になっていたために、実際には事務機など有力な事業部が出してくる予算にもの申すことはできなかった。当時のキヤノンの収益構造を見ると、売上高は、事務機が8割程度を占め、利益も事務機に依存していた。カメラや光学機器は赤字だった。「中央集権にする戦い」。編み出した作戦は、本社から人事・経理担当の社員を送り込む「人事・経理社員制度」の導入。事業部の中に机を置いて仕事をするが、所属は経理部や人事部のまま。現状把握のための情報収集が人事・経理社員の第一の任務。 副社長では限界がある 人事・経理社員は「スパイ」として警戒され、事業部内の会議にも呼ばれない状況が続いた。しかし、時間が経つにつれ警戒心も薄れ、溶け込んでいった。御手洗が何度も強調した「連結決算で全体を一元化して見る」ことの重要性が事業部にも少しずつ理解されていった。93年3月、御手洗肇が山路に代わってトップの座に就いた。肇は、初代社長・御手洗毅の長男。人柄がよく純粋な技術者である肇にいろいろと進言し、改革への道を探った。肇は御手洗の言葉に耳を傾け、新しい施策を取り入れてくれた。だが、トップとナンバー2とでは権限が全く違う。肇に納得してもらってから実行するために、どうしても時間がかかる。 ４ ターニングポイント（1995年9月）</div>
+      
+      </div>
+    </div>
+    <div class="card ch1" id="sec-6">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">ターニングポイント——1995年9月社長就任</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">&#128214;</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">「黒い猫でも白い猫でも、利益を稼ぐのはいい猫だ」——社長就任初の幹部会での宣言。「役員でも管理職でもヒラメになるな。トップダウンをしろ」。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="6">&#128266; この節を読む</button>
+        <button class="card-tts" data-readall="6" style="color:#1A6B3C;border-color:#b2d8be;">&#9654; ここから全部読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">御手洗改革の始動。目標設定は独断で、戦略は協調で、実行は率先垂範で。</div>
+        <div class="detail-body">。御手洗は、賀来とともに同日 記者会見。御手洗「前社長の急逝で引き受けることになったが、共生理論という企業理念を引き継ぎながらグローバル路線を歩みたい。多難な時代を乗り切るため、高付加価値経営を追求したい。」 「黒い猫でも白い猫でも、利益を稼ぐのはいい猫だ」。社長就任後初の幹部会で御手洗は強い調子でこう語り始めた。「不採算部門はいらない。逆に、他社ブランドで売っているビジネスでも利益さえ上げていれば立派な事業」。「役員でも中間管理職でもボスと名のつく人間は上ばかり見るヒラメになるな。トップダウンをしろ。まず第1に正しい目標設定をする。そのときには部下の意見を絶対に聞くな。目標に向かうための戦略は、周囲とよく調整しなければならない。細かな戦術については部下の意見をよく聞け。そして実行に移すときは率先垂範する。そうしないと、実際の進捗状況がわからなくなるから」。 ミタライイズムの浸透 御手洗が「社内全体にわたる共通の価値を表すのは技術ではない。カネだ」と言ったこと。「技術より利益」など技術者の神経を逆なでするような言葉を発する御手洗に「これはえらいことになった」と思った。御手洗の性格はせっかちと周囲は言う。気になることがあると、すぐに解決しないと気がすまない。 キヤノンUSAの天王山 80年のキヤノンは、米国で複写機の新製品を売り出した。従来品より小型で高性能。ところが、予期せぬトラブルが生じた。乾燥した地域では静電気の影響でゴーストと呼ぶ影が出た。キヤノンの関連ディーラーの会合。御手洗は、この会合でスピーチをすることになっていたが、スピーチの後に、複写機のトラブルに見舞われたディ</div>
+      
+      </div>
+    </div>
+  </div>
+</div>
+<div class="chapter ch2" id="ch2">
+  <div class="chapter-header">
+    <span class="chapter-num" style="background:#1A5276;">第２章</span>
+    <div><div class="chapter-title">ものづくりの常識解体</div><div class="chapter-sub">セル生産方式・SCM・ブラックボックス戦略（6節）</div></div>
+  </div>
+  <div class="cards">
+    <div class="card ch2" id="sec-7">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">ベルトコンベアよ、さらば</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">&#128214;</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">1997年、屈辱の工場見学をきっかけにセル生産方式を導入。99年にベルトコンベアが完全消滅。活人数728人・省スペース年間10,000㎡の成果。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="7">&#128266; この節を読む</button>
+        <button class="card-tts" data-readall="7" style="color:#1A6B3C;border-color:#b2d8be;">&#9654; ここから全部読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「からくり」と呼ぶ手作り改善装置が生産革新の象徴。女性チームが3日で予定生産量達成。</div>
+        <div class="detail-body">長浜キヤノン第1製造部長の山田は懸命に怒りの爆発を抑えていた。1997年7月 工場見学に迎え入れた中堅電子部品メーカーの生産担当者。「キヤノンさんはお金持ちですね。こんなに長いベルトコンベアはいらないのでは」「自走車による無人搬送は無駄なことを合理化している。これほど愚かなことはないですよ。」最新鋭の自動倉庫、ベルトコンベアライン、無人搬送システムなど、かなりの投資をした設備を、ことごとくにこきおろす。長浜キヤノンの主力は、米ヒューレット・パッカードなどに供給するレーザービームプリンターのOEM。世界市場は年間1,200万台前後。OEM分を含めれば、キヤノンは世界市場の6割強を占める最大手。レーザービームプリンターの低価格化は急速に進んでいた。製品が多様化する一方で、ライフサイクルはどんどん短くなっている。 セル生産方式の導入 屈辱の工場見学から2ヶ月後の97年9月、キヤノン社長の御手洗は大手電機メーカーの生産子会社を訪れた。長浜キヤノンの社長の武藤も同行。少人数のチームが複数の工程を一貫してこなし、一つの製品をつくり上げるセル生産方式。「目から鱗が落ちた。うちでも生産革新をやろう。まず長浜キヤノンではどうか」。熱心に工場を見て回った後、御手洗は周囲の役員や武藤にこう話しかけた。同年10月に周辺機器事業本部の中で生産革新推進委員会が発足、長浜キヤノンがモデル工場となった。まず「間締め」と呼ぶ運動から始めた。間締めは、長いベルトコンベアラインでの余計な動作、無人搬送機などによる部品移送といった生産現場での無駄をなくすことが目的。レーザービームプリンター組み立てラインの本体をセルに</div>
+      
+      </div>
+    </div>
+    <div class="card ch2" id="sec-8">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">生産革新の上からの仕掛け人</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">&#128214;</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">市川副事業本部長が仕掛け人。「できるだけ厳しく批判してくれ」と事前に頼んで屈辱の工場見学を演出。御手洗を現場に連れて行き「目から鱗」を体験させた。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="8">&#128266; この節を読む</button>
+        <button class="card-tts" data-readall="8" style="color:#1A6B3C;border-color:#b2d8be;">&#9654; ここから全部読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">改革にはトップを動かす「演出」が必要。市川の巧みな仕掛けがトップダウンの火付け役になった。</div>
+        <div class="detail-body">周辺機器事業本部の副事業本部長の市川である。 コスト削減の素地 市川は中堅電機メーカーの芝電気から中途でキヤノンに入社。 OEMビジネスでは出荷先から納入価格引き下げなどの圧力が常にかかってくる。ところが、生産量が増えてもキヤノンのコストは一向に下がらない。量産効果が表れない。調達部門は量に関係なく調達額を決めていた。長浜キャノンにより、設計変更や生産量の変化などに応じて調達額をかえられるようになり、調達コストの削減に成功。 取引先の中にフロッピーディスクの生産を手がける中堅電子部品メーカーがあった。プロッピーディスクの生産はコスト競争が特に激しく、キヤノングループは撤退していたが、この部品メーカーは事業を続けている。さっそく、相手先の工場を見せてくれるよう頼み込み、長浜キヤノン社長の武藤とともに現場を見学した。後に長浜キヤノンを訪れ、罵倒して帰ったのがこの会社である。セルの現場を見て「これはすごい」と感じた。 社長を生産革新に巻き込む 山田らが顔面蒼白になるほど激しい言葉をぶつけられたのには実は仕掛けがあった。事前に市川が相手側に「できるだけ厳しく批判してほしい」と頼み込んでいたのである。時機が熟したと判断した市川は、本部長・北村喬と一緒に、社長の御手洗と会った。北村は「生産革新の手法としてセル方式が有力です」と説明。「セル方式で成功している会社があるなら、自分を連れていけ」。御手洗は自らの目で見ないと完全には納得しない。97年9月、視察先の現場。「セル生産の意味は一目瞭然、すぐに悟ったよ」と御手洗は振り返る。 改革は子会社工場から ただ、「生産革新をいきなり全社で展開すると</div>
+      
+      </div>
+    </div>
+    <div class="card ch2" id="sec-9">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">「トップ」と「現場」——セル生産の本質</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">&#128214;</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">セル方式の真価は「柔軟性」。需要変動に即座に対応できる生産体制。97年から2000年でフリーキャッシュフローが225億円赤字→1338億円黒字に。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="9">&#128266; この節を読む</button>
+        <button class="card-tts" data-readall="9" style="color:#1A6B3C;border-color:#b2d8be;">&#9654; ここから全部読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">過剰投資・過剰生産からの脱却。キャッシュフロー経営が現場を変えた。</div>
+        <div class="detail-body">「目から鱗が落ちた」のは単なる可能性ではなく、全体最適へとつながる道筋が開けたことを悟ったから。 過剰投資、過剰生産からの脱却 御手洗にとっては、生産量の変動に合わせた作業が可能になるセル方式の柔軟性こそが大きな意味。ビジネス機会が訪れたら即座に製品をつくり、需要が落ちてきたらすぐさま生産を減らす。機敏で柔軟な多品種少量生産をしなければならない。ベルトコンベアラインのように少品種大量生産を前提にした仕組みでは、販売機会を失うばかりでなく、在庫を抱えるリスクが大きくなる。投資資金調達や在庫・仕掛品の負担が重くなってどんな大企業でも経営は苦しくなる。IT不況と呼ばれる2001年の電機・通信業界の不振も、基本は生産過剰、つくり過ぎによる在庫増が引き金になっている。右肩上がりの市場での成功者は、「過剰投資をしてもいつかは回収できる、在庫を抱えてもいつかははける、それより機会損失の方が怖い」と心のどこかで考えている。もう一つは、標準化、分業のメリットを信じる神話にがんじがらめにされていたこと。トヨタ方式は同社独特の企業文化と絡み合って外側から見えにくいため、フォーディズムの枠内での改善であるという理解の方が多いのかもしれない。これは誤り。トヨタ方式は、多品種少量生産をターゲットにしている。また、キヤノンのセル導入の初期に見られた「大きなものはセルではつくれない」という思い込みの影響もある。 キャッシュフロー経営が現場を変える キャッシュフローを重視するなら、資金を固定してしまう重厚長大の設備、在庫・仕掛品はすべて「悪」である。モデルチェンジの際の対応などが遅れる生産方式も「悪」である。過</div>
+      
+      </div>
+    </div>
+    <div class="card ch2" id="sec-10">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">ライバルは中国——人件費30分の1の脅威</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">&#128214;</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">中国の平均賃金は日本の30分の1。技術面での追い上げスピードは想像以上に速い。一方で中国工場への生産革新成果の移植も加速。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="10">&#128266; この節を読む</button>
+        <button class="card-tts" data-readall="10" style="color:#1A6B3C;border-color:#b2d8be;">&#9654; ここから全部読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">ブラックボックス化できない製品は中国に負ける。日本に残すべき産業の条件とは。</div>
+        <div class="detail-body">の動き、特に人件費の安さを武器にした中国での低コスト生産に対する危機感。しかし、中国の脅威は消えていない。長浜キヤノンにしても利益体質は強まったものの、従業員数は減り、売り上げも減っている。 中国への生産移転 キヤノングループの中国への生産移転はむしろ加速されている。複写機でも中級クラス以下の製品はほぼすべてを中国で生産する準備を開始した。中国江蘇省の蘇州に中国最大級の複写機工場を建設、2002年7月稼働を目指す。2004年時点では3,500人前後の従業員を雇用し、月産約20,000台で年間2,000億円を売り上げる計画。 破格の人件費 中国に生産を集約する第一の理由は、もちろん人件費コストの安さである。中国の平均賃金は年間約1,000ドルで、日本の約30分の1の水準。内陸部の女性が若いうちに沿岸部の工場で働き、数年たったら故郷に戻り結婚、そして別の若い女性がまた働きに出てくる。現場の作業をする女性は20歳代半ばで退職するケースが多い。中国現地工場での作業者の平均年齢はさほど上昇しない。したがって賃金上昇も緩やかな速度でしか進んでいない。キヤノンの生産部門でも人件費削減のために外部社員を増やしている。国内ではすでに13,000人がアウトソーシング。しかし、この程度では人件費の面で中国に太刀打ちできない。しかも、中国が技術面で追いついてくるスピードは想像以上に速い。作業者の習熟も早く、スキャナーを生産する珠海の工場では米粒ほどの部品を目にもとまらぬ早業で基板に載せる女性作業者がずらっと並んでいる。すべて手作業。日本製の自動マウンター（部品挿入装置）はいったん動き出せば、彼女らの手</div>
+      
+      </div>
+    </div>
+    <div class="card ch2" id="sec-11">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">キャノン式SCMへ——全体最適の追求</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">&#128214;</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">セル生産→SCM導入で受注から出荷まで3か月→1か月に短縮。製品コード約20万種類の統一プロジェクトに御手洗自らが乗り出した。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="11">&#128266; この節を読む</button>
+        <button class="card-tts" data-readall="11" style="color:#1A6B3C;border-color:#b2d8be;">&#9654; ここから全部読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">工場だけの改革余地を1とすれば他部門全体は300。SCMが改革の第2段階。</div>
+        <div class="detail-body">中国の低コストに対抗するには、工場だけでの改革では難しい。研究開発、設計、原材料・部品調達、物流、販売、マーケティングなどすべてのビジネスプロセスの部門と連動、連携して改革していけば、生き残りの道はあるかもしれない。「工場だけでの改革の余地を一とするなら、ほかの部門全体を合わせれば300の改革の余地があるはず。」その手法が米国発サプライチェーン・マネジメント(SCM)。部門間の仕事の流れにIT（情報技術）を使って一本筋を通し、全体を制御する。2001年10月、複写機の事業部門ではコンピュータのディスプレー上で米国や日本の販売会社が抱えている製品在庫の量を確認できるSCMシステムが稼動し始めた。日本のキヤノン販売や米国の販売会社が複写機の生産拠点へ、日々の販売実績と在庫情報を専用回線経由で送っている。従来は、工場は2ヶ月後に生産を始める月間生産計画をつくっていた。SCMを導入後は工場の担当者が日々の在庫量を検索しながら、1週間単位で生産計画をつくる仕組みに改めた。これにより、販売会社から注文を受けて出荷するまでのリードタイムは、従来の3ヶ月から1ヶ月に短縮した。 グローバル展開への布石 製品コードが世界各国の販社、製造子会社ごとにバラバラで統一されていなかった。製品コードは約20万種類にのぼる。関係会社の都合で追加や変更を加える製品コードと本社が採用するコードのすり合わせは難しい。99年4月、経営革新委員会傘下の専門委員会の一つ、グローバルロジスティックス革新専門委員会の最重要条件として製品コード統一のプロジェクトがスタート。しかし、現場の抵抗は思った以上に強かった。子会社は自社</div>
+      
+      </div>
+    </div>
+    <div class="card ch2" id="sec-12">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">ブラックボックスで稼ぐ</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">&#128214;</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">労働集約型産業は日本から消える。日本に残るのは独自技術でブラックボックス化した装置産業。SED・SOIウエハー・セル方式が日本製造業の答え。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="12">&#128266; この節を読む</button>
+        <button class="card-tts" data-readall="12" style="color:#1A6B3C;border-color:#b2d8be;">&#9654; ここから全部読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「装置産業はごく少数の人間で面倒を見ればいい。為替変動にも耐えやすい」——御手洗の日本製造業論。</div>
+        <div class="detail-body">など）労働集約型の産業は日本から減っていく。よほど付加価値が高い産業でない限り残れない」と見ている。 日本に残せるもの それでは日本に何が残るのか。御手洗の答えは「装置産業」。キヤノンの場合は複写機、プリンターの付属品であるトナー、インク、インクタンクなどがそれに当たる。「装置産業はごく少数の人間が交代で面倒を見ればいい。だから労務費の値上がりを稼働率で吸収できる。為替変動にも耐えやすい」。「既存装置を改造、限りなく単能機に近づける。量をつくるなら機械の数を増やすことで対応する」。ある作業だけをこなす小型の単能機をつくり、複数種類の単能機を並べて目的とする製品を生産する。製品が変われば、単能機の組み合わせを変える。独自技術に基づく高付加価値の製品、すなわちブラックボックスの中にある製品については、原則として中国など海外にも移転せず、国内で生産を続ける。 SOIへの期待 シリコンウエハーの新顔であるSOI（シリコン・オン・インシュレーター）。SOIを使ったウエハーは、通常のウエハー基板上に絶縁層となるシリコン酸化層をつくり、さらにその上に単結晶シリコンをのせる。SOIウエハーでつくった半導体チップは既存品に比べ、処理性能が3割高速化できる一方、シリコン基板への微弱な電流の漏れを防ぐので、消費電力は半分以下ですむ。キヤノンは、独自にSOIウエハーを開発した。2004年にもキヤノン製ウエハーを使って、東芝が超小型演算装置（MPU）や大規模集積回路（LSI）を製品化する計画。キヤノンが用意しているブラックボックスは、もう一つある。戦略商品の薄型ディスプレー、SED。製造装置などは、なる</div>
+      
+      </div>
+    </div>
+  </div>
+</div>
+<div class="chapter ch3" id="ch3">
+  <div class="chapter-header">
+    <span class="chapter-num" style="background:#1A6B3C;">第３章</span>
+    <div><div class="chapter-title">イノベーションへの再挑戦</div><div class="chapter-sub">開発革新・キーテク戦略・技術の全体最適（6節）</div></div>
+  </div>
+  <div class="cards">
+    <div class="card ch3" id="sec-13">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">技術を深く耕す——パソコン残党の意地</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">&#128214;</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">パソコン撤退で帰国した川端チームが新SOC「NADA」を開発しデジタル複写機に搭載。事業から撤退しても技術者と技術は捨てない。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="13">&#128266; この節を読む</button>
+        <button class="card-tts" data-readall="13" style="color:#1A6B3C;border-color:#b2d8be;">&#9654; ここから全部読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">失った事業から生まれた新技術。技術の使い回しと継続がキャノンの強みの源泉。</div>
+        <div class="detail-body">川端は、CT（コンピューターテクノロジー）プロジェクトのサブチームのリーダーという地位を与えられ、ファイアーパワーから戻った日本人スタッフのうち10人を部下に持った。川端が得意とする半導体に絡んだ分野では生産の話題が出るばかりで、回路設計の議論がほとんどなかった。米国での経験からすれば、キヤノンのような企業は回路設計に専念して、製造は専門メーカーに任せるのが常識。一つのチップに複数の半導体の機能を入れて回路をつくり込むというのはSOCの概念。このプロジェクトにはセンサー関連の回路を設計していた部隊も合流、回路設計の技術者が集結。川端は社内のさまざまな事業部に技術の売り込みをかけた。デジタル複写機を制御するコントローラをSOCでつくることが開発の目標となった。コントローラーの名称は「NADA」。Network Adaptive Architectureの略。 川端は開発を始める前に、まず複数事業部にまたがるタスクフォースを編成。2000年7月、キヤノンは「イメージランナーiR5000」「同6000」という複写機の新製品を発売した。多彩な機能を加えた「マルチファンクション」が売り物。この中にNADAが組みこまれている。 技術と技術者を無駄にしない キヤノンは、イメージランナーをシリーズ化、主力商品として高級機から普及機までの品揃えをしている最中。NADAをすべてのタイプに搭載していく。処理速度や信頼性の向上など性能面でのプラス効果があるうえ、同じ部品であるNADAがそのまま複数種類の製品で使い回しできるので、コスト削減にもつながる。事業から撤退しても技術は捨てない。とことん深く耕す</div>
+      
+      </div>
+    </div>
+    <div class="card ch3" id="sec-14">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">技術の棚卸し——継続と撤退の見極め</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">&#128214;</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">研究開発に3年・5年の期限を設ける「棚卸し」を導入。電子写真・バブルジェット・人工蛍石は数十年間継続。川端・松本は撤退で逆に元気を取り戻した。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="14">&#128266; この節を読む</button>
+        <button class="card-tts" data-readall="14" style="color:#1A6B3C;border-color:#b2d8be;">&#9654; ここから全部読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">執着と独善の分かれ目——継続すべきものと捨てるべきものを見極める眼力。</div>
+        <div class="detail-body">キヤノンの研究開発の特徴は、ねばりと継続にある。その代表例が1960年代に開発された電子写真技術。光に反応する感光体に電気を帯びさせ、トナーをその上にまくと感光体に投射された画像と同じ像ができる。このトナーをそのまま紙に定着すれば、コピーが完了する。米ゼロックスの特許をかいくぐって普通紙複写機をつくるためにキヤノンが開発。普通紙複写機だけでなく、その後、レーザービームプリンター、デジタルフルカラー複写機へと引き継がれ、今も生きている。インクジェットプリンターの独自方式であるバブルジェット方式の開発。「ハンダごてにたまたま触れた注射針。その先からインクがビュッと飛び出した。この偶然の発見からバブルジェットが誕生した」。遠藤が苦しんだのは「3つのション」。コゲイション（ヒーターの加熱などでインクがこげる）、パッシベーション（電極がいたむ）、キャピテーション（ヒーターがいたむ）の3つ。さまざまな工夫で3つのションを何とかクリアして商品化にこぎ着けた。1つのアイデアだけでは、バブルジェットはつくれなかった。技術の継続的な研究や細やかな工夫の積み重ねの中からバブルジェットは生まれた。 もう1つの例が人工蛍石。蛍石は、フッ化カルシウムの結晶で鉱石の一種。高温で熱すると光を放って砕け散るという不思議な性質を持っている。これをカメラのレンズに使うと、微妙な色のにじみなどを防ぐことができる。自然界では大きな結晶がほとんどないので、これを人工的につくったのが人工蛍石である。この人工蛍石が最近になって半導体製造の世界で脚光を浴びる。キヤノンが2001年末から生産を始める次世代半導体製造用のステッパー</div>
+      
+      </div>
+    </div>
+    <div class="card ch3" id="sec-15">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">実験室改革は整理整頓から</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">&#128214;</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">5S・共有化・機能美の3コンセプトで実験室を一新。設備予算60%削減。ドレスコードまで導入した発想が「技術者の聖域」に風穴を開けた。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="15">&#128266; この節を読む</button>
+        <button class="card-tts" data-readall="15" style="color:#1A6B3C;border-color:#b2d8be;">&#9654; ここから全部読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「生産現場に5Sがあるなら開発部門も」——当たり前の整理整頓が創造性を高めた。</div>
+        <div class="detail-body">机や席は個人に割り振られているのではなく、すべて共用。市川は、98年に発足した経営革新委員会の開発システム革新委員会で知的生産性向上分科会を担当。気が付いたのが研究所内、特に実験室の乱雑ぶり。「生産現場では5Sという標語があって整理整頓を心がけている。開発部門でも整理整頓した方が、効率がアップするのではないか」。99年3月の初め、まず大掃除。「今回はトップダウンで管理者が本気でやることを示す。そのためには、なぜやるのかを十分理解してもらったうえで、全員参加を徹底する」。 一番大切なのは“しつけ” 実験室改革全体のコンセプトとして野口が打ち出したのが、「5S」「共有化」「機能美」。共有化は、それまで一部は個人持ちにしていた工具、計測器などをすべて共用。テスト用の試験機も共有化。1台800万円から1,000万円かかるオシロスコーズのような高価な計測器も実験室1つで1台ぐらいあればよいようになった。作業スペースも共有化。個人検討エリアと、開発チームの人が一緒に集まれる共通検討エリアの2種類を設けた。共有化と同時に、不要なものを捨てて、生産現場の「間締め」に当たる省スペース化を進めた。機能美は「使いやすく、見た目もきれい」にすること。お金をかけて新しい棚や机、什器類を入れたのは機能美実現のため。野口がまず電気実験室で始めた実験室改革を市川は富士裾野リサーチパーク全体に広げた。 中間管理職が早期からチェック 設備予算が以前に比べ年間で60％以上削減できた。省スペース効果で今後、人員が多少増えてもスペースを増やさないですむようになった。試作機の共有化で試作数を減らせた効果も大きい。後の世代</div>
+      
+      </div>
+    </div>
+    <div class="card ch3" id="sec-16">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">3つの道具——KI・3次元CAD・品質工学</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">&#128214;</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">KI（技術ばらし会議）・3次元CAD・品質工学の組み合わせで開発力2倍。PIXUS開発では1年計画でKIを活用し騒音低減を実現。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="16">&#128266; この節を読む</button>
+        <button class="card-tts" data-readall="16" style="color:#1A6B3C;border-color:#b2d8be;">&#9654; ここから全部読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「わいわいがやがや」で早期に問題を洗い出し手戻りを減らす。マンネリ中間管理職が目覚めた。</div>
+        <div class="detail-body">、品質工学の3つの組み合わせで開発力は2倍になった」。 開発の初期段階から「わいわいがやがや」 まず第1のKI活動は、正式には「技術KI計画（Knowledge Intensive Staff Innovation Plan）」。日本能率協会コンサルティング（JMAC）が編み出した手法。例えば、開発の初期段階からチーム内の意志疎通をよくするために、「技術ばらし」と呼ぶ会議。技術ばらしというのは、開発しようとする新製品に必要な技術の内容、課題を細かくばらして分析すること。本田技研工業の役員同士のコミュニケーションを指して使われた「わいがや（わいわいがやがやの略）」。参加者全員にとって「見える計画」にして早め早めに問題を解決していく。まず技術ばらし会議で事前に課題をすべて洗い出した。その結果に基づいてプロジェクトの「作戦ストーリー」をまとめ、どの時点でどこまで進めるか、という日程も決めた。日程は全体計画に沿って個人のレベルまで1週間単位で細かく示し、誰がどの週に何をしなければいけないかをはっきりさせた。 2000年からスタートした1年計画の新製品プロジェクトでもKIを活用。この1年プロジェクトで開発したのが、2001年10月にキヤノンが発表したデジタルフォト事業の戦略商品 PIXUS（ピクサス）。新製品は、カメラダイレクトと呼ぶデジタルカメラとの直接結合の機能に加え、高速印字、高画質、低騒音などを売り物にしている。例えば、騒音低減に「特効薬」はない。材料の吟味、筐体の構造の検討など地道な努力を総合しないとだめ。KI方式で課題を細かく振り分けることで、最終的には低騒音化が実現。 「日</div>
+      
+      </div>
+    </div>
+    <div class="card ch3" id="sec-17">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">キーテクを共有し、使い回す</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">&#128214;</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">映像エンジン・CMOSセンサー・NADA——キーテクノロジーを複数製品で使い回す戦略。IXYデジタルのヒットは映像エンジンと「一円玉レンズ」が支えた。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="17">&#128266; この節を読む</button>
+        <button class="card-tts" data-readall="17" style="color:#1A6B3C;border-color:#b2d8be;">&#9654; ここから全部読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">スキャナーはキャノンが設計し台湾で図面を引き中国で生産する。キーテクだけ握れば主導権を持てる。</div>
+        <div class="detail-body">キヤノンの研究開発部門には、現場の技術者同士が協力して成果を上げる伝統がある。 まずインクを噴出するノズルの素材は光ファイバーの開発部隊に依頼して、直径100ミクロンのファイバーを中空に加工してもらって手に入れた。熱源の方も、別の開発部隊が当時取り組んでいた電卓の感熱紙印刷用の小型ヒーターが役立った。いろんな部門で共有できる基盤技術を開発し、そこへ研究者や技術者が自由にアクセスし、使い回す仕組みがつくられ始めた。共有、使い回しが可能な基盤技術を「要素技術」、要素技術を盛り込んだ基幹部品を「キーコンポーネント」。ここではカギとなる技術という意味で要素技術とキーコンポーネントをまとめて「キーテクノロジー」略してキーテクと表現。 デジタルカメラ逆転劇の裏側 2000年の国内デジタルカメラ市場（出荷ベース）でのシェアは、8.7パーセントで前年より4.1ポイントも上昇。順位は、富士写真フィルム、ソニー、オリンパス工業に続く4位。2001年も新製品の出荷が好調で、キヤノンは「おそらく2位ぐらいまで来ている」（御手洗）。好調の原因は「IXY（イクシ）デジタル」のヒットにある。イクシデジタルの新デザインを実現できた裏には「映像エンジン」というキーテクの存在がある。映像エンジンは、約13ミリ四方の半導体チップ。この中にデジタルカメラの信号処理に必要なほとんどの機能を盛り込んでいる。 92年に発売したのを最後に、電子スチルカメラの開発を止めた。丹羽は約200人いた電子スチルカメラ部隊のうち、60人ぐらいをビデオカメラや高速複写機の部門に回し、残った140人をデジタルカメラの開発に転換させた。 映像</div>
+      
+      </div>
+    </div>
+    <div class="card ch3" id="sec-18">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">技術の全体最適経営</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">&#128214;</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">3年間で研究開発・M&Aに1兆円投資する計画。SED・SOI・CMOSセンサーが次世代大型製品の候補。シリコンバレーにリサーチセンターを設立。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="18">&#128266; この節を読む</button>
+        <button class="card-tts" data-readall="18" style="color:#1A6B3C;border-color:#b2d8be;">&#9654; ここから全部読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「いくら画期的な開発成果があっても在庫となれば開発投資をした分はマイナス」——技術の全体最適。</div>
+        <div class="detail-body">として、その技術から派生した産業に入ってきた。常に自分の持っている技術を深めながら、さらに新しい技術を加えて、新しい産業分野に入っていき、多角化して、付加価値の高いものを求めてきた。技術をもとにした経営戦略だった」。 キャッシュを生み出す研究を コストの安い商品がつくれても売れずに在庫となるぐらいなら、つくらない方がよい。それと同じように、いくら画期的な開発成果があっても売れる商品を生み出せずに「在庫」となれば開発投資をした分はマイナス。研究開発人員、開発投資などの社内資源を徹底的に有効活用して、キャッシュフローを増大させる。技術の全体最適経営へ向かった動き。不採算分野からの撤退、研究開発への棚卸しの考え方の導入は、その第一弾。生産革新などに並んで開発革新も重要なテーマ。生産革新はセル方式への転換が象徴となり、わかりやすい形で進行し始めた。これに対して、開発革新はまだ手探りの段階。 組織改革に次ぐ組織改革 96年4月には本社直属の開発組織として従来の研究開発本部に商品開発本部を加えた。研究開発本部は、基礎的な研究を担当し、商品開発本部が、新規事業の種となるような技術の開発を受け持つ仕組み。さらに、カメラ事業本部の中の電子映像開発センター、映像事務機事業本部の中の映像事務機開発センターなど事業本部がそれぞれ抱える開発部隊は、既存製品の改良型などの開発に取り組む。これが99年7月に、がらっと変わった。研究開発本部と商品開発本部は解体され、テクノロジー統括本部、コアテクノロジー開発本部、プラットフォーム開発本部、ディスプレイ開発本部、インターネットビジネス開発本部、事業化推進本部の6</div>
+      
+      </div>
+    </div>
+  </div>
+</div>
+<div class="chapter ch4" id="ch4">
+  <div class="chapter-header">
+    <span class="chapter-num" style="background:#7B3200;">第４章</span>
+    <div><div class="chapter-title">企業の「根っこ」は変えない</div><div class="chapter-sub">終身雇用・実力主義・企業文化の継承（3節）</div></div>
+  </div>
+  <div class="cards">
+    <div class="card ch4" id="sec-19">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">終身雇用維持——御手洗は語る</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">&#128214;</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">「終身雇用による運命共同体意識が企業の競争力を引き上げる」——産業界で数少ない終身雇用維持の旗手。一方で年功序列は「人を腐らせる」と完全否定。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="19">&#128266; この節を読む</button>
+        <button class="card-tts" data-readall="19" style="color:#1A6B3C;border-color:#b2d8be;">&#9654; ここから全部読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">終身雇用と実力主義は矛盾しない。平等ではなく公平——これがキャノンの人事哲学の核心。</div>
+        <div class="detail-body">で、日本流の終身雇用の堅持を正面切って主張する。終身雇用による運命共同体意識が社員の団結力になり、企業の競争力を引き上げるとの信念があるから。その一方で、年功序列を排し、実力主義の徹底にこだわる。 終身雇用のメリット 「会社の実体は社員。社員以外に会社という実在物はない。会社の実力を突き詰めれば社員の実力の集積値。社員を鍛え、活性化する。社員同士が切磋琢磨して、運命共同体意識を持ちながら、活性化して同じ目的に向かって走る。それが、日本では終身雇用という形に集約されてきた。困難な経営環境のときほど運命共同体意識で団結した少数精鋭部隊の方が、報酬を最大の動機付けに集散離合する組織よりはるかに強い。キヤノンの競争力の源泉もまさにこの部分にある。」「終身雇用の長所は一人ひとりの社員が生涯をかけ、経営方針や企業風土を理解してくれること。おのずと、ブランドを守ろうとか、団結して危機に立ち向かおうといった愛社精神も生まれてくる。企業間競争は団体戦だから、この無形財産は大きい。日本の風土に合っているし、グローバル市場を生き抜くうえでの貴重なコア・コンピタンス（競争力の源泉）だと思っている。」 「経営にはインターナショナル（国際的）な部分とローカル（地域的）な部分がある。開発戦略、商品戦略、財務戦略は、全部インターナショナル、万国共通。そうした分野では国際的な手法を徹底する。これに対し、ローカルな部分は、ローカルであるが故に大切。例えば、マレーシアのイスラム教徒の礼拝のためのモスク。そういう文化とか、社会の属性とかがあるものを否定する必要はない。雇用とか人的なものは地域性があってよいし、そうある</div>
+      
+      </div>
+    </div>
+    <div class="card ch4" id="sec-20">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">企業文化の源流——初代社長の理想主義</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">&#128214;</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">産婦人科医から転身した創業者・御手洗毅が1967年に日本初の週休2日制を導入。「3分説」で利益を労使株主で公平分配。高能率・高賃金を両立。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="20">&#128266; この節を読む</button>
+        <button class="card-tts" data-readall="20" style="color:#1A6B3C;border-color:#b2d8be;">&#9654; ここから全部読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">「打倒ライカ」から始まったキャノンの遺伝子——人間尊重主義と実力主義の共存。</div>
+        <div class="detail-body">の3つを社是、自発、自治、自覚を3つの柱とする「3自の精神」を行動指針として、機会あるごとに強調。「社是の背後に一貫して流れるものは人間主義。とにかく人間が大事だということ。これは口でそう言っているだけはなく、結核の集団検診のほか、週休2日制を日本で最初に取り入れたり、あるいは持ち家制度を導入したりして、実際に実行している」。60年8月、キヤノンは低価格カメラ「キャノネット」の発売を予告。中級機で価格は19,800円。「キヤノンはダンピングで業界の秩序を乱している」などと大騒ぎ。この大騒ぎのおかげで「キャノネット」の評判は日本国中に知れ渡り、東京・日本橋の三越本店で発売当日、1時間半で売り切れになった。 右手にカメラ、左手に事務機 カメラにだけ頼る事業形態では将来に不安が残る。こう考えた御手洗毅は、カメラ以外の分野へ進出する方針を62年に決めた。会社創設30周年に当たる67年の正月、御手洗毅は年頭挨拶で、「右手にカメラ、左手に事務機。この両方を生かして年間売上高300億円を突破したい」。複写機への進出の裏にはもう一つの大きな狙い。「消耗品で稼げる事業」を取り込むこと。写真業界ではカメラ以上にフイルムの収益性が高かった。複写機はトナー（インク粉）、複写用紙など消耗品が大きな収益を生むビジネスで、これをキヤノン自らが手がければ、うまみが十分にある。68年に感光板の表面を絶縁フィルムで覆う独自方式の普通紙複写機の開発に成功。 70年代に入ってからのキヤノンは以前のような勢いを失っていた。まず多角化の先兵だった電卓でつまずいた。「キヤノンの電卓はすべて欠陥品」との風評が立った欠陥品騒動</div>
+      
+      </div>
+    </div>
+    <div class="card ch4" id="sec-21">
+      <div class="card-bar"></div>
+      <div class="card-head" data-action="toggle">
+        <div class="card-title">企業文化ルネサンス——人事・賃金制度の革新</div>
+        <button class="card-back" data-action="back-top" title="目次に戻る">&#128214;</button>
+        <span class="toggle-btn">＋</span>
+      </div>
+      <div class="card-summary">定昇を廃止し「範囲職務給（ミッションバンド）」制度を導入。管理職の年収格差を35歳で1.4倍→1.8倍に拡大。名匠制度・マイスター制度で現場の職人技を評価・継承。</div>
+      <div style="padding:4px 16px 10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="card-tts" data-readone="21">&#128266; この節を読む</button>
+        <button class="card-tts" data-readall="21" style="color:#1A6B3C;border-color:#b2d8be;">&#9654; ここから全部読む</button>
+      </div>
+      <div class="card-detail">
+        <div class="detail-summary">仕事の成果と役割で報酬を決める。古くて新しい実力主義の再構築。</div>
+        <div class="detail-body">――人事・賃金制度の革新 御手洗が米国から戻ってきた頃には、実力主義の部分に深部でひびが入り始めていた。職務遂行能力を測る際に「経験年数」を中心とした年齢が大きく影響するようになっていた。事業部制の弊害で、自分の部や課の事情だけに合わせた人材の評価が目立ち始めるなど、基準もばらつき始めた。2000年2月、御手洗は人事本部副部長・山崎に「賃金制度を見直せ。できれば今年の4月から導入してほしい」と厳命した。狙いは、大きく分けて3つ。まず毎年自動的に賃金が上がる「定昇」の廃止、2番目は「公正・公平」の追求、3番目が「グローバルに通用する仕組み」の導入。山崎は、御手洗に事情を話して、導入目標を翌2001年の4月にずらしてもらった。それでも時間はあまりない。4月、人事本部内にJKプロジェクトチームが結成。JKは「人事」と「革新」の頭文字。 職務給制度への転換 時代が変わっても守っていくべきキヤノンの伝統である実力主義と人間尊重、この両方を生かし続けられる測定基準を探した。行き着いた先が「人」を基準とする職能資格制度から、「仕事」を基準とする職務給制度への転換。職務給は、米国では一般的で、報酬は、経理部長ならいくら、人事課長ならいくらといった具合に職務でほぼ自動的に決まる。職務内容をきっちり決めてしまうと、会社の業態が変化したときに対応できない問題もある。悩んだ山崎たちが採用したのが、「範囲職務給」という概念。範囲職務給では、まず職務を「役割（英語ではミッション）」と言い換える。固定的な記述で終わる米国流の職務だけでなく、職責という流動的な要素を組み合わせる。例えば、人事課長の場合「採用」</div>
+      
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  AI構造化本棚 &#x7c;
+  <a href="https://www.amazon.co.jp/s?k=%E3%83%88%E3%83%A8%E3%82%BF%E7%94%9F%E7%94%A3%E6%96%B9%E5%BC%8F+%E5%A4%A7%E9%87%8E%E8%80%90%E4%B8%80" target="_blank">Amazonで探す &#8594;</a>
+</div>
+
+<div class="tts-bar" id="ttsBar">
+  <button class="tts-btn tts-play" id="ttsPlayBtn">&#9654;</button>
+  <button class="tts-btn tts-stop-btn" id="ttsStopBtn">&#9632;</button>
+  <div class="tts-title" id="ttsTitle">—</div>
+  <div class="tts-progress"><div class="tts-progress-fill" id="ttsProgress"></div></div>
+  <select class="tts-speed" id="ttsSpeed">
+    <option value="0.8">遅い</option>
+    <option value="1.0" selected>普通</option>
+    <option value="1.3">やや速い</option>
+    <option value="1.6">速い</option>
+    <option value="2.0">2倍速</option>
+  </select>
+  <button class="tts-btn tts-stop-btn" id="ttsPrevBtn" style="font-size:14px;">&#9664;</button>
+  <button class="tts-btn tts-stop-btn" id="ttsNextBtn" style="font-size:14px;">&#9654;&#9654;</button>
+</div>
+
+<script>
+var synth=window.speechSynthesis,queue=[],qIdx=0,isPaused=false;
+var ttsVoice=null;
+function loadVoices(){var voices=synth.getVoices();ttsVoice=voices.find(function(v){return v.lang==='ja-JP';})||voices.find(function(v){return v.lang.startsWith('ja');})||voices[0]||null;}
+loadVoices();
+if(speechSynthesis.onvoiceschanged!==undefined){speechSynthesis.onvoiceschanged=loadVoices;}
+function openIndex(){document.getElementById('indexPanel').classList.add('open');document.getElementById('indexOverlay').classList.add('show');document.getElementById('indexToggle').textContent='✕';}
+function closeIndex(){document.getElementById('indexPanel').classList.remove('open');document.getElementById('indexOverlay').classList.remove('show');document.getElementById('indexToggle').textContent='INDEX';}
+document.getElementById('indexToggle').addEventListener('pointerup',function(e){document.getElementById('indexPanel').classList.contains('open')?closeIndex():openIndex();});
+document.getElementById('indexClose').addEventListener('pointerup',function(e){closeIndex();});
+document.getElementById('indexOverlay').addEventListener('pointerup',function(e){closeIndex();});
+document.getElementById('navIndexBtn').addEventListener('pointerup',function(e){e.preventDefault();openIndex();});
+// タブ切替：イベント委譲（Android Chrome display:none内でも確実）
+document.addEventListener('click', function(e) {
+  var tab = e.target.closest('.index-tab');
+  if (tab) {
+    e.preventDefault();
+    var t = tab.getAttribute('data-tab');
+    if (!t) return;
+    document.querySelectorAll('.index-tab').forEach(function(x){ x.classList.remove('active'); });
+    document.querySelectorAll('.index-ch-panel').forEach(function(x){ x.classList.remove('active'); });
+    tab.classList.add('active');
+    var panel = document.getElementById('idx-panel-' + t);
+    if (panel) panel.classList.add('active');
+  }
+}, false);
+// イベント委譲でINDEXジャンプ（display:none内でも確実）
+document.addEventListener('pointerup', function(e) {
+  var a = e.target.closest('[data-close-index]');
+  if (a) {
+    var href = a.getAttribute('href');
+    closeIndex();
+    setTimeout(function() {
+      var el = document.querySelector(href);
+      if (el) {
+        var top = el.getBoundingClientRect().top + window.pageYOffset - 60;
+        window.scrollTo({ top: top, behavior: 'smooth' });
+      }
+    }, 350);
+  }
+  var backBtn = e.target.closest('[data-action="back-top"]');
+  if (backBtn) {
+    openIndex();
+    var card = backBtn.closest('.card');
+    if (card) {
+      // アクティブ節に対応するタブを自動選択
+      var cardClass = Array.from(card.classList).find(function(c){ return c.startsWith('ch'); });
+      var chMap = {'ch0':1,'ch1':2,'ch2':3,'ch3':4,'ch4':5,'ch5':6,'ch_app':7,'ch0_ato':8};
+      var tabNum = chMap[cardClass];
+      if (tabNum) {
+        document.querySelectorAll('.index-tab').forEach(function(t){ t.classList.remove('active'); });
+        document.querySelectorAll('.index-ch-panel').forEach(function(p){ p.classList.remove('active'); });
+        var tab = document.querySelector('[data-tab="'+tabNum+'"]');
+        var panel = document.getElementById('idx-panel-'+tabNum);
+        if (tab) tab.classList.add('active');
+        if (panel) panel.classList.add('active');
+      }
+      // 現在の節リンクをハイライト
+      var secId = card.id;
+      setTimeout(function(){
+        var link = document.querySelector('.index-list a[href="#'+secId+'"]');
+        if (link) {
+          link.classList.add('active');
+          link.scrollIntoView({ block:'center' });
+        }
+      }, 100);
+    }
+  }
+}, false);
+window.addEventListener('scroll',function(){
+  var current='';
+  document.querySelectorAll('.card[id^="sec-"]').forEach(function(c){
+    if(c.getBoundingClientRect().top<window.innerHeight*0.45)current=c.id;
+  });
+  document.querySelectorAll('.index-list a').forEach(function(a){
+    a.classList.toggle('active',a.getAttribute('href')==='#'+current);
+  });
+});
+document.querySelectorAll('[data-action="toggle"]').forEach(function(head){
+  head.addEventListener('pointerup',function(e){
+    var card=this.closest('.card');if(!card)return;
+    var isOpen=card.classList.contains('open');
+    card.classList.toggle('open');
+    var btn=card.querySelector('.toggle-btn');if(btn)btn.textContent=isOpen?'＋':'－';
+  });
+});
+function getCardData(card){
+  var title=(card.querySelector('.card-title')||{}).textContent||'';
+  var summary=(card.querySelector('.card-summary')||{}).textContent||'';
+  var body=(card.querySelector('.detail-body')||{}).textContent||'';
+  return{title:title.trim(),text:title.trim()+'。'+summary.trim()+'。'+body.trim(),el:card};
+}
+function readOne(idx){var c=document.getElementById('sec-'+idx);if(!c)return;queue=[getCardData(c)];qIdx=0;startQueue();}
+function readAllFrom(idx){
+  queue=[];
+  document.querySelectorAll('.card[id^="sec-"]').forEach(function(c){
+    var i=parseInt(c.id.replace('sec-',''));if(i>=idx)queue.push(getCardData(c));
+  });
+  queue.sort(function(a,b){return parseInt(a.el.id.replace('sec-',''))-parseInt(b.el.id.replace('sec-',''));});
+  qIdx=0;startQueue();
+}
+function startQueue(){synth.cancel();isPaused=false;document.getElementById('ttsBar').classList.add('show');if(!ttsVoice)loadVoices();setTimeout(function(){if(!ttsVoice)loadVoices();playItem();},200);}
+function playItem(){
+  if(qIdx>=queue.length){ttsStop();return;}
+  var item=queue[qIdx];
+  document.querySelectorAll('.card.speaking').forEach(function(c){c.classList.remove('speaking');});
+  item.el.classList.add('speaking');
+  item.el.scrollIntoView({behavior:'smooth',block:'center'});
+  if(!item.el.classList.contains('open')){item.el.classList.add('open');var btn=item.el.querySelector('.toggle-btn');if(btn)btn.textContent='－';}
+  document.getElementById('ttsTitle').textContent='('+(qIdx+1)+'/'+queue.length+') '+item.title;
+  document.getElementById('ttsProgress').style.width=(qIdx/queue.length*100)+'%';
+  document.getElementById('ttsPlayBtn').innerHTML='&#9646;&#9646;';
+  var u=new SpeechSynthesisUtterance(item.text);
+  if(ttsVoice){u.voice=ttsVoice;u.lang=ttsVoice.lang;}else{u.lang='ja-JP';}
+  u.rate=parseFloat(document.getElementById('ttsSpeed').value);u.volume=1;
+  u.onend=function(){if(!isPaused){qIdx++;playItem();}};
+  u.onerror=function(){qIdx++;playItem();};
+  synth.speak(u);
+}
+function ttsToggle(){if(synth.speaking&&!synth.paused){synth.pause();isPaused=true;document.getElementById('ttsPlayBtn').innerHTML='&#9654;';}else if(synth.paused){synth.resume();isPaused=false;document.getElementById('ttsPlayBtn').innerHTML='&#9646;&#9646;';}else if(queue.length>0){playItem();}}
+function ttsStop(){synth.cancel();isPaused=false;queue=[];document.querySelectorAll('.card.speaking').forEach(function(c){c.classList.remove('speaking');});document.getElementById('ttsBar').classList.remove('show');document.getElementById('ttsProgress').style.width='0%';}
+function ttsNext(){synth.cancel();isPaused=false;qIdx=Math.min(qIdx+1,queue.length-1);playItem();}
+function ttsPrev(){synth.cancel();isPaused=false;qIdx=Math.max(qIdx-1,0);playItem();}
+document.getElementById('ttsPlayBtn').addEventListener('pointerup',function(e){ttsToggle();});
+document.getElementById('ttsStopBtn').addEventListener('pointerup',function(e){ttsStop();});
+document.getElementById('ttsNextBtn').addEventListener('pointerup',function(e){ttsNext();});
+document.getElementById('ttsPrevBtn').addEventListener('pointerup',function(e){ttsPrev();});
+document.getElementById('ttsSpeed').addEventListener('change',function(){if(synth.speaking){var i=qIdx;synth.cancel();isPaused=false;qIdx=i;setTimeout(playItem,80);}});
+document.querySelectorAll('[data-readone]').forEach(function(btn){btn.addEventListener('pointerup',function(e){e.stopPropagation();readOne(parseInt(this.getAttribute('data-readone')));});});
+document.querySelectorAll('[data-readall]').forEach(function(btn){btn.addEventListener('pointerup',function(e){e.stopPropagation();readAllFrom(parseInt(this.getAttribute('data-readall')));});});
+</script>
+</body>
+</html>

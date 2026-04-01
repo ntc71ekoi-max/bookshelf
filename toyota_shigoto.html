@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v-chrome-fix-2026-0401-p10 -->
+<!-- v-chrome-fix-2026-0401-p10b -->
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -94,11 +94,11 @@ body{font-family:'Arial','Hiragino Sans','Yu Gothic',sans-serif;
 .index-overlay.show{display:block;}
 .index-num{font-size:10px;color:#aaa;margin-right:5px;}
 /* 読み上げバー */
-.tts-bar{display:flex;position:fixed;bottom:-120px;left:0;right:0;background:white;
+.tts-bar{display:flex;position:fixed;pointer-events:none;bottom:-120px;left:0;right:0;background:white;
   border-top:2px solid var(--red);padding:8px 16px;
   flex-wrap:wrap;align-items:center;gap:10px;z-index:200;
   box-shadow:0 -3px 16px rgba(0,0,0,.12);transition:bottom .3s ease;}
-.tts-bar.show{bottom:0;}
+.tts-bar.show{bottom:0;pointer-events:auto;}
 .tts-title{font-size:12px;font-weight:bold;color:var(--red);flex:1;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
 .tts-btn{border:none;border-radius:50%;width:42px;height:42px;

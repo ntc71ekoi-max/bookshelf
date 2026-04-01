@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v-chrome-fix-2026-0331 -->
+<!-- v-chrome-fix-2026-0401-p10 -->
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -29,7 +29,7 @@ body{font-family:'Arial','Hiragino Sans','Yu Gothic',sans-serif;
   position:sticky;top:0;z-index:100;align-items:center;}
 .nav a{font-size:13px;padding:5px 12px;border-radius:20px;text-decoration:none;
   border:1px solid var(--border);color:var(--sub);
-  -webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+  -webkit-tap-highlight-color:transparent;touch-action:auto;}
 .nav a:hover,.nav a:active{background:var(--red);color:white;border-color:var(--red);}
 .nav-index-btn{margin-left:auto;background:var(--red);color:white!important;
   border-color:var(--red)!important;font-weight:bold;}
@@ -46,14 +46,14 @@ body{font-family:'Arial','Hiragino Sans','Yu Gothic',sans-serif;
 .card-bar{height:3px;}
 .card-head{padding:14px 16px 12px;display:flex;justify-content:space-between;
   align-items:flex-start;gap:8px;background:white;
-  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;touch-action:auto;
   user-select:none;-webkit-user-select:none;cursor:pointer;}
 .card-title{font-size:14px;font-weight:bold;line-height:1.5;flex:1;}
 .toggle-btn{font-size:20px;color:var(--sub);flex-shrink:0;min-width:28px;text-align:center;}
 .card-summary{font-size:13px;color:var(--sub);line-height:1.65;padding:0 16px 10px;}
 .card-tts{font-size:13px;color:var(--red2);background:none;
   border:1px solid var(--border);border-radius:6px;padding:8px 12px;min-height:40px;
-  -webkit-tap-highlight-color:transparent;touch-action:manipulation;cursor:pointer;}
+  -webkit-tap-highlight-color:transparent;touch-action:auto;cursor:pointer;}
 .card-detail{display:none;}
 .card.open .card-detail{display:block;}
 .detail-summary{font-size:13px;font-weight:500;padding:10px 16px;
@@ -76,11 +76,11 @@ body{font-family:'Arial','Hiragino Sans','Yu Gothic',sans-serif;
   background:var(--red);color:white;border:none;border-radius:6px 0 0 6px;
   padding:14px 8px;cursor:pointer;z-index:150;font-size:13px;min-height:80px;
   writing-mode:vertical-rl;letter-spacing:2px;
-  -webkit-tap-highlight-color:transparent;touch-action:manipulation;}
-.index-panel{display:none;position:fixed;right:0;top:0;
+  -webkit-tap-highlight-color:transparent;touch-action:auto;}
+.index-panel{display:none;pointer-events:none;position:fixed;right:0;top:0;
   width:min(300px,92vw);height:100%;background:white;
   border-left:2px solid var(--red);z-index:140;flex-direction:column;}
-.index-panel.open{display:flex;}
+.index-panel.open{display:flex;pointer-events:auto;}
 .index-panel-scroll{flex:1;overflow-y:scroll;-webkit-overflow-scrolling:touch;}
 .index-head{background:var(--red);color:white;padding:12px 16px;
   display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
@@ -88,7 +88,7 @@ body{font-family:'Arial','Hiragino Sans','Yu Gothic',sans-serif;
 .index-list{list-style:none;padding:0;margin:0;}
 .index-list li a{display:block;padding:8px 16px;font-size:13px;color:#333;
   text-decoration:none;border-bottom:1px solid #F0F4F8;line-height:1.4;
-  -webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+  -webkit-tap-highlight-color:transparent;touch-action:auto;}
 .index-ch-label{padding:7px 14px;font-size:11px;font-weight:bold;letter-spacing:1px;color:white;}
 .index-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:139;}
 .index-overlay.show{display:block;}
@@ -103,7 +103,7 @@ body{font-family:'Arial','Hiragino Sans','Yu Gothic',sans-serif;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
 .tts-btn{border:none;border-radius:50%;width:42px;height:42px;
   display:flex;align-items:center;justify-content:center;font-size:18px;
-  cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+  cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;touch-action:auto;}
 .tts-play{background:var(--red);color:white;}
 .tts-stop-btn{background:#eee;color:#555;}
 .tts-speed{font-size:12px;border:1px solid var(--border);border-radius:4px;padding:4px 8px;background:white;}

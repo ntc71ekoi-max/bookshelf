@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>「モノづくり」究極の知恵 トヨタ式生産力 | Claude本棚</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #21262d;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --accent: #f0883e;
+  --accent2: #d29922;
+  --part-color: #bc8cff;
+  --chapter-color: #79c0ff;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Helvetica Neue', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.7;
+}
+#app { display: flex; height: 100vh; overflow: hidden; }
+#sidebar {
+  width: 300px; min-width: 300px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+#main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+#header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 24px;
+  flex-shrink: 0;
+}
+#header h1 { font-size: 15px; font-weight: 700; color: var(--accent); line-height: 1.4; }
+#header .subtitle { font-size: 12px; color: var(--text2); margin-top: 2px; }
+#header .meta { font-size: 11px; color: var(--text2); margin-top: 3px; }
+#top-nav {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 24px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+.top-nav-btn {
+  padding: 5px 14px; border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent; color: var(--text2);
+  font-size: 12px; cursor: pointer; font-family: inherit;
+  transition: all 0.15s; white-space: nowrap; text-decoration: none;
+  display: inline-block;
+}
+.top-nav-btn:hover { background: var(--surface); color: var(--text); border-color: var(--accent); }
+.top-nav-btn.active { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 600; }
+#progress-area { margin-left: auto; font-size: 11px; color: var(--text2); white-space: nowrap; }
+#search-bar { padding: 10px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+#search-input {
+  width: 100%; background: var(--bg);
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: 7px 10px; color: var(--text); font-size: 13px;
+  font-family: inherit; outline: none;
+}
+#search-input:focus { border-color: var(--accent); }
+#nav-scroll { flex: 1; overflow-y: auto; padding: 8px 0; }
+#nav-scroll::-webkit-scrollbar { width: 4px; }
+#nav-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.nav-chapter {
+  padding: 8px 16px 4px; font-size: 10px; font-weight: 700;
+  color: var(--chapter-color); border-top: 1px solid var(--border); margin-top: 4px;
+}
+.nav-chapter:first-child { border-top: none; margin-top: 0; }
+.nav-item {
+  padding: 5px 16px; font-size: 12px; color: var(--text2);
+  cursor: pointer; transition: all 0.1s; border-left: 2px solid transparent;
+}
+.nav-item:hover { background: var(--surface2); color: var(--text); border-left-color: var(--accent2); }
+.nav-item.active { background: var(--surface2); color: var(--accent); border-left-color: var(--accent); }
+#index-panel-scroll { flex: 1; overflow-y: auto; padding: 24px; }
+#index-panel-scroll::-webkit-scrollbar { width: 6px; }
+#index-panel-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+.part-header {
+  margin: 28px 0 8px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, rgba(188,140,255,0.12), rgba(88,166,255,0.06));
+  border-left: 4px solid var(--part-color);
+  border-radius: 0 8px 8px 0;
+  font-size: 14px; font-weight: 700; color: var(--part-color);
+}
+.part-header:first-child { margin-top: 0; }
+.chapter-header {
+  margin: 18px 0 6px;
+  padding: 9px 16px;
+  background: rgba(121,192,255,0.08);
+  border-left: 3px solid var(--chapter-color);
+  border-radius: 0 6px 6px 0;
+  font-size: 13px; font-weight: 600; color: var(--chapter-color);
+}
+.section {
+  margin-bottom: 5px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.section:hover { border-color: var(--accent2); }
+.section.open { border-color: var(--accent); }
+.section-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  background: var(--surface);
+  user-select: none;
+  transition: background 0.15s;
+}
+.section-header:hover { background: var(--surface2); }
+.sec-num { font-size: 10px; color: var(--text2); min-width: 28px; flex-shrink: 0; }
+.sec-title { flex: 1; font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.4; }
+.toggle-icon { font-size: 10px; color: var(--text2); transition: transform 0.2s; flex-shrink: 0; }
+.section.open .toggle-icon { transform: rotate(180deg); }
+.detail-body { display: none; padding: 14px 20px; background: var(--bg); border-top: 1px solid var(--border); }
+.section.open .detail-body { display: block; }
+.detail-body p { margin-bottom: 10px; font-size: 14px; color: #cdd9e5; line-height: 1.85; text-align: justify; }
+.detail-body p:last-child { margin-bottom: 0; }
+#reading-view { display: none; flex: 1; overflow-y: auto; padding: 40px; }
+#reading-view.active { display: block; }
+#reading-view::-webkit-scrollbar { width: 6px; }
+#reading-view::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+.reading-inner { max-width: 780px; margin: 0 auto; }
+.reading-part {
+  margin: 36px 0 10px;
+  padding: 12px 22px;
+  background: linear-gradient(135deg, rgba(188,140,255,0.15), transparent);
+  border-left: 4px solid var(--part-color);
+  font-size: 15px; font-weight: 700; color: var(--part-color); border-radius: 0 8px 8px 0;
+}
+.reading-part:first-child { margin-top: 0; }
+.reading-chapter {
+  margin: 20px 0 8px;
+  padding: 9px 18px;
+  border-left: 3px solid var(--chapter-color);
+  font-size: 14px; font-weight: 600; color: var(--chapter-color);
+}
+.reading-section {
+  margin-bottom: 20px; padding: 16px 20px;
+  background: var(--surface); border-radius: 8px; border: 1px solid var(--border);
+}
+.reading-section h3 {
+  font-size: 14px; font-weight: 700; color: var(--accent);
+  margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+}
+.reading-section h3 .rnum { font-size: 11px; color: var(--text2); font-weight: 400; }
+.reading-section p { font-size: 14px; color: #cdd9e5; line-height: 1.85; margin-bottom: 8px; text-align: justify; }
+.reading-section p:last-child { margin-bottom: 0; }
+#splash { text-align: center; padding: 60px 24px; }
+#splash h2 { font-size: 22px; color: var(--accent); margin-bottom: 8px; }
+#splash .sp-sub { color: var(--text2); font-size: 14px; margin-bottom: 32px; }
+#splash .stats { display: flex; justify-content: center; gap: 40px; margin-bottom: 32px; }
+#splash .stat .num { font-size: 36px; font-weight: 800; color: var(--accent2); }
+#splash .stat .lbl { font-size: 12px; color: var(--text2); margin-top: 2px; }
+#splash .start-btn {
+  background: var(--accent); color: #000; border: none;
+  padding: 14px 44px; border-radius: 8px; font-size: 15px; font-weight: 700;
+  cursor: pointer; font-family: inherit; transition: opacity 0.2s;
+}
+#splash .start-btn:hover { opacity: 0.85; }
+#menu-toggle {
+  display: none; background: transparent; border: none;
+  color: var(--text); font-size: 20px; cursor: pointer; padding: 4px 8px;
+  vertical-align: middle; margin-right: 8px;
+}
+.hidden { display: none !important; }
+@media (max-width: 768px) {
+  #sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+    transform: translateX(-100%); transition: transform 0.25s ease; width: 280px;
+  }
+  #sidebar.open { transform: translateX(0); }
+  #menu-toggle { display: inline-block; }
+  #index-panel-scroll { padding: 14px; }
+  #top-nav { padding: 8px 14px; }
+  #header { padding: 11px 14px; }
+  #reading-view { padding: 16px; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="sidebar">
+  <div id="search-bar">
+    <input id="search-input" type="text" placeholder="🔍 節タイトルを検索..." oninput="filterNav(this.value)">
+  </div>
+  <div id="nav-scroll">
+<div class="nav-chapter">第１章　「日本のモノづくりが危ない」は本当か</div>
+<div class="nav-item" onclick="goSec(3)">設備依存がモノづくりの足を引っ張っている</div>
+<div class="nav-item" onclick="goSec(4)">今日のモノづくりに設備では答えが出ない</div>
+<div class="nav-item" onclick="goSec(5)">人中心のモノづくりへの転換を</div>
+<div class="nav-item" onclick="goSec(6)">モノづくりはEMSに任せればいいか</div>
+<div class="nav-item" onclick="goSec(7)">変化に対応できないからモノづくりのリスクが高くなる</div>
+<div class="nav-item" onclick="goSec(8)">中国のモノづくりは安いと錯覚していないか</div>
+<div class="nav-item" onclick="goSec(9)">注文は決して急にはなくならない</div>
+<div class="nav-item" onclick="goSec(10)">現場を見なければ、市場動向も生産力もわからない</div>
+<div class="nav-item" onclick="goSec(11)">「売りに結びついたモノだけをつくる」という決断</div>
+<div class="nav-item" onclick="goSec(12)">口先だけの「人を大事に」</div>
+<div class="nav-item" onclick="goSec(13)">トップの現場への関心度合いが生産力を左右する</div>
+<div class="nav-item" onclick="goSec(14)">現場を知らない人にはわからないことがある</div>
+<div class="nav-item" onclick="goSec(15)">下請けからビジネスパートナーへ</div>
+<div class="nav-item" onclick="goSec(16)">つくる力がブランドになる</div>
+<div class="nav-item" onclick="goSec(17)">中小企業にはつくる力をつける条件がいくつも備わっている</div>
+<div class="nav-chapter">第２章　右肩下がりの経済時代に生き残る企業の条件</div>
+<div class="nav-item" onclick="goSec(19)">ニーズはあるが、どれだけニーズに応えられるか</div>
+<div class="nav-item" onclick="goSec(20)">目的のない仕事から、お客さまを意識した仕事へ</div>
+<div class="nav-item" onclick="goSec(21)">お客さまを中心とした生産システムを</div>
+<div class="nav-item" onclick="goSec(22)">「原価＋利益」は通用しない</div>
+<div class="nav-item" onclick="goSec(23)">「一物一価」に負けないモノづくりを</div>
+<div class="nav-item" onclick="goSec(24)">原価は下げるためにある</div>
+<div class="nav-item" onclick="goSec(25)">お客さま満足度を向上させる三つの条件</div>
+<div class="nav-item" onclick="goSec(26)">品質・品格への要求プラス買いやすい価格</div>
+<div class="nav-item" onclick="goSec(27)">つくりすぎを許すシステムでは省エネは実現できない</div>
+<div class="nav-item" onclick="goSec(28)">コンパクトな設備と最小エネルギー</div>
+<div class="nav-item" onclick="goSec(29)">環境にやさしいモノづくりが求められている</div>
+<div class="nav-item" onclick="goSec(30)">トヨタ生産方式は発展途上である</div>
+<div class="nav-item" onclick="goSec(31)">知恵を出しに行く環境を</div>
+<div class="nav-item" onclick="goSec(32)">机上の生産技術から現場の知恵活用へ</div>
+<div class="nav-chapter">第３章　見込み生産はムダを生産する</div>
+<div class="nav-item" onclick="goSec(34)">売れるモノをよりよい品質でより安く素早くつくる</div>
+<div class="nav-item" onclick="goSec(35)">ジャスト・インタイムの原則は、売れないモノはつくらない</div>
+<div class="nav-item" onclick="goSec(36)">タクトタイムは必要数で決まる</div>
+<div class="nav-item" onclick="goSec(37)">かんばんには厳格なルールがある</div>
+<div class="nav-item" onclick="goSec(38)">自働化の意味とねらい</div>
+<div class="nav-item" onclick="goSec(39)">品質は工程でつくり込む</div>
+<div class="nav-item" onclick="goSec(40)">標準のないところに改善はない</div>
+<div class="nav-item" onclick="goSec(41)">ものを平均で見るな、バラツキにこそ意味がある</div>
+<div class="nav-item" onclick="goSec(42)">生産量の増減に柔軟に対応する少人化</div>
+<div class="nav-item" onclick="goSec(43)">ムラがあるからムリをしてムダが発生する</div>
+<div class="nav-item" onclick="goSec(44)">多すぎる情報はつくりすぎを招く</div>
+<div class="nav-item" onclick="goSec(45)">コンピュータの仕事と人の仕事</div>
+<div class="nav-item" onclick="goSec(46)">もうけるITになっているか</div>
+<div class="nav-chapter">第４章　リコーユニテクノ株式会社の挑戦</div>
+<div class="nav-item" onclick="goSec(49)">育てた会社に主力商品の座を奪われる</div>
+<div class="nav-item" onclick="goSec(50)">「理想の工場」をイラストに描く</div>
+<div class="nav-item" onclick="goSec(51)">５Sにはトップダウンが欠かせない</div>
+<div class="nav-item" onclick="goSec(52)">あいさつはするが、あいさつをしろとは言わない</div>
+<div class="nav-item" onclick="goSec(53)">生産ラインの仕事のしやすさを第一に</div>
+<div class="nav-item" onclick="goSec(54)">大切な人と人の心の通いあい</div>
+<div class="nav-chapter">第５章　ユニテクノ方式の展開</div>
+<div class="nav-item" onclick="goSec(56)">守りから攻めに転じる</div>
+<div class="nav-item" onclick="goSec(57)">自動化ラインからの決別</div>
+<div class="nav-item" onclick="goSec(58)">スターウォーズライン誕生</div>
+<div class="nav-item" onclick="goSec(59)">品質は人で決まる</div>
+<div class="nav-item" onclick="goSec(60)">工場は最高のショールーム</div>
+<div class="nav-item" onclick="goSec(61)">いつも一歩先に進んでいたい</div>
+<div class="nav-item" onclick="goSec(62)">工場を見て、何を買うかを決める時代</div>
+<div class="nav-item" onclick="goSec(63)">注目を浴びる省エネ生産システム</div>
+<div class="nav-item" onclick="goSec(64)">生産方式の徹底が新たなビジネスを生む</div>
+<div class="nav-item" onclick="goSec(65)">協力会社を巻き込む第２の生産改革へ</div>
+<div class="nav-chapter">第６章　企業を救うトヨタ式モノづくりの実行</div>
+<div class="nav-item" onclick="goSec(68)">トヨタ生産方式は中小企業が使うと非常によい方式</div>
+<div class="nav-item" onclick="goSec(69)">中小企業は有利な条件をいくつも持っている</div>
+<div class="nav-item" onclick="goSec(70)">過去を否定せず、手法だけを持ち込まず、他人任せにするな</div>
+<div class="nav-item" onclick="goSec(71)">生産改革における「守・破・離」のレベル</div>
+<div class="nav-item" onclick="goSec(72)">専任でなければものの見方・考え方は変えられない</div>
+<div class="nav-item" onclick="goSec(73)">社長の本気のフォローが成功の鍵を握る</div>
+<div class="nav-item" onclick="goSec(74)">やってみせ、つくってみせる</div>
+<div class="nav-item" onclick="goSec(75)">モデルラインには2つの役割がある</div>
+<div class="nav-item" onclick="goSec(76)">水平展開し、改善し、さらに水平展開をする</div>
+<div class="nav-item" onclick="goSec(77)">１人ひとりの社員が、自ら知恵を出すモノづくり</div>
+<div class="nav-item" onclick="goSec(78)">現場の知恵を加えてオリジナルの生産方式を</div>
+<div class="nav-item" onclick="goSec(79)">生産改革は人の可能性を信じることから始まる</div>
+<div class="nav-item" onclick="goSec(80)">つくり方を変える不安もある</div>
+<div class="nav-item" onclick="goSec(81)">トップに「やりぬく決意」があれば、人はついてくる</div>
+<div class="nav-item" onclick="goSec(82)">「やろう」という決断と「やりぬこう」という意志</div>
+<div class="nav-item" onclick="goSec(83)">現状に満足すると、進歩は止まってしまう</div>
+<div class="nav-item" onclick="goSec(84)">仕事（動き）はムダと付随作業と正味作業に分かれる</div>
+<div class="nav-item" onclick="goSec(85)">ムダを見つけるのは管理監督者の仕事</div>
+<div class="nav-item" onclick="goSec(86)">ムダの種類</div>
+<div class="nav-item" onclick="goSec(87)">ムダ発見のための自問</div>
+<div class="nav-chapter">第８章　トヨタ式モノづくりの第２ステップは整理・整頓・清掃・清潔</div>
+<div class="nav-item" onclick="goSec(89)">モノを探していては仕事にならない</div>
+<div class="nav-item" onclick="goSec(90)">赤札作戦の進め方</div>
+<div class="nav-item" onclick="goSec(91)">整理の徹底はトップで決まる</div>
+<div class="nav-item" onclick="goSec(92)">どこに何がいくつあるかがすぐわかるように</div>
+<div class="nav-item" onclick="goSec(93)">整理と整頓は生産改革の第一歩</div>
+<div class="nav-item" onclick="goSec(94)">保全型清掃と衛生型清掃</div>
+<div class="nav-item" onclick="goSec(95)">清掃点検で常に機械を最善の状態に</div>
+<div class="nav-item" onclick="goSec(96)">安全と衛生はすべてに優先する</div>
+<div class="nav-item" onclick="goSec(97)">上司は率先して清潔の習慣化を</div>
+<div class="nav-item" onclick="goSec(98)">清潔の維持には徹底した予防を</div>
+<div class="nav-item" onclick="goSec(99)">全員参加型の５Sを</div>
+<div class="nav-item" onclick="goSec(100)">なんのための５Sか</div>
+<div class="nav-item" onclick="goSec(101)">５Sに職場の知恵をつける</div>
+<div class="nav-chapter">第９章　トヨタ式モノづくりの自働化24ステップの考え方</div>
+<div class="nav-item" onclick="goSec(103)">知恵を使って効果をあげるのが本当の改善</div>
+<div class="nav-item" onclick="goSec(104)">改善に失敗したら、もとに戻さず、さらに改善を重ねる</div>
+<div class="nav-item" onclick="goSec(105)">ステップを踏むことで改善能力は磨かれる</div>
+<div class="nav-item" onclick="goSec(106)">工場の自働化には強烈なニーズが必要</div>
+<div class="nav-item" onclick="goSec(107)">点から線、線から面への展開</div>
+<div class="nav-item" onclick="goSec(108)">混合ラインの工場自働化には4つの前提条件がある</div>
+<div class="nav-chapter">第10章　トヨタ式モノづくりの情報の考え方・物流の考え方</div>
+<div class="nav-item" onclick="goSec(110)">変化を前提とするモノづくり</div>
+<div class="nav-item" onclick="goSec(111)">需要予測はあてにならない</div>
+<div class="nav-item" onclick="goSec(112)">「かんばん」は変化への微調整を可能にする</div>
+<div class="nav-item" onclick="goSec(113)">トヨタ生産方式の「目で見る管理」</div>
+<div class="nav-item" onclick="goSec(114)">もう一つの「目で見る管理」</div>
+<div class="nav-item" onclick="goSec(115)">はっきり見える企業・はっきり見えるモノづくり</div>
+<div class="nav-item" onclick="goSec(116)">モノだけではなく、情報をいかに運ぶか</div>
+<div class="nav-item" onclick="goSec(117)">モノを運ぶにはいろいろな方法がある。</div>
+<div class="nav-item" onclick="goSec(118)">混載多回運搬には後工程への気配りが必要</div>
+<div class="nav-item" onclick="goSec(119)">前工程と一緒に知恵を絞る</div>
+<div class="nav-item" onclick="goSec(120)">自工程を整備し、前工程に提案を行う。</div>
+<div class="nav-item" onclick="goSec(121)">状況に応じて計画はどんどん変えていく</div>
+<div class="nav-item" onclick="goSec(122)">生産計画と日々の調整を行えるモノづくり</div>
+<div class="nav-item" onclick="goSec(123)">企業の総合力が問われる一気通貫のモノづくり</div>
+<div class="nav-chapter">第11章　トヨタ式モノづくりを進める管理監督者の考え方</div>
+<div class="nav-item" onclick="goSec(125)">仕事の流れを監督する</div>
+<div class="nav-item" onclick="goSec(126)">人づくりこそ管理監督者の使命</div>
+<div class="nav-item" onclick="goSec(127)">現場の知恵を改善に結びつける</div>
+<div class="nav-item" onclick="goSec(128)">スピードは大切だが、納得も必要</div>
+<div class="nav-item" onclick="goSec(129)">徹底には通常のコミュニケーションが欠かせない</div>
+<div class="nav-item" onclick="goSec(130)">トヨタ式タテ・ヨコ・ナナメの人間関係づくり</div>
+<div class="nav-item" onclick="goSec(131)">生産力のベースは人にある</div>
+<div class="nav-item" onclick="goSec(132)">勉強はしても問題のホルダーにはならない</div>
+<div class="nav-item" onclick="goSec(133)">職場の問題を発見して、改善をするのは管理監督者の仕事</div>
+<div class="nav-item" onclick="goSec(134)">管理監督者は頼りになる親方になれ</div>
+<div class="nav-item" onclick="goSec(135)">上司は部下と知恵比べ</div>
+<div class="nav-item" onclick="goSec(136)">部下の創意工夫を殺してはならない</div>
+<div class="nav-item" onclick="goSec(137)">評価よりも理解を</div>
+<div class="nav-item" onclick="goSec(138)">すべてはトップの姿勢にかかっている</div>
+<div class="nav-item" onclick="goSec(139)">24社中10社しか成功しなかった</div>
+<div class="nav-item" onclick="goSec(140)">わずかの成功に満足するな</div>
+  </div>
+</div>
+<div id="main">
+  <div id="header">
+    <button id="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <h1>「モノづくり」究極の知恵　トヨタ式生産力</h1>
+    <div class="subtitle">～中小企業・異業種でも勝てる普遍の経営論～</div>
+    <div class="meta">若松義人・近藤哲夫 著 ／ 要約・編集：奈良高専OB会</div>
+  </div>
+  <div id="top-nav">
+    <button id="menu-toggle2" style="display:none;background:transparent;border:none;color:var(--text);font-size:18px;cursor:pointer;" onclick="toggleSidebar()">☰</button>
+    <button class="top-nav-btn active" id="btn-index" onclick="showTab('index')">目次モード</button>
+    <button class="top-nav-btn" id="btn-read" onclick="showTab('read')">通読モード</button>
+    <button class="top-nav-btn" onclick="expandAll()">全展開</button>
+    <button class="top-nav-btn" onclick="collapseAll()">全折畳</button>
+    <a href="top.html" class="top-nav-btn">← 本棚へ</a>
+    <span id="progress-area">3部 10章 127節</span>
+  </div>
+  <div id="index-panel-scroll">
+    <div id="splash">
+      <h2>「モノづくり」究極の知恵</h2>
+      <p class="sp-sub">トヨタ式生産力 ― 若松義人・近藤哲夫</p>
+      <div class="stats">
+        <div class="stat"><div class="num">3</div><div class="lbl">部</div></div>
+        <div class="stat"><div class="num">10</div><div class="lbl">章</div></div>
+        <div class="stat"><div class="num">127</div><div class="lbl">節</div></div>
+      </div>
+      <button class="start-btn" onclick="startReading()">読み始める</button>
+    </div>
+    <div id="content-area" class="hidden">
+<div class="part-header">第Ⅰ部　日本の知恵を活かしたモノづくりに挑む</div>
+<div class="chapter-header">第１章　「日本のモノづくりが危ない」は本当か</div>
+<div class="section" id="sec-3">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§4</span>
+    <span class="sec-title">設備依存がモノづくりの足を引っ張っている</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「設備は嘘をつかない」モノづくりの世界で、長い間信じられてきた言葉。生産性にしろ、品質にしろ、すべてを設備で解決してきたのが、日本のモノづくり。モノ不足が設備中心の経営を可能にしていた。</p></div>
+</div>
+<div class="section" id="sec-4">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§5</span>
+    <span class="sec-title">今日のモノづくりに設備では答えが出ない</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>一つは、国際競争力が問われる時代。「よくて、早くて、安くて」つまり「品質・納期・コスト」のいずれかで、どこにも負けないものを持たないと生き残れない。二つは、量の拡大が望めないなかでの激しいシェア争いが展開される時代。三つは、需要の変動が激しい時代。商品寿命は短く、量の変動も激しく、今日売れているモノが明日も売れるとはかぎらない。四つは、多様化志向が激しい時代。消費者ニーズに応えていくため、次々と新商品が投入される。見込みによる大量生産では、売れない在庫を抱えるだけ。五つは、多品種化志向が激しい時代。種類が次々と増えていくため、一つの工場で何百種類・何千種類もの商品をつくる力が必要。自動化ラインでは、新しい商品に対応するための、生産ラインやロボットの切り替えに、最低１～2ヶ月は必要になる。これでは多品種少量生産には対応できない。</p></div>
+</div>
+<div class="section" id="sec-5">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§6</span>
+    <span class="sec-title">人中心のモノづくりへの転換を</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>トヨタ生産方式。「知恵を出すことによって、マンパワーは無限に拡大される」もの。住宅用の網戸や玄関ドアをつくっている共立金属工業株式会社は、大量生産方式をやめ、トヨタ生産方式の導入を試みて10年。この間、消費者ニーズに応えるため、商品の種類は100種類から500種類に増えたにもかかわらず、生産性は3倍になり、なおかつリードタイムはかつての30日から２時間に短縮。売りと連動した生産を実現している。生産力を上げるのは、必要な人と設備（道具）。人の持っている無限の能力をいかに引き出すかが鍵。</p><p>２　必要なモノをかってきたまちがい</p></div>
+</div>
+<div class="section" id="sec-6">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§7</span>
+    <span class="sec-title">モノづくりはEMSに任せればいいか</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>モノづくりをEMS（生産請負会社）に委託する動きは加速している。パソコンや携帯電話などのIT関連商品は、市場が激しく変動する。売れ行きが急速に伸びたかと思えば、急降下する例もある。多くの企業は相変わらずの需要予測に基づく大量生産方式をとっている。もっとも売れる時に肝心の製品が不足したかと思えば、ちょっとでも売れなくなれば、大量の在庫を抱え、ムダな設備や人を抱える。</p></div>
+</div>
+<div class="section" id="sec-7">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§8</span>
+    <span class="sec-title">変化に対応できないからモノづくりのリスクが高くなる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>本来生産ラインは、「必要数」のうえに組み立てられなければならない。「必要数」とは、売れ行きの事であり、市場の動向で決まってくる。変化に対応できない企業にとって、モノづくりは、きわめてリスクの高いものとなっている。</p></div>
+</div>
+<div class="section" id="sec-8">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§9</span>
+    <span class="sec-title">中国のモノづくりは安いと錯覚していないか</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>日本の人件費が高くなりすぎたため、人件費が日本の20分の1の中国に生産拠点を移し、コスト競争に勝とうとしている。しかし、「本当に儲かっているのでしょうか」と疑問。「設備を持っていくお金や、技術・管理の指導に人が行くお金を考えると、本当に儲かっているのか、疑問。人件費が安いため、錯覚を起こしているケースもあるし、コストがどんぶりになっているケースも多い。モノづくりの本質を見る必要がある。」「同業他社の多くが中国で生産をしている。たしかに縫製部分は安いのですが、周辺のコストは見えていないのが実情。机上の計算では安いつもりが、実際にはどんぶりでわからないのが本当」リードタイムの短さなどを考慮すれば、国内生産のメリットは実に大きい。</p><p>３　需要に応えるモノづくりに成功した企業に不況はない</p></div>
+</div>
+<div class="section" id="sec-9">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§10</span>
+    <span class="sec-title">注文は決して急にはなくならない</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>月に１回出てくる試算表を見て、「注文が減っているなぁ」などと言っているようでは経営者失格。毎日、お客さんのところへ足を運び、自社の工場と物流は、最低限見て歩く必要がある。毎日、足を運んでいれば、情報も入ってくるし、自然と状況は見えてくる。だから、情報の正確さ・リーダタイムの短さがポイント。</p><p>オイルショックの混乱期、トヨタはそれまで五日ごとに把握していた販売店の受注・在庫状況を、その日のうちに把握できるようにした。その結果、他社が増産を続けているにもかかわらず、減産に踏み切った。そのかいあって、早期に在庫調整を終え、景気回復とともに、一気に攻勢に転じる体制を築いた。</p></div>
+</div>
+<div class="section" id="sec-10">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§11</span>
+    <span class="sec-title">現場を見なければ、市場動向も生産力もわからない</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>売上げ向上に結びつく情報は三つ。一つは、売れたものをつくる後補充型。二つは、確定受注。注文を受けたモノを、短いリードタイムで生産すれば、在庫を持たずに、しかもお客さんの要望に柔軟に対応できる。三つは、いま売れているモノ、確実に売れそうなモノ。市場の毎日の変化を正確につかみながら、生産をしていけばよい。机上でどれほど需要予測をしようとも、市場の変化が予測通りにいく例は滅多にない。ムダな計算をする暇があれば、お客さんの所へ足を運び、自社の工場と物流を見て回るほうがよい。</p></div>
+</div>
+<div class="section" id="sec-11">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§12</span>
+    <span class="sec-title">「売りに結びついたモノだけをつくる」という決断</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「需要はある」と勝手に思い込んでつくるのはいけないし、「需要はない」とあきらめるのはもっと悪い。この10年間、「量が減っても、なお生産性を上げるモノづくり」に励んできた。その結果、同業他社に比べ、品質は同じで価格は30%安い住宅を建てられるところまできた。自社のモノづくりが、本当に売りに結びついたモノづくりとなっているかを検証する必要がある。「仕事は親会社や国から降ってくる」という下請け意識ではもはややっていけない。</p><p>４　大変だと騒いでいるのは、現場知らずの評論家</p></div>
+</div>
+<div class="section" id="sec-12">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§13</span>
+    <span class="sec-title">口先だけの「人を大事に」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>生産改革を進めるにあたっては、専任メンバーによるプロジェクトチームを発足させ、改善推進計画をつくり、研修会や報告会を定期的に開催する。報告会には必ず社長以下の役員が出席するのが望ましい。トップ自らが改善に参画し、自分でフォローする情熱こそ改善を成功させる最大のポイント。</p></div>
+</div>
+<div class="section" id="sec-13">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§14</span>
+    <span class="sec-title">トップの現場への関心度合いが生産力を左右する</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>豊田英二氏は、かつて暇さえあれば工場を見て歩き、近隣のグループ会社を含め、生産ラインはもちろん、工場に生えている木まで熟知。張富士夫社長も、いまでも自分で車を運転して、朝早くから工場の生産ラインを見に行く。</p></div>
+</div>
+<div class="section" id="sec-14">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§15</span>
+    <span class="sec-title">現場を知らない人にはわからないことがある</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>余分につくっても、売れなければなんにもならない。売れない在庫は実は資産ではなく死産になってしまう。ところが、現場を知らない人にとっては、こうした考え方はわかっても、実際にどうすればよいかがわからない。「疑問に思ったり、困ったり、何かヒントを思いついたら現場に行けばよい。現場を見れば、考えたことがよいことか悪いことかが判断できる。そこからまた新しい問題点やヒントも浮かんでくる」は、大野耐一氏の口癖。</p><p>５　つくる力があるかどうかが企業成長の分かれ道</p></div>
+</div>
+<div class="section" id="sec-15">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§16</span>
+    <span class="sec-title">下請けからビジネスパートナーへ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>モノづくりの力、つまり「品質・納期・コスト」で卓越した力を備えていれば、相手企業にとって、その企業は実に頼もしい存在になる。本来よい品質のモノをより安くつくろうと思えば、設計と生産は一体であるほうが望ましい。設計段階に原価や品質・安全性・工場の作業性などすべてが入っていれば、モノづくりはうんと楽になる。ところが、現実には「設計は設計、生産は生産」と分かれているケースが圧倒的に多い。まして下請けであればなおさら。つくる力を備えた企業が、この関係を変えつつある。つくる力を見込んだ相手企業の依頼により、設計と生産をペアで取り組むパートナーシップを確立し始めている。</p></div>
+</div>
+<div class="section" id="sec-16">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§17</span>
+    <span class="sec-title">つくる力がブランドになる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>設計でのコストのつくり込み、徹底した環境対策により、商品力を高めるのに貢献。下請けというよりは、ビジネスパートナーとしての地位を固めつつある。つくる力が、営業の武器となり、同時に自社の可能性を広げつつある。消費者と生産者が直接向き合うようになると、モノづくりそのものが問われる。親会社のブランドではなく、モノづくりを通じて培われたブランド力が重要になってくる。</p></div>
+</div>
+<div class="section" id="sec-17">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§18</span>
+    <span class="sec-title">中小企業にはつくる力をつける条件がいくつも備わっている</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>つくる力のある企業には注文が殺到するが、つくる力がない企業には注文はこない。リコーユニテクノや共立金属工業には、両社のモノづくりに関心のある人がたくさん訪れる。モノづくりを見て、納得をして、仕事を依頼。工場そのものがまさに「ショールーム」としての役割を果たしている。中小企業が、こうしたつくる力を身につければ、日本のモノづくりは強くなる。中小企業には、つくる力を身につけるうえで、大企業にはない強みがいくつもある。間接経費が少なく、情報リードタイムが短く、トップが決断さえすれば、フレキシブルな運営が可能。何よりも社員全員の顔をトップが熟知できる。</p></div>
+</div>
+<div class="chapter-header">第２章　右肩下がりの経済時代に生き残る企業の条件</div>
+<div class="section" id="sec-19">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§20</span>
+    <span class="sec-title">ニーズはあるが、どれだけニーズに応えられるか</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>住宅についての要望が多様化してくると、どれだけ消費者の要求に応えられるかが、ハウスメーカーの業績を左右する。</p></div>
+</div>
+<div class="section" id="sec-20">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§21</span>
+    <span class="sec-title">目的のない仕事から、お客さまを意識した仕事へ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>一棟ずつ、お客さまの要望に合わせて、部材などを生産する「邸別生産」へと切り替えた。4～5本の生産ラインで、一棟の住宅を建てるのに必要な何十種類もの部材を順番につくっていく。最終工程では、サッシなども組み込んで、建築現場へと出荷する。かつて苦しんだ大量の在庫も、いまは確実に需要がきまっている数日分を抱えるにすぎない。完全な邸別生産ですから、なんのための、誰のための仕事かがはっきりしている。</p></div>
+</div>
+<div class="section" id="sec-21">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§22</span>
+    <span class="sec-title">お客さまを中心とした生産システムを</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>強い生産力を手にするためには、「自分にとってお客さまは誰か」を問い続ける姿勢が必要。お客さまは、使いやすくて、便利で、故障がなく、楽しく、嬉しくなる商品が欲しい。注文したら、すぐに手に入る商品を望んでいる。しかも、お客さまの欲求は日々変化している。変化するお客さまの欲求に、毎日毎日対応し続ける。これがモノづくりの基本。</p><p>２　売値はお客さまが決める時代のモノづくり</p></div>
+</div>
+<div class="section" id="sec-22">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§23</span>
+    <span class="sec-title">「原価＋利益」は通用しない</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>お客さまは「相場」で買う。「原価＋利益」では買わない。「売値はお客さまが決める」という発想に転換しきれないと、どうしても中途半端な経営になってしまう。医療器具の世界で、やがて到来する国際競争をにらみながら、生産改革を推し進めている企業がある。健康保険制度が危機。医療費の伸びをいかにして抑えるかが目下の課題。診療報酬や薬価、さらには医療器具にも影響が及ぶから。海外の医療器具と比較した場合、明らかに高すぎるものがある。</p></div>
+</div>
+<div class="section" id="sec-23">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§24</span>
+    <span class="sec-title">「一物一価」に負けないモノづくりを</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>同社の場合、危機感がポイント。現状は十分に儲かっているだけに、安住したり、「国が守ってくれる」という依頼心を持ってしまっては生産改革は進まない。</p></div>
+</div>
+<div class="section" id="sec-24">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§25</span>
+    <span class="sec-title">原価は下げるためにある</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>モノが不足していた時代は、モノの価格は生産者が決めた。一物一価の時代だから、売値は決まっている。つくる側の「原価がいくらかかった」という事情は一切関係ない。かつて大野耐一氏は「原価は計算するためにあるのではない。下げるためにある」それだけではない。多品種少量時代には、量を増やして原価を下げるのは難しい。たとえ少ない数でも原価を下げて、利益を出すモノづくりが必要。</p><p>３　不良は絶対につくらない、送らない、受け取らない</p></div>
+</div>
+<div class="section" id="sec-25">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§26</span>
+    <span class="sec-title">お客さま満足度を向上させる三つの条件</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「お客さま満足度」を向上させる三つのポイント。</p><p>①お客さまの不平・不満をゼロにする</p><p>②お客さまの品質クレームをゼロにする</p><p>③未納・遅延・欠品などの物流クレームをゼロにする。</p><p>この三つのポイントを達成するためには、モノづくりに関するすべての工程が「不良はつくらない、送らない、受け取らない」を徹底。モノをつくっている以上、ある程度の不良は仕方がないという人がいる。結果として、製品へのクレームが増加して、経営の根幹を揺るがす一因。</p></div>
+</div>
+<div class="section" id="sec-26">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§27</span>
+    <span class="sec-title">品質・品格への要求プラス買いやすい価格</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>検査により不良率を低く抑えようという考え方では、不良品は決してなくならない。アパレルメーカーのワールドインダストリーは、今日の消費者ニーズを「品質・品格への要求プラス買いやすい価格」と捉えている。同社は、製造工程のなかに隠れている「運搬のムダ」「停滞のムダ」「つくりすぎのムダ」といったあらゆるムダを省いて、効率のよい生産方式を追求。同時に原料引き取りから裁断、縫製、仕上げ、検査、出荷、小売店店頭というすべての工程で、「不良はつくらない、送らない、受け取らない」を徹底。お客さまは、注文したら、すぐにでも手に入るのを望んでいる。ワールドインダストリーの場合、受注して、お客さまにお届けするまでの「リードタイム」は5日間。「品質」を備えたうえでの「納期」であり「コスト」。</p><p>４　環境問題に配慮したモノづくり</p></div>
+</div>
+<div class="section" id="sec-27">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§28</span>
+    <span class="sec-title">つくりすぎを許すシステムでは省エネは実現できない</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>21世紀のモノづくりのポイントは、省エネにある。産業破棄物をゼロにするゼロエミッション計画も各社で進められている。つくりすぎは、材料・部品を先食いし、電機や油といったエネルギーを浪費する。パレットやスキットなどの容器の増加を招き、倉庫などの増設が必要になる。売れ残ってしまえば、ものによっては産業廃棄物として捨てるしかない。大型機械、大きな設備に問題。機械や設備を動かすだけでも大量のエネルギーを要するうえに、せっかくの機械・設備を動かさないのはムダとばかりにフル稼動をさせ、結局はつくりすぎを招く。</p></div>
+</div>
+<div class="section" id="sec-28">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§29</span>
+    <span class="sec-title">コンパクトな設備と最小エネルギー</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>トヨタのある工場では、設備中心であれば膨大なスペースが必要になるところを、機械の仕事と人の仕事を共存させて、コンパクトな設備・コンパクトな工場を実現。さらにリサイクルの問題がある。設計の段階からリサイクルを考えていかないと、高いリサイクル率の実現は難しい。</p></div>
+</div>
+<div class="section" id="sec-29">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§30</span>
+    <span class="sec-title">環境にやさしいモノづくりが求められている</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>環境対策というと、対策だけが独立した、コストのかかる問題と捉えている人もいる。しかし実際にはムダを徹底的に排除した生産方式を進めれば、自ずと環境にやさしいモノづくりへとつながっていく。</p><p>５　人の知恵を活かしたモノづくり</p></div>
+</div>
+<div class="section" id="sec-30">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§31</span>
+    <span class="sec-title">トヨタ生産方式は発展途上である</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>お客さまの欲求をはじめ、モノづくりを取り巻く環境は刻々と変化している。設備中心のモノづくりでは、こうした要求には応えられない。人と機械が共存する「人中心のモノづくり」でなければ、これからのモノづくりは難しい。トヨタ生産方式が「今日のやり方が最悪と思え」という厳しい姿勢で改善に取り組むのは、市場はたえず変化しており、「これでいいと思ったら、進歩が止まる」事実を知っているから。</p></div>
+</div>
+<div class="section" id="sec-31">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§32</span>
+    <span class="sec-title">知恵を出しに行く環境を</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>スタッフが理論的に考えるのも可能だが、実際には現場が考えないと役には立たない。一つひとつ自分たちで実行していったものは本当の力になる。異常があれば機械やラインを止める。そのとき、一刻も早く修繕をしてラインを動かすのではない。なぜ異常が起きたのか、「真因」を追求して、二度と同じ異常が起きないように修理を施す。買ってきた機械をカタログどおりに動かしていると「カタログエンジニアか」と大野氏に怒られる。作業のやりにくさや、姿勢のつらさといった小さな気づきも無視しない。改善提案については、評価をする人は、現場を見に行って、提案した人からいろいろ話を聞く。提案した人も、はりきって取り組む。「仕事に行くではなく、知恵を出しに行く」という環境。</p></div>
+</div>
+<div class="section" id="sec-32">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§33</span>
+    <span class="sec-title">机上の生産技術から現場の知恵活用へ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>机上の生産技術ではなく、現場の経験・技能の蓄積と体系化による改善が、はるかに有効で即時性がある。現場の全員参加が、これからのモノづくりのキーワード。21世紀のモノづくりは、人を育て、人の知恵を活かす姿勢がもっとも重要になる。</p></div>
+</div>
+<div class="chapter-header">第３章　見込み生産はムダを生産する</div>
+<div class="section" id="sec-34">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§35</span>
+    <span class="sec-title">売れるモノをよりよい品質でより安く素早くつくる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ＣＵＭＳ(Cultivating Management System)生産方式は、筆者たちの活動体験を集大成したもの。</p></div>
+</div>
+<div class="section" id="sec-35">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§36</span>
+    <span class="sec-title">ジャスト・インタイムの原則は、売れないモノはつくらない</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>何よりも「ジャスト・イン・タイム」の考え方が大切。原則は、「後工程が前工程に、必要なモノを、必要なとき、必要な量だけ取りにいく」であり、「前工程は、引き取られた分だけをつくる」。大野耐一氏は「暇だったら遊んでいてくれればいいのに、何かごそごそ余計なことをやる。」　つくりすぎを防ぐ工夫。ひとりの人が、いくつもの工程をできるようにする「多能工化」。工程順にレイアウトして、「流れでモノをつくる」やり方。</p></div>
+</div>
+<div class="section" id="sec-36">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§37</span>
+    <span class="sec-title">タクトタイムは必要数で決まる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>お客さまの需要に合うようにモノを生産していく時間の基準が必要。それを「タクトタイム」という。タクトタイムとは、製品一個あるいは部品一個をつくる時間。各工程の生産スピードを統一する。タクトタイムは、必要数と稼働時間で決まり、日当たり稼働時間を日当たり生産必要数で割って求められる。</p></div>
+</div>
+<div class="section" id="sec-37">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§38</span>
+    <span class="sec-title">かんばんには厳格なルールがある</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>かんばんには、生産指示情報としての「工程内かんばん」と、引き取りまたは運搬情報としても「引き取りかんばん」がある。「不良品は絶対に後工程に流さない」というルールにより、100%良品を保証する。かんばんには、ほかに「在庫を適正な量に抑える」や、かんばんの枚数を減らして「問題点を顕在化させる」役割もある。</p><p>＜工程内かんばんのルール＞</p><p>(a)　後工程に引き取られた量だけつくる。</p><p>(b)　かんばんのないものは絶対につくらない。</p><p>(c)　かんばんと物は必ず一緒に流す。</p><p>(d)　不良品は絶対に後工程に流さない。</p><p>＜引き取りかんばんのルール＞</p><p>(a)　最初の部品を取り出すとき、かんばんを外す。</p><p>(b)　外されたかんばんを持って、前工程に引き取りにいく。</p><p>(c)　引き取りにいった先で、工程内かんばんと差し替える。</p><p>(d)　かんばんのないものは絶対に運ばない。</p><p>２　不良は見つけるものではなく、つくらない</p></div>
+</div>
+<div class="section" id="sec-38">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§39</span>
+    <span class="sec-title">自働化の意味とねらい</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>加工物や機械設備になんらかの異常が生じたとき、機械設備が自ら異常を検知して、自動的に止まる。これを「自働化」。正常に作動中は人間は機械設備のそばにいる必要はない。異常でストップしたときだけ行けばよいという点では「少人化」も可能にする。自働化のもう一つのねらいは、「問題の顕在化」にある。問題がはっきりすれば、改善も進む。組み立てラインに応用。異常があれば、作業者自身がストップボタンを押してラインを止める。</p></div>
+</div>
+<div class="section" id="sec-39">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§40</span>
+    <span class="sec-title">品質は工程でつくり込む</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>自分のつくったモノがよいかどうかを責任を持って検査をして、よいモノだけを「お客さま」である後工程に流していく。管理監督者は、異常工程に急行して、処置する。処置にあたっては、「5回のなぜ」を繰り返す。「真因」をつきとめて、真因に対して対策。設備面の品質保証には「ポカヨケ」と呼ばれる装置する。</p><p>３　つくり方によって「品質・納期・コスト」は大きく変わる</p></div>
+</div>
+<div class="section" id="sec-40">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§41</span>
+    <span class="sec-title">標準のないところに改善はない</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>標準作業は、「生産現場でモノをつくっていくときの基準となるもので、人の動きを中心として仕事を進め、ムダのない順序で、もっとも効率的な生産をするやり方」標準作業があるからこその改善である。だから一ヶ月以上も修正されないような標準作業は役に立たない。標準作業には「タクトタイム・作業順序・標準手持ち」という三つの要素がある。「標準手持ち」は、作業順序に従って、作業をしていく場合、繰り返し同じ手順・動作で作業者ができるように工程内に持つ最小限の仕掛品をいう。</p></div>
+</div>
+<div class="section" id="sec-41">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§42</span>
+    <span class="sec-title">ものを平均で見るな、バラツキにこそ意味がある</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>作業における標準時間については、平均値で決めるやり方をしてはいけない。トヨタ生産方式では、「一番短い時間が、一番楽なやり方だ」と考える。標準作業は刻々と変わるもの。しかも働く人たちの提案によっても、たえず改訂が行われる。</p></div>
+</div>
+<div class="section" id="sec-42">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§43</span>
+    <span class="sec-title">生産量の増減に柔軟に対応する少人化</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>生産量の増減に応じて工数の低減ができる仕組みを「少人化」という。少人化は、生産量に応じて5人でも3人でもやれるようにして、人数の固定はしない。前提条件がある。</p><p>１．標準作業をきちんと決めて、誰でも簡単にできるようにする。</p><p>２．作業のローテーションを行って、多能工を育成しておく。</p><p>３．“離れ小島”をなくし、一カ所に作業を集め、チームワークを発揮できるようにする。</p></div>
+</div>
+<div class="section" id="sec-43">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§44</span>
+    <span class="sec-title">ムラがあるからムリをしてムダが発生する</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>トヨタ生産方式では、「ムラ・ムリ・ムダ」の順番で考える。生産量にムラがあるから、どこかでムリを生じ、それがムダを招く。量と種類などの複数の要素を平均化する「平準化」により、バラツキを少なくしていく。トヨタ生産方式を実践している企業では、確定受注だけでは平準化が難しいときには、確実に受注が見込まれるモノを加えて、できるだけ山と谷をならすようにしている。「より安くモノをつくる」というと、いまでも仕入れをいかに安くするか、いかに人を減らすかばかりに目がいく人が多い。まずモノの作り方そのものを徹底して改善する方が先決。</p><p>４　多すぎる情報がムラ・ムリ・ムダの原因</p></div>
+</div>
+<div class="section" id="sec-44">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§45</span>
+    <span class="sec-title">多すぎる情報はつくりすぎを招く</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>生産指示書にしろ、平準化した順序計画にしろ、コンピュータを用いて初めて素早く正確に対応できるものは多い。しかし、多すぎる情報は、ときに進みすぎを招き、順序間違いを引き起こす。ある会社で、かつては一日分の情報をまとめて出していた。すると、売れる順序とは関係なしに、勝手にロットをまとめ、つくりやすさを優先しがちとなった。</p></div>
+</div>
+<div class="section" id="sec-45">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§46</span>
+    <span class="sec-title">コンピュータの仕事と人の仕事</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>かんばんが生産指示情報となって前工程へとさかのぼっていく。一枚のかんばんが「必要なときに必要な情報」を送ってくれる。しかも、かんばんは、計画の微調整を行ううえでも役に立つ。当初の計画と、つくるモノの種類や数が変わったとしても、各工程はかんばんどおりにつくっているだけだから、わざわざ計画の変更を指示して回る必要はない。あるパートではコンピュータの力を最大限に活用するが、あるパートではかんばんや人の力を最大に活用する。</p></div>
+</div>
+<div class="section" id="sec-46">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§47</span>
+    <span class="sec-title">もうけるITになっているか</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「IT革命」が流行語になって以来、過度の情報投資を行っている企業が目につく。部品の受け入れと仕分けをコンピュータ化している企業がある。ところが、部品がいちいち大ロットで出てくるものだから、売りに結びついた小ロット化・一個流しのモノづくりには不便で仕方がない。IT化は、別に特別視するものではない。あくまでも原価を下げるものでなければならない。</p></div>
+</div>
+<div class="part-header">第Ⅱ部　魅せるモノづくりが企業の活力を生み出す</div>
+<div class="chapter-header">第４章　リコーユニテクノ株式会社の挑戦</div>
+<div class="section" id="sec-49">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§50</span>
+    <span class="sec-title">育てた会社に主力商品の座を奪われる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>1996年当時のリコーユニテクノ株式会社は、主力のファックスの生産拠点の座を中国の上海理光に奪われ始め、事業構造の転換を迫れていた。当時は、同社にかぎらず、自動化ライン中心という大量生産方式のやり方そのままに、次々と新製品を市場に投入していた。そのため生産部門は、生産品種の多様化に対応するために頻繁なラインの切り替えに追われ、生産性を落とすだけでなく、不良品の発生も避けられなかった。クレーム対応に追われるのは、多くの企業に共通する悩みだった。しかも同社の場合は、売上げの大幅ダウンという厳しい現実もあった。</p></div>
+</div>
+<div class="section" id="sec-50">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§51</span>
+    <span class="sec-title">「理想の工場」をイラストに描く</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>たとえ売上げは落ちても、利益を出す方法を考えようと、悲観するのではなく、気持ちを前向きに持つようにした。「結果は気にせず、まずやってみろ」というプラス思考。高く掲げた目標は「いまある商品を、いかに安く、早く、よくつくるか」。</p></div>
+</div>
+<div class="section" id="sec-51">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§52</span>
+    <span class="sec-title">５Sにはトップダウンが欠かせない</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>最初に着手したのは、「ラインの問題が見えるようにする」ための５Sの展開。５Sは,一般には「整理・整頓・清掃・清潔・躾」。特に整理は、不要なものに赤い札を貼り、誰でも不要なものが目で見てわかるように区別する。「私は生産現場や倉庫などを朝・昼・晩の一日3回見ています。2～3ヶ月かけて、現場を見ていると、このラインはいらないのでは、このラックはいらないのではということが自然とわかるようになってきます」　５Sを徹底させた結果、スペースも生まれ、お金も浮いてきた。次に進めたのが「ラインでの人の仕事のしやすさ」。</p><p>２　ラインの人の働きやすさを第一に考える</p></div>
+</div>
+<div class="section" id="sec-52">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§53</span>
+    <span class="sec-title">あいさつはするが、あいさつをしろとは言わない</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>もう一つの５S。「SPEEDY・SIMPLY・SYSTEM・SERVICE・SMILE」。なかでもSERVICEとSMILEの2つを重視。「自分からあいさつをしますが、あいさつをしろとは決して言いません。」どんな政策でも「トップを含む管理職が、まず率先してやるべき」</p></div>
+</div>
+<div class="section" id="sec-53">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§54</span>
+    <span class="sec-title">生産ラインの仕事のしやすさを第一に</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「なぜラインが包装をいちいちほどかなければならないような部品の仕入れの仕方をするのか。なぜ何枚もの伝票をいちいち書かせる必要があるのか。」「ラインの人が、よりおおくの付加価値を生むためには、あくまでもラインが主役でなければならない」多品種少量に対応する混合生産を進めていくうえでは、前工程が次工程のことを考えることが欠かせない。部品をただ揃えて運ぶだけでなく、下拵え（簡単な組み立て）をして運んでくれれば、生産ラインは、よりレベルの高い仕事が可能になる。</p></div>
+</div>
+<div class="section" id="sec-54">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§55</span>
+    <span class="sec-title">大切な人と人の心の通いあい</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「ラインが主役」を徹底するには、情報や評価についても、すべてを社員に見せる。ラインMAPの上に改善の内容と提案した人の顔写真を貼り付けた「改善MAP」や社員１人ひとりの現在の能力を示すマトリックス型の星取り表。情報についても正社員と派遣社員の差は一切ない。「何かを徹底するためには、通常のコミュニケーションが大切です。感情を無視して、理屈から入ると、たいていは失敗する。」</p></div>
+</div>
+<div class="chapter-header">第５章　ユニテクノ方式の展開</div>
+<div class="section" id="sec-56">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§57</span>
+    <span class="sec-title">守りから攻めに転じる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>①異常と正常がみえるライン　②生産性の50%アップ　③お客さんに柔軟に対応できる生産方式</p></div>
+</div>
+<div class="section" id="sec-57">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§58</span>
+    <span class="sec-title">自動化ラインからの決別</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>五基あるベルトコンベアーのうち、一基だけを廃棄。「たとえ一基でもベルトコンベアーを捨てるのは大変でした。1億円以上もするものを捨てるわけです。」</p></div>
+</div>
+<div class="section" id="sec-58">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§59</span>
+    <span class="sec-title">スターウォーズライン誕生</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>モデルラインは、人を中心とする「台車引きライン」とした。製品を組み立てるワーク台車と部品を配膳した台車を交互に連結して、連続移動で定位置停止する生産ライン。多能工を目指し、いくつもの生産品種がラインを流れる完全な混合生産とした。次々と改善を加えた結果、生産性は自動化ラインに比べて30%もアップした。新しい生産ライン構築にあたって、縮尺20分の1のプラモデルを作成し、生産工程のレイアウトの検討と作業担当者への教育に使用。</p></div>
+</div>
+<div class="section" id="sec-59">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§60</span>
+    <span class="sec-title">品質は人で決まる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>2000年にはついにベルトコンベアーを全廃。現在では、生産品種と構成部品と人材育成に対応して、台車引き生産のほか、リレー生産、１人生産、2人以上生産など、多様な生産方式を駆使するようになっている。「組み立ては人によってしかできません。品質は人で決まると言っても過言ではありません。技術・技能・気持ちの3つがモノづくりには大切です」と神戸社長。</p><p>２　つくる力が売る力に結びつく</p></div>
+</div>
+<div class="section" id="sec-60">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§61</span>
+    <span class="sec-title">工場は最高のショールーム</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>最近では、工場の生産管理や商品の供給能力なども厳しくチェックされ始めている。「品質・納期・コスト」といった点で、卓越したものをもっている工場は、単なる下請けを脱し、ビジネスパートナーとしての役割を期待されている。</p></div>
+</div>
+<div class="section" id="sec-61">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§62</span>
+    <span class="sec-title">いつも一歩先に進んでいたい</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>人中心の生産ラインであるだけに、生産性改善のためのラインのレイアウト変更や、生産品目の頻繁な切り替え、急な増産や減産にも実に柔軟に対応できる。自信があるだけに、同社は興味がある人には誰にでも工場を見せる。たとえライバルの同業他社にでも。</p></div>
+</div>
+<div class="section" id="sec-62">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§63</span>
+    <span class="sec-title">工場を見て、何を買うかを決める時代</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>生産者と消費者がダイレクトにつながっていく時代には、これは誰がどこでどうやってつくっているのだろうというのは、非常に重要な情報。</p><p>３　課題を徹底的に追求していくと事業領域が広がる</p></div>
+</div>
+<div class="section" id="sec-63">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§64</span>
+    <span class="sec-title">注目を浴びる省エネ生産システム</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>リコーなどからの受託生産以外に、次々と新しいビジネスが生まれ初めている。代表的なものが、省エネ型生産ラインの外販やコンサルティング事業。「台車引き生産ライン」は、それまでの自動コンベアーラインに比べ、消費電力はわずか80分の1にすぎない。しかも電力は、自社で設置した太陽光発電でまかなっている。</p></div>
+</div>
+<div class="section" id="sec-64">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§65</span>
+    <span class="sec-title">生産方式の徹底が新たなビジネスを生む</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>不良品をつくってしまったときも、工場の外で、社員自身の手によって分解・分別を徹底的に行う。ベルトコンベアーを捨てたときも、おなじようにすべてリサイクル用に分別・分解し、現在ではこれもノウハウとしてビジネスの役に立っている。生産現場で生まれた平面展開タイプの通い箱「フラダン」は、スペース4分の1で空き箱輸送・倉庫保管できるうえ、ダンボールに比べて格段に長持ちする。</p></div>
+</div>
+<div class="section" id="sec-65">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§66</span>
+    <span class="sec-title">協力会社を巻き込む第２の生産改革へ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>間接部門の社員たちも「生産性工場支援活動」「環境マネジメントシステム支援」「省エネ＆低コスト生産ライン構想設計」など多くのソリューションビジネスに関わり始めている。まずは自社に徹底することを第一と考えて、これまでやってきましたが、少しは支援する力がついてきたので、これからは協力会社に広げていく。</p></div>
+</div>
+<div class="part-header">第Ⅲ部　トヨタ式モノづくりへの道</div>
+<div class="chapter-header">第６章　企業を救うトヨタ式モノづくりの実行</div>
+<div class="section" id="sec-68">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§69</span>
+    <span class="sec-title">トヨタ生産方式は中小企業が使うと非常によい方式</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「トヨタ生産方式というのは、本来、中小企業に使うと非常によい方式。というのは、トヨタ生産方式の生い立ちが、月に3000台とか5000台とか、しかもいろいろな種類の車をつくるところから始まっているから。」もともとの成り立ちは「多種少量生産でいかに安くつくるか」</p></div>
+</div>
+<div class="section" id="sec-69">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§70</span>
+    <span class="sec-title">中小企業は有利な条件をいくつも持っている</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>①間接経費が少ない　②情報のリーダタイムが短い　③トップの決断が速い　④フレキシブルな運営が可能である　⑤社員の顔がわかる</p></div>
+</div>
+<div class="section" id="sec-70">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§71</span>
+    <span class="sec-title">過去を否定せず、手法だけを持ち込まず、他人任せにするな</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>企業を変えていくにあたって、やってはいけない禁じ手。過去を否定する必要はない。過去に頑張ってきたからこそ、今日の企業があり、人がいる。これからのモノづくりは、人を真ん中に置いた、人の知恵を活かすモノづくり。手法だけを持ち込んだ場合、短期間で一定の成果はあがったとしても、肝心の人づくりを忘れると、すぐにもとに戻ってしまう。企業を変えていくには、何よりも「トップの本気」が大切。</p><p>２　誰が責任を持って行うかの覚悟が大切</p></div>
+</div>
+<div class="section" id="sec-71">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§72</span>
+    <span class="sec-title">生産改革における「守・破・離」のレベル</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>生産改革を進めていくには手順がある。第１ステップは、手法のモノマネである。第２ステップは、「基礎づくり」で教えられた手法を、自分たちの環境にマッチした手法に変えていくプロセスである。第３ステップは、自分流の拡大である。第３ステップは、トヨタ生産方式に「職場の知恵」をつけて、「自社流の生産方式」づくりを目指している。</p></div>
+</div>
+<div class="section" id="sec-72">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§73</span>
+    <span class="sec-title">専任でなければものの見方・考え方は変えられない</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>現実には兼任でやりたがる企業が多いが、兼任か専任かは後に決定的な差となって表れる。ものの見方・考え方までも変えていこうとすれば、兼任では無理で、何がなんでも専任メンバーでなければならない。メンバーの人数は、大手企業の場合は、すべての部門から選んだ10数名体制。社員数が100名くらいの企業の場合は、2～3名で十分。ただし、社長自らが参加する覚悟が必要。メンバーは兼任で、トップも参加せず、推進役は部課長クラスに任せるようでは、生産改革はまず不可能。一時的に成功しても、すぐにもとのやり方に戻ってしまう。</p></div>
+</div>
+<div class="section" id="sec-73">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§74</span>
+    <span class="sec-title">社長の本気のフォローが成功の鍵を握る</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>専任メンバーによるプロジェクトチームが発足したならば、改善推進計画を作り、研修会や報告会を定期的に開催する。最初に目標を設定する。「製造コスト2分の1・受注から出荷までのリードタイム3分の1・間接コスト2分の1」といった、実績の「半分」や「3分の1」に挑戦するケースが多い。一気に「半分」となると、モノのつくり方を根本から見直していく必要がある。最初は無理に思える目標であっても、ムダを1つずつ丹念に潰し、知恵を出し、工夫を重ねていけば、いつのまにか達成できる。困難に思える目標だからこそ、人間の知恵は発揮される。生産改革の成功には、専任者によるプロジェクト推進室とトップの本気のフォローが不可欠。</p><p>３　理屈だけでは人も現場も動かない</p></div>
+</div>
+<div class="section" id="sec-74">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§75</span>
+    <span class="sec-title">やってみせ、つくってみせる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>トヨタ自動車が、海外でトヨタ生産方式を定着させた理由の１つは、指導に当たったトレーナー自身が、自分でやってみせ、つくってみせたから。トレーナーは実際に1日かけてやってみせて、社員に「あの人にできるのなら自分にもできるかもしれない」という気持ちにさせる必要がある。</p></div>
+</div>
+<div class="section" id="sec-75">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§76</span>
+    <span class="sec-title">モデルラインには2つの役割がある</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「その日の問題はその日に片づける」。モデルラインには、現場で働く社員に「目で見て、納得してもらう」という役割と、「問題を浮かび上がらせて、改善を進める」という２つの役割がある。</p></div>
+</div>
+<div class="section" id="sec-76">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§77</span>
+    <span class="sec-title">水平展開し、改善し、さらに水平展開をする</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>モデルラインによるモノづくりに目途が立ったなら、徐々に水平展開に移る。問題が生まれるのは改善のチャンスでもある。</p><p>４　企業の生産力は社員の知恵の総和で決まる</p></div>
+</div>
+<div class="section" id="sec-77">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§78</span>
+    <span class="sec-title">１人ひとりの社員が、自ら知恵を出すモノづくり</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>生産改革が目指すものはモノづくりだけではない。改善を通じての「人づくり」である。「人づくり」がないと継続的な改善はできないし、企業の永続的な発展もない。知恵を出す場所・時間・環境を提供するのが、これからの経営者や管理監督者の仕事でもある。かえって知識の多い人ほど先入観や経験が邪魔をして、知恵の出る隙間を狭くする。初めて生産方式を試みるときには、「気楽に」とか「ダメモト」で「すぐに実行＝現場実験する」。何より試行錯誤を重ねていけば、人が育ってくる。</p></div>
+</div>
+<div class="section" id="sec-78">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§79</span>
+    <span class="sec-title">現場の知恵を加えてオリジナルの生産方式を</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>改善案は、小さなものをおろそかにしてはいけない。「この作業はどうもやりにくい」といった気づきを大切にして、小さい提案・小さい改善を大きな効果が出る改善にまでまとめ上げていけばよい。スタッフ中心の改善からライン中心の改善へ、そして「やらされる改善」から「自分でやる改善」へと転換。</p></div>
+</div>
+<div class="section" id="sec-79">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§80</span>
+    <span class="sec-title">生産改革は人の可能性を信じることから始まる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>知恵はみんなに平等にある。問題は「うちの社員のレベルが低いから」と思い込んで、人づくりをおろそかにしている側にある。標準作業を整備して、現場の作業は素人でもやれるようにしないといけない。必要数に応じた柔軟な生産体制を築くには、多能工の育成が前提。星取り表をもとに、複数の作業ができる社員を育て、能力に応じた公平な評価を下す。現在の機械をどこまでうまく使えるかをとことん追求。人の知恵を信じ、人の能力を100%引き出そうという心構えが欠かせない。</p><p>５　会社を設立したときの想いこそが改善のエネルギー</p></div>
+</div>
+<div class="section" id="sec-80">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§81</span>
+    <span class="sec-title">つくり方を変える不安もある</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>つくる力が備わってきたいまでは、在庫は必要ないと考えられるようになってきました。たしかに「売れるモノだけをつくろう」と決断するのは大変。</p></div>
+</div>
+<div class="section" id="sec-81">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§82</span>
+    <span class="sec-title">トップに「やりぬく決意」があれば、人はついてくる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>トヨタ生産方式の強さは、「必要なモノを、必要な品質で、より安くつくる」というモノづくりの原点は決して揺るがせないでおいて、つくる手段・手法は刻々と変化していく点にある。</p></div>
+</div>
+<div class="section" id="sec-82">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§83</span>
+    <span class="sec-title">「やろう」という決断と「やりぬこう」という意志</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>不思議なもので「創業の精神」を忘れたり、踏み外した企業というのは、どこかで狂いが生じる。モノづくりに迷っている企業は、もう一度原点に帰って創業の精神を見直してみてはどうだろうか。そうすれば「お客さま満足度を向上させるモノづくりとは何か」がきっと見えてくる。</p><p>トヨタ式ものづくりはムダの徹底的排除から始まる</p><p>１　動くことは仕事ではない。働くことが仕事だ</p></div>
+</div>
+<div class="section" id="sec-83">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§84</span>
+    <span class="sec-title">現状に満足すると、進歩は止まってしまう</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>トヨタ生産方式は、徹底した「ムダ排除」の方式。「ムダ」とは、付加価値を高めない、いろいろな現象や結果をいう。「前工程も後行程もどんどん変化する時代、これでいいはありません。改善する余地は無限にあり、やればやるほどきりがなくなります」という気持ちで、日々改善。</p></div>
+</div>
+<div class="section" id="sec-84">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§85</span>
+    <span class="sec-title">仕事（動き）はムダと付随作業と正味作業に分かれる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「ムダ」は、作業をしていくうえで、なんら必要がなく、原価のみを高める動作である。「付随作業」は、付加価値のつかない作業。本来はムダと言えるが、現在の作業条件では、やらなければならないものが多い。たとえば段取り替えや、部品を取りに行ったりといった作業。「正味作業」は、付加価値を高める作業。注意しなければならないのは、正味作業を高める改善が、単に原価を上げるものとなってはいけない。たとえば「釘を打つ」作業で、安易に釘打ち機を導入してはいけない。原価を上げるだけになってしまう。設備や機械に走る前に、まずは動作分析により、動作中のムラ・ムリ・ムダを見つけて、改善を重ねる。</p></div>
+</div>
+<div class="section" id="sec-85">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§86</span>
+    <span class="sec-title">ムダを見つけるのは管理監督者の仕事</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>汗をかきかき一生懸命に働いている部下の姿を見ると、上司は「頑張っているな」と思いがち。「どこかにムダはないか、もっと楽にやれる方法はないだろうか」と見つけてやる。何も生産現場にかぎった話ではない。改革を依頼されて訪問した役所や病院には、生産現場以上に多くのムダが目につく。</p><p>２　付加価値をうまないものはすべてムダ</p></div>
+</div>
+<div class="section" id="sec-86">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§87</span>
+    <span class="sec-title">ムダの種類</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>①不良・手直しのムダ</p><p>②つくりすぎのムダ</p><p>つくりすぎのムダが特に悪いのは、新たなムダを誘発するから。材料・部品の先食いやエネルギーの浪費、倉庫の新設・金利負担の増加など</p><p>③加工そのもののムダ</p><p>工程の進みや加工の精度にはなんの関係もない不必要な加工をいう。</p><p>④運搬のムダ</p><p>「運ぶ・探すは仕事にあらず」という厳しい姿勢で、レイアウトや作業のやり方を見直す必要がある。</p><p>⑤在庫のムダ</p><p>⑥動作のムダ</p><p>作業中の付加価値を生まない人の動きや機械設備の動き。可動率は、機械設備が、生産したいときにいつでも正常に使える状態の割合で100%が理想。一般に使われている「稼働率」は、必要数によって決まるため、100%である必要はない。</p><p>⑦手待ちのムダ</p><p>機械設備が自動送りで加工しているとき、作業者がそばで機械を見守っていたり、仕事をしたくても、機械が回っていて手を出せない状態など。</p><p>⑧産業廃棄物のムダ</p><p>設計段階からリサイクルを考えておくのはもちろん、生産過程において、ムダな包装やダンボールを排除する。</p></div>
+</div>
+<div class="section" id="sec-87">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§88</span>
+    <span class="sec-title">ムダ発見のための自問</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>特に8項目のムダについては、「なぜ不良が発生したのか」「なぜ産業廃棄物が生まれるのか」と、常に自問する。自問の積み重ねが、改善と進歩につながっていく。</p></div>
+</div>
+<div class="chapter-header">第８章　トヨタ式モノづくりの第２ステップは整理・整頓・清掃・清潔</div>
+<div class="section" id="sec-89">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§90</span>
+    <span class="sec-title">モノを探していては仕事にならない</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「トヨタにはモノを探している人が誰もいない」自社に帰ってみると、いざ注文の品を出そうとすると、「必要なモノはなく、あるのはいらないものばかり」。部品や部材の一つひとつについて、どこに何があるか誰にでもわかる状態になっていれば、生産指示書に従って、必要なものを揃えて、必要な時にラインに届けるのは簡単。一定の数を使った際には、すぐに協力会社に発注する体制ができていれば、品切れの心配もない。ムダな在庫を持つ必要もない。欲しいモノがいつでも取り出せる「整理と整頓」を徹底。</p></div>
+</div>
+<div class="section" id="sec-90">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§91</span>
+    <span class="sec-title">赤札作戦の進め方</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>５Sは、多くの場合「赤札作戦」からスタートする。実施する前には、ぜひ現在の姿を写真に撮っておこう。</p><p>①赤札実施プロジェクトの発足</p><p>メンバーは、製造・資材・管理などの担当者。実施期間は、１ヶ月くらい。</p><p>②赤札対象物の決定</p><p>直接部門の在庫･･･原材料・部品・仕掛品・製品</p><p>直接部門の設備･･･機械、治工具、台車・パレット・作業台・椅子・机・棚</p><p>間接部門の機械･･･パソコン・ワープロ・ファクシミリ・コピー機</p><p>間接部門の備品･･･キャビネット・ロッカー・図書・雑誌類</p><p>③赤札基準の決定</p><p>「過去１ヶ月以上使用しなかったもの」は不要。</p><p>「今後１ヶ月以上使用する計画がないもの」も不要。</p><p>「１ヶ月以内に使用するもの」は必要とする。</p><p>④赤札の作成</p><p>⑤赤札を貼る</p><p>「冷たい目でものを見る」「貼るときは鬼になる」が基本。不明なものには「黄色い札」を貼るケースもある。</p><p>⑥赤札品の対処</p><p>不要品一覧表を作成して、記録に残す。できるだけリサイクルする。</p></div>
+</div>
+<div class="section" id="sec-91">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§92</span>
+    <span class="sec-title">整理の徹底はトップで決まる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>プロジェクトメンバーに任せて終わりではなく、トップ自身が積極的に関わって、何が必要で、何が不要かをきちんと判断する。赤札品の処理にあたっては、リサイクルできるところまで、自分たちの手で分解・分別を徹底するのも一つの方法。</p><p>２　整頓－欲しいモノをいつでも取り出せるようにする</p></div>
+</div>
+<div class="section" id="sec-92">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§93</span>
+    <span class="sec-title">どこに何がいくつあるかがすぐわかるように</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「どこに何が何個あるか」。すぐにわかる状態にしておく。</p><p>①置き場の決定と整備</p><p>使用頻度などを考慮して決定する。在庫品は、先に置かれたものから先に取り出して使う「先入れ先出し」が原則。</p><p>②場所表示</p><p>在庫は必要最小限に整理し、なおかつ「誰でもひと目でわかる」状態に整頓する。</p><p>③品目表示</p><p>棚のなかの場所表示が終わったら、そこに何を置くのかを決めて、はっきりと表示する。</p><p>④量表示</p><p>一定の数しか載らない台車やパレットを多用する。最小在庫量と最大在庫量を決めて、それぞれにテープを貼っておけばひと目でわかる。</p></div>
+</div>
+<div class="section" id="sec-93">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§94</span>
+    <span class="sec-title">整理と整頓は生産改革の第一歩</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ミスの再発を防ぐには、人の注意力だけに依存するのはやめたほうがよい。改善も、ミスをしたくてもできないレベルにまで何度も改善を繰り返すにかぎる。企業の生産力がどのレベルにあるかは倉庫を見ればわかる。ほしいモノがいつでも取り出せる。何がどこにあるかが誰にでもわかる。</p><p>３　清掃－ゴミ一つ落ちていないのは当たり前</p></div>
+</div>
+<div class="section" id="sec-94">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§95</span>
+    <span class="sec-title">保全型清掃と衛生型清掃</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>一つは、機械がたえずよい状態で運転できるように、ゴミやホコリなどを除去して環境条件を整える「保全型清掃」。二つは、細菌などの増殖を防ぐために環境をきれいいにする「衛生型清掃」。共立金属工業でも、「父親の代から使っています」という機械がいまでも活躍している。機械に人間の知恵をつけ、十分な保全さえ怠らなければ、機械の年数や型式にこだわる理由はない。</p></div>
+</div>
+<div class="section" id="sec-95">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§96</span>
+    <span class="sec-title">清掃点検で常に機械を最善の状態に</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>日ごろから使っているからこそ気づく点。</p><p>・いつもよりも大きな音がする。</p><p>・いつもと違う振動を感じる。</p><p>・少しだけこげくさい臭いがする。</p><p>清掃点検にあたっては、チェックシートに加え「目で見、鼻でかぎ・耳をすまし・手を触れ」て、ふだんとわずかな変化も見逃さない注意力を要する。音の原因が切り粉の詰まりにあったとする。切り粉を払って、音がおさまったとすれば、本来は清掃の目的が達せられる。しかし、これでは改善の芽をつんでしまう。「なぜ切り粉がつまるのか」「つまらないようにする方法はないのか」と、改善に向けて考える。真因をつぶして、二度と同じ故障が起きないようにする「修理」こそが望ましい。</p></div>
+</div>
+<div class="section" id="sec-96">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§97</span>
+    <span class="sec-title">安全と衛生はすべてに優先する</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「自分たちが職場環境を守る」という意識レベルの向上にしたがって、清掃レベルも「掃く」から「拭く」「磨く」へとレベルアップする。清掃点検にかぎらず、床や机などの清掃も日々行うのが原則。徹底して習慣化するためにも清掃時間を決めて、手際よくやるのが望ましい。全員で清掃にかかるのは「職場の環境は自分たちの手で守る」という意識を社員に持たせるため。社員全員に「安全」と「衛生」についての意識を徹底したうえで、「清掃」を日々の業務に組み込む。</p><p>４　清潔－整理と整頓された状態を維持継続すること</p></div>
+</div>
+<div class="section" id="sec-97">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§98</span>
+    <span class="sec-title">上司は率先して清潔の習慣化を</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>清潔とは、整理・整頓・清潔の状態の維持をいう。一つは、整理・整頓・清掃の3Sを、日常の業務のなかで習慣として続けて、清潔を維持していく。ゴミが落ちていれば、「ゴミが落ちているから拾っておけ」と命令してはいけない。上司自らが拾えばよい。</p></div>
+</div>
+<div class="section" id="sec-98">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§99</span>
+    <span class="sec-title">清潔の維持には徹底した予防を</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ただし、最初から予防を考えるのは難しい。たとえ時間はかかっても、整理・整頓・清掃は社員の力で少しずつ進めていくにかぎる。</p><p>５　SMILE&amp;SENSIBLE</p></div>
+</div>
+<div class="section" id="sec-99">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§100</span>
+    <span class="sec-title">全員参加型の５Sを</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>まず決められた内容を実際にやってみる。やってみなければ、それがよいか悪いかは決してわからない。もし守れなかったり、不具合があれば、どこがまずいのかを考える。「こうすればよいのでは」という意見が出たら、それを採用してやってみる。これを繰り返していれば、最初は「決められた」と思っていたものが、いつのまにか「自分たちで決めた」ものになる。</p></div>
+</div>
+<div class="section" id="sec-100">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§101</span>
+    <span class="sec-title">なんのための５Sか</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「なんのための５Sか」ムダを省いた生産方式の実現であり、次工程への気配りが行き届いた職場の実現。</p></div>
+</div>
+<div class="section" id="sec-101">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§102</span>
+    <span class="sec-title">５Sに職場の知恵をつける</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>サービス精神も大切になる。明るく元気に笑顔で仕事をしないと、いい知恵を浮かんでこない。５Sの定着には、日常の管理の仕組みとして機能していることが重要。</p></div>
+</div>
+<div class="chapter-header">第９章　トヨタ式モノづくりの自働化24ステップの考え方</div>
+<div class="section" id="sec-103">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§104</span>
+    <span class="sec-title">知恵を使って効果をあげるのが本当の改善</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>最初に作業改善をやって、さらに作業改善をする。そのうえでもっとよくするために最小限の設備改善をする。そして最後にレイアウトの変更などに着手する。お金を使わないで、知恵を使って効果をあげるのが本当の改善というもの。安易に設備改善や工程改善に飛びつくようでは、真に効果のある改善はできない。</p></div>
+</div>
+<div class="section" id="sec-104">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§105</span>
+    <span class="sec-title">改善に失敗したら、もとに戻さず、さらに改善を重ねる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>改善には失敗もある。このときに決してもとのやり方に戻してはいけない。「この機械なら目的が達成できる」と新しい機械を買ってしまうと、改善能力がないものだから、結局は機械に使われるだけに終わってしまう。</p></div>
+</div>
+<div class="section" id="sec-105">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§106</span>
+    <span class="sec-title">ステップを踏むことで改善能力は磨かれる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>これからのモノづくりに大切なのは、それぞれの工程が次工程の状況を考えて仕事をする仕組み。</p><p>２　工場の自働化を進めるステップ</p></div>
+</div>
+<div class="section" id="sec-106">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§107</span>
+    <span class="sec-title">工場の自働化には強烈なニーズが必要</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ニーズがあるからこそ「何がなんでもやりぬこう」という気持ちにもなる。難しく考える必要はない。「ダメモトの思想」で気楽に取り組む。たとえ改善がうまくいかなくとも、さらに改善を加えればよいだけ。</p></div>
+</div>
+<div class="section" id="sec-107">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§108</span>
+    <span class="sec-title">点から線、線から面への展開</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>点は「工程自働化」である。前提として、タクトタイムを設定。ほかに標準作業を実施して、投入材料・完成品在庫の管理、日々の生産個数・生産順序を設定する。以上の前提をもとに、「工具の自働化5ステップ」「工程自働化10テップ」。ついで点から線へと展開していく「ライン自働化」。「ライン自働化」は、工程と工程の仕掛かりを最小にする工夫から始まる。工程間仕掛かりを１個にするのを「連結する」という。工程間仕掛かりが複数個以上のケースを「連動」と呼ぶ。「連結」がうまく機能していくには、不良率が極端に少ないことと、設備の稼働率が100%に近いことが条件である。このような条件のもとで、「ライン自働化5ステップ」を順次実施していく。</p></div>
+</div>
+<div class="section" id="sec-108">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§109</span>
+    <span class="sec-title">混合ラインの工場自働化には4つの前提条件がある</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>最後に、面への展開つまり「工場自働化」。多品種生産をする場合、「設備・機械・工具の共用化」と「多品種のための多能工化訓練」が欠かせない。「工場自働化」を難しくしているのは、「受注と工程能力に見合ったバランスのよい生産順序計画」という２つのテーマ。生産順序計画は、ラインバランスと、順序計画に基づく部品の納入指示、出荷指示という3つの活動のベース。物流システムは、100%良品を、必要な数だけ、タイミングよく納入する仕組み。</p><p>自働化設備の10ヵ条</p><p>１　人・機械の仕事を分ける</p><p>２　方法・ライン・規模から設備を決める</p><p>３　設備の作業者側の幅を狭くする</p><p>４　移動しやすい設備</p><p>５　物の流しやすい設備</p><p>６　転用のきく設備</p><p>７　設備のムダ時間をなくす</p><p>８　生産準備のゼロ化</p><p>９　クイックチェンジ</p><p>10　自働化･･･“自働化とは異常の際、即刻止めることである”</p><p>CUMS生産方式自働化導入のステップ</p></div>
+</div>
+<div class="chapter-header">第10章　トヨタ式モノづくりの情報の考え方・物流の考え方</div>
+<div class="section" id="sec-110">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§111</span>
+    <span class="sec-title">変化を前提とするモノづくり</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>市場の需要を予測するのは難しい。需要予測をもとに生産計画を立てても、現実には数量が増減したり、売れる品種が変わったりというのは日常茶飯事。</p></div>
+</div>
+<div class="section" id="sec-111">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§112</span>
+    <span class="sec-title">需要予測はあてにならない</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>決定を行う者が、自ら出かけ、自ら現場を見ないと現実から遊離する。モノづくりにおける情報は、営業の現場・生産の現場・物流の現場などと密接に結びつく必要がある。毎日、足を運び、話に耳を傾けていれば、「何が必要で、何が必要でないのか、どんな変化が起きているのか」がはっきりと見えてくる。</p></div>
+</div>
+<div class="section" id="sec-112">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§113</span>
+    <span class="sec-title">「かんばん」は変化への微調整を可能にする</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>いくら売りの情報がダイレクトに入ってきて、市場の変化を正確に知覚しようとも、生産ラインが、いつでも計画の変更に対応できるようになっていないと、肝心のモノづくりが後手に回ってしまう。営業現場の情報が生産現場にダイレクトに伝わり、生産現場は変化への微調整機能を備えて柔軟にモノづくりに対応していく。</p><p>２　目で見る管理はトヨタ式モノづくりのキーファクター</p></div>
+</div>
+<div class="section" id="sec-113">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§114</span>
+    <span class="sec-title">トヨタ生産方式の「目で見る管理」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「生産管理板」は、ラインにおける生産状況を表し、生産実績、稼働状況、ライン停止時間、計画の誤差などを表示している。異常があればラインを止めるため、あらかじめ何分かの停止時間は組みこんである。その予定時間をオーバーするようなら、作業のやり方や部品の搬入など、どこかに問題が生じている。反対に予定よりもはるかに短い停止時間で進むとすれば、社員の熟練度も増したのであり、時間の見直しが図られる。「アンドン」は、工程内の異常を管理監督者に知らせるための表示灯。ほかにも機械設備や仕掛品の置き場などをはっきりさせるために引いた「白線表示」、部品がどこにあるかすぐにわかる所番地を明示した「表示板」など。</p></div>
+</div>
+<div class="section" id="sec-114">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§115</span>
+    <span class="sec-title">もう一つの「目で見る管理」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>生産現場で異常が起きても、知らないうちに処理されてしまっては、「真因」をつぶす改善にはなりようがない。「目で見る管理」の考え方は、生産現場にかぎらず、企業経営全般に適用されている。「ラインの責任者を経営者に変えようと想えば、原価を与えること。経理の情報も含めてすべての情報をオープンにすることで、経営者感覚を養っています。」</p></div>
+</div>
+<div class="section" id="sec-115">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§116</span>
+    <span class="sec-title">はっきり見える企業・はっきり見えるモノづくり</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>生産改革を進めるためには、情報についての考え方、人の管理の仕方も根底から変えていく必要がある。「すべての情報をオープンにして、問題がみんなにはっきり見えるようにする」</p><p>３　情報とモノを一緒に運ぶ</p></div>
+</div>
+<div class="section" id="sec-116">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§117</span>
+    <span class="sec-title">モノだけではなく、情報をいかに運ぶか</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>部品や商品を運ぶにあたっては、運搬の原則がある。一つは、モノと情報を組み合わせて運搬する。かんばんのないときには、生産しないし運ばない。この徹底により、何をつくるか、何をつくらないかを管理して、適正な在庫量に抑えていく。</p></div>
+</div>
+<div class="section" id="sec-117">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§118</span>
+    <span class="sec-title">モノを運ぶにはいろいろな方法がある。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>二つ目は、小刻み運搬である。まとめて運べば安くつくといっても、売れる量は日によって違ってくる。量が揃うまで運ぶのを待ってもらうというわけにもいかない。お客さまのところに、必要なときに、必要なモノを、必要な数だけ、タイミングよく届けるのが運搬の目的である。どうしても小刻みによる、効果的な運搬が求められる。「混載運搬」。いろいろな部品や、数社の部品を一台の車に乗せて運ぶやり方。</p></div>
+</div>
+<div class="section" id="sec-118">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§119</span>
+    <span class="sec-title">混載多回運搬には後工程への気配りが必要</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>サブ・アッシ部品など前工程を回って集めてくる「混載多回運搬」。モノづくりというと、どうしてもつくり方ばかりに目が行きがち。実際には情報をどう運ぶか、モノをどう運ぶかという「物流改善」が大きな鍵を握っている。</p><p>４　前工程は神様・後工程はお客さま－協力会社をいかに巻き込むか</p><p>協力会社から100%良品のモノが、必要なときに、必要な数だけまちがいなく納品される必要がある。もちろん価格においても、より安くが求められる。だからといって、協力会社に一方的に犠牲を強いるようでは、長い目でみて生産力の強化にはつながらない。目指すのは協力会社も儲かったうえでの収益アップ。</p></div>
+</div>
+<div class="section" id="sec-119">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§120</span>
+    <span class="sec-title">前工程と一緒に知恵を絞る</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>大野耐一氏は、協力会社の人を呼んで、トヨタのモノのつくり方を実際に見てもらいながら、「こうすれば経済的にモノがつくれます」と、少しずつ理解してもらった。</p></div>
+</div>
+<div class="section" id="sec-120">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§121</span>
+    <span class="sec-title">自工程を整備し、前工程に提案を行う。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>生産方式を変えていこうとするときに、前工程から変えていこうとするから無理がくる。生産改革は、お客さまに近い後工程から進めていくほうがよい。お客さまの要求に応えようと改善を進めていくうちに、モノのつくり方は確実に進歩していく。後工程から初めて、少しずつ前工程へと進めていく。そうやって自社のつくり方にある程度の目途が立った段階で初めて部品の納品方法などに本格的に着手する。</p><p>５　点ではなく、線で考えるモノづくり</p></div>
+</div>
+<div class="section" id="sec-121">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§122</span>
+    <span class="sec-title">状況に応じて計画はどんどん変えていく</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>受注情報に従ってモノづくりを進めていれば、生産計画はいらないのではないか？実際には年間計画も策定するし、月次計画も策定する。トヨタ生産方式の強さは、計画の微調整を生産現場で簡単に実行できる点にある。計画は「内示情報」と「確定情報」。内示情報は協力企業が資材などを手当てするのに必要なリードタイムを考慮して伝達。生産順序計画は緻密に練っていく。ここで生産の平準化と工程バランスを徹底して、生産順序計画のなかに織り込んでいく。この計画を、最終組み立てラインの頭に、一カ所だけ送る。</p></div>
+</div>
+<div class="section" id="sec-122">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§123</span>
+    <span class="sec-title">生産計画と日々の調整を行えるモノづくり</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>生産計画は緻密に作成するが、決して生産計画に縛られない。</p></div>
+</div>
+<div class="section" id="sec-123">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§124</span>
+    <span class="sec-title">企業の総合力が問われる一気通貫のモノづくり</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>変化への機動性を高めるうえでは、リードタイムの短縮が重要。生産のリードタイムは、加工時間と運搬時間、停滞時間の総計で決まる。注文から生産、物流、販売、そして回収というまさに「一気通貫のモノづくり」の実現。</p></div>
+</div>
+<div class="chapter-header">第11章　トヨタ式モノづくりを進める管理監督者の考え方</div>
+<div class="section" id="sec-125">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§126</span>
+    <span class="sec-title">仕事の流れを監督する</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>管理監督者に求め有られる能力は五つ。一つは、仕事についての十分な知識。管理監督者は、生産ラインに入って、部下と一緒になって汗を流すのではない。あくまでも仕事の流れを監督する。</p></div>
+</div>
+<div class="section" id="sec-126">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§127</span>
+    <span class="sec-title">人づくりこそ管理監督者の使命</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>二つ目は、職責の知識。会社・工場の方針・生産計画・安全規則などに従って仕事をするための知識。今日では管理監督者次第で生産性も品質も決まってくる。自分で考えて、自ら行動する能力。三つ目は、教える技術。管理監督者自身で「やってみせる」だけの技量が必要。上司という権力をかさにきて、無理にやらせようとしたり、あるいは部下にこびて、「やってもらう」のは、どちらもまちがっている。</p></div>
+</div>
+<div class="section" id="sec-127">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§128</span>
+    <span class="sec-title">現場の知恵を改善に結びつける</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>四つは、人を扱う技術。職場の人の気持ちを重んじて、職場の知恵を吸収しながら進めていくと、いつのまにか全員参加型の改善になっていく。「社員が風邪で会社を休んだら、管理監督者には見舞いに行け」。五つは、改善する技能。「どこかにムダはないか」「もっといいつくり方はないのか」と常に改善を続ける能力。現場からあがってくるちょっとした「気づき」にも耳を傾けて、よりムダのない方法を考える。大野耐一氏は「管理監督者は、管理監督する時間を3分の1にしろ。改善する時間が半分以上になればまあ一人前」</p><p>２　個人で解決するのではなく、チームで解決する</p></div>
+</div>
+<div class="section" id="sec-128">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§129</span>
+    <span class="sec-title">スピードは大切だが、納得も必要</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「生産改革を進めていくうえで、スピードは大切ですが、納得も必要。理屈先行では失敗をします。</p></div>
+</div>
+<div class="section" id="sec-129">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§130</span>
+    <span class="sec-title">徹底には通常のコミュニケーションが欠かせない</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「新しいやり方は何か。これまでのやり方にくらべて、何が違うのか」をみんなに、目で見て納得してもらう。</p></div>
+</div>
+<div class="section" id="sec-130">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§131</span>
+    <span class="sec-title">トヨタ式タテ・ヨコ・ナナメの人間関係づくり</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>人のネットワークは、仕事のうえでも、心のケアのうえでも大きな支えになっている。スタッフは、こうした場で、「君たちは生産ラインに飯を食わせてもらっている」という意識をたたきこまれる。</p></div>
+</div>
+<div class="section" id="sec-131">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§132</span>
+    <span class="sec-title">生産力のベースは人にある</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>“離れ小島”にしてしまうと、工程どうしで遅れを助け合う作業ができなくなってしまう。工程間には、お互いに助け合える「バトンタッチゾーン」が必要。生産力を高めるうえでは、「人をベースにするモノづくり」が不可欠。</p><p>３　問題から逃げてはいけない。ソリューションこそが利益の源泉</p></div>
+</div>
+<div class="section" id="sec-132">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§133</span>
+    <span class="sec-title">勉強はしても問題のホルダーにはならない</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>会社の問題点をあれこれあげる人は多い。「それは誰の問題か」と聞けば、ほとんどの人は「会社の問題です」。実際には自分の問題であるにもかかわらず。</p></div>
+</div>
+<div class="section" id="sec-133">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§134</span>
+    <span class="sec-title">職場の問題を発見して、改善をするのは管理監督者の仕事</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>現場が「自分が行うのだ」という明確な自主性を持って取り組むようでないと、生産現場を変えていくのは難しい。問題のホルダーであるという意識に加え、さらに要求されるのは、広い視野でものを見ること、ラインから離れてものを見ること、目で見る管理ができることの三つ。</p></div>
+</div>
+<div class="section" id="sec-134">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§135</span>
+    <span class="sec-title">管理監督者は頼りになる親方になれ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「目で見る管理」は、すべて「標準化」しておき、これからはずれるものを重点的に見る「異常管理」である。管理監督者自身が、職場の問題に対して、先頭に立って、一緒に考え、対策を立て実行する。</p><p>４　長所を伸ばし、理解する人材育成</p></div>
+</div>
+<div class="section" id="sec-135">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§136</span>
+    <span class="sec-title">上司は部下と知恵比べ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>部下に命令や指示をするときには、自分もその命令や指示を受けたと想って考える。一緒になって苦しんでやる、考えてやる。</p></div>
+</div>
+<div class="section" id="sec-136">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§137</span>
+    <span class="sec-title">部下の創意工夫を殺してはならない</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>人を真ん中に置いた生産方式を進めていくうえで、人を育てることと、人の知恵を活かすことは、上司にとってもっとも大切な能力。「うまくいくはずがない。」「時期尚早だよ」「予算がないのでね。」といった言葉は、部下のやる気を奪ってしまう。「それはよさそうだ。」「責任は俺がとるから、やれるだけやってくれ」「もう一歩のようだ。」「期待してるぞ」「創造力は年齢や職歴、学歴には関係がないんだ」といった言葉は、部下の創意を活かす。ただの評論家なら上司の資格はない。</p></div>
+</div>
+<div class="section" id="sec-137">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§138</span>
+    <span class="sec-title">評価よりも理解を</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「最近の若い人は評価よりも理解されたがっています」。結果中心の能力主義の問題点。高い目標を目指すという果敢なチャレンジ精神が、未達を恐れて影をひそめつつある。管理監督者は、目標の達成ももちろん大切だが、それ以上に部下を育てる喜びを感じ取りたい。「人を抜くときは優秀な人を抜け」という。残された人間も負けじと知恵を出し、よりよい仕事をするようになる。自分を凌駕するような人間をどれだけ育成できるか。実はそれが管理監督者の評価。</p><p>５　明るく笑顔で徹底的にやりぬくことが成功の秘訣</p></div>
+</div>
+<div class="section" id="sec-138">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§139</span>
+    <span class="sec-title">すべてはトップの姿勢にかかっている</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>各人それぞれが自分の問題として、ムダ排除や改善に取り組まないと、生産改革は進まないし、定着もしない。それ以上に大切なのが、会社のトップが本気で取り組む姿勢があるかどうか。</p></div>
+</div>
+<div class="section" id="sec-139">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§140</span>
+    <span class="sec-title">24社中10社しか成功しなかった</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>大野耐一氏は、「改善は、やむにやまれず、やらなければ会社が潰れてしまうというくらいの気持ちでやる改善が一番大事な改善である。」</p></div>
+</div>
+<div class="section" id="sec-140">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§141</span>
+    <span class="sec-title">わずかの成功に満足するな</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>トヨタ生産方式は、うまく導入すれば短期間で成果があがる。それ以前のやり方がムダだらけだから、ムダを的確に排除していけば、10%や20%の生産性をあげるのは簡単だ。そこで満足してしまうトップがまれにいる。一方では、「やり続けて10年、でもいつでもいまが最悪と思ってやっています」と、決して現状に満足しないトップもいる。瞬間的な改善は、デモンストレーションにはなっても、企業の発展には結びつかない。まして長い時間を要する人材育成など不可能。</p></div>
+</div>
+    </div>
+  </div>
+  <div id="reading-view"><div class="reading-inner" id="reading-inner"></div></div>
+</div>
+</div>
+<script>
+const sections = [{"id": 3, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第１章　「日本のモノづくりが危ない」は本当か", "title": "設備依存がモノづくりの足を引っ張っている", "body": ["「設備は嘘をつかない」モノづくりの世界で、長い間信じられてきた言葉。生産性にしろ、品質にしろ、すべてを設備で解決してきたのが、日本のモノづくり。モノ不足が設備中心の経営を可能にしていた。"]}, {"id": 4, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第１章　「日本のモノづくりが危ない」は本当か", "title": "今日のモノづくりに設備では答えが出ない", "body": ["一つは、国際競争力が問われる時代。「よくて、早くて、安くて」つまり「品質・納期・コスト」のいずれかで、どこにも負けないものを持たないと生き残れない。二つは、量の拡大が望めないなかでの激しいシェア争いが展開される時代。三つは、需要の変動が激しい時代。商品寿命は短く、量の変動も激しく、今日売れているモノが明日も売れるとはかぎらない。四つは、多様化志向が激しい時代。消費者ニーズに応えていくため、次々と新商品が投入される。見込みによる大量生産では、売れない在庫を抱えるだけ。五つは、多品種化志向が激しい時代。種類が次々と増えていくため、一つの工場で何百種類・何千種類もの商品をつくる力が必要。自動化ラインでは、新しい商品に対応するための、生産ラインやロボットの切り替えに、最低１～2ヶ月は必要になる。これでは多品種少量生産には対応できない。"]}, {"id": 5, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第１章　「日本のモノづくりが危ない」は本当か", "title": "人中心のモノづくりへの転換を", "body": ["トヨタ生産方式。「知恵を出すことによって、マンパワーは無限に拡大される」もの。住宅用の網戸や玄関ドアをつくっている共立金属工業株式会社は、大量生産方式をやめ、トヨタ生産方式の導入を試みて10年。この間、消費者ニーズに応えるため、商品の種類は100種類から500種類に増えたにもかかわらず、生産性は3倍になり、なおかつリードタイムはかつての30日から２時間に短縮。売りと連動した生産を実現している。生産力を上げるのは、必要な人と設備（道具）。人の持っている無限の能力をいかに引き出すかが鍵。", "２　必要なモノをかってきたまちがい"]}, {"id": 6, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第１章　「日本のモノづくりが危ない」は本当か", "title": "モノづくりはEMSに任せればいいか", "body": ["モノづくりをEMS（生産請負会社）に委託する動きは加速している。パソコンや携帯電話などのIT関連商品は、市場が激しく変動する。売れ行きが急速に伸びたかと思えば、急降下する例もある。多くの企業は相変わらずの需要予測に基づく大量生産方式をとっている。もっとも売れる時に肝心の製品が不足したかと思えば、ちょっとでも売れなくなれば、大量の在庫を抱え、ムダな設備や人を抱える。"]}, {"id": 7, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第１章　「日本のモノづくりが危ない」は本当か", "title": "変化に対応できないからモノづくりのリスクが高くなる", "body": ["本来生産ラインは、「必要数」のうえに組み立てられなければならない。「必要数」とは、売れ行きの事であり、市場の動向で決まってくる。変化に対応できない企業にとって、モノづくりは、きわめてリスクの高いものとなっている。"]}, {"id": 8, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第１章　「日本のモノづくりが危ない」は本当か", "title": "中国のモノづくりは安いと錯覚していないか", "body": ["日本の人件費が高くなりすぎたため、人件費が日本の20分の1の中国に生産拠点を移し、コスト競争に勝とうとしている。しかし、「本当に儲かっているのでしょうか」と疑問。「設備を持っていくお金や、技術・管理の指導に人が行くお金を考えると、本当に儲かっているのか、疑問。人件費が安いため、錯覚を起こしているケースもあるし、コストがどんぶりになっているケースも多い。モノづくりの本質を見る必要がある。」「同業他社の多くが中国で生産をしている。たしかに縫製部分は安いのですが、周辺のコストは見えていないのが実情。机上の計算では安いつもりが、実際にはどんぶりでわからないのが本当」リードタイムの短さなどを考慮すれば、国内生産のメリットは実に大きい。", "３　需要に応えるモノづくりに成功した企業に不況はない"]}, {"id": 9, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第１章　「日本のモノづくりが危ない」は本当か", "title": "注文は決して急にはなくならない", "body": ["月に１回出てくる試算表を見て、「注文が減っているなぁ」などと言っているようでは経営者失格。毎日、お客さんのところへ足を運び、自社の工場と物流は、最低限見て歩く必要がある。毎日、足を運んでいれば、情報も入ってくるし、自然と状況は見えてくる。だから、情報の正確さ・リーダタイムの短さがポイント。", "オイルショックの混乱期、トヨタはそれまで五日ごとに把握していた販売店の受注・在庫状況を、その日のうちに把握できるようにした。その結果、他社が増産を続けているにもかかわらず、減産に踏み切った。そのかいあって、早期に在庫調整を終え、景気回復とともに、一気に攻勢に転じる体制を築いた。"]}, {"id": 10, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第１章　「日本のモノづくりが危ない」は本当か", "title": "現場を見なければ、市場動向も生産力もわからない", "body": ["売上げ向上に結びつく情報は三つ。一つは、売れたものをつくる後補充型。二つは、確定受注。注文を受けたモノを、短いリードタイムで生産すれば、在庫を持たずに、しかもお客さんの要望に柔軟に対応できる。三つは、いま売れているモノ、確実に売れそうなモノ。市場の毎日の変化を正確につかみながら、生産をしていけばよい。机上でどれほど需要予測をしようとも、市場の変化が予測通りにいく例は滅多にない。ムダな計算をする暇があれば、お客さんの所へ足を運び、自社の工場と物流を見て回るほうがよい。"]}, {"id": 11, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第１章　「日本のモノづくりが危ない」は本当か", "title": "「売りに結びついたモノだけをつくる」という決断", "body": ["「需要はある」と勝手に思い込んでつくるのはいけないし、「需要はない」とあきらめるのはもっと悪い。この10年間、「量が減っても、なお生産性を上げるモノづくり」に励んできた。その結果、同業他社に比べ、品質は同じで価格は30%安い住宅を建てられるところまできた。自社のモノづくりが、本当に売りに結びついたモノづくりとなっているかを検証する必要がある。「仕事は親会社や国から降ってくる」という下請け意識ではもはややっていけない。", "４　大変だと騒いでいるのは、現場知らずの評論家"]}, {"id": 12, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第１章　「日本のモノづくりが危ない」は本当か", "title": "口先だけの「人を大事に」", "body": ["生産改革を進めるにあたっては、専任メンバーによるプロジェクトチームを発足させ、改善推進計画をつくり、研修会や報告会を定期的に開催する。報告会には必ず社長以下の役員が出席するのが望ましい。トップ自らが改善に参画し、自分でフォローする情熱こそ改善を成功させる最大のポイント。"]}, {"id": 13, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第１章　「日本のモノづくりが危ない」は本当か", "title": "トップの現場への関心度合いが生産力を左右する", "body": ["豊田英二氏は、かつて暇さえあれば工場を見て歩き、近隣のグループ会社を含め、生産ラインはもちろん、工場に生えている木まで熟知。張富士夫社長も、いまでも自分で車を運転して、朝早くから工場の生産ラインを見に行く。"]}, {"id": 14, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第１章　「日本のモノづくりが危ない」は本当か", "title": "現場を知らない人にはわからないことがある", "body": ["余分につくっても、売れなければなんにもならない。売れない在庫は実は資産ではなく死産になってしまう。ところが、現場を知らない人にとっては、こうした考え方はわかっても、実際にどうすればよいかがわからない。「疑問に思ったり、困ったり、何かヒントを思いついたら現場に行けばよい。現場を見れば、考えたことがよいことか悪いことかが判断できる。そこからまた新しい問題点やヒントも浮かんでくる」は、大野耐一氏の口癖。", "５　つくる力があるかどうかが企業成長の分かれ道"]}, {"id": 15, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第１章　「日本のモノづくりが危ない」は本当か", "title": "下請けからビジネスパートナーへ", "body": ["モノづくりの力、つまり「品質・納期・コスト」で卓越した力を備えていれば、相手企業にとって、その企業は実に頼もしい存在になる。本来よい品質のモノをより安くつくろうと思えば、設計と生産は一体であるほうが望ましい。設計段階に原価や品質・安全性・工場の作業性などすべてが入っていれば、モノづくりはうんと楽になる。ところが、現実には「設計は設計、生産は生産」と分かれているケースが圧倒的に多い。まして下請けであればなおさら。つくる力を備えた企業が、この関係を変えつつある。つくる力を見込んだ相手企業の依頼により、設計と生産をペアで取り組むパートナーシップを確立し始めている。"]}, {"id": 16, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第１章　「日本のモノづくりが危ない」は本当か", "title": "つくる力がブランドになる", "body": ["設計でのコストのつくり込み、徹底した環境対策により、商品力を高めるのに貢献。下請けというよりは、ビジネスパートナーとしての地位を固めつつある。つくる力が、営業の武器となり、同時に自社の可能性を広げつつある。消費者と生産者が直接向き合うようになると、モノづくりそのものが問われる。親会社のブランドではなく、モノづくりを通じて培われたブランド力が重要になってくる。"]}, {"id": 17, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第１章　「日本のモノづくりが危ない」は本当か", "title": "中小企業にはつくる力をつける条件がいくつも備わっている", "body": ["つくる力のある企業には注文が殺到するが、つくる力がない企業には注文はこない。リコーユニテクノや共立金属工業には、両社のモノづくりに関心のある人がたくさん訪れる。モノづくりを見て、納得をして、仕事を依頼。工場そのものがまさに「ショールーム」としての役割を果たしている。中小企業が、こうしたつくる力を身につければ、日本のモノづくりは強くなる。中小企業には、つくる力を身につけるうえで、大企業にはない強みがいくつもある。間接経費が少なく、情報リードタイムが短く、トップが決断さえすれば、フレキシブルな運営が可能。何よりも社員全員の顔をトップが熟知できる。"]}, {"id": 19, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第２章　右肩下がりの経済時代に生き残る企業の条件", "title": "ニーズはあるが、どれだけニーズに応えられるか", "body": ["住宅についての要望が多様化してくると、どれだけ消費者の要求に応えられるかが、ハウスメーカーの業績を左右する。"]}, {"id": 20, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第２章　右肩下がりの経済時代に生き残る企業の条件", "title": "目的のない仕事から、お客さまを意識した仕事へ", "body": ["一棟ずつ、お客さまの要望に合わせて、部材などを生産する「邸別生産」へと切り替えた。4～5本の生産ラインで、一棟の住宅を建てるのに必要な何十種類もの部材を順番につくっていく。最終工程では、サッシなども組み込んで、建築現場へと出荷する。かつて苦しんだ大量の在庫も、いまは確実に需要がきまっている数日分を抱えるにすぎない。完全な邸別生産ですから、なんのための、誰のための仕事かがはっきりしている。"]}, {"id": 21, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第２章　右肩下がりの経済時代に生き残る企業の条件", "title": "お客さまを中心とした生産システムを", "body": ["強い生産力を手にするためには、「自分にとってお客さまは誰か」を問い続ける姿勢が必要。お客さまは、使いやすくて、便利で、故障がなく、楽しく、嬉しくなる商品が欲しい。注文したら、すぐに手に入る商品を望んでいる。しかも、お客さまの欲求は日々変化している。変化するお客さまの欲求に、毎日毎日対応し続ける。これがモノづくりの基本。", "２　売値はお客さまが決める時代のモノづくり"]}, {"id": 22, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第２章　右肩下がりの経済時代に生き残る企業の条件", "title": "「原価＋利益」は通用しない", "body": ["お客さまは「相場」で買う。「原価＋利益」では買わない。「売値はお客さまが決める」という発想に転換しきれないと、どうしても中途半端な経営になってしまう。医療器具の世界で、やがて到来する国際競争をにらみながら、生産改革を推し進めている企業がある。健康保険制度が危機。医療費の伸びをいかにして抑えるかが目下の課題。診療報酬や薬価、さらには医療器具にも影響が及ぶから。海外の医療器具と比較した場合、明らかに高すぎるものがある。"]}, {"id": 23, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第２章　右肩下がりの経済時代に生き残る企業の条件", "title": "「一物一価」に負けないモノづくりを", "body": ["同社の場合、危機感がポイント。現状は十分に儲かっているだけに、安住したり、「国が守ってくれる」という依頼心を持ってしまっては生産改革は進まない。"]}, {"id": 24, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第２章　右肩下がりの経済時代に生き残る企業の条件", "title": "原価は下げるためにある", "body": ["モノが不足していた時代は、モノの価格は生産者が決めた。一物一価の時代だから、売値は決まっている。つくる側の「原価がいくらかかった」という事情は一切関係ない。かつて大野耐一氏は「原価は計算するためにあるのではない。下げるためにある」それだけではない。多品種少量時代には、量を増やして原価を下げるのは難しい。たとえ少ない数でも原価を下げて、利益を出すモノづくりが必要。", "３　不良は絶対につくらない、送らない、受け取らない"]}, {"id": 25, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第２章　右肩下がりの経済時代に生き残る企業の条件", "title": "お客さま満足度を向上させる三つの条件", "body": ["「お客さま満足度」を向上させる三つのポイント。", "①お客さまの不平・不満をゼロにする", "②お客さまの品質クレームをゼロにする", "③未納・遅延・欠品などの物流クレームをゼロにする。", "この三つのポイントを達成するためには、モノづくりに関するすべての工程が「不良はつくらない、送らない、受け取らない」を徹底。モノをつくっている以上、ある程度の不良は仕方がないという人がいる。結果として、製品へのクレームが増加して、経営の根幹を揺るがす一因。"]}, {"id": 26, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第２章　右肩下がりの経済時代に生き残る企業の条件", "title": "品質・品格への要求プラス買いやすい価格", "body": ["検査により不良率を低く抑えようという考え方では、不良品は決してなくならない。アパレルメーカーのワールドインダストリーは、今日の消費者ニーズを「品質・品格への要求プラス買いやすい価格」と捉えている。同社は、製造工程のなかに隠れている「運搬のムダ」「停滞のムダ」「つくりすぎのムダ」といったあらゆるムダを省いて、効率のよい生産方式を追求。同時に原料引き取りから裁断、縫製、仕上げ、検査、出荷、小売店店頭というすべての工程で、「不良はつくらない、送らない、受け取らない」を徹底。お客さまは、注文したら、すぐにでも手に入るのを望んでいる。ワールドインダストリーの場合、受注して、お客さまにお届けするまでの「リードタイム」は5日間。「品質」を備えたうえでの「納期」であり「コスト」。", "４　環境問題に配慮したモノづくり"]}, {"id": 27, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第２章　右肩下がりの経済時代に生き残る企業の条件", "title": "つくりすぎを許すシステムでは省エネは実現できない", "body": ["21世紀のモノづくりのポイントは、省エネにある。産業破棄物をゼロにするゼロエミッション計画も各社で進められている。つくりすぎは、材料・部品を先食いし、電機や油といったエネルギーを浪費する。パレットやスキットなどの容器の増加を招き、倉庫などの増設が必要になる。売れ残ってしまえば、ものによっては産業廃棄物として捨てるしかない。大型機械、大きな設備に問題。機械や設備を動かすだけでも大量のエネルギーを要するうえに、せっかくの機械・設備を動かさないのはムダとばかりにフル稼動をさせ、結局はつくりすぎを招く。"]}, {"id": 28, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第２章　右肩下がりの経済時代に生き残る企業の条件", "title": "コンパクトな設備と最小エネルギー", "body": ["トヨタのある工場では、設備中心であれば膨大なスペースが必要になるところを、機械の仕事と人の仕事を共存させて、コンパクトな設備・コンパクトな工場を実現。さらにリサイクルの問題がある。設計の段階からリサイクルを考えていかないと、高いリサイクル率の実現は難しい。"]}, {"id": 29, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第２章　右肩下がりの経済時代に生き残る企業の条件", "title": "環境にやさしいモノづくりが求められている", "body": ["環境対策というと、対策だけが独立した、コストのかかる問題と捉えている人もいる。しかし実際にはムダを徹底的に排除した生産方式を進めれば、自ずと環境にやさしいモノづくりへとつながっていく。", "５　人の知恵を活かしたモノづくり"]}, {"id": 30, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第２章　右肩下がりの経済時代に生き残る企業の条件", "title": "トヨタ生産方式は発展途上である", "body": ["お客さまの欲求をはじめ、モノづくりを取り巻く環境は刻々と変化している。設備中心のモノづくりでは、こうした要求には応えられない。人と機械が共存する「人中心のモノづくり」でなければ、これからのモノづくりは難しい。トヨタ生産方式が「今日のやり方が最悪と思え」という厳しい姿勢で改善に取り組むのは、市場はたえず変化しており、「これでいいと思ったら、進歩が止まる」事実を知っているから。"]}, {"id": 31, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第２章　右肩下がりの経済時代に生き残る企業の条件", "title": "知恵を出しに行く環境を", "body": ["スタッフが理論的に考えるのも可能だが、実際には現場が考えないと役には立たない。一つひとつ自分たちで実行していったものは本当の力になる。異常があれば機械やラインを止める。そのとき、一刻も早く修繕をしてラインを動かすのではない。なぜ異常が起きたのか、「真因」を追求して、二度と同じ異常が起きないように修理を施す。買ってきた機械をカタログどおりに動かしていると「カタログエンジニアか」と大野氏に怒られる。作業のやりにくさや、姿勢のつらさといった小さな気づきも無視しない。改善提案については、評価をする人は、現場を見に行って、提案した人からいろいろ話を聞く。提案した人も、はりきって取り組む。「仕事に行くではなく、知恵を出しに行く」という環境。"]}, {"id": 32, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第２章　右肩下がりの経済時代に生き残る企業の条件", "title": "机上の生産技術から現場の知恵活用へ", "body": ["机上の生産技術ではなく、現場の経験・技能の蓄積と体系化による改善が、はるかに有効で即時性がある。現場の全員参加が、これからのモノづくりのキーワード。21世紀のモノづくりは、人を育て、人の知恵を活かす姿勢がもっとも重要になる。"]}, {"id": 34, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第３章　見込み生産はムダを生産する", "title": "売れるモノをよりよい品質でより安く素早くつくる", "body": ["ＣＵＭＳ(Cultivating Management System)生産方式は、筆者たちの活動体験を集大成したもの。"]}, {"id": 35, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第３章　見込み生産はムダを生産する", "title": "ジャスト・インタイムの原則は、売れないモノはつくらない", "body": ["何よりも「ジャスト・イン・タイム」の考え方が大切。原則は、「後工程が前工程に、必要なモノを、必要なとき、必要な量だけ取りにいく」であり、「前工程は、引き取られた分だけをつくる」。大野耐一氏は「暇だったら遊んでいてくれればいいのに、何かごそごそ余計なことをやる。」　つくりすぎを防ぐ工夫。ひとりの人が、いくつもの工程をできるようにする「多能工化」。工程順にレイアウトして、「流れでモノをつくる」やり方。"]}, {"id": 36, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第３章　見込み生産はムダを生産する", "title": "タクトタイムは必要数で決まる", "body": ["お客さまの需要に合うようにモノを生産していく時間の基準が必要。それを「タクトタイム」という。タクトタイムとは、製品一個あるいは部品一個をつくる時間。各工程の生産スピードを統一する。タクトタイムは、必要数と稼働時間で決まり、日当たり稼働時間を日当たり生産必要数で割って求められる。"]}, {"id": 37, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第３章　見込み生産はムダを生産する", "title": "かんばんには厳格なルールがある", "body": ["かんばんには、生産指示情報としての「工程内かんばん」と、引き取りまたは運搬情報としても「引き取りかんばん」がある。「不良品は絶対に後工程に流さない」というルールにより、100%良品を保証する。かんばんには、ほかに「在庫を適正な量に抑える」や、かんばんの枚数を減らして「問題点を顕在化させる」役割もある。", "＜工程内かんばんのルール＞", "(a)　後工程に引き取られた量だけつくる。", "(b)　かんばんのないものは絶対につくらない。", "(c)　かんばんと物は必ず一緒に流す。", "(d)　不良品は絶対に後工程に流さない。", "＜引き取りかんばんのルール＞", "(a)　最初の部品を取り出すとき、かんばんを外す。", "(b)　外されたかんばんを持って、前工程に引き取りにいく。", "(c)　引き取りにいった先で、工程内かんばんと差し替える。", "(d)　かんばんのないものは絶対に運ばない。", "２　不良は見つけるものではなく、つくらない"]}, {"id": 38, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第３章　見込み生産はムダを生産する", "title": "自働化の意味とねらい", "body": ["加工物や機械設備になんらかの異常が生じたとき、機械設備が自ら異常を検知して、自動的に止まる。これを「自働化」。正常に作動中は人間は機械設備のそばにいる必要はない。異常でストップしたときだけ行けばよいという点では「少人化」も可能にする。自働化のもう一つのねらいは、「問題の顕在化」にある。問題がはっきりすれば、改善も進む。組み立てラインに応用。異常があれば、作業者自身がストップボタンを押してラインを止める。"]}, {"id": 39, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第３章　見込み生産はムダを生産する", "title": "品質は工程でつくり込む", "body": ["自分のつくったモノがよいかどうかを責任を持って検査をして、よいモノだけを「お客さま」である後工程に流していく。管理監督者は、異常工程に急行して、処置する。処置にあたっては、「5回のなぜ」を繰り返す。「真因」をつきとめて、真因に対して対策。設備面の品質保証には「ポカヨケ」と呼ばれる装置する。", "３　つくり方によって「品質・納期・コスト」は大きく変わる"]}, {"id": 40, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第３章　見込み生産はムダを生産する", "title": "標準のないところに改善はない", "body": ["標準作業は、「生産現場でモノをつくっていくときの基準となるもので、人の動きを中心として仕事を進め、ムダのない順序で、もっとも効率的な生産をするやり方」標準作業があるからこその改善である。だから一ヶ月以上も修正されないような標準作業は役に立たない。標準作業には「タクトタイム・作業順序・標準手持ち」という三つの要素がある。「標準手持ち」は、作業順序に従って、作業をしていく場合、繰り返し同じ手順・動作で作業者ができるように工程内に持つ最小限の仕掛品をいう。"]}, {"id": 41, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第３章　見込み生産はムダを生産する", "title": "ものを平均で見るな、バラツキにこそ意味がある", "body": ["作業における標準時間については、平均値で決めるやり方をしてはいけない。トヨタ生産方式では、「一番短い時間が、一番楽なやり方だ」と考える。標準作業は刻々と変わるもの。しかも働く人たちの提案によっても、たえず改訂が行われる。"]}, {"id": 42, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第３章　見込み生産はムダを生産する", "title": "生産量の増減に柔軟に対応する少人化", "body": ["生産量の増減に応じて工数の低減ができる仕組みを「少人化」という。少人化は、生産量に応じて5人でも3人でもやれるようにして、人数の固定はしない。前提条件がある。", "１．標準作業をきちんと決めて、誰でも簡単にできるようにする。", "２．作業のローテーションを行って、多能工を育成しておく。", "３．“離れ小島”をなくし、一カ所に作業を集め、チームワークを発揮できるようにする。"]}, {"id": 43, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第３章　見込み生産はムダを生産する", "title": "ムラがあるからムリをしてムダが発生する", "body": ["トヨタ生産方式では、「ムラ・ムリ・ムダ」の順番で考える。生産量にムラがあるから、どこかでムリを生じ、それがムダを招く。量と種類などの複数の要素を平均化する「平準化」により、バラツキを少なくしていく。トヨタ生産方式を実践している企業では、確定受注だけでは平準化が難しいときには、確実に受注が見込まれるモノを加えて、できるだけ山と谷をならすようにしている。「より安くモノをつくる」というと、いまでも仕入れをいかに安くするか、いかに人を減らすかばかりに目がいく人が多い。まずモノの作り方そのものを徹底して改善する方が先決。", "４　多すぎる情報がムラ・ムリ・ムダの原因"]}, {"id": 44, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第３章　見込み生産はムダを生産する", "title": "多すぎる情報はつくりすぎを招く", "body": ["生産指示書にしろ、平準化した順序計画にしろ、コンピュータを用いて初めて素早く正確に対応できるものは多い。しかし、多すぎる情報は、ときに進みすぎを招き、順序間違いを引き起こす。ある会社で、かつては一日分の情報をまとめて出していた。すると、売れる順序とは関係なしに、勝手にロットをまとめ、つくりやすさを優先しがちとなった。"]}, {"id": 45, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第３章　見込み生産はムダを生産する", "title": "コンピュータの仕事と人の仕事", "body": ["かんばんが生産指示情報となって前工程へとさかのぼっていく。一枚のかんばんが「必要なときに必要な情報」を送ってくれる。しかも、かんばんは、計画の微調整を行ううえでも役に立つ。当初の計画と、つくるモノの種類や数が変わったとしても、各工程はかんばんどおりにつくっているだけだから、わざわざ計画の変更を指示して回る必要はない。あるパートではコンピュータの力を最大限に活用するが、あるパートではかんばんや人の力を最大に活用する。"]}, {"id": 46, "part": "第Ⅰ部　日本の知恵を活かしたモノづくりに挑む", "chapter": "第３章　見込み生産はムダを生産する", "title": "もうけるITになっているか", "body": ["「IT革命」が流行語になって以来、過度の情報投資を行っている企業が目につく。部品の受け入れと仕分けをコンピュータ化している企業がある。ところが、部品がいちいち大ロットで出てくるものだから、売りに結びついた小ロット化・一個流しのモノづくりには不便で仕方がない。IT化は、別に特別視するものではない。あくまでも原価を下げるものでなければならない。"]}, {"id": 49, "part": "第Ⅱ部　魅せるモノづくりが企業の活力を生み出す", "chapter": "第４章　リコーユニテクノ株式会社の挑戦", "title": "育てた会社に主力商品の座を奪われる", "body": ["1996年当時のリコーユニテクノ株式会社は、主力のファックスの生産拠点の座を中国の上海理光に奪われ始め、事業構造の転換を迫れていた。当時は、同社にかぎらず、自動化ライン中心という大量生産方式のやり方そのままに、次々と新製品を市場に投入していた。そのため生産部門は、生産品種の多様化に対応するために頻繁なラインの切り替えに追われ、生産性を落とすだけでなく、不良品の発生も避けられなかった。クレーム対応に追われるのは、多くの企業に共通する悩みだった。しかも同社の場合は、売上げの大幅ダウンという厳しい現実もあった。"]}, {"id": 50, "part": "第Ⅱ部　魅せるモノづくりが企業の活力を生み出す", "chapter": "第４章　リコーユニテクノ株式会社の挑戦", "title": "「理想の工場」をイラストに描く", "body": ["たとえ売上げは落ちても、利益を出す方法を考えようと、悲観するのではなく、気持ちを前向きに持つようにした。「結果は気にせず、まずやってみろ」というプラス思考。高く掲げた目標は「いまある商品を、いかに安く、早く、よくつくるか」。"]}, {"id": 51, "part": "第Ⅱ部　魅せるモノづくりが企業の活力を生み出す", "chapter": "第４章　リコーユニテクノ株式会社の挑戦", "title": "５Sにはトップダウンが欠かせない", "body": ["最初に着手したのは、「ラインの問題が見えるようにする」ための５Sの展開。５Sは,一般には「整理・整頓・清掃・清潔・躾」。特に整理は、不要なものに赤い札を貼り、誰でも不要なものが目で見てわかるように区別する。「私は生産現場や倉庫などを朝・昼・晩の一日3回見ています。2～3ヶ月かけて、現場を見ていると、このラインはいらないのでは、このラックはいらないのではということが自然とわかるようになってきます」　５Sを徹底させた結果、スペースも生まれ、お金も浮いてきた。次に進めたのが「ラインでの人の仕事のしやすさ」。", "２　ラインの人の働きやすさを第一に考える"]}, {"id": 52, "part": "第Ⅱ部　魅せるモノづくりが企業の活力を生み出す", "chapter": "第４章　リコーユニテクノ株式会社の挑戦", "title": "あいさつはするが、あいさつをしろとは言わない", "body": ["もう一つの５S。「SPEEDY・SIMPLY・SYSTEM・SERVICE・SMILE」。なかでもSERVICEとSMILEの2つを重視。「自分からあいさつをしますが、あいさつをしろとは決して言いません。」どんな政策でも「トップを含む管理職が、まず率先してやるべき」"]}, {"id": 53, "part": "第Ⅱ部　魅せるモノづくりが企業の活力を生み出す", "chapter": "第４章　リコーユニテクノ株式会社の挑戦", "title": "生産ラインの仕事のしやすさを第一に", "body": ["「なぜラインが包装をいちいちほどかなければならないような部品の仕入れの仕方をするのか。なぜ何枚もの伝票をいちいち書かせる必要があるのか。」「ラインの人が、よりおおくの付加価値を生むためには、あくまでもラインが主役でなければならない」多品種少量に対応する混合生産を進めていくうえでは、前工程が次工程のことを考えることが欠かせない。部品をただ揃えて運ぶだけでなく、下拵え（簡単な組み立て）をして運んでくれれば、生産ラインは、よりレベルの高い仕事が可能になる。"]}, {"id": 54, "part": "第Ⅱ部　魅せるモノづくりが企業の活力を生み出す", "chapter": "第４章　リコーユニテクノ株式会社の挑戦", "title": "大切な人と人の心の通いあい", "body": ["「ラインが主役」を徹底するには、情報や評価についても、すべてを社員に見せる。ラインMAPの上に改善の内容と提案した人の顔写真を貼り付けた「改善MAP」や社員１人ひとりの現在の能力を示すマトリックス型の星取り表。情報についても正社員と派遣社員の差は一切ない。「何かを徹底するためには、通常のコミュニケーションが大切です。感情を無視して、理屈から入ると、たいていは失敗する。」"]}, {"id": 56, "part": "第Ⅱ部　魅せるモノづくりが企業の活力を生み出す", "chapter": "第５章　ユニテクノ方式の展開", "title": "守りから攻めに転じる", "body": ["①異常と正常がみえるライン　②生産性の50%アップ　③お客さんに柔軟に対応できる生産方式"]}, {"id": 57, "part": "第Ⅱ部　魅せるモノづくりが企業の活力を生み出す", "chapter": "第５章　ユニテクノ方式の展開", "title": "自動化ラインからの決別", "body": ["五基あるベルトコンベアーのうち、一基だけを廃棄。「たとえ一基でもベルトコンベアーを捨てるのは大変でした。1億円以上もするものを捨てるわけです。」"]}, {"id": 58, "part": "第Ⅱ部　魅せるモノづくりが企業の活力を生み出す", "chapter": "第５章　ユニテクノ方式の展開", "title": "スターウォーズライン誕生", "body": ["モデルラインは、人を中心とする「台車引きライン」とした。製品を組み立てるワーク台車と部品を配膳した台車を交互に連結して、連続移動で定位置停止する生産ライン。多能工を目指し、いくつもの生産品種がラインを流れる完全な混合生産とした。次々と改善を加えた結果、生産性は自動化ラインに比べて30%もアップした。新しい生産ライン構築にあたって、縮尺20分の1のプラモデルを作成し、生産工程のレイアウトの検討と作業担当者への教育に使用。"]}, {"id": 59, "part": "第Ⅱ部　魅せるモノづくりが企業の活力を生み出す", "chapter": "第５章　ユニテクノ方式の展開", "title": "品質は人で決まる", "body": ["2000年にはついにベルトコンベアーを全廃。現在では、生産品種と構成部品と人材育成に対応して、台車引き生産のほか、リレー生産、１人生産、2人以上生産など、多様な生産方式を駆使するようになっている。「組み立ては人によってしかできません。品質は人で決まると言っても過言ではありません。技術・技能・気持ちの3つがモノづくりには大切です」と神戸社長。", "２　つくる力が売る力に結びつく"]}, {"id": 60, "part": "第Ⅱ部　魅せるモノづくりが企業の活力を生み出す", "chapter": "第５章　ユニテクノ方式の展開", "title": "工場は最高のショールーム", "body": ["最近では、工場の生産管理や商品の供給能力なども厳しくチェックされ始めている。「品質・納期・コスト」といった点で、卓越したものをもっている工場は、単なる下請けを脱し、ビジネスパートナーとしての役割を期待されている。"]}, {"id": 61, "part": "第Ⅱ部　魅せるモノづくりが企業の活力を生み出す", "chapter": "第５章　ユニテクノ方式の展開", "title": "いつも一歩先に進んでいたい", "body": ["人中心の生産ラインであるだけに、生産性改善のためのラインのレイアウト変更や、生産品目の頻繁な切り替え、急な増産や減産にも実に柔軟に対応できる。自信があるだけに、同社は興味がある人には誰にでも工場を見せる。たとえライバルの同業他社にでも。"]}, {"id": 62, "part": "第Ⅱ部　魅せるモノづくりが企業の活力を生み出す", "chapter": "第５章　ユニテクノ方式の展開", "title": "工場を見て、何を買うかを決める時代", "body": ["生産者と消費者がダイレクトにつながっていく時代には、これは誰がどこでどうやってつくっているのだろうというのは、非常に重要な情報。", "３　課題を徹底的に追求していくと事業領域が広がる"]}, {"id": 63, "part": "第Ⅱ部　魅せるモノづくりが企業の活力を生み出す", "chapter": "第５章　ユニテクノ方式の展開", "title": "注目を浴びる省エネ生産システム", "body": ["リコーなどからの受託生産以外に、次々と新しいビジネスが生まれ初めている。代表的なものが、省エネ型生産ラインの外販やコンサルティング事業。「台車引き生産ライン」は、それまでの自動コンベアーラインに比べ、消費電力はわずか80分の1にすぎない。しかも電力は、自社で設置した太陽光発電でまかなっている。"]}, {"id": 64, "part": "第Ⅱ部　魅せるモノづくりが企業の活力を生み出す", "chapter": "第５章　ユニテクノ方式の展開", "title": "生産方式の徹底が新たなビジネスを生む", "body": ["不良品をつくってしまったときも、工場の外で、社員自身の手によって分解・分別を徹底的に行う。ベルトコンベアーを捨てたときも、おなじようにすべてリサイクル用に分別・分解し、現在ではこれもノウハウとしてビジネスの役に立っている。生産現場で生まれた平面展開タイプの通い箱「フラダン」は、スペース4分の1で空き箱輸送・倉庫保管できるうえ、ダンボールに比べて格段に長持ちする。"]}, {"id": 65, "part": "第Ⅱ部　魅せるモノづくりが企業の活力を生み出す", "chapter": "第５章　ユニテクノ方式の展開", "title": "協力会社を巻き込む第２の生産改革へ", "body": ["間接部門の社員たちも「生産性工場支援活動」「環境マネジメントシステム支援」「省エネ＆低コスト生産ライン構想設計」など多くのソリューションビジネスに関わり始めている。まずは自社に徹底することを第一と考えて、これまでやってきましたが、少しは支援する力がついてきたので、これからは協力会社に広げていく。"]}, {"id": 68, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第６章　企業を救うトヨタ式モノづくりの実行", "title": "トヨタ生産方式は中小企業が使うと非常によい方式", "body": ["「トヨタ生産方式というのは、本来、中小企業に使うと非常によい方式。というのは、トヨタ生産方式の生い立ちが、月に3000台とか5000台とか、しかもいろいろな種類の車をつくるところから始まっているから。」もともとの成り立ちは「多種少量生産でいかに安くつくるか」"]}, {"id": 69, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第６章　企業を救うトヨタ式モノづくりの実行", "title": "中小企業は有利な条件をいくつも持っている", "body": ["①間接経費が少ない　②情報のリーダタイムが短い　③トップの決断が速い　④フレキシブルな運営が可能である　⑤社員の顔がわかる"]}, {"id": 70, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第６章　企業を救うトヨタ式モノづくりの実行", "title": "過去を否定せず、手法だけを持ち込まず、他人任せにするな", "body": ["企業を変えていくにあたって、やってはいけない禁じ手。過去を否定する必要はない。過去に頑張ってきたからこそ、今日の企業があり、人がいる。これからのモノづくりは、人を真ん中に置いた、人の知恵を活かすモノづくり。手法だけを持ち込んだ場合、短期間で一定の成果はあがったとしても、肝心の人づくりを忘れると、すぐにもとに戻ってしまう。企業を変えていくには、何よりも「トップの本気」が大切。", "２　誰が責任を持って行うかの覚悟が大切"]}, {"id": 71, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第６章　企業を救うトヨタ式モノづくりの実行", "title": "生産改革における「守・破・離」のレベル", "body": ["生産改革を進めていくには手順がある。第１ステップは、手法のモノマネである。第２ステップは、「基礎づくり」で教えられた手法を、自分たちの環境にマッチした手法に変えていくプロセスである。第３ステップは、自分流の拡大である。第３ステップは、トヨタ生産方式に「職場の知恵」をつけて、「自社流の生産方式」づくりを目指している。"]}, {"id": 72, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第６章　企業を救うトヨタ式モノづくりの実行", "title": "専任でなければものの見方・考え方は変えられない", "body": ["現実には兼任でやりたがる企業が多いが、兼任か専任かは後に決定的な差となって表れる。ものの見方・考え方までも変えていこうとすれば、兼任では無理で、何がなんでも専任メンバーでなければならない。メンバーの人数は、大手企業の場合は、すべての部門から選んだ10数名体制。社員数が100名くらいの企業の場合は、2～3名で十分。ただし、社長自らが参加する覚悟が必要。メンバーは兼任で、トップも参加せず、推進役は部課長クラスに任せるようでは、生産改革はまず不可能。一時的に成功しても、すぐにもとのやり方に戻ってしまう。"]}, {"id": 73, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第６章　企業を救うトヨタ式モノづくりの実行", "title": "社長の本気のフォローが成功の鍵を握る", "body": ["専任メンバーによるプロジェクトチームが発足したならば、改善推進計画を作り、研修会や報告会を定期的に開催する。最初に目標を設定する。「製造コスト2分の1・受注から出荷までのリードタイム3分の1・間接コスト2分の1」といった、実績の「半分」や「3分の1」に挑戦するケースが多い。一気に「半分」となると、モノのつくり方を根本から見直していく必要がある。最初は無理に思える目標であっても、ムダを1つずつ丹念に潰し、知恵を出し、工夫を重ねていけば、いつのまにか達成できる。困難に思える目標だからこそ、人間の知恵は発揮される。生産改革の成功には、専任者によるプロジェクト推進室とトップの本気のフォローが不可欠。", "３　理屈だけでは人も現場も動かない"]}, {"id": 74, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第６章　企業を救うトヨタ式モノづくりの実行", "title": "やってみせ、つくってみせる", "body": ["トヨタ自動車が、海外でトヨタ生産方式を定着させた理由の１つは、指導に当たったトレーナー自身が、自分でやってみせ、つくってみせたから。トレーナーは実際に1日かけてやってみせて、社員に「あの人にできるのなら自分にもできるかもしれない」という気持ちにさせる必要がある。"]}, {"id": 75, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第６章　企業を救うトヨタ式モノづくりの実行", "title": "モデルラインには2つの役割がある", "body": ["「その日の問題はその日に片づける」。モデルラインには、現場で働く社員に「目で見て、納得してもらう」という役割と、「問題を浮かび上がらせて、改善を進める」という２つの役割がある。"]}, {"id": 76, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第６章　企業を救うトヨタ式モノづくりの実行", "title": "水平展開し、改善し、さらに水平展開をする", "body": ["モデルラインによるモノづくりに目途が立ったなら、徐々に水平展開に移る。問題が生まれるのは改善のチャンスでもある。", "４　企業の生産力は社員の知恵の総和で決まる"]}, {"id": 77, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第６章　企業を救うトヨタ式モノづくりの実行", "title": "１人ひとりの社員が、自ら知恵を出すモノづくり", "body": ["生産改革が目指すものはモノづくりだけではない。改善を通じての「人づくり」である。「人づくり」がないと継続的な改善はできないし、企業の永続的な発展もない。知恵を出す場所・時間・環境を提供するのが、これからの経営者や管理監督者の仕事でもある。かえって知識の多い人ほど先入観や経験が邪魔をして、知恵の出る隙間を狭くする。初めて生産方式を試みるときには、「気楽に」とか「ダメモト」で「すぐに実行＝現場実験する」。何より試行錯誤を重ねていけば、人が育ってくる。"]}, {"id": 78, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第６章　企業を救うトヨタ式モノづくりの実行", "title": "現場の知恵を加えてオリジナルの生産方式を", "body": ["改善案は、小さなものをおろそかにしてはいけない。「この作業はどうもやりにくい」といった気づきを大切にして、小さい提案・小さい改善を大きな効果が出る改善にまでまとめ上げていけばよい。スタッフ中心の改善からライン中心の改善へ、そして「やらされる改善」から「自分でやる改善」へと転換。"]}, {"id": 79, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第６章　企業を救うトヨタ式モノづくりの実行", "title": "生産改革は人の可能性を信じることから始まる", "body": ["知恵はみんなに平等にある。問題は「うちの社員のレベルが低いから」と思い込んで、人づくりをおろそかにしている側にある。標準作業を整備して、現場の作業は素人でもやれるようにしないといけない。必要数に応じた柔軟な生産体制を築くには、多能工の育成が前提。星取り表をもとに、複数の作業ができる社員を育て、能力に応じた公平な評価を下す。現在の機械をどこまでうまく使えるかをとことん追求。人の知恵を信じ、人の能力を100%引き出そうという心構えが欠かせない。", "５　会社を設立したときの想いこそが改善のエネルギー"]}, {"id": 80, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第６章　企業を救うトヨタ式モノづくりの実行", "title": "つくり方を変える不安もある", "body": ["つくる力が備わってきたいまでは、在庫は必要ないと考えられるようになってきました。たしかに「売れるモノだけをつくろう」と決断するのは大変。"]}, {"id": 81, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第６章　企業を救うトヨタ式モノづくりの実行", "title": "トップに「やりぬく決意」があれば、人はついてくる", "body": ["トヨタ生産方式の強さは、「必要なモノを、必要な品質で、より安くつくる」というモノづくりの原点は決して揺るがせないでおいて、つくる手段・手法は刻々と変化していく点にある。"]}, {"id": 82, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第６章　企業を救うトヨタ式モノづくりの実行", "title": "「やろう」という決断と「やりぬこう」という意志", "body": ["不思議なもので「創業の精神」を忘れたり、踏み外した企業というのは、どこかで狂いが生じる。モノづくりに迷っている企業は、もう一度原点に帰って創業の精神を見直してみてはどうだろうか。そうすれば「お客さま満足度を向上させるモノづくりとは何か」がきっと見えてくる。", "トヨタ式ものづくりはムダの徹底的排除から始まる", "１　動くことは仕事ではない。働くことが仕事だ"]}, {"id": 83, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第６章　企業を救うトヨタ式モノづくりの実行", "title": "現状に満足すると、進歩は止まってしまう", "body": ["トヨタ生産方式は、徹底した「ムダ排除」の方式。「ムダ」とは、付加価値を高めない、いろいろな現象や結果をいう。「前工程も後行程もどんどん変化する時代、これでいいはありません。改善する余地は無限にあり、やればやるほどきりがなくなります」という気持ちで、日々改善。"]}, {"id": 84, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第６章　企業を救うトヨタ式モノづくりの実行", "title": "仕事（動き）はムダと付随作業と正味作業に分かれる", "body": ["「ムダ」は、作業をしていくうえで、なんら必要がなく、原価のみを高める動作である。「付随作業」は、付加価値のつかない作業。本来はムダと言えるが、現在の作業条件では、やらなければならないものが多い。たとえば段取り替えや、部品を取りに行ったりといった作業。「正味作業」は、付加価値を高める作業。注意しなければならないのは、正味作業を高める改善が、単に原価を上げるものとなってはいけない。たとえば「釘を打つ」作業で、安易に釘打ち機を導入してはいけない。原価を上げるだけになってしまう。設備や機械に走る前に、まずは動作分析により、動作中のムラ・ムリ・ムダを見つけて、改善を重ねる。"]}, {"id": 85, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第６章　企業を救うトヨタ式モノづくりの実行", "title": "ムダを見つけるのは管理監督者の仕事", "body": ["汗をかきかき一生懸命に働いている部下の姿を見ると、上司は「頑張っているな」と思いがち。「どこかにムダはないか、もっと楽にやれる方法はないだろうか」と見つけてやる。何も生産現場にかぎった話ではない。改革を依頼されて訪問した役所や病院には、生産現場以上に多くのムダが目につく。", "２　付加価値をうまないものはすべてムダ"]}, {"id": 86, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第６章　企業を救うトヨタ式モノづくりの実行", "title": "ムダの種類", "body": ["①不良・手直しのムダ", "②つくりすぎのムダ", "つくりすぎのムダが特に悪いのは、新たなムダを誘発するから。材料・部品の先食いやエネルギーの浪費、倉庫の新設・金利負担の増加など", "③加工そのもののムダ", "工程の進みや加工の精度にはなんの関係もない不必要な加工をいう。", "④運搬のムダ", "「運ぶ・探すは仕事にあらず」という厳しい姿勢で、レイアウトや作業のやり方を見直す必要がある。", "⑤在庫のムダ", "⑥動作のムダ", "作業中の付加価値を生まない人の動きや機械設備の動き。可動率は、機械設備が、生産したいときにいつでも正常に使える状態の割合で100%が理想。一般に使われている「稼働率」は、必要数によって決まるため、100%である必要はない。", "⑦手待ちのムダ", "機械設備が自動送りで加工しているとき、作業者がそばで機械を見守っていたり、仕事をしたくても、機械が回っていて手を出せない状態など。", "⑧産業廃棄物のムダ", "設計段階からリサイクルを考えておくのはもちろん、生産過程において、ムダな包装やダンボールを排除する。"]}, {"id": 87, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第６章　企業を救うトヨタ式モノづくりの実行", "title": "ムダ発見のための自問", "body": ["特に8項目のムダについては、「なぜ不良が発生したのか」「なぜ産業廃棄物が生まれるのか」と、常に自問する。自問の積み重ねが、改善と進歩につながっていく。"]}, {"id": 89, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第８章　トヨタ式モノづくりの第２ステップは整理・整頓・清掃・清潔", "title": "モノを探していては仕事にならない", "body": ["「トヨタにはモノを探している人が誰もいない」自社に帰ってみると、いざ注文の品を出そうとすると、「必要なモノはなく、あるのはいらないものばかり」。部品や部材の一つひとつについて、どこに何があるか誰にでもわかる状態になっていれば、生産指示書に従って、必要なものを揃えて、必要な時にラインに届けるのは簡単。一定の数を使った際には、すぐに協力会社に発注する体制ができていれば、品切れの心配もない。ムダな在庫を持つ必要もない。欲しいモノがいつでも取り出せる「整理と整頓」を徹底。"]}, {"id": 90, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第８章　トヨタ式モノづくりの第２ステップは整理・整頓・清掃・清潔", "title": "赤札作戦の進め方", "body": ["５Sは、多くの場合「赤札作戦」からスタートする。実施する前には、ぜひ現在の姿を写真に撮っておこう。", "①赤札実施プロジェクトの発足", "メンバーは、製造・資材・管理などの担当者。実施期間は、１ヶ月くらい。", "②赤札対象物の決定", "直接部門の在庫･･･原材料・部品・仕掛品・製品", "直接部門の設備･･･機械、治工具、台車・パレット・作業台・椅子・机・棚", "間接部門の機械･･･パソコン・ワープロ・ファクシミリ・コピー機", "間接部門の備品･･･キャビネット・ロッカー・図書・雑誌類", "③赤札基準の決定", "「過去１ヶ月以上使用しなかったもの」は不要。", "「今後１ヶ月以上使用する計画がないもの」も不要。", "「１ヶ月以内に使用するもの」は必要とする。", "④赤札の作成", "⑤赤札を貼る", "「冷たい目でものを見る」「貼るときは鬼になる」が基本。不明なものには「黄色い札」を貼るケースもある。", "⑥赤札品の対処", "不要品一覧表を作成して、記録に残す。できるだけリサイクルする。"]}, {"id": 91, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第８章　トヨタ式モノづくりの第２ステップは整理・整頓・清掃・清潔", "title": "整理の徹底はトップで決まる", "body": ["プロジェクトメンバーに任せて終わりではなく、トップ自身が積極的に関わって、何が必要で、何が不要かをきちんと判断する。赤札品の処理にあたっては、リサイクルできるところまで、自分たちの手で分解・分別を徹底するのも一つの方法。", "２　整頓－欲しいモノをいつでも取り出せるようにする"]}, {"id": 92, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第８章　トヨタ式モノづくりの第２ステップは整理・整頓・清掃・清潔", "title": "どこに何がいくつあるかがすぐわかるように", "body": ["「どこに何が何個あるか」。すぐにわかる状態にしておく。", "①置き場の決定と整備", "使用頻度などを考慮して決定する。在庫品は、先に置かれたものから先に取り出して使う「先入れ先出し」が原則。", "②場所表示", "在庫は必要最小限に整理し、なおかつ「誰でもひと目でわかる」状態に整頓する。", "③品目表示", "棚のなかの場所表示が終わったら、そこに何を置くのかを決めて、はっきりと表示する。", "④量表示", "一定の数しか載らない台車やパレットを多用する。最小在庫量と最大在庫量を決めて、それぞれにテープを貼っておけばひと目でわかる。"]}, {"id": 93, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第８章　トヨタ式モノづくりの第２ステップは整理・整頓・清掃・清潔", "title": "整理と整頓は生産改革の第一歩", "body": ["ミスの再発を防ぐには、人の注意力だけに依存するのはやめたほうがよい。改善も、ミスをしたくてもできないレベルにまで何度も改善を繰り返すにかぎる。企業の生産力がどのレベルにあるかは倉庫を見ればわかる。ほしいモノがいつでも取り出せる。何がどこにあるかが誰にでもわかる。", "３　清掃－ゴミ一つ落ちていないのは当たり前"]}, {"id": 94, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第８章　トヨタ式モノづくりの第２ステップは整理・整頓・清掃・清潔", "title": "保全型清掃と衛生型清掃", "body": ["一つは、機械がたえずよい状態で運転できるように、ゴミやホコリなどを除去して環境条件を整える「保全型清掃」。二つは、細菌などの増殖を防ぐために環境をきれいいにする「衛生型清掃」。共立金属工業でも、「父親の代から使っています」という機械がいまでも活躍している。機械に人間の知恵をつけ、十分な保全さえ怠らなければ、機械の年数や型式にこだわる理由はない。"]}, {"id": 95, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第８章　トヨタ式モノづくりの第２ステップは整理・整頓・清掃・清潔", "title": "清掃点検で常に機械を最善の状態に", "body": ["日ごろから使っているからこそ気づく点。", "・いつもよりも大きな音がする。", "・いつもと違う振動を感じる。", "・少しだけこげくさい臭いがする。", "清掃点検にあたっては、チェックシートに加え「目で見、鼻でかぎ・耳をすまし・手を触れ」て、ふだんとわずかな変化も見逃さない注意力を要する。音の原因が切り粉の詰まりにあったとする。切り粉を払って、音がおさまったとすれば、本来は清掃の目的が達せられる。しかし、これでは改善の芽をつんでしまう。「なぜ切り粉がつまるのか」「つまらないようにする方法はないのか」と、改善に向けて考える。真因をつぶして、二度と同じ故障が起きないようにする「修理」こそが望ましい。"]}, {"id": 96, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第８章　トヨタ式モノづくりの第２ステップは整理・整頓・清掃・清潔", "title": "安全と衛生はすべてに優先する", "body": ["「自分たちが職場環境を守る」という意識レベルの向上にしたがって、清掃レベルも「掃く」から「拭く」「磨く」へとレベルアップする。清掃点検にかぎらず、床や机などの清掃も日々行うのが原則。徹底して習慣化するためにも清掃時間を決めて、手際よくやるのが望ましい。全員で清掃にかかるのは「職場の環境は自分たちの手で守る」という意識を社員に持たせるため。社員全員に「安全」と「衛生」についての意識を徹底したうえで、「清掃」を日々の業務に組み込む。", "４　清潔－整理と整頓された状態を維持継続すること"]}, {"id": 97, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第８章　トヨタ式モノづくりの第２ステップは整理・整頓・清掃・清潔", "title": "上司は率先して清潔の習慣化を", "body": ["清潔とは、整理・整頓・清潔の状態の維持をいう。一つは、整理・整頓・清掃の3Sを、日常の業務のなかで習慣として続けて、清潔を維持していく。ゴミが落ちていれば、「ゴミが落ちているから拾っておけ」と命令してはいけない。上司自らが拾えばよい。"]}, {"id": 98, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第８章　トヨタ式モノづくりの第２ステップは整理・整頓・清掃・清潔", "title": "清潔の維持には徹底した予防を", "body": ["ただし、最初から予防を考えるのは難しい。たとえ時間はかかっても、整理・整頓・清掃は社員の力で少しずつ進めていくにかぎる。", "５　SMILE&SENSIBLE"]}, {"id": 99, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第８章　トヨタ式モノづくりの第２ステップは整理・整頓・清掃・清潔", "title": "全員参加型の５Sを", "body": ["まず決められた内容を実際にやってみる。やってみなければ、それがよいか悪いかは決してわからない。もし守れなかったり、不具合があれば、どこがまずいのかを考える。「こうすればよいのでは」という意見が出たら、それを採用してやってみる。これを繰り返していれば、最初は「決められた」と思っていたものが、いつのまにか「自分たちで決めた」ものになる。"]}, {"id": 100, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第８章　トヨタ式モノづくりの第２ステップは整理・整頓・清掃・清潔", "title": "なんのための５Sか", "body": ["「なんのための５Sか」ムダを省いた生産方式の実現であり、次工程への気配りが行き届いた職場の実現。"]}, {"id": 101, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第８章　トヨタ式モノづくりの第２ステップは整理・整頓・清掃・清潔", "title": "５Sに職場の知恵をつける", "body": ["サービス精神も大切になる。明るく元気に笑顔で仕事をしないと、いい知恵を浮かんでこない。５Sの定着には、日常の管理の仕組みとして機能していることが重要。"]}, {"id": 103, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第９章　トヨタ式モノづくりの自働化24ステップの考え方", "title": "知恵を使って効果をあげるのが本当の改善", "body": ["最初に作業改善をやって、さらに作業改善をする。そのうえでもっとよくするために最小限の設備改善をする。そして最後にレイアウトの変更などに着手する。お金を使わないで、知恵を使って効果をあげるのが本当の改善というもの。安易に設備改善や工程改善に飛びつくようでは、真に効果のある改善はできない。"]}, {"id": 104, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第９章　トヨタ式モノづくりの自働化24ステップの考え方", "title": "改善に失敗したら、もとに戻さず、さらに改善を重ねる", "body": ["改善には失敗もある。このときに決してもとのやり方に戻してはいけない。「この機械なら目的が達成できる」と新しい機械を買ってしまうと、改善能力がないものだから、結局は機械に使われるだけに終わってしまう。"]}, {"id": 105, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第９章　トヨタ式モノづくりの自働化24ステップの考え方", "title": "ステップを踏むことで改善能力は磨かれる", "body": ["これからのモノづくりに大切なのは、それぞれの工程が次工程の状況を考えて仕事をする仕組み。", "２　工場の自働化を進めるステップ"]}, {"id": 106, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第９章　トヨタ式モノづくりの自働化24ステップの考え方", "title": "工場の自働化には強烈なニーズが必要", "body": ["ニーズがあるからこそ「何がなんでもやりぬこう」という気持ちにもなる。難しく考える必要はない。「ダメモトの思想」で気楽に取り組む。たとえ改善がうまくいかなくとも、さらに改善を加えればよいだけ。"]}, {"id": 107, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第９章　トヨタ式モノづくりの自働化24ステップの考え方", "title": "点から線、線から面への展開", "body": ["点は「工程自働化」である。前提として、タクトタイムを設定。ほかに標準作業を実施して、投入材料・完成品在庫の管理、日々の生産個数・生産順序を設定する。以上の前提をもとに、「工具の自働化5ステップ」「工程自働化10テップ」。ついで点から線へと展開していく「ライン自働化」。「ライン自働化」は、工程と工程の仕掛かりを最小にする工夫から始まる。工程間仕掛かりを１個にするのを「連結する」という。工程間仕掛かりが複数個以上のケースを「連動」と呼ぶ。「連結」がうまく機能していくには、不良率が極端に少ないことと、設備の稼働率が100%に近いことが条件である。このような条件のもとで、「ライン自働化5ステップ」を順次実施していく。"]}, {"id": 108, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第９章　トヨタ式モノづくりの自働化24ステップの考え方", "title": "混合ラインの工場自働化には4つの前提条件がある", "body": ["最後に、面への展開つまり「工場自働化」。多品種生産をする場合、「設備・機械・工具の共用化」と「多品種のための多能工化訓練」が欠かせない。「工場自働化」を難しくしているのは、「受注と工程能力に見合ったバランスのよい生産順序計画」という２つのテーマ。生産順序計画は、ラインバランスと、順序計画に基づく部品の納入指示、出荷指示という3つの活動のベース。物流システムは、100%良品を、必要な数だけ、タイミングよく納入する仕組み。", "自働化設備の10ヵ条", "１　人・機械の仕事を分ける", "２　方法・ライン・規模から設備を決める", "３　設備の作業者側の幅を狭くする", "４　移動しやすい設備", "５　物の流しやすい設備", "６　転用のきく設備", "７　設備のムダ時間をなくす", "８　生産準備のゼロ化", "９　クイックチェンジ", "10　自働化･･･“自働化とは異常の際、即刻止めることである”", "CUMS生産方式自働化導入のステップ"]}, {"id": 110, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第10章　トヨタ式モノづくりの情報の考え方・物流の考え方", "title": "変化を前提とするモノづくり", "body": ["市場の需要を予測するのは難しい。需要予測をもとに生産計画を立てても、現実には数量が増減したり、売れる品種が変わったりというのは日常茶飯事。"]}, {"id": 111, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第10章　トヨタ式モノづくりの情報の考え方・物流の考え方", "title": "需要予測はあてにならない", "body": ["決定を行う者が、自ら出かけ、自ら現場を見ないと現実から遊離する。モノづくりにおける情報は、営業の現場・生産の現場・物流の現場などと密接に結びつく必要がある。毎日、足を運び、話に耳を傾けていれば、「何が必要で、何が必要でないのか、どんな変化が起きているのか」がはっきりと見えてくる。"]}, {"id": 112, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第10章　トヨタ式モノづくりの情報の考え方・物流の考え方", "title": "「かんばん」は変化への微調整を可能にする", "body": ["いくら売りの情報がダイレクトに入ってきて、市場の変化を正確に知覚しようとも、生産ラインが、いつでも計画の変更に対応できるようになっていないと、肝心のモノづくりが後手に回ってしまう。営業現場の情報が生産現場にダイレクトに伝わり、生産現場は変化への微調整機能を備えて柔軟にモノづくりに対応していく。", "２　目で見る管理はトヨタ式モノづくりのキーファクター"]}, {"id": 113, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第10章　トヨタ式モノづくりの情報の考え方・物流の考え方", "title": "トヨタ生産方式の「目で見る管理」", "body": ["「生産管理板」は、ラインにおける生産状況を表し、生産実績、稼働状況、ライン停止時間、計画の誤差などを表示している。異常があればラインを止めるため、あらかじめ何分かの停止時間は組みこんである。その予定時間をオーバーするようなら、作業のやり方や部品の搬入など、どこかに問題が生じている。反対に予定よりもはるかに短い停止時間で進むとすれば、社員の熟練度も増したのであり、時間の見直しが図られる。「アンドン」は、工程内の異常を管理監督者に知らせるための表示灯。ほかにも機械設備や仕掛品の置き場などをはっきりさせるために引いた「白線表示」、部品がどこにあるかすぐにわかる所番地を明示した「表示板」など。"]}, {"id": 114, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第10章　トヨタ式モノづくりの情報の考え方・物流の考え方", "title": "もう一つの「目で見る管理」", "body": ["生産現場で異常が起きても、知らないうちに処理されてしまっては、「真因」をつぶす改善にはなりようがない。「目で見る管理」の考え方は、生産現場にかぎらず、企業経営全般に適用されている。「ラインの責任者を経営者に変えようと想えば、原価を与えること。経理の情報も含めてすべての情報をオープンにすることで、経営者感覚を養っています。」"]}, {"id": 115, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第10章　トヨタ式モノづくりの情報の考え方・物流の考え方", "title": "はっきり見える企業・はっきり見えるモノづくり", "body": ["生産改革を進めるためには、情報についての考え方、人の管理の仕方も根底から変えていく必要がある。「すべての情報をオープンにして、問題がみんなにはっきり見えるようにする」", "３　情報とモノを一緒に運ぶ"]}, {"id": 116, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第10章　トヨタ式モノづくりの情報の考え方・物流の考え方", "title": "モノだけではなく、情報をいかに運ぶか", "body": ["部品や商品を運ぶにあたっては、運搬の原則がある。一つは、モノと情報を組み合わせて運搬する。かんばんのないときには、生産しないし運ばない。この徹底により、何をつくるか、何をつくらないかを管理して、適正な在庫量に抑えていく。"]}, {"id": 117, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第10章　トヨタ式モノづくりの情報の考え方・物流の考え方", "title": "モノを運ぶにはいろいろな方法がある。", "body": ["二つ目は、小刻み運搬である。まとめて運べば安くつくといっても、売れる量は日によって違ってくる。量が揃うまで運ぶのを待ってもらうというわけにもいかない。お客さまのところに、必要なときに、必要なモノを、必要な数だけ、タイミングよく届けるのが運搬の目的である。どうしても小刻みによる、効果的な運搬が求められる。「混載運搬」。いろいろな部品や、数社の部品を一台の車に乗せて運ぶやり方。"]}, {"id": 118, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第10章　トヨタ式モノづくりの情報の考え方・物流の考え方", "title": "混載多回運搬には後工程への気配りが必要", "body": ["サブ・アッシ部品など前工程を回って集めてくる「混載多回運搬」。モノづくりというと、どうしてもつくり方ばかりに目が行きがち。実際には情報をどう運ぶか、モノをどう運ぶかという「物流改善」が大きな鍵を握っている。", "４　前工程は神様・後工程はお客さま－協力会社をいかに巻き込むか", "協力会社から100%良品のモノが、必要なときに、必要な数だけまちがいなく納品される必要がある。もちろん価格においても、より安くが求められる。だからといって、協力会社に一方的に犠牲を強いるようでは、長い目でみて生産力の強化にはつながらない。目指すのは協力会社も儲かったうえでの収益アップ。"]}, {"id": 119, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第10章　トヨタ式モノづくりの情報の考え方・物流の考え方", "title": "前工程と一緒に知恵を絞る", "body": ["大野耐一氏は、協力会社の人を呼んで、トヨタのモノのつくり方を実際に見てもらいながら、「こうすれば経済的にモノがつくれます」と、少しずつ理解してもらった。"]}, {"id": 120, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第10章　トヨタ式モノづくりの情報の考え方・物流の考え方", "title": "自工程を整備し、前工程に提案を行う。", "body": ["生産方式を変えていこうとするときに、前工程から変えていこうとするから無理がくる。生産改革は、お客さまに近い後工程から進めていくほうがよい。お客さまの要求に応えようと改善を進めていくうちに、モノのつくり方は確実に進歩していく。後工程から初めて、少しずつ前工程へと進めていく。そうやって自社のつくり方にある程度の目途が立った段階で初めて部品の納品方法などに本格的に着手する。", "５　点ではなく、線で考えるモノづくり"]}, {"id": 121, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第10章　トヨタ式モノづくりの情報の考え方・物流の考え方", "title": "状況に応じて計画はどんどん変えていく", "body": ["受注情報に従ってモノづくりを進めていれば、生産計画はいらないのではないか？実際には年間計画も策定するし、月次計画も策定する。トヨタ生産方式の強さは、計画の微調整を生産現場で簡単に実行できる点にある。計画は「内示情報」と「確定情報」。内示情報は協力企業が資材などを手当てするのに必要なリードタイムを考慮して伝達。生産順序計画は緻密に練っていく。ここで生産の平準化と工程バランスを徹底して、生産順序計画のなかに織り込んでいく。この計画を、最終組み立てラインの頭に、一カ所だけ送る。"]}, {"id": 122, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第10章　トヨタ式モノづくりの情報の考え方・物流の考え方", "title": "生産計画と日々の調整を行えるモノづくり", "body": ["生産計画は緻密に作成するが、決して生産計画に縛られない。"]}, {"id": 123, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第10章　トヨタ式モノづくりの情報の考え方・物流の考え方", "title": "企業の総合力が問われる一気通貫のモノづくり", "body": ["変化への機動性を高めるうえでは、リードタイムの短縮が重要。生産のリードタイムは、加工時間と運搬時間、停滞時間の総計で決まる。注文から生産、物流、販売、そして回収というまさに「一気通貫のモノづくり」の実現。"]}, {"id": 125, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第11章　トヨタ式モノづくりを進める管理監督者の考え方", "title": "仕事の流れを監督する", "body": ["管理監督者に求め有られる能力は五つ。一つは、仕事についての十分な知識。管理監督者は、生産ラインに入って、部下と一緒になって汗を流すのではない。あくまでも仕事の流れを監督する。"]}, {"id": 126, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第11章　トヨタ式モノづくりを進める管理監督者の考え方", "title": "人づくりこそ管理監督者の使命", "body": ["二つ目は、職責の知識。会社・工場の方針・生産計画・安全規則などに従って仕事をするための知識。今日では管理監督者次第で生産性も品質も決まってくる。自分で考えて、自ら行動する能力。三つ目は、教える技術。管理監督者自身で「やってみせる」だけの技量が必要。上司という権力をかさにきて、無理にやらせようとしたり、あるいは部下にこびて、「やってもらう」のは、どちらもまちがっている。"]}, {"id": 127, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第11章　トヨタ式モノづくりを進める管理監督者の考え方", "title": "現場の知恵を改善に結びつける", "body": ["四つは、人を扱う技術。職場の人の気持ちを重んじて、職場の知恵を吸収しながら進めていくと、いつのまにか全員参加型の改善になっていく。「社員が風邪で会社を休んだら、管理監督者には見舞いに行け」。五つは、改善する技能。「どこかにムダはないか」「もっといいつくり方はないのか」と常に改善を続ける能力。現場からあがってくるちょっとした「気づき」にも耳を傾けて、よりムダのない方法を考える。大野耐一氏は「管理監督者は、管理監督する時間を3分の1にしろ。改善する時間が半分以上になればまあ一人前」", "２　個人で解決するのではなく、チームで解決する"]}, {"id": 128, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第11章　トヨタ式モノづくりを進める管理監督者の考え方", "title": "スピードは大切だが、納得も必要", "body": ["「生産改革を進めていくうえで、スピードは大切ですが、納得も必要。理屈先行では失敗をします。"]}, {"id": 129, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第11章　トヨタ式モノづくりを進める管理監督者の考え方", "title": "徹底には通常のコミュニケーションが欠かせない", "body": ["「新しいやり方は何か。これまでのやり方にくらべて、何が違うのか」をみんなに、目で見て納得してもらう。"]}, {"id": 130, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第11章　トヨタ式モノづくりを進める管理監督者の考え方", "title": "トヨタ式タテ・ヨコ・ナナメの人間関係づくり", "body": ["人のネットワークは、仕事のうえでも、心のケアのうえでも大きな支えになっている。スタッフは、こうした場で、「君たちは生産ラインに飯を食わせてもらっている」という意識をたたきこまれる。"]}, {"id": 131, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第11章　トヨタ式モノづくりを進める管理監督者の考え方", "title": "生産力のベースは人にある", "body": ["“離れ小島”にしてしまうと、工程どうしで遅れを助け合う作業ができなくなってしまう。工程間には、お互いに助け合える「バトンタッチゾーン」が必要。生産力を高めるうえでは、「人をベースにするモノづくり」が不可欠。", "３　問題から逃げてはいけない。ソリューションこそが利益の源泉"]}, {"id": 132, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第11章　トヨタ式モノづくりを進める管理監督者の考え方", "title": "勉強はしても問題のホルダーにはならない", "body": ["会社の問題点をあれこれあげる人は多い。「それは誰の問題か」と聞けば、ほとんどの人は「会社の問題です」。実際には自分の問題であるにもかかわらず。"]}, {"id": 133, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第11章　トヨタ式モノづくりを進める管理監督者の考え方", "title": "職場の問題を発見して、改善をするのは管理監督者の仕事", "body": ["現場が「自分が行うのだ」という明確な自主性を持って取り組むようでないと、生産現場を変えていくのは難しい。問題のホルダーであるという意識に加え、さらに要求されるのは、広い視野でものを見ること、ラインから離れてものを見ること、目で見る管理ができることの三つ。"]}, {"id": 134, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第11章　トヨタ式モノづくりを進める管理監督者の考え方", "title": "管理監督者は頼りになる親方になれ", "body": ["「目で見る管理」は、すべて「標準化」しておき、これからはずれるものを重点的に見る「異常管理」である。管理監督者自身が、職場の問題に対して、先頭に立って、一緒に考え、対策を立て実行する。", "４　長所を伸ばし、理解する人材育成"]}, {"id": 135, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第11章　トヨタ式モノづくりを進める管理監督者の考え方", "title": "上司は部下と知恵比べ", "body": ["部下に命令や指示をするときには、自分もその命令や指示を受けたと想って考える。一緒になって苦しんでやる、考えてやる。"]}, {"id": 136, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第11章　トヨタ式モノづくりを進める管理監督者の考え方", "title": "部下の創意工夫を殺してはならない", "body": ["人を真ん中に置いた生産方式を進めていくうえで、人を育てることと、人の知恵を活かすことは、上司にとってもっとも大切な能力。「うまくいくはずがない。」「時期尚早だよ」「予算がないのでね。」といった言葉は、部下のやる気を奪ってしまう。「それはよさそうだ。」「責任は俺がとるから、やれるだけやってくれ」「もう一歩のようだ。」「期待してるぞ」「創造力は年齢や職歴、学歴には関係がないんだ」といった言葉は、部下の創意を活かす。ただの評論家なら上司の資格はない。"]}, {"id": 137, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第11章　トヨタ式モノづくりを進める管理監督者の考え方", "title": "評価よりも理解を", "body": ["「最近の若い人は評価よりも理解されたがっています」。結果中心の能力主義の問題点。高い目標を目指すという果敢なチャレンジ精神が、未達を恐れて影をひそめつつある。管理監督者は、目標の達成ももちろん大切だが、それ以上に部下を育てる喜びを感じ取りたい。「人を抜くときは優秀な人を抜け」という。残された人間も負けじと知恵を出し、よりよい仕事をするようになる。自分を凌駕するような人間をどれだけ育成できるか。実はそれが管理監督者の評価。", "５　明るく笑顔で徹底的にやりぬくことが成功の秘訣"]}, {"id": 138, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第11章　トヨタ式モノづくりを進める管理監督者の考え方", "title": "すべてはトップの姿勢にかかっている", "body": ["各人それぞれが自分の問題として、ムダ排除や改善に取り組まないと、生産改革は進まないし、定着もしない。それ以上に大切なのが、会社のトップが本気で取り組む姿勢があるかどうか。"]}, {"id": 139, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第11章　トヨタ式モノづくりを進める管理監督者の考え方", "title": "24社中10社しか成功しなかった", "body": ["大野耐一氏は、「改善は、やむにやまれず、やらなければ会社が潰れてしまうというくらいの気持ちでやる改善が一番大事な改善である。」"]}, {"id": 140, "part": "第Ⅲ部　トヨタ式モノづくりへの道", "chapter": "第11章　トヨタ式モノづくりを進める管理監督者の考え方", "title": "わずかの成功に満足するな", "body": ["トヨタ生産方式は、うまく導入すれば短期間で成果があがる。それ以前のやり方がムダだらけだから、ムダを的確に排除していけば、10%や20%の生産性をあげるのは簡単だ。そこで満足してしまうトップがまれにいる。一方では、「やり続けて10年、でもいつでもいまが最悪と思ってやっています」と、決して現状に満足しないトップもいる。瞬間的な改善は、デモンストレーションにはなっても、企業の発展には結びつかない。まして長い時間を要する人材育成など不可能。"]}];
+function startReading() {
+  document.getElementById('splash').classList.add('hidden');
+  document.getElementById('content-area').classList.remove('hidden');
+}
+function showTab(tab) {
+  document.getElementById('btn-index').classList.toggle('active', tab==='index');
+  document.getElementById('btn-read').classList.toggle('active', tab==='read');
+  const ip = document.getElementById('index-panel-scroll');
+  const rv = document.getElementById('reading-view');
+  if (tab === 'index') {
+    ip.classList.remove('hidden');
+    rv.classList.remove('active');
+  } else {
+    ip.classList.add('hidden');
+    buildReadingView();
+    rv.classList.add('active');
+  }
+}
+function buildReadingView() {
+  const inner = document.getElementById('reading-inner');
+  let h = '';
+  let lp = '', lc = '';
+  sections.forEach(s => {
+    if (s.part !== lp) { lp = s.part; h += '<div class="reading-part">' + esc(s.part) + '</div>'; }
+    if (s.chapter !== lc) { lc = s.chapter; h += '<div class="reading-chapter">' + esc(s.chapter) + '</div>'; }
+    const bh = s.body.map(p => '<p>' + esc(p) + '</p>').join('');
+    h += '<div class="reading-section"><h3><span class="rnum">§' + (s.id+1) + '</span>' + esc(s.title) + '</h3>' + bh + '</div>';
+  });
+  inner.innerHTML = h;
+}
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function toggleSection(header) {
+  header.parentElement.classList.toggle('open');
+}
+function goSec(id) {
+  document.getElementById('btn-index').classList.add('active');
+  document.getElementById('btn-read').classList.remove('active');
+  document.getElementById('index-panel-scroll').classList.remove('hidden');
+  document.getElementById('reading-view').classList.remove('active');
+  document.getElementById('splash').classList.add('hidden');
+  document.getElementById('content-area').classList.remove('hidden');
+  const el = document.getElementById('sec-' + id);
+  if (!el) return;
+  setTimeout(() => { el.scrollIntoView({behavior:'smooth', block:'start'}); }, 50);
+  if (!el.classList.contains('open')) el.classList.add('open');
+  document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(item => {
+    if (item.getAttribute('onclick') === 'goSec(' + id + ')') {
+      item.classList.add('active');
+      item.scrollIntoView({block:'nearest'});
+    }
+  });
+  document.getElementById('sidebar').classList.remove('open');
+}
+function expandAll() {
+  document.getElementById('splash').classList.add('hidden');
+  document.getElementById('content-area').classList.remove('hidden');
+  document.querySelectorAll('.section').forEach(s => s.classList.add('open'));
+}
+function collapseAll() { document.querySelectorAll('.section').forEach(s => s.classList.remove('open')); }
+function filterNav(q) {
+  const lower = q.toLowerCase();
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.style.display = (!q || item.textContent.toLowerCase().includes(lower)) ? '' : 'none';
+  });
+}
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+document.getElementById('index-panel-scroll').addEventListener('click', () => {
+  if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+});
+document.getElementById('reading-view').addEventListener('click', () => {
+  if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>グローバル経済の本質 | Claude本棚</title>
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;--text:#e6edf3;--text2:#8b949e;--accent:#f0883e;--accent2:#d29922;--chapter-color:#79c0ff;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Helvetica Neue','Hiragino Sans','Yu Gothic',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.7;}
+#app{display:flex;height:100vh;overflow:hidden;}
+#sidebar{width:300px;min-width:300px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+#header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;flex-shrink:0;}
+#header h1{font-size:15px;font-weight:700;color:var(--accent);line-height:1.4;}
+#header .subtitle{font-size:12px;color:var(--text2);margin-top:2px;}
+#header .meta{font-size:11px;color:var(--text2);margin-top:3px;}
+#top-nav{display:flex;align-items:center;gap:8px;padding:8px 24px;background:var(--surface2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;}
+.top-nav-btn{padding:5px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:inherit;transition:all 0.15s;white-space:nowrap;text-decoration:none;display:inline-block;}
+.top-nav-btn:hover{background:var(--surface);color:var(--text);border-color:var(--accent);}
+.top-nav-btn.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600;}
+#progress-area{margin-left:auto;font-size:11px;color:var(--text2);white-space:nowrap;}
+#search-bar{padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+#search-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:13px;font-family:inherit;outline:none;}
+#search-input:focus{border-color:var(--accent);}
+#nav-scroll{flex:1;overflow-y:auto;padding:8px 0;}
+#nav-scroll::-webkit-scrollbar{width:4px;}
+#nav-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.nav-chapter{padding:8px 16px 4px;font-size:10px;font-weight:700;color:var(--chapter-color);border-top:1px solid var(--border);margin-top:4px;}
+.nav-chapter:first-child{border-top:none;margin-top:0;}
+.nav-item{padding:5px 16px;font-size:12px;color:var(--text2);cursor:pointer;transition:all 0.1s;border-left:2px solid transparent;}
+.nav-item:hover{background:var(--surface2);color:var(--text);border-left-color:var(--accent2);}
+.nav-item.active{background:var(--surface2);color:var(--accent);border-left-color:var(--accent);}
+#index-panel-scroll{flex:1;overflow-y:auto;padding:24px;}
+#index-panel-scroll::-webkit-scrollbar{width:6px;}
+#index-panel-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.chapter-header{margin:18px 0 6px;padding:9px 16px;background:rgba(121,192,255,0.08);border-left:3px solid var(--chapter-color);border-radius:0 6px 6px 0;font-size:13px;font-weight:600;color:var(--chapter-color);}
+.chapter-header:first-child{margin-top:0;}
+.section{margin-bottom:5px;border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color 0.2s;}
+.section:hover{border-color:var(--accent2);}
+.section.open{border-color:var(--accent);}
+.section-header{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;background:var(--surface);user-select:none;transition:background 0.15s;}
+.section-header:hover{background:var(--surface2);}
+.sec-num{font-size:10px;color:var(--text2);min-width:28px;flex-shrink:0;}
+.sec-title{flex:1;font-size:13px;font-weight:500;color:var(--text);line-height:1.4;}
+.toggle-icon{font-size:10px;color:var(--text2);transition:transform 0.2s;flex-shrink:0;}
+.section.open .toggle-icon{transform:rotate(180deg);}
+.detail-body{display:none;padding:14px 20px;background:var(--bg);border-top:1px solid var(--border);}
+.section.open .detail-body{display:block;}
+.detail-body p{margin-bottom:10px;font-size:14px;color:#cdd9e5;line-height:1.85;text-align:justify;}
+.detail-body p:last-child{margin-bottom:0;}
+#reading-view{display:none;flex:1;overflow-y:auto;padding:40px;}
+#reading-view.active{display:block;}
+#reading-view::-webkit-scrollbar{width:6px;}
+#reading-view::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.reading-inner{max-width:780px;margin:0 auto;}
+.reading-chapter{margin:24px 0 8px;padding:9px 18px;border-left:3px solid var(--chapter-color);font-size:14px;font-weight:600;color:var(--chapter-color);}
+.reading-chapter:first-child{margin-top:0;}
+.reading-section{margin-bottom:18px;padding:16px 20px;background:var(--surface);border-radius:8px;border:1px solid var(--border);}
+.reading-section h3{font-size:14px;font-weight:700;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.reading-section h3 .rnum{font-size:11px;color:var(--text2);font-weight:400;}
+.reading-section p{font-size:14px;color:#cdd9e5;line-height:1.85;margin-bottom:8px;text-align:justify;}
+.reading-section p:last-child{margin-bottom:0;}
+#splash{text-align:center;padding:60px 24px;}
+#splash h2{font-size:22px;color:var(--accent);margin-bottom:8px;}
+#splash .sp-sub{color:var(--text2);font-size:14px;margin-bottom:32px;}
+#splash .stats{display:flex;justify-content:center;gap:40px;margin-bottom:32px;}
+#splash .stat .num{font-size:36px;font-weight:800;color:var(--accent2);}
+#splash .stat .lbl{font-size:12px;color:var(--text2);margin-top:2px;}
+#splash .start-btn{background:var(--accent);color:#000;border:none;padding:14px 44px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity 0.2s;}
+#splash .start-btn:hover{opacity:0.85;}
+#menu-toggle{display:none;background:transparent;border:none;color:var(--text);font-size:20px;cursor:pointer;padding:4px 8px;vertical-align:middle;margin-right:8px;}
+.hidden{display:none !important;}
+@media(max-width:768px){
+  #sidebar{position:fixed;top:0;left:0;bottom:0;z-index:100;transform:translateX(-100%);transition:transform 0.25s ease;width:280px;}
+  #sidebar.open{transform:translateX(0);}
+  #menu-toggle{display:inline-block;}
+  #index-panel-scroll{padding:14px;}
+  #top-nav{padding:8px 14px;}
+  #header{padding:11px 14px;}
+  #reading-view{padding:16px;}
+}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="sidebar">
+  <div id="search-bar"><input id="search-input" type="text" placeholder="🔍 節タイトルを検索..." oninput="filterNav(this.value)"></div>
+  <div id="nav-scroll">
+<div class="nav-chapter">（本文）</div>
+<div class="nav-item" onclick="goSec(0)">国境を越えるヒト・モノ・カネが経済を変える</div>
+<div class="nav-chapter">序章</div>
+<div class="nav-item" onclick="goSec(1)">９．１１の衝撃</div>
+<div class="nav-item" onclick="goSec(2)">グローバル化した現代社会におけるテロとは、国家間の武力衝突のことであった戦争が</div>
+<div class="nav-item" onclick="goSec(3)">テロによって予想される経済の混乱に対応するため、多くの投資家が、株などの資産を</div>
+<div class="nav-item" onclick="goSec(4)">外国人の株保有比率の高いソニーやホンダの株が、テロ発生後最初に開いた市場である</div>
+<div class="nav-item" onclick="goSec(5)">台湾で生産される半導体チップなどのハイテク部品は、航空機を使ってアメリカの企業</div>
+<div class="nav-item" onclick="goSec(6)">世界を覆う巨大な市場メカニズム</div>
+<div class="nav-item" onclick="goSec(7)">市場は学び、そして元の機能に戻る</div>
+<div class="nav-item" onclick="goSec(8)">経済のグローバル化のなかで、市場の活動範囲は、さらに広範になり、複雑かつ深いも</div>
+<div class="nav-item" onclick="goSec(9)">第１話 労働力の国際化に潜むジレンマ</div>
+<div class="nav-item" onclick="goSec(10)">日本での労働は巨大な輸出産業</div>
+<div class="nav-item" onclick="goSec(11)">世界中で急増する外国人労働者</div>
+<div class="nav-item" onclick="goSec(12)">外国人が支えるアメリカ経済</div>
+<div class="nav-item" onclick="goSec(13)">「シリコンバレーを支えているのは、中国人とインド人」</div>
+<div class="nav-item" onclick="goSec(14)">「純血主義」を貫いてきた日本は、90 年代以降、国際競争力を急</div>
+<div class="nav-item" onclick="goSec(15)">少子高齢化と外国人労働者受け入れ</div>
+<div class="nav-item" onclick="goSec(16)">「労働者１人を節約するためなら、4,000 万円ぐらいの投資をしてロボッ</div>
+<div class="nav-item" onclick="goSec(17)">日本の政策論議は利用者不在</div>
+<div class="nav-item" onclick="goSec(18)">純血社会か多元的社会か</div>
+<div class="nav-item" onclick="goSec(19)">日本の評価はボツワナ以下？</div>
+<div class="nav-item" onclick="goSec(20)">国債の価格が高いほど国債の利回りは低くなり、国債の価格が下がれば利回りは高くな</div>
+<div class="nav-item" onclick="goSec(21)">財政赤字や政府債務削減の重要性が指摘されるのも、政府の借金が膨れあがれば、国債</div>
+<div class="nav-item" onclick="goSec(22)">国債資金に翻弄されたアジア諸国</div>
+<div class="nav-item" onclick="goSec(23)">投資誘致を狙って、韓国、タイ、インドネシアなどの国は、国際資金流入の自由化を進</div>
+<div class="nav-item" onclick="goSec(24)">資金の逆流が経済混乱を招く</div>
+<div class="nav-item" onclick="goSec(25)">国際的な資金移動には、成長に必要な原資という面と、経済混乱の原因になりかねない</div>
+<div class="nav-item" onclick="goSec(26)">通貨危機が起きたときアジア諸国間で互いの通貨を交換する契約を結んでおくというス</div>
+<div class="nav-item" onclick="goSec(27)">中国は、その段階ではまだ資金流入に厳しい制限を設けており、短期融資という形では</div>
+<div class="nav-item" onclick="goSec(28)">短期融資という資金調達方法に偏らないためには、直接投資、債権・株式による投資な</div>
+<div class="nav-item" onclick="goSec(29)">日本の国債価格が高値を続けているのは、高い貯蓄率を誇る国民の預貯金が、銀行の国</div>
+<div class="nav-item" onclick="goSec(30)">金融機関は、国債の保有を増やすことで、ますます国債価格の変動リスクをかぶるよう</div>
+<div class="nav-item" onclick="goSec(31)">国民の資金が株式など他の資産にシフトしていくことが、日本経済を活性化するうえで</div>
+<div class="nav-item" onclick="goSec(32)">世界的な一物一価の浸透</div>
+<div class="nav-item" onclick="goSec(33)">メーカは、そこで日本でしか手に入らないような商品を開発することで高価格を維持す</div>
+<div class="nav-item" onclick="goSec(34)">エイズ特効薬をめぐる攻防</div>
+<div class="nav-item" onclick="goSec(35)">こうした事態に直面して、エイズの特効薬を開発しているメーカーに対する抗議運動が</div>
+<div class="nav-item" onclick="goSec(36)">パテントという独占権を認めるからこそ、企業も研究開発にお金と時間をつぎ込もうと</div>
+<div class="nav-item" onclick="goSec(37)">結局、製薬メーカーは妥協して、途上国に対して低価格でエイズ治療薬が販売されるこ</div>
+<div class="nav-item" onclick="goSec(38)">偽物やパテント違反の商品が国境を越えて動きはじめると、それによって本物を生産し</div>
+<div class="nav-item" onclick="goSec(39)">偽物やコピー商品の撲滅にどう取り組むかということは、多くの企業にとって重要な課</div>
+<div class="nav-item" onclick="goSec(40)">日本のあるオートバイメーカーでは、自社製品の偽物の品質が優れていることに気付い</div>
+<div class="nav-item" onclick="goSec(41)">「中国人は、かつて紙や火薬の製造法をただ</div>
+<div class="nav-item" onclick="goSec(42)">立てることはないだろう」</div>
+<div class="nav-item" onclick="goSec(43)">西友とウォルマート提携の背景</div>
+<div class="nav-item" onclick="goSec(44)">日本市場への参入が困難な理由</div>
+<div class="nav-item" onclick="goSec(45)">日常の食材は近くにあるスーパーなどで週に２，３度の頻度で買い、家電製品などは特</div>
+<div class="nav-item" onclick="goSec(46)">マクドナルド、スターバックス、ケンタッキー、フライド・チキンなどは、これまで日</div>
+<div class="nav-item" onclick="goSec(47)">それでも海外に出て行く小売業</div>
+<div class="nav-item" onclick="goSec(48)">コラム 中国最大の輸出企業ウォルマート</div>
+<div class="nav-item" onclick="goSec(49)">急増する中国からの輸入</div>
+<div class="nav-item" onclick="goSec(50)">三洋電機は、中国最大の総合家電メーカーであるハイアールと広い分野での包括的な提</div>
+<div class="nav-item" onclick="goSec(51)">実態を冷静に見る必要性</div>
+<div class="nav-item" onclick="goSec(52)">さらに重要なことだが、中国から安価な製品が入ってくることの意味を評価するとき、</div>
+<div class="nav-item" onclick="goSec(53)">近隣の国が貧しい場合と、近隣の国が急成長している場合では、どちらのほうが日本に</div>
+<div class="nav-item" onclick="goSec(54)">高齢化に向かう日本経済にとって、近隣の国々の成長は、実は有利な経済環境を提供し</div>
+<div class="nav-item" onclick="goSec(55)">非常に乱暴な言い方をすれば、先進工業国の社会は、モノ重視の経済から情報やサービ</div>
+<div class="nav-item" onclick="goSec(56)">技術が決める新たな産業</div>
+<div class="nav-item" onclick="goSec(57)">バイオからナノテクまで、研究室の中で起きていることが、産業を大きく変えようとし</div>
+<div class="nav-item" onclick="goSec(58)">サービス産業のもつ大きな潜在力</div>
+<div class="nav-item" onclick="goSec(59)">旧来型の産業を中国などの近隣諸国に譲ってこそ、日本は、その限られた資源を、より</div>
+<div class="nav-item" onclick="goSec(60)">コラム 「空洞化」で活性化したアメリカの産業</div>
+<div class="nav-item" onclick="goSec(61)">空洞化の原因は中国への投資か？</div>
+<div class="nav-item" onclick="goSec(62)">世界という規模で見ても、日本の対外直接投資は、他の先進国に比べて相当程度に低調</div>
+<div class="nav-item" onclick="goSec(63)">こうした数値を見れば、日本から海外に巨額の直接投資が行われていることが日本国内</div>
+<div class="nav-item" onclick="goSec(64)">日本に投資が入ってこない理由</div>
+<div class="nav-item" onclick="goSec(65)">日本では、</div>
+<div class="nav-item" onclick="goSec(66)">イギリスは 33.7％、</div>
+<div class="nav-item" onclick="goSec(67)">外資の誘致で活性化したイギリス経済</div>
+<div class="nav-item" onclick="goSec(68)">外資系企業の活力を最大限に活用しているという意味では、ロンドンの金融街シティー</div>
+<div class="nav-item" onclick="goSec(69)">外資参入で変わる業界の常識</div>
+<div class="nav-item" onclick="goSec(70)">外資系企業の日本市場参入ということで最近注目されているケースが、中外製薬とロシ</div>
+<div class="nav-item" onclick="goSec(71)">為替レートが激しく変動する理由</div>
+<div class="nav-item" onclick="goSec(72)">努力の成果が吹っ飛んでしまう」</div>
+<div class="nav-item" onclick="goSec(73)">市場動向については、自分がどう考えるのかではなく、他の市場参加者がどう考えてい</div>
+<div class="nav-item" onclick="goSec(74)">為替レートは、しばしば貿易やマクロ経済動向などの実体経済の動きから乖離した動き</div>
+<div class="nav-item" onclick="goSec(75)">「構造改革相場」「有事のドル相場」</div>
+<div class="nav-item" onclick="goSec(76)">応するのが「金利相場」</div>
+<div class="nav-item" onclick="goSec(77)">れは「有事のドル相場」</div>
+<div class="nav-item" onclick="goSec(78)">になっていたときには、</div>
+<div class="nav-item" onclick="goSec(79)">「貿易収支の黒字を解消しない限り、円高</div>
+<div class="nav-item" onclick="goSec(80)">日常生活にも大きく関係する為替レート</div>
+<div class="nav-item" onclick="goSec(81)">「プラザ合意」</div>
+<div class="nav-item" onclick="goSec(82)">石油会社の多くは、海外から原油を購入するとき、ドルで資金を調達して石油代金とす</div>
+<div class="nav-item" onclick="goSec(83)">をあらかじめすることを、</div>
+<div class="nav-item" onclick="goSec(84)">企業は、長期の為替レートの動きに、生産・調達・販売の仕組みのグローバルな分散化</div>
+<div class="nav-item" onclick="goSec(85)">日本のメーカーや小売り業も、原材料の調達先を分散化することで、為替レートの変化</div>
+<div class="nav-item" onclick="goSec(86)">ユーロで加速する欧州統合</div>
+<div class="nav-item" onclick="goSec(87)">１つは、過去に何度もドイツとフランスの間で起きてきた戦争を回避するためにも、こ</div>
+<div class="nav-item" onclick="goSec(88)">もう１つは、アメリカが巨大な政治・経済大国になるなかで、欧州諸国の影響力が小さ</div>
+<div class="nav-item" onclick="goSec(89)">政治・経済・通貨と広範かつ深い統合を進めているという意味では、欧州は、例外的な</div>
+<div class="nav-item" onclick="goSec(90)">10/16</div>
+<div class="nav-item" onclick="goSec(91)">日本とシンガポールの自由貿易協定</div>
+<div class="nav-item" onclick="goSec(92)">取り残される日本の危機感</div>
+<div class="nav-item" onclick="goSec(93)">農業分野である程度自由化を進める判断なくして、自由貿易協定を進めることは、不可</div>
+<div class="nav-item" onclick="goSec(94)">先進工業国のことを「北」</div>
+<div class="nav-item" onclick="goSec(95)">11/16</div>
+<div class="nav-item" onclick="goSec(96)">「輸入代替政策」</div>
+<div class="nav-item" onclick="goSec(97)">注目すべきなのが、社会主義経済のもとでの閉鎖的政策を捨て、改革開放路線によって</div>
+<div class="nav-item" onclick="goSec(98)">先進国と途上国の新たな利害対立</div>
+<div class="nav-item" onclick="goSec(99)">グローバル化が生む途上国内の格差</div>
+<div class="nav-item" onclick="goSec(100)">大連、天津、上海、広州など工業化が進んでいる沿海部と、そうした成長から取り残さ</div>
+<div class="nav-item" onclick="goSec(101)">欧米で高まっている反グローバリズム運動のなかで、ナイキをはじめとする国際的企業</div>
+<div class="nav-item" onclick="goSec(102)">セーフガードに揺れた日本</div>
+<div class="nav-item" onclick="goSec(103)">こうした措置を中国側に要請するため、日本から経済産業相と農林水産相が交渉に行っ</div>
+<div class="nav-item" onclick="goSec(104)">12/16</div>
+<div class="nav-item" onclick="goSec(105)">国民が安心できる食糧を安定的に確保できるようにすべきだという考え方には、誰も異</div>
+<div class="nav-item" onclick="goSec(106)">「安全保障のために輸入を制限すべきだ」という安易な議論に、飛びつくべきで</div>
+<div class="nav-item" onclick="goSec(107)">食糧の安全保障とは、消費者が安心して安定的な食糧を確保できるようになるというこ</div>
+<div class="nav-item" onclick="goSec(108)">保護すべきもの、市場開放すべきもの</div>
+<div class="nav-item" onclick="goSec(109)">食糧の安全保障とは、本当に海外から食糧が入らなくなったときに、日本人が飢え死に</div>
+<div class="nav-item" onclick="goSec(110)">政府は、国内の農業を保護するという名のもと、実に多くの農産物について輸入制限を</div>
+<div class="nav-item" onclick="goSec(111)">何でも保護しようとする日本の農業政策は、結局のところ護送船団方式になってしまっ</div>
+<div class="nav-item" onclick="goSec(112)">都市間競争の時代が始まった</div>
+<div class="nav-item" onclick="goSec(113)">13/16</div>
+<div class="nav-item" onclick="goSec(114)">サービス産業の拡大と製造業のハイテク化という、先進工業国の長期的な産業トレンド</div>
+<div class="nav-item" onclick="goSec(115)">ニューヨークやロンドンの狭い地域に国際的な金融機関が密集しているのは、そこに多</div>
+<div class="nav-item" onclick="goSec(116)">ハリウッドのような地域に映画ビジネスが集中し、スタンフォード大学を中心に広がる</div>
+<div class="nav-item" onclick="goSec(117)">こうした都市の集積で重要なのは、ビジネスの機能だけが集中するのではなく、都市の</div>
+<div class="nav-item" onclick="goSec(118)">国際都市「東京」の競争力</div>
+<div class="nav-item" onclick="goSec(119)">一般的な労働者の能力という意味では日本の労働力は優れているが、英語を駆使すると</div>
+<div class="nav-item" onclick="goSec(120)">東京という都市は、グローバル化時代に強い競争力を発揮するうえで、多くの問題点を</div>
+<div class="nav-item" onclick="goSec(121)">東京の魅力をどう高めるのか</div>
+<div class="nav-item" onclick="goSec(122)">高層ビルの建設ラッシュは、東京という都市の構造が大きく変わろうとしている象徴的</div>
+<div class="nav-item" onclick="goSec(123)">東京が国際的に魅力ある街であるためには、ニューヨークやロンドンと同じような街に</div>
+<div class="nav-item" onclick="goSec(124)">日本の社会・経済にとって最大の「窓」</div>
+<div class="nav-item" onclick="goSec(125)">地方空港が増えることは、結果として東京や大阪の空港がもつハブ空港（各地からの航</div>
+<div class="nav-item" onclick="goSec(126)">14/16</div>
+<div class="nav-item" onclick="goSec(127)">国際化時代にあって、優れたハブ空港を抱えることは、その国の経済にとって大きな意</div>
+<div class="nav-item" onclick="goSec(128)">重要性を増す地域拠点戦略</div>
+<div class="nav-item" onclick="goSec(129)">シンガポールは、東南アジア地域の拠点の港として、そして香港は、中国南部の大工業</div>
+<div class="nav-item" onclick="goSec(130)">日本の空港建設にも国家的戦略を</div>
+<div class="nav-item" onclick="goSec(131)">グローバル化をめぐる相対立する２つの動き</div>
+<div class="nav-item" onclick="goSec(132)">国境を越えたさまざまな動きが、想像以上の規模で展開していると同時に、他方で国境</div>
+<div class="nav-item" onclick="goSec(133)">15/16</div>
+<div class="nav-item" onclick="goSec(134)">グローバル化に抗する新たな動き</div>
+<div class="nav-item" onclick="goSec(135)">第２次世界大戦後は、戦前の反省のもとに自由貿易を回復させようという動きが活発に</div>
+<div class="nav-item" onclick="goSec(136)">19 世紀型の国際化と 21 世紀型のグローバル化</div>
+<div class="nav-item" onclick="goSec(137)">現在のグローバル社会では、取引される商品は多様であり、国境を越えた経済活動もき</div>
+<div class="nav-item" onclick="goSec(138)">テロとそれに続くアフガン攻撃は、アメリカ型のグローバル経済の世界への広がりと、</div>
+<div class="nav-item" onclick="goSec(139)">アルカイダなどの非政府組織が、世界的な規模でテロを実行できるようになったのも、</div>
+  </div>
+</div>
+<div id="main">
+  <div id="header">
+    <button id="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <h1>グローバル経済の本質</h1>
+    <div class="subtitle">国境を越えるヒト・モノ・カネが経済を変える</div>
+    <div class="meta">伊藤元重 著</div>
+  </div>
+  <div id="top-nav">
+    <button class="top-nav-btn active" id="btn-index" onclick="showTab('index')">目次モード</button>
+    <button class="top-nav-btn" id="btn-read" onclick="showTab('read')">通読モード</button>
+    <button class="top-nav-btn" onclick="expandAll()">全展開</button>
+    <button class="top-nav-btn" onclick="collapseAll()">全折畳</button>
+    <a href="top.html" class="top-nav-btn">← 本棚へ</a>
+    <span id="progress-area">140節</span>
+  </div>
+  <div id="index-panel-scroll">
+    <div id="splash">
+      <h2>グローバル経済の本質</h2>
+      <p class="sp-sub">国境を越えるヒト・モノ・カネが経済を変える</p>
+      <div class="stats"><div class="stat"><div class="num">140</div><div class="lbl">節</div></div></div>
+      <button class="start-btn" onclick="startReading()">読み始める</button>
+    </div>
+    <div id="content-area" class="hidden">
+<div class="section" id="sec-0">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§1</span>
+    <span class="sec-title">国境を越えるヒト・モノ・カネが経済を変える</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>著者：伊藤元重</p></div>
+</div>
+<div class="chapter-header">序章</div>
+<div class="section" id="sec-1">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§2</span>
+    <span class="sec-title">９．１１の衝撃</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>2001 年 9 月 11 日、同時多発テロ。これをきっかけに、オサマ・ビンラディンをめぐる</p><p>動向やアフガン情勢、アメリカを中心としたテロ撲滅への報復行為、日本の参加のあり方</p><p>といった重要な問題が、一気に噴出。</p><p>タリバン政権は崩壊。イラクをテロ支援国家と名指し。イラクへの対応で米英と他の主</p><p>要国の間にできた溝は、イラク問題を越えて国際的に大きな懸念材料。イラクへの武力行</p><p>使とも関連して、世界の多くの地域でテロの危険が、増している。</p></div>
+</div>
+<div class="section" id="sec-2">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§3</span>
+    <span class="sec-title">グローバル化した現代社会におけるテロとは、国家間の武力衝突のことであった戦争が</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>民営化した行為。</p></div>
+</div>
+<div class="section" id="sec-3">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§4</span>
+    <span class="sec-title">テロによって予想される経済の混乱に対応するため、多くの投資家が、株などの資産を</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>再建や預金といった安全で流動性の高い資産に移そうとしたという。</p></div>
+</div>
+<div class="section" id="sec-4">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§5</span>
+    <span class="sec-title">外国人の株保有比率の高いソニーやホンダの株が、テロ発生後最初に開いた市場である</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>東京市場で大量に売られた。</p></div>
+</div>
+<div class="section" id="sec-5">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§6</span>
+    <span class="sec-title">台湾で生産される半導体チップなどのハイテク部品は、航空機を使ってアメリカの企業</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>に運ばれる。テロ直後からアメリカ発着の航空機は、ほとんど全面的にストップ状態。</p><p>経済停滞にあえいでいた台湾経済は、テロ事件によって大きな打撃を受けた。</p><p>このテロ事件で最も大きな影響を受けた業界の１つは、保険業界。結果的に、保険会社</p><p>の負担は、想像をはるかに超える規模に膨らんだ。日本の保険会社は最大手でも 100 億円</p><p>規模の負担だったと言われている。</p></div>
+</div>
+<div class="section" id="sec-6">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§7</span>
+    <span class="sec-title">世界を覆う巨大な市場メカニズム</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>市場メカニズムは、人類がつくったシステムのなかで最も複雑かつ高度な仕組みである。</p><p>日常の生活のなかで市場の機能を意識することはほとんどない。だが、私たちの考えも及</p><p>ばないところで、市場メカニズムは、さまざまな形で威力を発揮して、私たちの生活に影</p><p>響を及ぼしている。</p><p>多様な理由で牛肉の末端価格は、上がりうる。しかし、消費者は価格だけを見て行動す</p><p>ればよい。</p></div>
+</div>
+<div class="section" id="sec-7">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§8</span>
+    <span class="sec-title">市場は学び、そして元の機能に戻る</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>同時多発テロ事件を通じて、多くの経済活動の見直しが起きている。金融機関は、リス</p><p>ク管理を強化。保険業界では、航空輸送の保険料金を見直し。国際的な物流システムに依</p><p>存した生産・組み立てを行ってきたメーカーも、適切な在庫や物流のあり方の見直し。</p></div>
+</div>
+<div class="section" id="sec-8">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§9</span>
+    <span class="sec-title">経済のグローバル化のなかで、市場の活動範囲は、さらに広範になり、複雑かつ深いも</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>のになっている。巨大化したグローバルな市場の実態を、私たちの生活の周りに見える動</p><p>きから分析してみたい。</p></div>
+</div>
+<div class="section" id="sec-9">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§10</span>
+    <span class="sec-title">第１話 労働力の国際化に潜むジレンマ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>った</p></div>
+</div>
+<div class="section" id="sec-10">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§11</span>
+    <span class="sec-title">日本での労働は巨大な輸出産業</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ブラジル日系移民の相当数の人が、日本に出稼ぎにきている。約 25 万人。賃金の高い日</p><p>1/16</p><p>送金。全部で 25 億ドル。約 3,000 億円になる。日系ブラジル人の出稼ぎ労働サービスが、</p><p>ブラジル有数の輸出産業である。</p><p>サンパウロは、非常に治安の悪い都市。日常茶飯事のように強盗が起きる。稼いだ現金</p><p>をたくさん持ち帰ってきた日系人の出稼ぎ労働者の乗った車を狙って、空港から市内への</p><p>道でよく強盗が出没する。</p><p>出稼ぎ労働者の多くは、自動車関連産業。トヨタ自動車の関連企業が多い愛知県東部の</p><p>都市、ホンダやスズキのある静岡県浜松市、富士工業のお膝元である群馬県太田市など。</p></div>
+</div>
+<div class="section" id="sec-11">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§12</span>
+    <span class="sec-title">世界中で急増する外国人労働者</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>日本は厳しい移民規制をしているので、その数はむしろ尐ないほう。</p><p>欧州やアメリカには、かなりの規模の外国人労働者がいる。</p><p>アメリカには、メキシコ国境から合法・不法の労働者が大量に入っている。</p><p>欧州では、1970 年代に大規模に外国人労働者を受け入れた。トルコなどの中東諸国、北</p><p>アフリカ諸国など。大挙して欧州に入った外国人労働者たちは、町の中にゲットーをつく</p><p>りはじめた。ドイツに入っていったトルコ人のケースが、有名。移民の人たちが低賃金の</p><p>労働を引き受けるので、ドイツの若者の仕事が奪われてしまうということも、ネオナチ運</p><p>動の背景にあるのかもしれない。</p><p>石油で急速に経済発展したサウジアラビアには、韓国やインド等から多くの建設労働者。</p><p>シンガポールや香港の街角では、フィリピンからやってきた大勢の家政婦さんたち。</p></div>
+</div>
+<div class="section" id="sec-12">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§13</span>
+    <span class="sec-title">外国人が支えるアメリカ経済</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>1980 年代までのアメリカ経済は、日本などからの産業の追い上げにあって苦しんでいた。</p><p>しかし 90 年代以降、アメリカの産業は、見事に復活。かつての鉄鋼、自動車などの分野で</p><p>はない。ハイテク企業が、アメリカ復活のシンボル。</p><p>シリコンバレーの繁栄を支えているのは、中国人とインド人である。世界で最も高い所</p><p>得が得られる機会の多いアメリカ市場を目指して、世界中から優秀な人材が、集まってく</p><p>る。</p></div>
+</div>
+<div class="section" id="sec-13">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§14</span>
+    <span class="sec-title">「シリコンバレーを支えているのは、中国人とインド人」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>。正確な言い方をすれば、</p><p>「シ</p><p>リコンバレーを支えているのは、世界中の優秀な人たち」。</p></div>
+</div>
+<div class="section" id="sec-14">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§15</span>
+    <span class="sec-title">「純血主義」を貫いてきた日本は、90 年代以降、国際競争力を急</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>速に失ってしまった。</p></div>
+</div>
+<div class="section" id="sec-15">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§16</span>
+    <span class="sec-title">少子高齢化と外国人労働者受け入れ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>バブル経済に沸く 1980 年代後半。当時の日本経済では、人手不足が深刻化。ある自動車</p></div>
+</div>
+<div class="section" id="sec-16">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§17</span>
+    <span class="sec-title">「労働者１人を節約するためなら、4,000 万円ぐらいの投資をしてロボッ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>トを導入してもかまわない」と。</p><p>尐子高齢化の進むなかで、介護、医療、家事代行といった分野の労働へのニーズが増え、</p><p>この分野は、労働集約的な分野である。</p></div>
+</div>
+<div class="section" id="sec-17">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§18</span>
+    <span class="sec-title">日本の政策論議は利用者不在</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>女性の社会進出が進んでいる。女性がキャリア思考を高めるほど、家事や育児が大きな</p><p>問題になる。シンガポールやマレーシアなどの女性の研究者。彼女たちを支えているのは、</p><p>フィリピンなどから来る優秀な家政婦さんたち。</p><p>介護や医療の分野でも、団塊の世代が高齢化する 10 年後、20 年後になってから必要。</p><p>日本の行政は、どうしても生産者・労働者中心になりやすい。消費者や生活者の視点は、</p><p>非常に弱い。重要なことは、労働者のための政策ではなく、国民一般（その大半は利用者）</p><p>のための政策。</p></div>
+</div>
+<div class="section" id="sec-18">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§19</span>
+    <span class="sec-title">純血社会か多元的社会か</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>テロ事件で明らかになったのは、多元的社会のもつ危険性である。さまざまな人種、宗</p><p>教の人たちを１つの社会のなかに抱える難しさを再認識。そして、グローバル社会とは、</p><p>そうした社会なのである。</p><p>2/16</p><p>をもつべき。職場での外国人の専門家の利用拡大、さまざまなレベルでの人的交流、介護・</p><p>医療・家事代行などで外国人労働者の利用拡大等々の分野では、アクセルを踏む必要があ</p><p>る。しかし、不法労働の摘発、外国人が日本社会へ流入するためのルールの強化など、強</p><p>力なブレーキも必要。</p></div>
+</div>
+<div class="section" id="sec-19">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§20</span>
+    <span class="sec-title">日本の評価はボツワナ以下？</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>長期国債の最近の評価は、主要先進国のなかでは最も低いレベル。パレスチナ問題で揺</p><p>れているイスラエル並み。日本の政府（財務省）は、クレームをつけた。なぜ日本の格付</p><p>けが、これほど低いのか。</p></div>
+</div>
+<div class="section" id="sec-20">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§21</span>
+    <span class="sec-title">国債の価格が高いほど国債の利回りは低くなり、国債の価格が下がれば利回りは高くな</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>る。すべての金利は連動しているので、他の長期金利の利回りなども上がる。しかし、景</p><p>気が依然として低迷している日本経済で、金利の上昇が起きれば、それは景気にとって致</p><p>命的なものともなりかねない。</p></div>
+</div>
+<div class="section" id="sec-21">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§22</span>
+    <span class="sec-title">財政赤字や政府債務削減の重要性が指摘されるのも、政府の借金が膨れあがれば、国債</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>の価格が、下がる危険がある。国内の貯蓄と投資のバランスで金利が決まるという点にあ</p><p>る。もし日本の国債を売ってその資金を海外の資産に換えるような動きが起これば、日本</p><p>国内で資金が余っていても国債の価格が下がり、金利が上がることは十分に起こりうる。</p><p>では、投資家は、どのような場合に、日本の国債を売りに出すのだろうか。それは「日</p><p>本の国債を保有していると損をする」と感じたとき。つまり国債の価格が下がると思えば、</p><p>その前に国債を売りに出す。いったん国債売りという大きな国際的資金の流れが起きれば、</p><p>日本経済は、大きな打撃を受ける。</p></div>
+</div>
+<div class="section" id="sec-22">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§23</span>
+    <span class="sec-title">国債資金に翻弄されたアジア諸国</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>アジア諸国は、90 年代の前半、奇跡的な経済成長を実現。韓国、台湾、シンガポール、</p><p>香港という、アジア NIEs（アジア新興経済地域）に続き、タイ、マレーシア、インドネシ</p><p>アなど。その原動力は、これらの国に海外から多くの投資が行われ、急速な産業化が起き</p><p>ていたことになる。</p></div>
+</div>
+<div class="section" id="sec-23">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§24</span>
+    <span class="sec-title">投資誘致を狙って、韓国、タイ、インドネシアなどの国は、国際資金流入の自由化を進</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>めており、国内業者が海外から短期資金を借り入れることを可能にしてきた。ドルや円な</p><p>どの通貨建てで資金を借りて、それを自国通貨に換えて国内投資を行っていった。</p></div>
+</div>
+<div class="section" id="sec-24">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§25</span>
+    <span class="sec-title">資金の逆流が経済混乱を招く</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>1997 年にタイで起きたバーツ危機は、こうした資金流入の流れが逆転したことによる。</p><p>新たな資金が入ってこないだけでなく、これまで貸し出された資金の回収が始まった。返</p><p>済する場合には、タイ通貨のバーツをドルや円に換えて返済。外国為替市場で大量のバー</p><p>ツ売り、ドル買い、円買いが生じる。タイ政府は、手持ちの外貨を市場に放出することで</p><p>固定相場制を守ろうとするが、ついに手持ちの外貨が底をつきはじめる。</p><p>同様のことは、韓国やインドネシアなどの国にも起きた。為替レートの急激な下落と投</p><p>資の停止などによって、国内の失業率は急激に上昇し、金融機関の破綻も続出。</p><p>こうした混乱を抑えるために、IMF が資金供給をした。IMF がアジア諸国に求めたこと</p><p>は、通貨価値の保持と経済の健全化のための金利引き上げと財政構造改革。これが、アジ</p><p>ア諸国の景気をさらに悪くした。</p></div>
+</div>
+<div class="section" id="sec-25">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§26</span>
+    <span class="sec-title">国際的な資金移動には、成長に必要な原資という面と、経済混乱の原因になりかねない</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>という面の両面がある。</p></div>
+</div>
+<div class="section" id="sec-26">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§27</span>
+    <span class="sec-title">通貨危機が起きたときアジア諸国間で互いの通貨を交換する契約を結んでおくというス</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ワップ協定が、結ばれつつある。大きな反省点は、アジア諸国があまりにも短期融資とい</p><p>3/16</p></div>
+</div>
+<div class="section" id="sec-27">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§28</span>
+    <span class="sec-title">中国は、その段階ではまだ資金流入に厳しい制限を設けており、短期融資という形では</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>大きな資金が入ってきていなかった。資金供給は、中国国内での工場や販売網への投資と</p><p>いう直接投資の形。直接投資は、短期的にすぐ資金が逆流するというような性格の投資で</p><p>はない。</p></div>
+</div>
+<div class="section" id="sec-28">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§29</span>
+    <span class="sec-title">短期融資という資金調達方法に偏らないためには、直接投資、債権・株式による投資な</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ど、多用な資金流入のチャネルを育成しなくてはいけない。</p></div>
+</div>
+<div class="section" id="sec-29">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§30</span>
+    <span class="sec-title">日本の国債価格が高値を続けているのは、高い貯蓄率を誇る国民の預貯金が、銀行の国</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>債保有を支えているから。つまり「高い預貯金→銀行による国債購入→国債増加」という</p><p>三角関係。日本の政府が抱えている負債は、国公債など目に見えるものだけでも、日本の</p><p>GDP（国内総生産）の 140％近くある。</p></div>
+</div>
+<div class="section" id="sec-30">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§31</span>
+    <span class="sec-title">金融機関は、国債の保有を増やすことで、ますます国債価格の変動リスクをかぶるよう</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>になっている。国債の価格が大きく下がるようだと、銀行の資産は大きく傷つく。</p></div>
+</div>
+<div class="section" id="sec-31">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§32</span>
+    <span class="sec-title">国民の資金が株式など他の資産にシフトしていくことが、日本経済を活性化するうえで</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>は好ましい。それなのに、依然として国民は預貯金を持ち続ける。</p></div>
+</div>
+<div class="section" id="sec-32">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§33</span>
+    <span class="sec-title">世界的な一物一価の浸透</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>子どもの頃、スコッチ・ウィスキーは、大変に高価なものだった。当時と比べると、い</p><p>まや隔世の感がある。高級酒が、いくらでも安く手に入るようになった。高級酒が安く買</p><p>える香港などで大量に仕入れて、日本に輸入してくるビジネスが登場。並行輸入である。</p></div>
+</div>
+<div class="section" id="sec-33">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§34</span>
+    <span class="sec-title">メーカは、そこで日本でしか手に入らないような商品を開発することで高価格を維持す</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>る作戦に出た。新しく高級な金ラベル、つまり通称「ジョニ金」を売り出した。この商品</p><p>は、日本以外の市場で安く買うことはできない。こうしたメーカー側の秘策が成功したと</p><p>いう話は聞いたことがない。結局、輸入高級酒の価格は下がり、その結果、販売数量も下</p><p>がった。</p><p>グローバル化の流れは、各国の間に依存する価格差を縮めるように働いている。価格の</p><p>安い所から高い所へ商品が流れることを「裁定」というが、国際的な裁定メカニズムが機</p><p>能している。国際的な一物一価が、しっかりと定着してきた。</p></div>
+</div>
+<div class="section" id="sec-34">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§35</span>
+    <span class="sec-title">エイズ特効薬をめぐる攻防</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>エイズに感染した人でも、薬を服用していれば進行を遅くすることができるらしい。問</p><p>題は、薬の価格。先進国の多くの患者は、自分の生死に関わることであれば、多尐高くて</p><p>も服用する。しかし現在市場に出回っている価格では、アフリカなど途上国の患者には高</p><p>くて手が出せない。</p></div>
+</div>
+<div class="section" id="sec-35">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§36</span>
+    <span class="sec-title">こうした事態に直面して、エイズの特効薬を開発しているメーカーに対する抗議運動が</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>盛り上がってきた。生産するだけであれば、途上国の患者でも手に入れることができる程</p><p>度に価格を下げることは、可能だったのである。製薬メーカーとしては、研究開発費を特</p><p>効薬の価格に乗せなければ、新しい薬を開発することができなくなると主張したが、多く</p><p>の患者が薬を買えずに死亡している現実の前では、製薬メーカー側の主張は説得力をもた</p><p>なかった。</p></div>
+</div>
+<div class="section" id="sec-36">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§37</span>
+    <span class="sec-title">パテントという独占権を認めるからこそ、企業も研究開発にお金と時間をつぎ込もうと</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>する。研究開発を活性化することを重視するなら、パテントの権利を強化。結果をすべて</p><p>の人に広く活用してもらおうとすれば、パテント制度はないほうがよい。</p></div>
+</div>
+<div class="section" id="sec-37">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§38</span>
+    <span class="sec-title">結局、製薬メーカーは妥協して、途上国に対して低価格でエイズ治療薬が販売されるこ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>とに同意した。製薬メーカーが強く抵抗したのは、並行輸入によって低価格の薬が、途上</p><p>国から安く入ってくるのを止めることが難しいと考えたから。</p><p>4/16</p><p>偽ブランドも国境を越えて大量に流れ込んでいる。消費者が本物のブランド品に払って</p><p>いるのは、その大半がブランド料なのである。バッグや時計については、偽物を生産・販</p><p>売することは犯罪行為として規制されている。</p></div>
+</div>
+<div class="section" id="sec-38">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§39</span>
+    <span class="sec-title">偽物やパテント違反の商品が国境を越えて動きはじめると、それによって本物を生産し</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ている企業の受ける被害は大きくなる。</p></div>
+</div>
+<div class="section" id="sec-39">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§40</span>
+    <span class="sec-title">偽物やコピー商品の撲滅にどう取り組むかということは、多くの企業にとって重要な課</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>題。日本国内だけの問題であれば、効果的に対応することが可能であろうが、中国などの</p><p>第三国で出回る偽物やコピー商品を取り締まることは、容易ではない。</p></div>
+</div>
+<div class="section" id="sec-40">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§41</span>
+    <span class="sec-title">日本のあるオートバイメーカーでは、自社製品の偽物の品質が優れていることに気付い</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>た。偽物を生産しているメーカーに「本物」の生産の一部委託を始めた。</p><p>中国は、偽物天国である。中国のある高官、</p></div>
+</div>
+<div class="section" id="sec-41">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§42</span>
+    <span class="sec-title">「中国人は、かつて紙や火薬の製造法をただ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>で世界の人に教えてあげた。それなのに、小さな技術や発明の権利のことで、目くじらを</p></div>
+</div>
+<div class="section" id="sec-42">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§43</span>
+    <span class="sec-title">立てることはないだろう」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>。</p></div>
+</div>
+<div class="section" id="sec-43">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§44</span>
+    <span class="sec-title">西友とウォルマート提携の背景</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>2002 年３月、大手スーパーの西友が、世界最大の小売業である米ウォルマートの資本参</p><p>加を受けると発表。イトーヨーカ堂やイオングループに大きく水をあけられてしまった西</p><p>友にとって、単独に生き残ることは非常に困難。</p><p>小売業は、ある一定の規模を超えると、どうしても海外展開を考える必要が出てくる。</p><p>日本市場は、ウォルマートにとって必ず参入しなければならない市場。そこでリスクの尐</p><p>ない形で試験的に参入し、チャンスがあれば、一気に日本でのビジネスを拡大できるよう</p><p>な機会を狙っていたに違いない。西友との提携話は、まさに渡りに船。</p><p>商法が改正され５年以内に株式の過半数を握るオプションを確保した形で資本投資する。</p></div>
+</div>
+<div class="section" id="sec-44">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§45</span>
+    <span class="sec-title">日本市場への参入が困難な理由</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>一般的に外資系の小売業が、日本市場で大きな成功を収めているとは言い難い。日本の</p><p>流通市場における競争は非常に厳しく、たとえ力のある多国籍型小売業でも、日本の消費</p><p>者に合った形の商売をしない限り、利益をあげるのは難しい。</p></div>
+</div>
+<div class="section" id="sec-45">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§46</span>
+    <span class="sec-title">日常の食材は近くにあるスーパーなどで週に２，３度の頻度で買い、家電製品などは特</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>別なときに買いに行くというのが、通常の買い物パターン。</p></div>
+</div>
+<div class="section" id="sec-46">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§47</span>
+    <span class="sec-title">マクドナルド、スターバックス、ケンタッキー、フライド・チキンなどは、これまで日</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>本になかったような外食産業文化を日本に持ち込み、大きな成功を収めている。</p><p>しかし外食産業に比べて小売業には、大きなハンディがある。それは、同じ商品が日本</p><p>の小売店にも売っているということ。すでに多様な業態の小売業がひしめき合って競争し</p><p>ているため、海外の小売業が参入するのは容易ではない。</p></div>
+</div>
+<div class="section" id="sec-47">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§48</span>
+    <span class="sec-title">それでも海外に出て行く小売業</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>巨大化したテスコは、イギリス市場の壁という限界に突き当たった。これ以上大きくな</p><p>るためには、選択肢は２つ。１つは、イギリスで成功した食品スーパーの手法で海外に進</p><p>出する。もう１つは、イギリス国内で、食品スーパー以外の分野に出ていく。</p><p>テスコが始めたビジネスは、スーパーの店頭で銀行サービスを積極的に展開すること。</p><p>5/16</p><p>多様な消費スタイルが、グローバル化の名のもとに世界に広がるということ。寿司は、</p><p>日本独特の食べ物ではあるが、だからこそ非常に強い国際競争力を持ちながら、グローバ</p><p>ル化の波に乗って世界に広がっている。</p><p>1991 年に日本に店舗を開いた玩具の大手小売業のトイザラスである。大規模小売店舗法</p><p>（大店法）が、大きな障壁。この規制の緩和・撤廃を求めて日米の通商問題にまで発展し</p><p>た。長年の小売業を縛ってきた大店法が撤廃される事が、日本の流通を大きく変えてきた。</p></div>
+</div>
+<div class="section" id="sec-48">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§49</span>
+    <span class="sec-title">コラム 中国最大の輸出企業ウォルマート</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>アメリカのウォルマート店頭で売られている商品には、中国製品が尐なくない。衣料品、</p><p>日用雑貨、電気製品など、中国製品なしには、ウォルマートの店頭は成立しない。国際的</p><p>な規模で活躍している大型小売業の活動は、世界の生産や貿易の流れに大きな影響を及ぼ</p><p>している。</p><p>「我が社は、アメリカの大手小売業の店頭で 99 ドル 98 セントで販売されるラジカセを</p><p>大量生産して順調だったのに、日系のライバル社が 79 ドル 98 セントで販売できる商品を</p><p>開発した為、市場をすべて奪われてしまった」と。小売業は、尐しでも価格の安い商品を</p><p>販売しようとする。</p></div>
+</div>
+<div class="section" id="sec-49">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§50</span>
+    <span class="sec-title">急増する中国からの輸入</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>中国からの製品の輸入が、急増している。ユニクロの衣料品、スーパーの冷凍食品、大</p><p>型店に並ぶ中国製の家電製品など。輸入拡大の背後には、メーカーや商社、小売業など日</p><p>本企業の努力がある。食品メーカーの加ト吉は、中国で数千人規模のタコ焼き工場を運営。</p><p>最新鋭のタコ焼き製造機械を使って、若くて勤勉な中国の女子工員が、大挙してタコ焼き</p><p>を焼いている。それを冷凍したものが、日本のスーパーなどに並ぶ。</p></div>
+</div>
+<div class="section" id="sec-50">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§51</span>
+    <span class="sec-title">三洋電機は、中国最大の総合家電メーカーであるハイアールと広い分野での包括的な提</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>携。井植会長の話では、ハイアールの工場を見てそのレベルの高さに驚いた。こうした企</p><p>業とまともに対抗するよりは、どう組んでいけばよいのかを考えたほうが賢いと判断。ハ</p><p>イアールの製品を積極的に日本で販売しながらも、他方でハイアールに三洋のデバイス（部</p><p>品）を販売していくビジネスに転換。</p><p>地域経済の多くが、中国の脅威を感じている。地域雇用を支えてきた工場の閉鎖が決ま</p><p>り、地元の人たちの職場が失われようとしている地域は、全国至るところにある。</p></div>
+</div>
+<div class="section" id="sec-51">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§52</span>
+    <span class="sec-title">実態を冷静に見る必要性</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>マクロ経済の実態を冷静に見る目。2001 年に日本の輸入総額は、約 48 兆円。これは、</p><p>日本の経済規模を表す GDP（国内総生産）500 兆円の 10％弱にすぎない。中国からの輸入</p><p>総額は約７兆円であるから、日本の GDP の 1.4％。一般論で議論するのは危険ではあるが、</p><p>地域経済の沈滞は、中国が急速に成長してきたここ数年の現象というより、過去 20 年ぐら</p><p>いの間に徐々に進行してきた現象といえる。</p><p>地域経済が停滞する理由は、多岐にわたっている。中国経済急成長は、その理由の１つ</p><p>にすぎない。</p></div>
+</div>
+<div class="section" id="sec-52">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§53</span>
+    <span class="sec-title">さらに重要なことだが、中国から安価な製品が入ってくることの意味を評価するとき、</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>競合製品をつくっている生産者にとってのデメリットと、それを買う消費者のメリットの</p><p>両方を勘案しなくてはいけない。</p></div>
+</div>
+<div class="section" id="sec-53">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§54</span>
+    <span class="sec-title">近隣の国が貧しい場合と、近隣の国が急成長している場合では、どちらのほうが日本に</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>とって経済的に好ましいことだろうか。重要なことは、日本経済が、近隣諸国の経済成長</p><p>を織り込んだ形で変化しなくてはいけないということ。</p><p>6/16</p></div>
+</div>
+<div class="section" id="sec-54">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§55</span>
+    <span class="sec-title">高齢化に向かう日本経済にとって、近隣の国々の成長は、実は有利な経済環境を提供し</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>てくれている。これらの国の若い労働者に汗を流す仕事を一部引き受けてもらい、日本は</p><p>より付加価値の高い分野にシフトしていく。こうした動きは、欧米の主要先進国では常識。</p></div>
+</div>
+<div class="section" id="sec-55">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§56</span>
+    <span class="sec-title">非常に乱暴な言い方をすれば、先進工業国の社会は、モノ重視の経済から情報やサービ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ス中心の経済に大きく変わろうとしている。製造業全体が苦しんでいるのは、中国からの</p><p>輸入製品が大量に入ってくるからではなく、社会の変化についていけない旧来型の企業が、</p><p>次々に製品を生産し続けた結果、供給過剰の状態に陥っているから。規格・大量生産で労</p><p>働集約型の製品は、中国に生産してもらい、日本は、それを安い価格で購入すればよい。</p><p>そして産業の主力をより付加価値の高い次のステージに移すような戦略的な展開が、日本</p><p>には必要。</p></div>
+</div>
+<div class="section" id="sec-56">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§57</span>
+    <span class="sec-title">技術が決める新たな産業</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>IT（情報通信技術）の進歩は、あっという間にインターネットの世界を実現した。遺伝</p><p>子の情報さえもコンピュータで解析される時代。</p></div>
+</div>
+<div class="section" id="sec-57">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§58</span>
+    <span class="sec-title">バイオからナノテクまで、研究室の中で起きていることが、産業を大きく変えようとし</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ている。燃料電池の開発は、自動車の世界を大きく変える。</p><p>富国強兵・殖産興業のスローガンのもとで産業化をひた走った明治時代。非常に短期間</p><p>に世界第２の経済大国になった戦後の高度経済成長期。いま、新たな戦略的転換が必要な</p><p>時代。</p></div>
+</div>
+<div class="section" id="sec-58">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§59</span>
+    <span class="sec-title">サービス産業のもつ大きな潜在力</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>先端技術産業は、高い付加価値を生み出す可能性を秘めている。しかし、それは十分な</p><p>雇用を生み出すわけではない。基本的には、技術者・研究者の世界。</p><p>そこで大きな雇用吸収力のある産業を、これとは別に準備しなくてはいけない。それが、</p><p>サービス産業。</p><p>ただがむしゃらに経済成長路線を歩んだ仕事一辺倒の人生とは違う、21 世紀型のライフ</p><p>スタイルへの移行が進もうとしている。それが、新たな産業を生み出す原動力となる。</p><p>ここ数年の携帯電話。現在、全国に約 1 万店。１店あたりの雇用を 20 人とすると、全国</p><p>で 20 万人の雇用が、この新しいコミュニケーション手段で生まれたことになる。</p></div>
+</div>
+<div class="section" id="sec-59">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§60</span>
+    <span class="sec-title">旧来型の産業を中国などの近隣諸国に譲ってこそ、日本は、その限られた資源を、より</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>高度な技術産業と、多くの人手を必要とする生活関連産業に振り向けることができる。</p></div>
+</div>
+<div class="section" id="sec-60">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§61</span>
+    <span class="sec-title">コラム 「空洞化」で活性化したアメリカの産業</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>アメリカは、1960 年以降、日本をはじめとする多くの新興工業国の追い上げにあった。</p><p>60 年代後半に鉄鋼、70 年代にはカラーテレビ、80 年代には自動車や工作機械、90 年代に</p><p>入って半導体。</p><p>80 年代以降、急速に回復を示したアメリカの産業を支えたのは、こうした旧来型の産業</p><p>ではない。IBM、マイクロソフト、インテル、ボーイング、シスコシステムズなど、IT、</p><p>ハイテク、バイオといった新規産業。また、金融業やエンターテイメントなど、非製造業</p><p>の競争力強化も、アメリカの産業活力を支えてきた。要するに、アメリカ経済の復活は、</p><p>「空</p><p>洞化」によって生み出された。</p><p>第６話</p><p>効果</p></div>
+</div>
+<div class="section" id="sec-61">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§62</span>
+    <span class="sec-title">空洞化の原因は中国への投資か？</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>直接投資とは、現地での生産や販売を目的とした海外企業による投資のこと。中国の潤</p><p>沢で低廉な労働力、技術力の高いエンジニアの充実、そして巨大な国内市場は、多くの企</p><p>業にとって魅力的な存在。</p><p>7/16</p><p>の直接投資のシェア（実行ベース）では、香港が 38％で圧倒的なシェアを誇るが、日本は</p><p>7.2％で、約 11％のシェアを占めるアメリカや EU 諸国に比べて相当小さい。</p></div>
+</div>
+<div class="section" id="sec-62">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§63</span>
+    <span class="sec-title">世界という規模で見ても、日本の対外直接投資は、他の先進国に比べて相当程度に低調</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>である。2000 年度の対外直接投資額のランキングをみると、多い順に上からイギリス、フ</p><p>ランス、アメリカ、ベルギー、ルクセンブルクと続くが、日本は世界第 12 位にすぎない。</p><p>一国の経済規模の指標である GDP（国内総生産）に対する対外直接投資の比率。イギリ</p><p>スの 19％やフランスの 13％など欧州諸国の数値が際立って高い。日本は 0.7％でアメリカ</p><p>の 1.8％に比べてもきわめて低くなっている。</p></div>
+</div>
+<div class="section" id="sec-63">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§64</span>
+    <span class="sec-title">こうした数値を見れば、日本から海外に巨額の直接投資が行われていることが日本国内</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>の産業の空洞化を引き起こしているという見方はまったく間違っている。</p></div>
+</div>
+<div class="section" id="sec-64">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§65</span>
+    <span class="sec-title">日本に投資が入ってこない理由</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>その国に過去に入ってきた直接投資の累計額を計算し、その国の GDP で割った数値。</p></div>
+</div>
+<div class="section" id="sec-65">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§66</span>
+    <span class="sec-title">日本では、</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>これがわずか 1.2％にすぎない。ちなみにアメリカは 27.2％、</p></div>
+</div>
+<div class="section" id="sec-66">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§67</span>
+    <span class="sec-title">イギリスは 33.7％、</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ドイツは 22.5％、そしてフランスは 54.2％である。</p><p>入ってこない理由。エネルギー価格や地価に代表される日本国内の高コスト構造、海外</p><p>の人にとって住みにくい生活環境、投資を抑制するような諸々の規制など。</p><p>直接投資は、すべてゼロからの工場建設の形をとるわけではない。日本企業の買収や資</p><p>本参加などの形態も多いだろう。大規模な投資が行われれば、それが日本経済の活性化に</p><p>貢献する。残念ながら、日本の地方自治体が、大規模な外資系企業の誘致に成功したとい</p><p>う話はあまりない。</p></div>
+</div>
+<div class="section" id="sec-67">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§68</span>
+    <span class="sec-title">外資の誘致で活性化したイギリス経済</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>イギリスの地方都市に進出した日産の工場。この地域はもともと、鉱山で栄えた地域。</p><p>鉱山の閉鎖が続き、地域経済は衰退。鉱山閉鎖などによって職を失った人たちに貴重な職</p><p>場を提供したのである。</p><p>イギリスには、もはや純粋な英国系の自動車会社は１社も残っていない。トヨタ、日産、</p><p>ホンダ、フォードなどの外国企業の現地工場が元気に自動車生産を続けている。</p></div>
+</div>
+<div class="section" id="sec-68">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§69</span>
+    <span class="sec-title">外資系企業の活力を最大限に活用しているという意味では、ロンドンの金融街シティー</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>が、その最たる例。シティーで活躍している金融機関は、そのほとんどがイギリス以外に</p><p>本部をもつ多国籍金融機関。多国籍金融機関には、多くのイギリス人が雇われている。</p><p>外資系企業に占拠されてしまう現象を「ウィンブルドン現象」と呼ぶ。ウィンブルドン</p><p>は、イギリスにある世界最高峰のプロテニスの試合会場。この会場では、イギリスの選手</p><p>が、活躍することはほとんどない。ウィンブルドンという場を提供することで、イギリス</p><p>は世界最高のテニスのメッカ。当然、地元への経済効果も大きい。</p></div>
+</div>
+<div class="section" id="sec-69">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§70</span>
+    <span class="sec-title">外資参入で変わる業界の常識</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>海外からの投資を呼び込んで経済を活性化させようとすることは、いまや国際的な常識。</p><p>海外からの直接投資の拡大なしには、日本経済を活性化することは、難しいと考えるべき。</p><p>金融や保険では、外資系企業が大きな役割を演じるようになった。</p><p>自動車と言えば、日産の社長に就任したカルロス・ゴーン氏のケースが有名。10 社を越</p><p>える日本の自動車メーカーのなかで純粋に日本企業と言えるのは、トヨタとホンダだけ。</p><p>ゴーン氏の改革は、日産にとどまらず、業界全体に影響を及ぼしたというのが「業界全体</p><p>に広がったゴーン効果」という。</p></div>
+</div>
+<div class="section" id="sec-70">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§71</span>
+    <span class="sec-title">外資系企業の日本市場参入ということで最近注目されているケースが、中外製薬とロシ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ュとの提携。医薬品開発に必要な研究資金は急速に膨れあがっており、研究開発競争に生</p><p>き残るためには、世界レベルで市場を制すような企業規模が必要になってきている。欧米</p><p>では、次々に企業合併や吸収が置き、医薬品業界の巨大化・寡占化の動きが進んでいる。</p><p>日本の企業は、国内市場において世界的に見れば小さな規模でひしめき合っている。今後、</p><p>8/16</p><p>るのさえ難しくなってくるかも。ロシュの力を活用して、中外製薬が、日本市場で、そし</p><p>て世界の市場で積極的に活躍できる可能性も生まれる。</p><p>外資系と組むということは、異質なものとの融合であるため、難しい面も多い。また相</p><p>手が大きければ、それだけ飲み込まれて支配されるリスクも多い。ただ、異質の相手と組</p><p>むことで、得られるものも多いはず。同質の企業が一緒になっても規模の拡大を目指すこ</p><p>とにしかならないが、異質の企業が一緒になればシナジー効果を高めることにつながる。</p><p>重要なのは、異質の企業が日本にどんどん入ってくることで、日本の産業や社会が活性化</p><p>すること、すなわちシナジー効果が働くこと。</p><p>グローバル化の本質は、多様なものがぶつかり合い、融合すること。そうした動きを日</p><p>本経済のなかに持ち込むことが、日本経済活性化の最も有効な手法。</p></div>
+</div>
+<div class="section" id="sec-71">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§72</span>
+    <span class="sec-title">為替レートが激しく変動する理由</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>激しく変化する為替レートについての不満。「現場の技術は、必死の思いで１％、２％の</p><p>コスト削減に努力しているのに、為替レートがあっという間に 10％以上変化してしまって、</p></div>
+</div>
+<div class="section" id="sec-72">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§73</span>
+    <span class="sec-title">努力の成果が吹っ飛んでしまう」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>。</p><p>何とか政策的に為替レートを固定できないだろうか。しかし話は、そんなに簡単ではな</p><p>い。外国為替市場、東京やシドニーで始まった取引は、シンガポール、中東、ロンドンな</p><p>どを回り、アメリカで終結する。そして各国の市場は、すべて連動している。外国為替取</p><p>引の額は、１日に２兆ドル前後。世界全体の貿易額の 100 倍近い規模。</p><p>貿易などで発生する実需だけが、為替レートの動きをきめるのではない。市場の思惑の</p><p>ようなものが、為替レートの動きを決める部分が大きい。市場参加者の多くが、ドル高に</p><p>なると思えば、ドルへの需要が拡大して、実際にドル高方向へ為替レートが動いていく。</p><p>逆に、ドル安になると多くの人が思えば、ドル売りが大量に出て、実際にドル安方向へ為</p><p>替レートが動く。</p></div>
+</div>
+<div class="section" id="sec-73">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§74</span>
+    <span class="sec-title">市場動向については、自分がどう考えるのかではなく、他の市場参加者がどう考えてい</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>るのかを察知することが重要。</p></div>
+</div>
+<div class="section" id="sec-74">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§75</span>
+    <span class="sec-title">為替レートは、しばしば貿易やマクロ経済動向などの実体経済の動きから乖離した動き</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>を示す。</p></div>
+</div>
+<div class="section" id="sec-75">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§76</span>
+    <span class="sec-title">「構造改革相場」「有事のドル相場」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>。</p></div>
+</div>
+<div class="section" id="sec-76">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§77</span>
+    <span class="sec-title">応するのが「金利相場」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>。国際関係に問題が生じたときにドルが高くなることがあるが、こ</p></div>
+</div>
+<div class="section" id="sec-77">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§78</span>
+    <span class="sec-title">れは「有事のドル相場」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>。10 年ほど前、日本の貿易黒字や経常黒字が通商摩擦の大きな問題</p></div>
+</div>
+<div class="section" id="sec-78">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§79</span>
+    <span class="sec-title">になっていたときには、</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「貿易収支相場」。日本の貿易収支や経常収支の黒字が膨らめば円</p><p>高、黒字幅が縮小すれば円安になるという動き。</p></div>
+</div>
+<div class="section" id="sec-79">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§80</span>
+    <span class="sec-title">「貿易収支の黒字を解消しない限り、円高</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>方向の動きを止めることはできない」といった主張が、強い影響力をもつ。この数年、日</p><p>本の経常収支や貿易収支の動きは、為替レートにほとんど影響を及ぼしていない。</p></div>
+</div>
+<div class="section" id="sec-80">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§81</span>
+    <span class="sec-title">日常生活にも大きく関係する為替レート</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>1980 年代前代、１ドル＝250 円。</p></div>
+</div>
+<div class="section" id="sec-81">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§82</span>
+    <span class="sec-title">「プラザ合意」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>。３年後の 1988 年には、円高は１ドル</p><p>＝125 円前後にまで進んでしまった。</p><p>航空運賃も海外のホテル宿泊料も土産代も、すべて円高のおかげで安くなった。この時</p><p>期に日本の企業が、次々と海外の企業を買収。ソニーがコロンビア映画を、ブリヂストン</p><p>がファイアストンタイヤを、そして三菱地所がリンカーンセンターを買収。円高の影響が</p><p>9/16</p><p>ることなどを考えると、円がいまのような高い水準にとどまっていないことも考えられる。</p><p>その場合には、海外の商品は次第に高いものになっていく。</p></div>
+</div>
+<div class="section" id="sec-82">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§83</span>
+    <span class="sec-title">石油会社の多くは、海外から原油を購入するとき、ドルで資金を調達して石油代金とす</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>る。石油を日本にもってきて販売するまでは、ドルの借金を抱える。多くの企業にとって</p><p>為替レート変動への対応は、重要な経営課題の１つ。</p><p>いくつか重要な為替レートへの対応方法。短期的な対応方法として多くの企業が行って</p><p>いるのは、先物市場などを利用した為替ヘッジ。輸出企業は近い将来、ドルなどの外貨で</p><p>支払いを受けることが多い。何ヶ月か先に一定のドルを、決まった為替レートで売る約束</p></div>
+</div>
+<div class="section" id="sec-83">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§84</span>
+    <span class="sec-title">をあらかじめすることを、</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「先物でドルを売る」という。輸出企業は、円の受取額を確定す</p><p>ることができる。</p><p>輸出企業と輸入企業では、為替レートの影響がちょうど逆になる。輸出企業が先物でド</p><p>ルを売り、輸入企業が先物でドルを購入する。その結果、外国為替市場で巨額の先物取引</p><p>が行われる。</p></div>
+</div>
+<div class="section" id="sec-84">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§85</span>
+    <span class="sec-title">企業は、長期の為替レートの動きに、生産・調達・販売の仕組みのグローバルな分散化</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>を図ることで対応しようとしている。原料や材料の調達をグローバルに展開することも、</p><p>為替レートの変化への対応となる。</p></div>
+</div>
+<div class="section" id="sec-85">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§86</span>
+    <span class="sec-title">日本のメーカーや小売り業も、原材料の調達先を分散化することで、為替レートの変化</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>への対応力を高めることができる。</p></div>
+</div>
+<div class="section" id="sec-86">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§87</span>
+    <span class="sec-title">ユーロで加速する欧州統合</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>2002 年 1 月から「ユーロ」という共通通貨が、流通しはじめた。通貨統合を果たすこと</p><p>で、欧州の経済統合は新たなステージを迎えている。各国は、自国による金融政策の調整</p><p>を放棄した。金融政策の決定は、すべて欧州中央銀行に委ねられ、各国ごとの金融政策の</p><p>運営は行われない。</p><p>第２次世界大戦後、欧州諸国は、時間をかけて経済統合を着実に進めてきた。1960 年代</p><p>には域内の関税を撤廃し、域外国に対して共通関税を儲ける関税同盟を採用。その後も、</p><p>域内の人や資本の動きの自由化を進め、税制をはじめとする経済制度の統一化・均一化を</p><p>進め、域内共通の財政政策や農業政策に着手し、そしてついに通貨統合まで果たした。</p><p>推進してきた背景には、おもに２つの要因がある。</p></div>
+</div>
+<div class="section" id="sec-87">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§88</span>
+    <span class="sec-title">１つは、過去に何度もドイツとフランスの間で起きてきた戦争を回避するためにも、こ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>の２カ国を含めて欧州諸国が連合体を形成する必要があると考えられてきたこと。</p></div>
+</div>
+<div class="section" id="sec-88">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§89</span>
+    <span class="sec-title">もう１つは、アメリカが巨大な政治・経済大国になるなかで、欧州諸国の影響力が小さ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>くなることを恐れ、そのためにも連合を組むことが重要。多くの困難にもかかわらず、欧</p><p>州諸国は、共通通貨の採用に踏み切った。</p><p>経済統合どころか、政治統合への流れさえ形成されようとしている。</p></div>
+</div>
+<div class="section" id="sec-89">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§90</span>
+    <span class="sec-title">政治・経済・通貨と広範かつ深い統合を進めているという意味では、欧州は、例外的な</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>存在。</p><p>地域経済協定の動きが広がる大きな転機となったのは、1994 年の NAFTA（北米自由貿</p><p>易協定）の締結。アメリカ・カナダ・メキシコの３カ国が、域内の関税を撤廃し、北米に</p><p>１つの経済圏を形成しようとしてできた。アメリカという超大国が、当時行き詰まりを見</p><p>せていた GATT（関税と貿易に関する一般協定）のウルグアイ・ラウンドを横目に見なが</p><p>ら、勝手に自由貿易協定を進めていった。アメリカにとって隣国のカナダやメキシコとの</p><p>貿易額は、欧州や日本との貿易規模にも匹敵する大きさ。</p></div>
+</div>
+<div class="section" id="sec-90">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§91</span>
+    <span class="sec-title">10/16</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>えで大きな意味をもった。そうしたなかで、さまざまな地域経済協定が生まれてきた。</p><p>ただ世界全体でこうした動きが進む中、東アジア地域だけは、蚊帳の外。世界の主要国</p><p>でいかなる自由貿易協定やそれに類する協定にも参加してこなかったのは、日本・中国・</p><p>韓国だけだった。</p></div>
+</div>
+<div class="section" id="sec-91">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§92</span>
+    <span class="sec-title">日本とシンガポールの自由貿易協定</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>そうしたなかで出てきたのが、日本とシンガポールの間の自由貿易協定である。</p><p>シンガポールは、自由貿易協定を積極的に展開。ASEAN 諸国との間に AFTA、アメリカ、</p><p>オーストリアなどと自由貿易協定。</p><p>シンガポールから出された自由貿易協定の提案は、日本にとっても渡りに船。その理由</p><p>は、農業問題にある。自由貿易協定というのは、すべての分野において域内の関税を撤廃</p><p>することを原則。しかし、日本の場合には、農業分野で関税を撤廃するというのは政治的</p><p>にほとんど不可能。幸いなことに、国土の小さいシンガポールには、目立った農業製品が</p><p>ない。</p><p>シンガポールとの自由貿易協定は、単なる域内関税撤廃を超えた意欲的な協定。人的交</p><p>流・投資協定・金融協力など、旧来の自由貿易協定を超えたさまざまな分野での域内交流</p><p>の拡大を狙ったもの。</p><p>シンガポールとの交渉は、アジア太平洋地域の他の国に思わぬ影響を及ぼした。日本と</p><p>の経済協定締結に積極的な動きを見せる国が増えてきた。韓国、メキシコ、チリ、カナダ</p><p>やオーストラリアなど。</p></div>
+</div>
+<div class="section" id="sec-92">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§93</span>
+    <span class="sec-title">取り残される日本の危機感</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>すでに中国は、ASEAN 諸国との間で自由貿易協定の検討に入る姿勢を打ち出していた。</p><p>欧州や南北アメリカでは、それぞれの地域経済統合の動きが進んでいる。欧州では、EU の</p><p>深化と、周辺国への地理的拡大。もしこうしたなかで ASEAN 諸国と中国の間で自由貿易</p><p>協定が締結されるようなことになり、しかも日本がいかなる地域経済協定の輪にも入って</p><p>いないとしたら、それは日本に経済的孤立をもたらすのではないか。</p><p>メキシコは、アメリカと NAFTA を結んでいる。EU とも自由貿易協定を結んだ。主要先</p><p>進国でメキシコとの間に関税を残しているのは、日本だけ。アメリカに近接するメキシコ</p><p>は、アメリカ市場向けの生産基地として重要な存在。メキシコにある日本企業の工場が、</p><p>日本から部品を輸入する場合には、高い関税を払わなければならない。</p></div>
+</div>
+<div class="section" id="sec-93">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§94</span>
+    <span class="sec-title">農業分野である程度自由化を進める判断なくして、自由貿易協定を進めることは、不可</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>能。もちろん農業を徹底的に守っていくというスタンスもある。しかし、それでは貿易に</p><p>多くを依存した日本経済は、地域経済協定や WTO における多国間交渉のなかで追いつめら</p><p>れていく。</p></div>
+</div>
+<div class="section" id="sec-94">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§95</span>
+    <span class="sec-title">先進工業国のことを「北」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>、発展途上国のことを「南」という。グローバル化のなかで南</p><p>北格差は、本当に広がっているのだろうか。</p><p>日本や欧米のような先進工業国が第１群。OECD（経済協力開発機構）の加盟国。中国</p><p>や東南アジア諸国、東欧諸国やロシア、あるいはブラジルやアルゼンチンなどの南米諸国</p><p>などは、新興工業国として括る。これが第２群。第３群として、最貧国とも言うべき厳し</p><p>い経済状況に直面している国々。アフリカのサハラ砂漠以南の国々、カンボジア、ミャン</p><p>マー、ラオスなどのインドシナ半島の国々、アフガニスタンやキルギスタンなどのアジア</p><p>中部の国々など。第２群の国々を見てみると、グローバル化が、所得格差を縮めている。</p></div>
+</div>
+<div class="section" id="sec-95">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§96</span>
+    <span class="sec-title">11/16</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>であった。途上国の多くが、かつて欧米の植民地であり、欧米諸国に搾取されていたとい</p><p>う認識が強かったから。自国産業を保護することによって産業化を進める政策がとられた。</p></div>
+</div>
+<div class="section" id="sec-96">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§97</span>
+    <span class="sec-title">「輸入代替政策」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>。自国の企業が十分に力をつけるまでは、輸入制限や資本流入制限で保護</p><p>して、国内の産業育成を進めていこうという政策。保護貿易の罠にはまって成長できない</p><p>途上国が、先進国との差を広げられてしまった。</p><p>変化が見られたのが、1970 年前後。日本の目覚ましい成長にも刺激され、台湾や韓国な</p><p>どのアジアの新興国が、貿易自由化、資本自由化政策をとりはじめた。アジアの新興国の</p><p>成功は、それまで保護主義的な政策をとってきた途上国の多くを刺激した。</p></div>
+</div>
+<div class="section" id="sec-97">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§98</span>
+    <span class="sec-title">注目すべきなのが、社会主義経済のもとでの閉鎖的政策を捨て、改革開放路線によって</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>経済発展を実現しようとする中国の動き。</p></div>
+</div>
+<div class="section" id="sec-98">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§99</span>
+    <span class="sec-title">先進国と途上国の新たな利害対立</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>多くの新興工業国が、貿易自由化を梃子に工業化を進めていく中で、GATT における途</p><p>上国の発言力も次第に増していった。関税の引き下げや輸入数量制限の撤廃といった伝統</p><p>的な自由化のプロセスが進んで行くほど、サービス貿易や知的財産権など、これまでの自</p><p>由化交渉では対象外であった問題が、取り上げられる様になってきた。こうした新たな問</p><p>題は、先進国と途上国の間に大きな対立を生じさせている。途上国の立場から見れば、過</p><p>度な知的財産の権利を認めれば、技術に高いライセンス料を支払わなければならなくなる。</p><p>環境規制。先進工業国では、環境規制を世界的な規模で厳しくしていくべきだという考</p><p>え方が強い。しかし、途上国にとっては、環境規制を厳しくすることよりも、経済発展の</p><p>ほうが優先順位は高い。</p></div>
+</div>
+<div class="section" id="sec-99">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§100</span>
+    <span class="sec-title">グローバル化が生む途上国内の格差</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>途上国の経済発展は、国内の所得格差を拡大する場合がある。</p></div>
+</div>
+<div class="section" id="sec-100">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§101</span>
+    <span class="sec-title">大連、天津、上海、広州など工業化が進んでいる沿海部と、そうした成長から取り残さ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>れた内陸部の格差は、広がる一方である。急激な経済発展を遂げているにもかかわらず、</p><p>中国の労働コストはあまり上昇していない。内陸部には、経済発展の恩恵を受けていない</p><p>膨大な数の労働力が沿海地域に移動してきて、低コストの労働力の供給源となっている。</p><p>中国では、戸籍によって住民の移動を制限している。発展を続ける沿海部の人件費の上</p><p>昇を抑えるため、必要なだけの若い労働力が沿海部に流れていくように、政治的なコント</p><p>ロールをしている。</p><p>グローバル化の動きは、途上国の経済発展を促す原動力。しかし、その動きは、非常に</p><p>偏った形で起きる。途上国内の所得格差の拡大は、その典型的な現象。</p></div>
+</div>
+<div class="section" id="sec-101">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§102</span>
+    <span class="sec-title">欧米で高まっている反グローバリズム運動のなかで、ナイキをはじめとする国際的企業</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>に対して批判の声。途上国に進出した多国籍企業が、途上国の人々により好ましい労働環</p><p>境を提供している。その労働条件は先進国の人が考える労働基準から見れば务悪であるケ</p><p>ースも尐なくない。</p></div>
+</div>
+<div class="section" id="sec-102">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§103</span>
+    <span class="sec-title">セーフガードに揺れた日本</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>2001 年の後半、ネギ・シイタケ・畳表の農産物３品目に対するセーフガード（緊急輸入</p><p>制限）で、日本政府が揺れた。これに対して中国側は、日本製の自動車や携帯電話など工</p><p>業製品３品目に特別関税を課すという対抗措置を打ち出してきた。結局、政府が選択した</p><p>のは、本格的セーフガードの発動を避けて中国側に輸出を抑制する措置を求めるという道。</p></div>
+</div>
+<div class="section" id="sec-103">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§104</span>
+    <span class="sec-title">こうした措置を中国側に要請するため、日本から経済産業相と農林水産相が交渉に行っ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>たと言えば聞こえはいいが、実際は「お願い」しに行った。</p></div>
+</div>
+<div class="section" id="sec-104">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§105</span>
+    <span class="sec-title">12/16</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>このとき起きたことは、攻守所を変えて日本が、アメリカと長年争ってきたのと同じ。</p><p>繊維、鉄鋼、カラーテレビ、自動車、半導体――日本は、アメリカに対して何度も輸出自</p><p>主規制を行ってきた。日本は、GATT、そして WTO の場で輸出自主規制のような措置はや</p><p>めるべきだという交渉してきた。</p><p>その日本が、中国に対して輸出自主規制を求めた。世界第２の経済大国である以上、自</p><p>由貿易体制へのフリーライダー（ただ乗り）ではなく、きちんとしたサポーター（支持者）</p><p>であるべき。</p></div>
+</div>
+<div class="section" id="sec-105">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§106</span>
+    <span class="sec-title">国民が安心できる食糧を安定的に確保できるようにすべきだという考え方には、誰も異</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>論はない。問題は、食糧の安全保障という美名のもとにおかしな政策が行われていないか</p><p>という点。</p></div>
+</div>
+<div class="section" id="sec-106">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§107</span>
+    <span class="sec-title">「安全保障のために輸入を制限すべきだ」という安易な議論に、飛びつくべきで</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>はないということ。</p></div>
+</div>
+<div class="section" id="sec-107">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§108</span>
+    <span class="sec-title">食糧の安全保障とは、消費者が安心して安定的な食糧を確保できるようになるというこ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>と。国内の供給だけに依存すれば、国内の生産変動や病虫害のリスクにさらされる。国内</p><p>からも海外からも調達できるからこそ、より安定的な食糧の確保が可能になる。江戸時代、</p><p>日本は、国内農業の不作から何度も飢饉に見舞われた。もし輸入がなくなれば、日本の食</p><p>糧は大変なことになる。</p></div>
+</div>
+<div class="section" id="sec-108">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§109</span>
+    <span class="sec-title">保護すべきもの、市場開放すべきもの</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>いざというときに食糧だけが確保できても、安全保障にはならない。石油が入ってこな</p><p>かったらどうするのだろうか。ミサイルが飛んできたらどうするのだろうか。食糧だけを</p><p>切り離して安全保障を議論することの愚かさは、明白。</p><p>ネギやシイタケの生産を守ることは、安全保障とはまったく関係ない議論。</p></div>
+</div>
+<div class="section" id="sec-109">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§110</span>
+    <span class="sec-title">食糧の安全保障とは、本当に海外から食糧が入らなくなったときに、日本人が飢え死に</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>しない程度に最低限の食糧を確保しておくと言うこと。食糧の安全保障のためには、平時</p><p>の社会的負担が最も尐なくなるような戦略的方法をとらなくてはならない。それは、コメ</p><p>の生産を確保し、それ以外の農産品については、できるだけ市場を開放していくというこ</p><p>とだろう。コメ以外の農産品については積極的に市場を開放する準備をしたうえで、コメ</p><p>だけは、食糧の安全保障のために国内生産を確保する。</p></div>
+</div>
+<div class="section" id="sec-110">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§111</span>
+    <span class="sec-title">政府は、国内の農業を保護するという名のもと、実に多くの農産物について輸入制限を</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>行っている。日本が、世界有数の農業保護国であるというレッテルを貼られているのは事</p><p>実。貿易立国でしか存立しえない日本の将来に、大きな暗雲を投げかけている。</p></div>
+</div>
+<div class="section" id="sec-111">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§112</span>
+    <span class="sec-title">何でも保護しようとする日本の農業政策は、結局のところ護送船団方式になってしまっ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ている。本当にやる気のある農家の力をそぐ結果になっている。弱い農家を守るというの</p><p>ではなく、やる気のある農家を支援するという姿勢に転じていくべき時期。</p><p>重要なことは、食糧政策は、農家のためにあるのではない。国民のためのものでなくて</p><p>はならない。</p></div>
+</div>
+<div class="section" id="sec-112">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§113</span>
+    <span class="sec-title">都市間競争の時代が始まった</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>いま、都市の重要性が増している。グローバル化によって、商品・情報・資金などは、</p><p>世界中を自由に動くようになっている。そうした時代だからこそ、生身の人間の生活範囲</p><p>である都市の重要性が増しているという面もある。また、情報が瞬時に世界を駆けめぐる</p></div>
+</div>
+<div class="section" id="sec-113">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§114</span>
+    <span class="sec-title">13/16</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ファッション業界は、世界的な動きをしている。『ウラハラ』と呼ばれる原宿の裏通り、</p><p>パリやミラの街、ニューヨークやロサンゼルスなどを回り、小売店の商品や歩行者の着て</p><p>いるものを観察してファッションの流れを分析し、その先の展開を読もうとしている。</p></div>
+</div>
+<div class="section" id="sec-114">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§115</span>
+    <span class="sec-title">サービス産業の拡大と製造業のハイテク化という、先進工業国の長期的な産業トレンド</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>に変化はない。</p><p>戦後の日本の都市は、職住分離が基本。しかし、こうした都市の構造は、現代の産業や</p><p>社会の環境に合わなくなってきている。長距離・長時間通勤・道路や鉄道などの混雑、コ</p><p>ミュニティの崩壊など。</p></div>
+</div>
+<div class="section" id="sec-115">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§116</span>
+    <span class="sec-title">ニューヨークやロンドンの狭い地域に国際的な金融機関が密集しているのは、そこに多</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>くの専門家が集まって日常的に顔を合わせる事が、金融ビジネスにとって重要であるから。</p></div>
+</div>
+<div class="section" id="sec-116">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§117</span>
+    <span class="sec-title">ハリウッドのような地域に映画ビジネスが集中し、スタンフォード大学を中心に広がる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>シリコンバレーに IT 企業が集中するのも、これらの産業で顔を突き合わせたやり取りが非</p><p>常に重要なため。</p></div>
+</div>
+<div class="section" id="sec-117">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§118</span>
+    <span class="sec-title">こうした都市の集積で重要なのは、ビジネスの機能だけが集中するのではなく、都市の</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>多様な機能が混在するということ。職場だけではなく、住居、エンターテイメント、学校、</p><p>医療機関などが狭い地域に混在することが、その街の価値を高める。</p><p>いま、世界の多くの地域で、都市への人口集中が進んでいる。ニューヨークのマンハッ</p><p>タンへの回帰現象、上海の浦東地区の大開発、東京における都心３区（港区・千代田区・</p><p>中央区）での高層ビルの建築ラッシュなど。</p></div>
+</div>
+<div class="section" id="sec-118">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§119</span>
+    <span class="sec-title">国際都市「東京」の競争力</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>国際都市であるための要件。</p><p>最も重要なものの１つは、外からの交通アクセス。東京は、国際便のアクセスとしては</p><p>最悪の状況。</p><p>東京の高い地価や务悪な住環境も、国際都市に向けての大きな障害。楽しくない街や住</p><p>みにくい街には、優れた能力をもった人たちは集まってこない。国際的企業は、コストの</p><p>割高な街を避けようとする。</p></div>
+</div>
+<div class="section" id="sec-119">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§120</span>
+    <span class="sec-title">一般的な労働者の能力という意味では日本の労働力は優れているが、英語を駆使すると</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>いうことになると、同じアジアの香港やシンガポールに大きく遅れている。</p></div>
+</div>
+<div class="section" id="sec-120">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§121</span>
+    <span class="sec-title">東京という都市は、グローバル化時代に強い競争力を発揮するうえで、多くの問題点を</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>抱えている。CNN のような国際報道機関や BIS（国際決済銀行）のような国際機関が、ア</p><p>ジアの拠点を香港に置いているのも、これらの問題の結果である。</p></div>
+</div>
+<div class="section" id="sec-121">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§122</span>
+    <span class="sec-title">東京の魅力をどう高めるのか</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>羽田空港の国際化。</p></div>
+</div>
+<div class="section" id="sec-122">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§123</span>
+    <span class="sec-title">高層ビルの建設ラッシュは、東京という都市の構造が大きく変わろうとしている象徴的</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>な出来事。</p></div>
+</div>
+<div class="section" id="sec-123">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§124</span>
+    <span class="sec-title">東京が国際的に魅力ある街であるためには、ニューヨークやロンドンと同じような街に</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>なってはいけない。東京にも、上野や浅草といった下町や、新宿、六本木の雑踏など。</p></div>
+</div>
+<div class="section" id="sec-124">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§125</span>
+    <span class="sec-title">日本の社会・経済にとって最大の「窓」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>。</p></div>
+</div>
+<div class="section" id="sec-125">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§126</span>
+    <span class="sec-title">地方空港が増えることは、結果として東京や大阪の空港がもつハブ空港（各地からの航</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>空路が１ヵ所に集まる拠点空港）としての機能を弱めることになる。</p></div>
+</div>
+<div class="section" id="sec-126">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§127</span>
+    <span class="sec-title">14/16</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>2001 年３月、ソウルの西、約 50 キロにある仁川に、大規模な国際空港が開港。この空</p><p>港は、成田のように滑走路が１本しかない中途半端なものではない。何本もの滑走路と広</p><p>大なターミナル施設を抱える本格的な国際空港。先日、中国山東省の青島に行くとき、こ</p><p>の仁川空港経由となったが、飛行機の乗り換えがスムーズにできるという印象。ターミナ</p><p>ルが２つあり、その間の行き来が不便な成田とは違う。乗り換えのためだけに利用する旅</p><p>客向けに、空港内のレストランや売店も充実している。成田は、ハブ空港としての考慮が</p><p>まったくなされていない孤立した空港。</p><p>香港とクアラルンプールにも、大きな国際空港ができた。シンガポールも、ハブ空港と</p><p>いう意味ではアジア屈指。</p></div>
+</div>
+<div class="section" id="sec-127">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§128</span>
+    <span class="sec-title">国際化時代にあって、優れたハブ空港を抱えることは、その国の経済にとって大きな意</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>味がある。優れたハブ空港とは、ハードとしての空港施設だけではない。空港の運営とい</p><p>うソフト面も重要な意味をもつ。</p><p>成田で大変な光景を目撃。入国審査に長い列ができていた。日本人のラインはよく流れ</p><p>ているが、隣の外国人のラインは時間がかかる。ざっと数えたところ 60 人近い外国人が並</p><p>んでいた。日本人の列がすべて終わったとき、外国人のラインにはまだ多くの人が順番を</p><p>待っていた。にもかかわらず、日本人のラインを担当していた入国審査官は、さっさと引</p><p>き上げてしまった。その結果、外国人の人たちは、入国審査をすませるだけで、１時間も</p><p>かかってしまった。</p></div>
+</div>
+<div class="section" id="sec-128">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§129</span>
+    <span class="sec-title">重要性を増す地域拠点戦略</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>海上輸送の拠点である港でも、同じような動き。かつては世界有数の取扱量を誇ってい</p><p>た横浜や神戸の港は、いまやシンガポールや香港などアジアの主要港に大きく水をあけら</p><p>れている。</p></div>
+</div>
+<div class="section" id="sec-129">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§130</span>
+    <span class="sec-title">シンガポールは、東南アジア地域の拠点の港として、そして香港は、中国南部の大工業</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>地帯の拠点の港。これらの港が成長しているのは、その周辺で工業化が進んでいるためだ</p><p>けでなく、香港やシンガポールの政府が制度改革に取り組んできたことが大きい。シンガ</p><p>ポールの港は、24 時間開いており、すべての事務処理がデジタルで一括処理される。モノ</p><p>の動きは、きわめてスムーズ。夜間は閉鎖されるのでさまざまな事務処理が遅れ、規制で</p><p>がんじがらめに縛られている日本の港とは比べものにならない。</p><p>地域経済の拠点を目指した競争は、さまざまな分野で見られる。金融センターもその１</p><p>つ。欧州ではロンドンやフランクフルト、アメリカではニューヨークなど。では、アジア</p><p>の金融センターは、どこになるのだろうか。東京、上海、香港、シンガポールなどが競う。</p></div>
+</div>
+<div class="section" id="sec-130">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§131</span>
+    <span class="sec-title">日本の空港建設にも国家的戦略を</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>成田空港は、ハブ空港としての体をなしていない。関西国際空港は、ハブ空港としての</p><p>機能を果たしうるが、発着料が高すぎる。この狭い国土に 100 を超える国内空港を建設。</p><p>現在の状況から考えれば、羽田空港を国際空港として利用することが一番現実的。今後、</p><p>ソウルや上海のような近隣国への国際便は、羽田空港から尐しずつ飛ばすようにしていく</p><p>べき。空港など都市としてのインフラを整備することが、一国経済の繁栄に大きな影響を</p><p>及ぼす時代。</p></div>
+</div>
+<div class="section" id="sec-131">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§132</span>
+    <span class="sec-title">グローバル化をめぐる相対立する２つの動き</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>北朝鮮は、その国境を閉ざしている。カシミール地域の領有をめぐるインドとパキスタ</p><p>ンの紛争、イスラエルとパレスチナの紛争、中国でも、いまだに国内の人々の移動が戸籍</p><p>制度によって縛られている。</p></div>
+</div>
+<div class="section" id="sec-132">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§133</span>
+    <span class="sec-title">国境を越えたさまざまな動きが、想像以上の規模で展開していると同時に、他方で国境</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>は、厳然として存在し国境の内と外の大きな違いを生み出している。</p></div>
+</div>
+<div class="section" id="sec-133">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§134</span>
+    <span class="sec-title">15/16</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>1949 年には国民総生産の 16％であった世界貿易は、1980 年には 22％にまで上昇してい</p><p>る。</p></div>
+</div>
+<div class="section" id="sec-134">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§135</span>
+    <span class="sec-title">グローバル化に抗する新たな動き</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>第１次世界大戦は、金本位制のメカニズムに思わぬ影響を及ぼした。ドイツのＵボート</p><p>が、商船を魚雷で沈めるといったことが起こり、大西洋を越えて金を運ぶことが難しくな</p><p>ってきた。その結果、金本位制ができにくくなってしまった。</p><p>第１次世界大戦終結から 10 年後の 1929 年。ウォールストリートで株の大暴落。この結</p><p>果、主要国が、貿易制限に走るブロック経済化に向かった。20 世紀前半の世界貿易のシェ</p><p>アは、大きく減退。</p></div>
+</div>
+<div class="section" id="sec-135">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§136</span>
+    <span class="sec-title">第２次世界大戦後は、戦前の反省のもとに自由貿易を回復させようという動きが活発に</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>なった。GATT（関税と貿易に関する一般協定）とそれを引き継いだ WTO（世界貿易機関）</p><p>のもとで、各国で貿易の自由化が進められていった。経済原則に基づいて国境を越えたさ</p><p>まざまな経済活動が、拡大していくことは間違いないが、他方でそうした流れに抗した多</p><p>くの新たな動きが、生まれてくるはず。</p></div>
+</div>
+<div class="section" id="sec-136">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§137</span>
+    <span class="sec-title">19 世紀型の国際化と 21 世紀型のグローバル化</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>19 世紀の国際化は、ヒト・モノ・カネが国境を越えて動くことであった。取引される商</p><p>品は、原材料や最終製品など単純なもの。ヒトの移動も、移民が主流。</p></div>
+</div>
+<div class="section" id="sec-137">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§138</span>
+    <span class="sec-title">現在のグローバル社会では、取引される商品は多様であり、国境を越えた経済活動もき</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>わめて複雑になっている。</p><p>トーマス・フリードマンのベストセラー『レクサスとオリーブの木』、グローバル化は、</p><p>国際標準的志向を強める動き（トヨタの高級車レクサスに象徴される）とローカルな価値</p><p>を頑なに守る動き（オリーブの木に象徴される）の微妙かつ複雑なバランスのプロセスで</p><p>ある。ダイナミックな世界経済の動きとローカルな価値とのぶつかり合い。この２つは、</p><p>あるときは深刻な衝突を起こすが、両者が相互に補完し合うことも尐なくない。</p><p>補完的関係の１つの例。グローバル化のなかで日本の食べ物で最も強い国際競争力をも</p><p>っているものに寿司がある。</p></div>
+</div>
+<div class="section" id="sec-138">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§139</span>
+    <span class="sec-title">テロとそれに続くアフガン攻撃は、アメリカ型のグローバル経済の世界への広がりと、</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>それに対するイスラム原理主義者たちの反発という「文明の衝突」。</p></div>
+</div>
+<div class="section" id="sec-139">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§140</span>
+    <span class="sec-title">アルカイダなどの非政府組織が、世界的な規模でテロを実行できるようになったのも、</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>グローバル化という動きが背後にある。</p><p>私たちの社会や生活は、グローバル化の動きから逃れることはできない。そしてグロー</p><p>バル化は、一方で物質的な豊かさと多様な文化・情報を届けてくれるが、他方で凶暴な牙</p><p>を剥き尐なからぬ人々を悲惨な状態に陥れる。</p><p>グローバル化の動きといかにうまくつき合っていくのか。</p></div>
+</div>
+    </div>
+  </div>
+  <div id="reading-view"><div class="reading-inner" id="reading-inner"></div></div>
+</div>
+</div>
+<script>
+
+const sections = [{"id": 0, "chapter": "", "title": "まえがき", "body": ["まえがき", "昭和 20 年９月、広島で行った私の講演速記を基礎に「自由国民」主筆。", "この３ヵ月の変化のうち、特に身に染みて感じますことは、進駐軍の態度によって、我々日本人は、単に物質的方", "面ばかりでなく精神的方面においても大いに学ばなければならない点が多々あることを教えられた。そうして真の自", "由主義的生活をするためには、いたずらにその形を真似るばかりでなく、その心構えから鍛え直さなければならない", "のですが、ともすると自由主義と無責任・無秩序とを履き違えた行動の多いことを痛感する。これは、終戦前の独善", "の圧制と同じように、日本国民の文化的水準の低さを示す以外の何物でもない。", "真剣な反省と努力とによって、日本国民の文化水準の向上をはかり、軍備より解放せられたる文化大国を再建する", "ことによって、今日の敗戦の弔鐘を、明日の勝利の暁鐘と転化し得る。", "敗戦の真相を明らかにしたのは、日本が敗れたのは、ひとえに武力ばかりではなかったことを反省したいため。", "昭和 20 年 11 月 23 日", "戦争はどのようにして起こったのか", "はっきり敗けたとは理屈の上では考えながら、どうも本当に敗けたという気持になれない。いわゆる、勝負には負", "けたが、角力には勝っていたのではないか。こういう気持は、実は非常に危険。", "第１次世界大戦の後に、ドイツ人の胸中に普遍的にわだかまっていた思想と同一。本当に敗けたという気持が、ど"]}, {"id": 1, "chapter": "", "title": "うしてもピッタリこなかったので、その結果、何が故に敗けたかという理由を自分の中に求めないで、第三者に", "body": ["うしてもピッタリこなかったので、その結果、何が故に敗けたかという理由を自分の中に求めないで、第三者にその", "原因を求めていった。特に敗因の最も大きい部分をユダヤ人の責に帰して、有名なユダヤ人征伐というものを始めて、", "そうして、さあこれで本当にゲルマン一色でドイツ人を形成し得たから、もう一遍、角力を取ってみようという気持", "になったのが、第２次世界大戦勃発の大きな原因。", "日本が、ここでドイツの二の舞いをして、すなわち自分の内部にその敗因を求めないで、外部にこれを求めるとい", "う風な態度に出ると、せっかくいま、2600 年の歴史をとにもかくにも食い止め得ているのに、この次には、日本人", "が本当に地球上から抹殺されるというようなひどい目に、遭わないとも限らない。", "この戦争の最も根本的な原因は、日本の国策の基本的理念が間違っておったということ。換言すれば、日本が、口", "先では万邦共栄というようなことを言いながら、肚の中では日本だけ栄えるという日本本意の考え方を、あらゆる国", "策の指導理念にしておった。", "開国当時は、どうひいき目に見ても、４等国以下の国力。日清・日露の両戦役を終わると、１等国の仲間に入った", "と自負するに至り、さらに第１次欧州大戦に連合国側に参加して勝利を占めると、もう押しも押されもせぬ世界の５", "大強国の１つ。この昇る旭のような日本の国運を寿いでいる、その１番得意な時代に、今日の日本の禍因が、その種", "を蒔かれた。", "「事を敗るは、多く得意のときに因す」"]}, {"id": 2, "chapter": "", "title": "。", "body": ["。", "積極的に、日本の国が、他の国の御世話にならないで、日本の国だけで立ち行くことのできるような、いわゆる自", "給自足の体制を取ろうという考え方が、国民の間に一般的に盛り上がってきた。尐なくとも軍部の指導者は、東亜 10", "億の支配者たる位置は、日本国民に対し天から授けられたる任務であるとさえ自負するに至りました。", "日本の政治勢力を独占した軍部が、この目的を実現するためにとった手段は、非常に拙务。日清、日露の両戦争ま", "では、日本の軍部の指導者も、事を起こす前には、非常な細心の注意を払い、いわゆる薄氷を踏む思いで戦争に入っ", "た。その切り上げどきについても、戦争の始まる前から十二分に研究しておいて、尐しでも早く戦争を切り上げたい", "と念願しておりました。これを、支那事変の最中、せっかく到来した２度までの全面和平のチャンスを、いたずらに", "思い上がって取り逃がした東条英機軍閥定見と軍統制力の欠如と比較すると、まさに天地雲泤の相違。", "戦争の原因を深く突き詰めて考えますと、日本の勢力範囲内に、戦争のための必要とするあらゆる物質を皆収めて", "おかなければならないという日本本位の自給自足主義が、根本的なガンである。一度、この自給自足主義を肯定した", "以上は、他国の資源・領土を侵略していくという結果を招来することは、資源の不足している日本の行き方として当", "然の帰結。満州事変が突発し、それが支那事変へと発展し、さらに大東亜戦争へと進んでいった経緯は、ちょうど一", "定の鉄道のレールの上を急行列車が進んでいくようなもの。その鉄道の工事はすこぶる不十分なもので、無理にその", "上に急行列車を走らせたものだから、ついに転覆してしまったような結果。"]}, {"id": 3, "chapter": "", "title": "この日本の国策決定の根本方針が間違っておったことが、今度の戦争が生まれた基本的原因。", "body": ["この日本の国策決定の根本方針が間違っておったことが、今度の戦争が生まれた基本的原因。", "自給自足主義という戦争の胚子を、この大戦争にまで育て上げた諸事情を進んで指摘してみたい。", "諸事情の第１には、日本の指導者がドイツの物真似をしたということ。日本国民が、万世一系の天皇を戴いて、世", "界無比の国体であり、世界で最も優れた忠勇な国民であるというような自負心を持っておったと同じように、ドイツ", "民族は、世界で最も優れた文化を持って、神に選ばれたる民族、いわゆる選民であるという自惚れた思想の下に、欧", "州新秩序の建設という美名を掲げてドイツ民族生活圏確保の侵略戦争に驀進していた。軍部は、一も二もなくナチス", "ドイツの真似をする。ドイツの物真似をしただけでは物足らず、その弟分のイタリアと一緒になって、３人で兄弟分", "1/10", "の盃をしようじゃないかという、いわゆる三国同盟の提唱を始める。ドイツ軍はいわゆる電撃戦術により、疾風枯れ", "葉を捲く勢いで全欧州を席捲きし始めたので、ついに三国同盟が単に軍部の主張のみならず、おそらく、当時の国民", "の大多数の世論として締結されるに至り、日本における英米派の勢力は、完全に一掃されてしまった。", "第２の事情として、軍部が己を知らず、敵を知らなかったこと。元来、戦争というものは、洋の東西を問わず、ま", "た時の古今を論ぜず、すべて誤解の産物である。何人といえども、最初から到底勝つ見込みのない戦争を仕掛けるも", "のはないはずで、お互いにどうしても勝つと思い込んだところに戦争は始まる。今度の戦争についてみても、英米側", "は、最初からその物量の力に絶対の自信を持ち、日本と戦争して負けるなどとは、ただの一度だって考えたこはない。"]}, {"id": 4, "chapter": "", "title": "むしろ日本が、あんな貧弱な物的資源をもって本当に戦争をするはずはない、戦争をするというかけ声は、外交", "body": ["むしろ日本が、あんな貧弱な物的資源をもって本当に戦争をするはずはない、戦争をするというかけ声は、外交上の", "掛け引きにすぎないと、最後まで信じていた。これに対して日本の軍部は、総力戦とか近代戦とかけ声ばかりしてい", "ましたが、その実、依然として日本の軍隊の精神力なるものは、英米の物的勢力を征服して余りあり、と自惚れてい", "る。このように、日本の軍部が、近代戦の実体も英米の実情をも知らず、また知ろうともせずして、いたずらに我が", "民族の精神力なるものを過大評価して、米軍ごときは、皇軍の前には鎧袖一触にも値しないということを信じておっ", "たという宿命的なる独断。", "この種の宿命的な３つの見込み違い。", "第１は、日本の支那［中国］に対する見込み違い。はじめ支那事変が勃発するや、日本は、まさか、こんなえらい", "ことになろうと思わず、上海、南京ぐらい占領すれば、この前と同じように簡単に事変は収まるだろうと考えておっ", "た。", "第２は、ドイツのソ連に対する見込み違い。ヒトラーは、確かに２ヵ月以内にソ連を征服し得るものと考えていた", "らしい。", "第３は、アメリカの日本に対する見込み違い。アメリカは、日本が戦争を仕掛けようとは思わなかった。昭和 16", "年 11 月にアメリカは、コンフィデンシャル（秘密）", "・テンタテーフ（試案）を通牒してきたのですが、まさか日本政"]}, {"id": 5, "chapter": "", "title": "府が、これを最後通牒と解釈して、真珠湾に不意打ちを食らわせようとは思わなかった。第１の場合の見込み違", "body": ["府が、これを最後通牒と解釈して、真珠湾に不意打ちを食らわせようとは思わなかった。第１の場合の見込み違いは、", "日本が支那の民族的統一力に対する計算を誤ったこと。", "第２に場合は、ドイツがソ連の共産主義的力量に対する観察を誤ったことに起因する。", "第３の場合は、米英が日本はもっと近代戦争に対する理解と準備を有しているだろうという、いわば日本を実際以", "上に買いかぶった角度からの見込み違い。", "今日の事態を招いた日本軍部の独善主義は、そもそも何故か。幼年学校教育。精神的にも身体的にも全く白紙な尐", "年時代から、極端な天皇中心の神国選民主義、軍国主義、独善的画一主義を強制され注入されたから。", "第３の事情として、世論本位の政治を行わなかったこと。すでにドイツの戦勝に眩惑せられたうえに、我が兵力を", "過信した日本の軍部が広く天下の世論を聞く余裕を持たず、ひたすらに戦争遂行に驀進した。5･15 事件、2･26 事件", "以後には、従来日本の指導的立場にあった上層階級のいわゆる穏健層の人々は、全く口を封ぜられてしまい、議会人", "すら、政府の鼻息を窺う一途に退けられてしまい、また、社会の木鐸と自認する新聞、雑誌も戦争に対する一切の主", "張を封じられてしまった。さらに、東条内閣が成立するとともに、いわゆる憲兵政治が、非常に目立ってきた。この", "ような憲兵政治によって弾圧されたのは、ひとり代議士や民間人ばかりでなく、軍人の中でも反東条と目されている", "ものは、遠慮なくやられている。また重臣方面に対しても、各種の手段で軍は押さえつけていた。例えば現在の外務", "大臣、吉田茂氏は、反戦的な言葉を弄したという理由で、終戦直前まで憲兵隊の留置場につながれていた。日本を名"]}, {"id": 6, "chapter": "", "title": "実ともに軍部一色化し、いわゆる本土決戦で 7000 万国民を最後まで道連れにする計画だったのが、その", "body": ["実ともに軍部一色化し、いわゆる本土決戦で 7000 万国民を最後まで道連れにする計画だったのが、その危うい直前", "に「万世のために泰平を開く」の御聖断が下されたわけ。", "日本にとって最も不幸だったことは、諸種の事情が、日本有史以来の大人物の端境期に起こったということ。ただ", "器用に目先の雑務をごまかしていく式の官僚がたくさん集まって、わいわい騒ぎながら、あれよあれよという間に世", "界的大波瀾の中に捲き込まれたのである。日本の代表的政治家は、近衛文麿、東条英機、小磯国昭。これを米国のル", "ーズベルト、英国のチャーチル、支那の蒋介石、ソ連のスターリン、ドイツのヒトラー、イタリアのムッソリーニな", "ど、いずれも世界史的な傑物が、百花繚乱の姿で並んでいる。千両役者のオールスターキャストの一座の中に、我が", "国の指導者の顔ぶれの如何に大根役者然たるものであったか。どの方面も非常な人物飢饉であり、そのために本筋の", "大道を見損なって、とんでもない方面に日本国民を引っ張っていく１つの大きな原因になった。", "どのようにして戦いに敗れたのか", "発生原因それ自体が、すでに敗北の要素を内包しておるといっていい。種が腐っていたのですから、良い樹が育つ", "わけはない。", "各種の政治的成功に慢心した軍部指導者が、我が国勢の根本方針を各国共存共栄の自由通商主義に置かずに、我が", "国一国を中心にした自給自足主義に置いたところにある。我が勢力下に帰した土地の経営が、自ずから日本本位とな", "り、その土地の原住民の福祉を二の次にする。"]}, {"id": 7, "chapter": "", "title": "私の極めて懇意にしている、ある満州人は、満鉄に十数年も勤め、「万一日本が、ロシアと戦争でもするような", "body": ["私の極めて懇意にしている、ある満州人は、満鉄に十数年も勤め、「万一日本が、ロシアと戦争でもするようなこ", "とがあったら、私は、遺憾ながらロシア側に付きますよ」と。「実は、日本人にいろいろ御世話にもなっているから、", "2/10", "こうやって今日まで辛抱しておるのだけれども、本当に腹に据えかねることがある」", "。", "だから今度いよいよ終戦になってソ連軍が侵入してきた後で、邦人がいかに満州人から冷酷な取り扱いを受けてい", "るか、思い半ばにすぎるものがある。", "フィリピンにおける日本の敗因中、フィリピン人が日本人に協力せず、ことごとにアメリカ人と協力したことが、", "日本の作戦に齟齬をきたした大きな原因。", "すべてこういうことは、日本本位の自給自足主義の当然の結果ですが、それと同時に行政の最末端に行く日本の役", "人の人柄によるところも大きい。末端の日本官吏は、具体的に言えば巡査。これがろくでもない人物が多く、例えば", "満人経営の料理屋なんかに行って無銭遊興をする。日本人だけが特権を持った民族であるという神国独善思想が、こ", "ういう末端官吏の行動にまで現れていた。こういう事情ですから、日本人の勢力地域が拡大すればするほど、反対に", "日本の戦力は脆弱になるという奇妙な論理が成り立つようになる。", "要するに第１の敗因は、日本の戦争目的が、東亜の諸民族を納得させて、随いて来さしめるような公明正大な目標"]}, {"id": 8, "chapter": "", "title": "を欠いておったところにある。例えば、ソ連がドイツの侵略戦争から「祖国を護れ」という極めて直截簡明な言", "body": ["を欠いておったところにある。例えば、ソ連がドイツの侵略戦争から「祖国を護れ」という極めて直截簡明な言葉を", "戦争目的として掲げ、何が故に戦うかという意味を、１億 6,000 万人のロシア人の心魂に強くぴたっと焼き付けてい", "る。数千マイル離れているインドネシア民族のために、自分らの良人の命、子供の命を献げなければならないという", "ことを納得していた日本国民は、ほとんど一人もなかった。", "第２の敗因として日本の軍部が、自己の力を計らず、敵の力を研究せず、ただ自己の精神力を過大評価して、これ", "に慢心したこと。敵の力を研究するという点において世界的に有名なのは、イギリスの諜報網。第１次欧州戦の時に", "は、ノースクリフが長官となりまして、世界各国のすみずみまで、有名な諜報網を張りめぐらし、時々刻々の情報を", "手に取るがごとく集めて、これを作戦外交の資料となし、それに対する宣伝対策を適当に打っていった。ヒトラーを", "して「第１次対戦は、ノースクリフの紙の弾丸のために敗れた」と嘆ぜしめたぐらい。", "例えば日本で虎の子のように大事にしている石油のタンクを敵機が爆撃する場合に、チャンと本物の石油タンクば", "かりに爆弾を落として、せっかく偽装してずらりと並べてある水タンクのほうには、１つも落とさないような事実も", "ある。ところが反対に日本のほうはどうかというと、大衆雑誌、それも数ヶ月遅れたものを中立国を介して手に入れ", "て、アメリカではこんなことを考えているということを種にして戦争しているのですから、その勝負はもう初めから", "わかっていたというべき。", "日本の諜報機関が何故こんなに無力であるかと申しますと、そういうトレーニングが平素からできていないという"]}, {"id": 9, "chapter": "", "title": "こと、資金的な力が足りないということが、その原因。根本的には相手方の事情を研究しなければ戦争ができな", "body": ["こと、資金的な力が足りないということが、その原因。根本的には相手方の事情を研究しなければ戦争ができない、", "ということに対する認識が足りないということに帰着する。", "米国においては、平素は日本語の研究機関などはたいしてなかったのですが、大東亜戦争になってから、さあ大変", "だというので、教科書をたくさん第三国を通して輸入して、それによって日本の歴史、地理から倫理まで研究して、", "日本人はどういう人情であり風俗であるか、産物にはどういうものがあるかということを十分呑み込んでから、それ", "に対する手を打ってきた。", "ところが、日本のほうは、それとまるで正反対。本当に英語が必要になった時には、反対に敵性語だといって英語", "を教室から駆逐してしまった。すなわち相手方の力量とか実情というものを研究しないで戦争をしたのだから、めく", "らと目明きが［剣術］をするようなもの。", "第３の敗因は、軍の指導者が、国民の良識や感覚を無視して、一人よがりで自分のいいと信じたところに国民を連", "れていこうとした点。何が故に戦争をしなければならないのか、十分理解せしむることなくして、法律規則と権力で", "もって強引に押し切ろうとしたために、かえって国民の間に一種の反感的な気分が起こってきた。", "日本の各重要産業の出勤率は、戦争をやっていけないというほど重要な関係にある工場にして、なお２割か３割と", "いう情けない低率。8 月 15 日以後の戦争が済んでしまって、反対にこれらの工場が俄然 90％、95％という非常によ", "い出勤率を示すようになった。8 月 15 日以後になりますと、問題が端的に国民の頭に浮かんできて、怠けて馘にな"]}, {"id": 10, "chapter": "", "title": "っては生活が脅かされるというので、自発的に進んで出勤するようになった。", "body": ["っては生活が脅かされるというので、自発的に進んで出勤するようになった。", "先年、朝のラジオ放送で「歴史というものは、過去のことをただ空暗記する学問ではなく、過去のことを推して将", "来のことを判断する学問である」", "。いろいろ実例を挙げられた際に「軍人がやった戦争で勝った例はない。必ず政治", "家の率いている軍隊に敗けている。歴史が、はっきりそれを示している」。結局、戦争に勝つためには、どうしても", "国民の総意を結集する以外にはない。その点においては政治家のほうが軍人よりもはるかに優れているという教訓。", "「科学無き者の最後」", "最も現実的に日本をギュッと参らせたのは、英米の科学の進歩。１つは、化学兵器の進歩があまりに違っておった", "ことであり、他の１つは、マネージメントの科学性の問題。", "残念ながら何一つ日本の兵器が、英米側より優れておるというものはない。その中で一番、日本に手痛い打撃を与", "えたのは、ラジオロケーター。", "原子爆弾、ラジオロケーターというような新しい有力な兵器は、全部イギリスで発明され、アメリカはこれを工業", "化したにすぎません。第１次世界大戦は、イギリス人がタンク（戦車）を発明したことによって勝負がついたと言わ", "3/10", "れている。今度の戦争においてもまた、ラジオロケーターによって勝負が決したといって言い過ぎではない。"]}, {"id": 11, "chapter": "", "title": "今度の戦争も最初のうちは、ドイツの潜水艦が、花形武器であって、開戦２年後の 1940 年には毎月 1", "body": ["今度の戦争も最初のうちは、ドイツの潜水艦が、花形武器であって、開戦２年後の 1940 年には毎月 100 万トン以", "上、１年には千数百万トンの船舶を撃沈して明らかに英米両国の造船率を超過した撃沈率を示しておりました。", "この危機一髪の際に、イギリスにラジオロケーターという救いの神が現れました。ラジオロケーターだと、暗夜の", "海上でも潜水艦の所在点が発見され、ちょっとでも潜望鏡を出すと飛行機から爆弾を投げられる。今度は逆にドイツ", "の潜水艦は、イギリスの飛行機のために、えらい目に遭わされるようになり、爾来１年にして、ほとんど大西洋から", "姿を没した。", "このラジオロケーターは、アメリカに渡って、さらに急激に進歩し、日本に爆撃に来た際、真っ暗な闇夜に来ても", "白昼と同じような正確な写真を撮っております。日本の潜水艦が、あの広い太平洋のまん中にちょっとでも潜望鏡を", "出すと、すぐ米国のレーダーにつかまってしまい、即座に飛行機がやって来て、アメリカ自慢の照準機で投弾するか", "ら、ほとんど百発百中でやられてしまう。これが、日本の潜水艦および諸艦船がほとんど全滅的打撃を受けた大きな", "原因。特攻機が目的の軍艦の上に行かない前に、ほとんどみなラジオロケーターにつかまってしまい、大部分は中途", "で敵戦闘機の餌。また、日本の運送船の所在も、たちまち発見されてしまう。", "この戦争に最後の止めを刺したのは、何と言っても原子爆弾。1919 年にロシアの学者が、その原理を発見したと", "いう話しですが、完成したのはイギリスで、工業化したのはアメリカです。ドイツでもソ連でもイタリアでもフラン", "スでも、日本においても、理論だけはわかっていたのですが、ウラン 235 と 238 を分離することが実験できなかった。"]}, {"id": 12, "chapter": "", "title": "一言にしていえば、広島全市が、１発の爆弾で消失した。その爆弾の中に使用したウラン 235 は、わずか", "body": ["一言にしていえば、広島全市が、１発の爆弾で消失した。その爆弾の中に使用したウラン 235 は、わずか１グラム", "にすぎなかったそうです。しかし、これを火薬に換算すると 80 万トンという想像もできない大量の火薬の爆発力に", "相当。", "この爆弾の性能は、物理的な破壊力の素晴らしさよりも、人間に与える生理的な影響の深刻さのほうが、聞けば聞", "くだけひどい。そのむごたらしさは到底聞くに堪えぬほどでありまして、中には近所の川にピクニックに行っていた", "何百人の女学生の皮膚が、まるで舵の皮が抜けるようにツルリと剥げて肉がまる出しになったような生き地獄を現出。", "この他、科学兵器については、日本人として目を見張るような実例がたくさんある。", "土木機械の一例。厚木と横浜の 40 キロの間に 27 時間で５インチのガソリンパイプの敷設を完成した。8 月 29 日", "に初めてアメリカの飛行機が、厚木に着いた。到着するとすぐその飛行機に給油をしなければならない。アメリカの", "タンカーは横浜に着いているので、これを厚木まで送油しなければならない。アメリカでは、すぐこの間にパイプを", "敷くと言い出した。これを聞いた日本の軍人は、横浜から厚木まで４０キロ、その間には山あり谷あり、測量するだ", "けでも３日や４日ではできないから、すっかりできあがるまでには、尐なくとも３年はかかると言った。", "たった１日で 40 キロの給油管を敷設した、この事実が特に我々に感動を与えるのは、同じような工事をいま日本", "が他の地方でやっているから。千葉県の大多喜というところに天然ガスが出る。３年前に大多喜から千葉市へガス管", "を敷設することに決定。やはり５インチのパイプを使って３年間やっているのだが、未だに完成はしていない。"]}, {"id": 13, "chapter": "", "title": "それからもう１つ、進駐軍が、横浜の［ホテル］ニューグランドから東京帝国ホテルに来た。そして本部のニュ", "body": ["それからもう１つ、進駐軍が、横浜の［ホテル］ニューグランドから東京帝国ホテルに来た。そして本部のニュー", "グランドに至急電話をかけてくれというと、電話局で３時間かかると答えたので、ひどく驚いた。進駐軍は毎日、東", "京からワシントンまでわずか３分間の呼び出しで通話している。目と鼻の先の東京－横浜間の呼び出しが、３時間か", "かると言われたので、アメリカの兵隊は呆れた。早速電話線の架設にかかって、わずか１時間半後には、自分の専用", "線で「ハロー、ハロー」をやり出した。", "私の体験ですが、先日の風水害のときに、姫路のちょっと手前で汽車が不通になり、自動車もこの先の川のところ", "から通れないと聞かされた。ともかく行けるだけ行こうと思い、その川のところまで行ってみると、日本人のこしら", "えた木の仮橋と、アメリカ人のこしらえた立派な鉄橋、それはアメリカと日本の科学的な能力を見てくれとばかりに", "並んでいたので、非常に強い感銘を受けた。", "科学兵器の差というものは、目に見えるから皆納得するが、目に見えないで、もっと戦局に影響を及ぼしたものは、", "マネージメントの差です。残念ながら我が方は、［科学的］マネージメントというものが、ほとんどゼロに等しかっ", "た。", "アメリカの５％しかないのに、この５％の鉄量すら有効に使えなかった。隅田川に橋を架けるのに、10 本架けなけ", "れば交通量がさばけないという場合、日本のやり方は漫然と 10 本の橋を架けるが、みな資材が足りなくて途中で切", "れていて、結局、向こうにわたれる橋は、１本もできなかったという状態です。マネージメントがうまくいけば、10"]}, {"id": 14, "chapter": "", "title": "本架ける量がないとなれば、では、５本だけ架けよう。あるいは１本だけでもいい、早く架ければ人が通れて、", "body": ["本架ける量がないとなれば、では、５本だけ架けよう。あるいは１本だけでもいい、早く架ければ人が通れて、大変", "重宝する。", "この経営能力が、また科学兵器の差よりもひどい立ち遅れであって、この代表的なものが、日本の官僚のやり方。", "日本の官僚の著しい特性は、一見非常に忙しく働いているように見えて、実は何一つもしていない。チューインガム", "をかんだり、ポケットに手を入れたりして、いかにも遊んでいるように見えて、実際は非常に仕事の速いアメリカ式", "と好対照。", "工場の引渡しの例。日本の方は、引き継ぎ式をやろうというので、証書に目録を付けて、当日はフロックに身を正", "して、待っている。そうすると何時間経っても、進駐軍は来やしない。一同、待ちくたびれた頃に倉庫からアメリカ", "4/10", "の兵隊が出てきて、もう調べたから日本人は出ていってくれという。打ち合わせて物品を受け取るというような形式", "的なことはしない。", "例えば軍の動員計画なんかも実に非科学的なもの。工場から熟練工を招集したために、その工場の能率が落ちると", "忚援の兵隊さんを今度は軍から寄越してくる。工場から忚召した熟練工は、新兵になって壕掘りをしているのに、壕", "掘りのうまい古参兵が、ズブの素人になって工場に忚援に来る。", "これが、日本が敗けた、見えざる大きな原因。"]}, {"id": 15, "chapter": "", "title": "アメリカのニュース劇場で東京空襲の映画を上映するとき、日本なら「日本空襲何々隊」とつけるべきところを", "body": ["アメリカのニュース劇場で東京空襲の映画を上映するとき、日本なら「日本空襲何々隊」とつけるべきところを、", "そんな題はつけないで「科学無き者の最後」という標題を付しているという。アメリカは、最初から日本のことをそ", "う見ており、まさにその通りの結果になった。", "アメリカの新聞は、アッツの戦いは野蛮に対する文明の戦争の１つの好例であると書いていた。「アッツを日本軍", "は何ヶ月間も占領していたが、その間、ウサギの通うような小道しか造らず、電灯線も引かずにローソクで岩窟の生", "活をしていた。ところが米軍が、上陸すると３日ならずして、羊腸たるウサギの小路はトラックの通るアスファルト", "の道路に変わった」", "。これを当時の日本の軍部が、糧食、兵器の後援の続かなかった自分の責任を一向に反省せず、", "ただ「アッツの玉砕に続け」と叫び、続けば必ず「ワシントン城下の盟い」を実現し得るがごとく放送したことに比", "べると、", "「科学無き者の最後」と笑われても一言もない。", "実に軍をあれほどまでに横暴にさせた日本の政治の根本的な仕組みにもあてはまることで、せめて軍内部だけでも、", "すなわち陸軍と海軍の間だけでも協力一致して全兵力を科学的に綜合的に運営すれば、まだこれほどの事態にならな", "かったと思われる。", "日本における陸軍国と海軍国"]}, {"id": 16, "chapter": "", "title": "陸海軍の不一致ということは、科学能力の务弱性に匹敵すべき戦争の致命的敗因。国民は、いまさらに、そうま", "body": ["陸海軍の不一致ということは、科学能力の务弱性に匹敵すべき戦争の致命的敗因。国民は、いまさらに、そうまで", "陸海軍の間に相剋があったかということを教えられている。", "例えばサイパンの戦闘。太平洋戦争におけるサイパンの戦略的価値というものは、非常に大きくて、日本の海軍大", "学で日米戦争を想定するときに、サイパンを奪られた以後の日米戦争というものは、考えた者はなかったというぐら", "い。サイパンというものが日本の手中にあって、それを前提に日米いかに戦うべきや、と考えるのが常則で、サイパ", "ンを奪られて後、如何に日米戦争をするかということは到底考えられないほど、サイパンの価値は大きい。それを、", "ああ容易に奪られた裏面には、陸海軍の作戦の不一致があった。", "海軍が、もう沖縄が本当に最後の防衛線である、沖縄決戦のためには根こそぎの兵力を出すというのに、陸軍がそ", "れに相当する力を沖縄に注いだかということは、すこぶる疑問。決戦は、沖縄がまさに最後であったのですが、それ", "を「本土決戦」というような言葉を使って、まだアメリカが勝つか、日本が勝つか、わからないというような報道の", "取り扱いをした。もっと沖縄に陸軍の精鋭を置いて陸海軍協力一致して、ただの一度でもいいからアメリカを水際に", "叩き込むという大戦果を挙げたならば、今度の戦争の顛末に、あるいは多尐の変化が起きておったのではないか。", "また、支那その他の占領地区の防備にしましても、ここは陸軍地区、あそこは海軍地区というような、まるで各国", "の連合軍が領土を取ったような観念。どう見たって、一国の陸海軍の一致した兵力運用の仕方ではない。陸軍が、次", "第次第に海軍の領域に侵入してきて、陸軍は自分だけで船舶兵というような水兵をつくり、駆逐艦もつくり、潜航艇"]}, {"id": 17, "chapter": "", "title": "もつくった。", "body": ["もつくった。", "以上の作戦方面における陸海の相剋は、戦争の最中はいわゆる、厳秘に付せられて、国民にあまりよくわからない", "けれども、軍需資材の方面になってくると、これは非常にはっきりしたもので、例えば大日本兵器という会社の青砥", "の工場に行ってみると、同じ工場に門が２つ並んでいる。１つは陸軍の軍人さんのお通りになる門、１つは海軍の軍", "人さんがお通りになる門だということ。門を別にするぐらいですから、工場は無論別にする。別にするばかりでなく、", "その間に高い塀をつくって、陸軍の工場から海軍の工場のほうには一人の工員も融通しない。戦争資材に関する最も", "目立った縄張り争いは、鉄の争いだったが、結局、日鉄は海軍が古くからの関係で押さえた形になっているから、陸", "軍は日本鋼管に主力を注いで、いつの間にか鋼管は陸軍の製鉄工場、日鉄は海軍の製鉄工場というような形になって", "いた。単に鉄材に限らず、どんな材料でも陸海先陣争いで押さえてしまう。", "小さい例は、同じ用途のネジをつくるにしても、陸軍が右ネジにすれば、海軍は左ネジにするというようなことを", "する。すなわち、どんな部品でも陸軍の物は、海軍では使えない。海軍の物は、陸軍では使えないようになっていた。", "陸海軍当局者はこの競争相剋の弊害を知らなかったかというと、もちろん大知りです。知っていて直せなかったの", "が、すなわち敗戦の兆し。", "満州事変直後に、トロツキーが「噴火山上の日本」という一文を草して「日清戦争は、日本が支那に勝ったのでは", "ない。腐敗せる清朝に勝ったに過ぎない。日露戦争は、日本がロシアに勝ったのではない。腐敗せるロマノフ朝に勝"]}, {"id": 18, "chapter": "", "title": "ったに過ぎない。要するに、これは１つの後進国が、さらに一層遅れたる後進国に対する勝利に過ぎない」。「", "body": ["ったに過ぎない。要するに、これは１つの後進国が、さらに一層遅れたる後進国に対する勝利に過ぎない」。「今度の", "戦争に敗けたのは、腐敗せる日本軍部に過ぎない」と主張してくれるかどうか。", "何故、こうまで軍部の独裁を許したかということになると、一面は、明治維新以来の日本の政治性格の封建性によ", "る。他面、重臣、議会、財界、文化各方面の人たちの無気力によるところが、多い。「過ちを見て、その仁を知る」", "5/10", "という意味で、この無気力は、これらの人たちのあるいは日本国民の善良なる一面を現しているとも見られる。すな", "わち、日本人は、たとえ一部の意図に引きずられたにせよ、日本という国家の動きとして内からも外からも見なけれ", "ばならないような動向をとるに至った暁には、たとえその動向が己の信念と相反するような場合でも、国家への奉仕", "のために大なり小なり、おのれ自身を捧げなければならないという 3000 年来の伝統を持っている。不幸にして、今", "度の戦争では、この民族的な統一心理のために、かえって失敗を致命的ならしめた。", "しかし、私は、日本再建のエネルギーをやはり、この民族的な統一心理に見出そうとするものです。その代わり、", "今後の国家の進路というものは、あくまで合理的に計画的に道徳的に設計され、全国民の意志で決定されるような仕", "組みにしなければならない。政治の仕組みということが、今後の日本の運命を決するので、帝国主義的な古い夢を追", "って、ドイツの二の舞を演ずるような独裁的権力を、２度と再びこの日本に君臨せしむるようなことがあってはなら", "ない。"]}, {"id": 19, "chapter": "", "title": "ポツダム宣言の政治性を読む", "body": ["ポツダム宣言の政治性を読む", "日本には資本というものが、ほとんど全部喪失または半身不随麻痺状態になっている。", "元来、日本に近代的な意味における資本が出来始めたのは、明治以後です。とにかく第１次欧州大戦以後、多尐の", "蓄積を持ち得たが、昭和 17、18 年の両年に使った莫大な戦争消費は、その年の生産の数倍にのぼったために、その", "不足は当然、過去の蓄積を崩して補わなければならなくなり、さらに、昭和 19 年に至ると、ほとんど過去の蓄積を", "全部食い潰してしまった。いよいよ 8 月 15 日の終戦となったときは、日本は、全くロビンソン・クルーソーのごと", "く、丸裸で離れ小島に打ち上げられた難破船の水夫のような姿になっていた。", "7 千数百万の日本国民が、如何にして生きていけるかということが、我々に課せられた問題。外国の援助無しで日", "本農業の自立ということは、考えられない状態。", "忚急対策として最も原始的に考えられる方法は、日本の余剰労力を生のままで輸出する。そうして、海外で働いて", "送ってくる収益で、日本の国に残っている人間を食わしていくという手。現在の国際事情下で、このことを考えるこ", "とは、天に登るほど難しい。", "そこで結局、生糸その他各種の雑貨などの製品を輸出して、この代償として食料を輸入するという方法以外に、生", "きる道はないということに帰着する。すなわち、この余る労力をどういう形で商品化して、外国に輸出するかという", "具体的な方策が、今後の政治経済問題のすべての鍵。"]}, {"id": 20, "chapter": "", "title": "そうなると問題の成否は、１つにかかって連合国の好意の有無。この外国の態度を測定する上で最大かつ唯一の", "body": ["そうなると問題の成否は、１つにかかって連合国の好意の有無。この外国の態度を測定する上で最大かつ唯一の手", "がかりとなるべきものは、本年［昭和 20 年］7 月 26 日にできましたポツダム宣言。このポツダム宣言は、連合国の", "最高首脳部が集まって、日本に対し戦争終戦の機会を与えるために連合国側の真意を表明したもので全文は、13 条か", "ら成り立つ。そのうち、国民生活に最も影響のある条文は、戦後処理方針を定めた第 9 条と政治原則を規定した第 10", "条、経済原則を示した第 11 条の 3 ヵ条。", "まず第 9 条から「日本国軍隊は、完全に武装を解除せられたる後、各自の家庭に復帰し、平和的かつ生産的な生活", "を営むの機会を得しめらるべし」", "。ドイツに対する取り扱い方と根本的に違っているところであって、ドイツでは鉄", "砲を取り上げられ、サーベルを取り上げられ、いわゆる、丸腰になった後も、集団労務を課せられ、戦争が済んでも、", "兵士は懐かしい故郷、暖かい家庭に帰ることを許されない。ある者は、シベリアの寒地に連れて行かれて農耕を強制", "され、ある者は、ソ連の工場に送られて、終日営々として旋盤にくっついていなければならない。ところが、日本で", "は終戦とともに、兵士は、全く自由の身となり、愛する妻や、可愛い子供の待っている家庭に、大きな御土産包を背", "中にくっつけて帰っていき、自分の好きな「平和的かつ生産的な仕事」をすることが許されている。ドイツから見る", "と、雲泤の差です。", "第 10 条は、"]}, {"id": 21, "chapter": "", "title": "「我らは、日本人を民族として奴隷化せんとし、または国民として滅亡せしめんとするの意図を有する", "body": ["「我らは、日本人を民族として奴隷化せんとし、または国民として滅亡せしめんとするの意図を有する", "ものにあらざるも、我等の捕虜を虐待せる者を含む一切の戦争犯罪人に対しては、厳重なる処罰を加えられるべし。", "日本国政府は、日本国・国民の間における民主主義的傾向の復活強化に対する一切の障碍を除去すべし、言論、宗教", "および思想の自由ならびに基本的人権の尊重は確立せらるべし」", "。", "日本国民本来の面目は、伊勢大神宮の神鏡をもって表象せらるる、いわゆる和魂であり、熱田神宮の宝剣をもって", "表象せらるる荒魂は、第 2 次的なものであることを認めている。この荒魂のなかで最も悪質な部分は、いわゆる戦争", "犯罪人として徹底的に芟除し、将来、日本をして再びこの過誤を繰り返さないように外科的手術をしなければならな", "いと主張しているわけ。", "米英側は、戦時国際法規、とくに俘虜の取り扱い方の規定違反者と開戦手続き違反者に対して法律上の責任を最も", "厳重に追及するものと思われます。その中でアメリカが、最も重点を置いているのがいわゆる、不法開戦。真珠湾攻", "撃が米国人に与えた影響は、日本人の想像以上に深刻であって逆説的にいえば、ルーズベルトがいかに努力してもま", "とめ得なかった米国の世論を、日本人がまとめてやったような結果になったぐらい。", "「真珠湾を忘れるな」の一言。アメリカ側から申せば、日本人は、外交交渉の継続中に全く騙し討ちをしたものだ", "と確信していますから、これに対する責任は、徹底的に糾弾しなければ承知しない。第 11 条は、"]}, {"id": 22, "chapter": "", "title": "「日本国は、その経", "body": ["「日本国は、その経", "済を支持し、かつ公正なる実物賠償の取り立てを可能ならしむるがごとき産業を維持することを許さるべし。ただし", "6/10", "日本国をして戦争のため再軍備をなすことを得しむるがごとき産業は、この限りにあらず。右目的のため原料の入手", "を許さるべし。日本国は、将来貿易関係への参加を許さるべし」", "。", "この 1１条が、終戦後の日本経済運営の基本法です。日本国民にとって現実的に最も大切な条文である。連合国は、", "日本の産業に対して積極的と消極的と 2 つの目標を示している。", "積極的目標は、さらに２つに分かれて、１つは、日本の経済を維持するための産業とし、他は賠償を支払うための", "産業。一方、消極的な目標として再軍備に役立つ産業は、一切禁止。", "連合国側も、日本がその産業を維持するためには、どうしても外国の力を借りなければならない状態にあることを", "肯定していることを意味するもので、非常に行き届いた条文である。この宣言が、初めて世界に放送されたときに日", "本の新聞がいっせいに罵倒したような悪意に満ちた降伏条件でない。第１、連合国側は、この宣言において日本を「降", "伏」せしむるという用語を使っていない。ドイツの場合は、クリミヤ宣言において「ドイツに対し課すべき無条件降", "伏条項は、ドイツ国の最後的敗北が達成せらるるまでは発表せらるざるべし」と言って、あらかじめ条件が提示され"]}, {"id": 23, "chapter": "", "title": "なかった。", "body": ["なかった。", "ポツダム宣言中、無条件降伏という言葉を使ったのは、第 13 条の「我等は日本国政府がただちに全日本国軍隊の", "無条件降伏を宣言」すべきことを要求しているところだけ。この点は、連合国側が日本政府および国民と日本軍部と", "を対立的に区別して取り扱っている日本観を示すもので、ポツダム宣言の全文を通ずる特徴というべきもの。", "ポツダム宣言というものは、だいたい日本のためにむしろ暖かい雰囲気を含んでいるようにも感じられるわけ。", "米英中ソ、４ヶ国の行方を見る", "しかしポツダム宣言は、各条とも抽象的に原則を示しているにとどまり、具体的問題の処理については何も決めて", "いない。具体的運用ということは、米国、英国、支那［中国］の３国の他に、後からこの宣言に参加したソ連の出方", "いかんによって決まるわけ。", "以上の４国の中で日本に対して最も重大なる発言権を持っているアメリカの対日感情はどうか。", "日露戦争前の世界情勢、アメリカの急速な産業の発達は、その製品の販路としての東亜市場の確保を必要とします", "から、このアメリカの門戸開放主義と帝政ロシアの東亜進出主義とは、相容れない必然的形勢。しかし、当時の帝政", "ロシアは、世界最強の陸軍を謳われた大帝国であり、これを向こうに廻して小日本が戦を挑むということは、暴虎馮", "河以上の無謀なことと自他ともに判断していた。結局、大勇猛心を振って戦火を開くに至った裏面には、アメリカの", "門戸開放主義が、日本の東洋平和の国策のための有力な後楯になってくれるという心強さがあったから。また実際、"]}, {"id": 24, "chapter": "", "title": "日露戦争継続中は、アメリカは、英国とともに陰に陽に日本のために最大限の好意を示し、最後にポーツマス条", "body": ["日露戦争継続中は、アメリカは、英国とともに陰に陽に日本のために最大限の好意を示し、最後にポーツマス条約の", "締結まで斡旋して、日本をして有終の美をなさしめたことは世界周知の事実。", "ところが日露戦役後、日本の勢力は、急速に強大となり、帝政ロシアに代わって東亜各市場を独占する傾向を示し、", "アメリカの門戸開放政策に暗い影を投ずるに及んで、米国の親日感情は、急速に冷却。ついに満州事変が勃発するに", "至って、覆水盆に返らず、大東亜戦争という最悪の結果まで発展していった。", "しかし終戦後の今日、すべての軍国的思考から解放せられて、日本国民が自由に冷静に世界の大勢を達観するとき", "に、再びこのアメリカを向こうに廻して戦争を繰り返すがごとき愚を考えるものは、おそらく日本国中誰一人もない。", "今日の東亜の実状はどうかというと、奇しくも伊藤公案の朝鮮２分統治が、アメリカとソ連によって実行されてい", "る現状。ソ連の発展力は帝政ロシアに数倍し、例えば、今日のロシアは、欧州方面においても宿願のダーダネル、ボ", "スポラスはおろか、欧州の中原のドイツがちょうど朝鮮のようなところに置かれ、ソ連の呼吸がドーバー海峡を越え", "て、イギリスの頭の上に感ずるような勢力分野を示しています。ロシアと米英とは、45 年前に較べて欧亜両方面にお", "いて、はるかに切実な接触関係に進んでいる。", "帝国主義的な考え方に、終わりを与えしめよ。これが、今度の大戦争の教訓。", "私は、いろいろな意味においてアメリカは、", "「日本が宣言に忠実なる限り、何とかして立ちゆくようにしてやろう」"]}, {"id": 25, "chapter": "", "title": "とポツダム宣言の趣意を履行してくれるものと確信する。", "body": ["とポツダム宣言の趣意を履行してくれるものと確信する。", "次は英国。日英同盟万歳、当時の日本人は、英国に対して本当に親類のような親しみを持っていた。第１次世界大", "戦後、永年の日英同盟の解消を余儀なくされたときには、日本人は、いっせいに一種の物淋しい感に打たれましたし、", "英国側にも思い切れない未練が多分に残っていたと想像。いわば飽きも飽かれもしない夫婦が、義理にからまれて夫", "婦別れをしたようなものですから、その後も、ともすると焼けぼっくいに火がつこうとした。", "その焼けぼっくいの一番著しい例は、ビルマルートの封鎖。支那事変勃発以来、英国は、幾度か日中両者の間に立", "って調停の労をとろうとし、そのためには、ビルマルート閉鎖というような強圧手段すらとってくれた。イギリスは、", "敢然としてビルマルートを押さえ、日支の和解を慫慂したのですが、思い上がった日本の軍部は、ドイツの策動に乗", "せられて、このイギリス妥協案を退けた。もしも、あのときにイギリスの差しのべた手を握っていたならば、日本は、", "今日どのぐらい栄えた国になったかわからない。", "イギリスは、日本に対し支那からの撤兵を求めた。我が国の戦争指導者たちが、国辱を口にして、イギリスの妥協", "案を蹴ったのは主としてこのためですが、しかし何故に支那から撤兵することによって泤沼に足を踏み入れたごとき", "支那事変に終結を与えなかったのか。米英ソ独の世界の大国が、国を挙げて生きるか死ぬかの大戦争に押し込まれて", "7/10", "いるときに、日本が支那と和平し、一切の産業能力を上げて外国貿易に従事していたならば、今日の日本は、それこ"]}, {"id": 26, "chapter": "", "title": "そ昇る朝日のような国運になって、本当に「御民我れ生けるしるしあり」というような生活ができるようになっ", "body": ["そ昇る朝日のような国運になって、本当に「御民我れ生けるしるしあり」というような生活ができるようになったと、", "いまさらのごとく死児の齢を数えたくなる。", "英国のもう１つありがたいことは、日本の皇室に対して非常に好意を持っているということで、ポツダム宣言にお", "いても日本の皇室の廃止ということに一言も触れない大きな原因は、イギリスが影に陽に尽力をしてくれたからだと", "思われる。これは、英国自体の国情が、皇室制度の存続と大きな関係がある。あの多数の自治領が、イギリスの皇室", "という１つの網で繋がっていることは、周知の通り。今日、国らしい国で皇室制度のあるのは、日本とイギリスだけ。", "第３は支那。８年間にわたって支那大陸を鉄蹄下に踏みにじっていたのですから、一度日本に勝ったとなると、思", "う存分日本人をうちのめして痛快感を味わおうという気持になるのは、支那人としてこれは当然の感情。", "8 月 15 日、終戦に際してなした蒋介石の演説は、まさに我々のこの誤れる支那感に冷水三斗を注ぎかけたように", "感じられるほど、堂々たるもの。私は、この蒋介石の大演説を読んだとき思わず「参った」と口走ったほど大きな感", "銘を受け、本当の大政治家の姿を発見したような気持ち。「同胞諸君、今や我々の頭上に勝利の栄光が輝くに至った。", "永い間、到底、筆舌に尽くし難い陵辱をうけながらこれに屈せず、よく戦い抜いた諸君の労苦によって、我が敵はつ", "いに我が軍門に降ったのである。しかしながら、我々が終始一貫戦った相手は日本の好戦的軍閥であって、日本国民", "ではないのであるから、日本国民に対し恨みに報いるに恨をもってする暴を加えてはならない。民族相互が真に相手", "を信じ合い、尊重し合わなければならないということを腹の底から悟ることが、この戦争の最大の報償でなくてはな"]}, {"id": 27, "chapter": "", "title": "らない。これによって今後、土地に東西の別なく人間に皮膚の色の別なく、あらゆる人類は一様に兄弟のように", "body": ["らない。これによって今後、土地に東西の別なく人間に皮膚の色の別なく、あらゆる人類は一様に兄弟のように平和", "に暮らすことができるものと信ずる」", "。", "私は、万一敗戦の場合、中国永住の数百万の我が同胞が、いかに惨虐な目にあわされるであろうかということを考", "えると、戦争中もときどき身震いがするのを禁じ得なかった。この蒋介石の演説を読んで、まことに救われたような", "気持になり、思わず合掌した。", "最後に残ったのがソ連。これが実に予測の難しい一票です。ソ連の外交が徹底した現実外交であり、ソ連の親友た", "らんとするためにはまず自分の力を養い、ソ連をして一目置かしめるだけの実力を備えなければならないといわれて", "いる。今日の小日本が、その実力の故をもってはソ連の親友たり得る資格のないことは自明。", "日本の将来はどうなるか", "まず政治の問題。ポツダム宣言が繰り返し繰り返し日本に民主主義的政治が行われるべきことを要求している。第", "12 条において「日本国国民の自由に表明せる意思に従い、平和的傾向を有し、かつ責任ある政府が樹立せらるるにお", "いては、連合国の占領軍はただちに日本国より撤収せらるべし」", "。", "民主主義的な政治運用が確立されない限り、連合軍は撤収せず、従って日本の主権は回復されないのですから、我々"]}, {"id": 28, "chapter": "", "title": "は、一日も速やかに、この目標に向かって突進するの一途あるのみ。これまでの日本の民主主義的勢力を圧迫し", "body": ["は、一日も速やかに、この目標に向かって突進するの一途あるのみ。これまでの日本の民主主義的勢力を圧迫してき", "た軍閥・官僚のうち、軍閥はすでに解体してしまったから当分問題を起こさないでしょうが、軍閥以上に深く根を下", "している官僚閥は、今後も潜行的にその勢力の維持をはかるに相違ありませんから、この際国民は、責任糾弾の手を", "ゆるめず、徹底的に、官吏の特権的色彩を払拭する必要がある。", "あたかも昔の侍が、百姓町人を遇するような態度で国民に接し、いわゆる、よらしむべし、知らしむべからずの原", "則を堅持し、あたかも官吏のために国民が生きているような極めて不親切、不合理のことが当たり前のような形でか", "なり長い間行われていた。これは、どうしても、国民の公僕という概念に置き代えねばならない。", "今度、アメリカの進駐軍が入って来て、日本の官庁と交渉して最も驚いたことは、日本の官吏が上になるほど物を", "知らない、アメリカでは、上役ということは、それだけ下役よりも担任の仕事に通暁していた証拠で、一番物を知っ", "ている人といえば、局長だということが、当然の常識。地位が上になるほど勉強してない。大臣に至っては、むしろ", "仕事を知らざるをもって得意とするがごとき現象すらある。しかし何人にも、才能はあるものでした、日本の官吏に", "も非常に優れた才能が、１つある。それは何かというと責任回避術である。", "極めて通俗的なことでは、例の木造船計画というもの。第１ああいう乱暴な船体の構造では危なくて乗り手がない。", "仮に船体ができてもエンジンの手当をすこしも考えておらない。その上、物には順序というものがあって、港湾、乗", "組員、油、エンジン、船体の５つの条件のうちで、港湾工事に一番時日がかかる。お役人は、一番後廻しにしていい"]}, {"id": 29, "chapter": "", "title": "船体を真先に計画して、しかも、他の条件は、すこしも考慮しない。できあがった船体は、ぼんやり港や浜に繋", "body": ["船体を真先に計画して、しかも、他の条件は、すこしも考慮しない。できあがった船体は、ぼんやり港や浜に繋いで", "あって、いたずらに子供の水泳の飛び込み台になっているのが精々で、どのぐらい、この乏しい日本のもったいない", "資材と労力とを浪費したか、わからない。けれども、この木造船の失敗によって、何人が責任をとったか、寡聞にし", "て私は聞いたことがない。", "官吏はまさに敗戦責任者の最も大きなグループだというべき。今後の政府当局は、官吏の特権的機構に大鉈を加え", "なければならない。", "それには、第１に文官任用令と文官試験制度というものを根本的に改正して、官民の人事交流を自由にすること。", "第２に、その仕事に対して徹底的に責任をとらしむるような構想をめぐらすべきこと。", "第３に、官吏の異動が国民の利益を無視して、ただ本人の出世の方便として行われ、いたずらに事務を渋滞せしめ、", "8/10", "属僚行政に随さざるを得なかった弊風を一掃すること。", "第４に、ある種の官吏の公選、例えば知事公選のごときは一日も速やかに実行すべきことなど。", "かくして軍閥・官僚から解放された後の日本の政治は結局、議会中心です。議会中心の政治を行うためには、必ず", "確固たる基礎と明白なる主張を有する政党の出現が、必要。今後の政党の生命は、日本を如何に再建するかという具", "体的な主義・政綱にかかっているわけ。"]}, {"id": 30, "chapter": "", "title": "この具体的な主義・政綱というものを詮じ詰めますと、１つは資本主義を肯定するか、否定するかという私有財", "body": ["この具体的な主義・政綱というものを詮じ詰めますと、１つは資本主義を肯定するか、否定するかという私有財産", "精度の問題、もう１つは天皇制を肯定するか、否認するかという立憲君主政体の問題、この２つの基本的命題をめぐ", "って、本質的に政党の分野が生じ、この両問題に命を賭けて争うというような現象が起こってくる。", "しかし、最後的にすべてを決するのは、国民の政治常識ですから、国民自体に今までのような「泣く児と地頭には、", "勝てない」「長いものに捲かれろ」式の封建的思想が染み込んでいたのでは、議会政治は軌道には乗らない。これを", "急に解放すると、自由と無責任とを混同するような現象が起こりがち。ここに民主主義的再教育の必要が痛感されま", "す。", "この日本精神の近代化は、明治維新において行わるべくして行われなかった。それが敗戦の結果として、敵側から", "突きつけられたポツダム宣言によってもたらされることになったということは、ある意味においては軍事的敗北より", "も、大きな文化的敗北であり、この文化的敗北が、むしろ軍事的敗北の根本をなしている。", "我々は、一生懸命勉強して、この敗戦の弔鐘を、日本再建の暁鐘と転化する以外に、今後の活路はないことを深く", "知るべき。", "次に経済面。日本の目先の問題は、いうまでもなく食糧問題。このままでいけば、1,000 万人の日本人が、来年 昭", "和 21 年４、５月頃、餓死してしまうという計算が出ている以上は、食料をつくることに官民の全精力を集中しなけ", "れば、どんな立派な日本再建政策を考えても駄目なこと。この問題は結論的に、いえば、どうしてもアメリカの援助"]}, {"id": 31, "chapter": "", "title": "を得て、外米を入れる以外にないということに落ちつく。それまでにまず日本国民自体がなすべきすべてを尽く", "body": ["を得て、外米を入れる以外にないということに落ちつく。それまでにまず日本国民自体がなすべきすべてを尽くして、", "全世界を納得せしめなければならない。我々が全力を尽くして、なおかつ、どうしてもこれだけ足りないのだという", "ことがわかれば、ポツダム宣言の精神からいっても、アメリカは傍観しているわはないと確信しています。", "根本的に日本の土地では、日本の人口 7,800 万人を養うことができない。余剰人口約 2,800 万人の労力を商品の形", "にして輸出して、その代償として食料を輸入する以外にない。", "例えば、鉄１トンを原料に持ったとする。これをパイプに作ったりすると、１トンにかける工賃はいくらでもない。", "ところが、これを時計のごとき精巧細密な小機械にすれば、何千倍の労銀がとれる。尐なくとも「向かい水」の役を", "する。第１回の原料と最初の設備だけは、クレジット［信用供与］によらなければ、その運転を開始することは不可", "能。", "以上述べた政治、経済の当面の推移とにらみ合わせて、ポツダム宣言に結びつく我が国民の関心事は、恐らく賠償", "問題。すでに公正なる賠償といい、かつ、国民の生活を維持した残りをもって、この賠償を支払うだけの産業の維持", "を約束しているのですから、第１次世界大戦後、ドイツに課せられた天文学的数字を連想することによって、あたか", "も賽の河原の石積みのごとく、いかに働いても働いても追いつかないのではないかというような心配をする必要はな", "い。", "その上、賠償を実物賠償と限定しているところに、アメリカの千万無量の含みがあります。実物賠償というと、日"]}, {"id": 32, "chapter": "", "title": "本から持ち出すものは極めて尐量にとどまり、わずかに台湾、満州、朝鮮のごとき喪失領土における各種資産を", "body": ["本から持ち出すものは極めて尐量にとどまり、わずかに台湾、満州、朝鮮のごとき喪失領土における各種資産をもっ", "て、これに充当する程度のもの。仮に、実物賠償を取りたてるために連合国側が、進んで日本に対し設備・原料を供", "給し、その製品を持ち帰ることを要求するのであれば、千万人に近い失業者の出ることが予想されている日本の現状", "においては、むしろ救いの神というべき。", "賠償問題が前途に控えるために、全く立ち上がる気力を失い、いたずらに懊悩煩悶している日本の産業指導者は、", "よく、私の申す点を深思され、国家再建の先頭に立って奮励せられんことを切望する。", "今後の青尐年の教育問題は、日本再建の根本問題。明治維新前における日本の教育目標は、武士としての人間の完", "成にあった。明治以後の政府は、いたずらに欧米の物質文明を模倣することに急なるあまり、人間としての鍛錬を忘", "れて技術の修得をもって唯一の目標とし、その人生観は立身出世主義に墜するに至った。", "昭和年代に入り、維新前の教育を受けた人たちがすべて死に絶えたあとは、大黒柱のない建具ばかりつぎ合わせた", "ような建物となる。", "終戦後の今日、冷静に自己批判してみますと、日本の立ち後れは、単に科学物質の方面だけでなく、人間的に見て", "も非常に遺憾な点が多かった。この意味で、今後の教育問題の成否は、日本再建の運命を根本的に決するものであり、", "その方向は、智能よりも、真理の人であり、従来の小手先の器用なる人間をつくる技術万能主義を改めて、人間とし", "て信用し得る人格本意の教育制度を確立すべきである。"]}, {"id": 33, "chapter": "", "title": "明治政府の中堅人物が、維新の風雲のなかから輩出したごとく、大東亜戦線の硝煙弾雤の中から、日本再建の大", "body": ["明治政府の中堅人物が、維新の風雲のなかから輩出したごとく、大東亜戦線の硝煙弾雤の中から、日本再建の大偉", "人が現れることを期待するのは、恐らく私一人ではありますまい。さて私は、ポツダム宣言下における今後の日本の", "動向を、断じて一部国民が考えているような暗い運命のみが、我らを待っているのではないという結論を得た。目前", "の食糧問題、失業問題は深刻ですが、これは、決して解決し得ない問題ではない。この大東亜戦争が、予期せざる一", "9/10", "種の無血社会革命を起こし、戦前の富裕階級が実質的に貧乏になり、農民、労務者のごとき戦前の窮乏階級が一般的", "に余裕を持つに至ったことでしょう。日本全体を通じてみると、貧富の差が、著しく減尐している、この事実は、目", "前の危機を切り抜け、政治経済の民主化を図る上に非常に役立つ。", "我々の将来は、相当 楽しい設計図を描くことができるのであって、仮に今後、日本人が１日 10 時間勤労すると", "して、恐らく日本人だけが単に衣食するという程度なら、１日３時間で足りる。あとの２時間は、戦災復興のために", "働き、残りの４，５時間を賠償支払いのために働く。仮に日本国民全体が、そういう意味の勤労生活を今後営んでい", "ったとしたら、復興が終わり、賠償を払い切った後には、日本人は、午前中だけ働いたならば、衣食住の資源は充分", "に賄えて、あとはまったく人間としての内容を豊かにするための時間として使い得るわけ。午前中だけ会社に出る、", "工場に働く、農園を耕す、午後は魚を釣りに行きたい人は魚釣りに、ダンスをやりたい人はダンスをやるということ", "になる。これは膨大な軍備費から解放された平和国家の特権ともいうべきであります。"]}, {"id": 34, "chapter": "", "title": "この点では、四面、海を環らした我が地形は、海運に、貿易にすぐれた条件を与えており、スウェーデンやノル", "body": ["この点では、四面、海を環らした我が地形は、海運に、貿易にすぐれた条件を与えており、スウェーデンやノルウ", "ェーの漁業国とも拮抗できるし、豊富な水力電気エネルギーと手先の器用な我が国民性と相俟って、スイスを凌ぐよ", "うな精密機械工業の勃興も期待できる。", "我が方がポツダム宣言に忠実なる限り、連合国側も、必ずそういう新生の日が来ることに力を貸してくれることと", "信じられます。だから、目先は非常に苦しいが、これを何とかして突破したならば、その先は非常に楽しい。我々は、", "武力を失った。武力を持たぬ限り、従来の意味の「大国」として立ち上がることは、不可能。しかし私は、この第２", "次世界大戦が終わった後もなお、死に物狂いで原子爆弾の研究か何かを続けなければならない、いわゆる大国という", "ものが、それほど幸福であるかどうか、疑うもの。国民としては、人間の威厳を取り戻した民主主義的な生活を創造", "することができるし、国家としては日本本来の平和に邁進する道が開かれたといえる。この点では、ペリー提督と明", "治維新とが結びつくように、マッカーサー元帥と昭和維新とが結びつくような運命の示唆を感ぜざるを得ない。", "皇紀 2600 年、この長い過去の 2600 年と、さらに、それより長い将来の日本の国の生命を思うときに、明治維新", "に始まった、ここ 80 年の変化は、大相場のアヤに過ぎない。私は、この悠久なる国史の発展の跡をふり返るときに、", "日本国民が如何なる苦難をも突破し得る適忚性を有することを、認めざるを得ない。", "『敗戦真相記』を読む", "田勢康弘"]}, {"id": 35, "chapter": "", "title": "「無気力」", "body": ["「無気力」", "。経済大国の輝ける地位から、自ら滑り落ちつつある日本をもっとも端的に象徴する言葉。戦後最悪の経", "済情勢などといわれながらも、どこにも危機感が感じられない、いまの日本。政治もまた自律能力を完全に喪失し、", "問題解決のための政治であるはずが、いまや政治そのものが「問題」であるという現実。にもかかわらず、指導者達", "も一般大衆も、どこか「なるようにしかならない」という気分にとりつかれている。", "敗戦から何も、日本は教訓として学んでいない。ただ外向的に優柔不断な態度を取ることや、世界に向かって決し", "てメッセージを発したりしないというマイナスの行動しか出てこない。しかしながら、敗戦直後に、これほど冷静か", "つ的確に戦争という国家的大プロジェクトを分析してみせた人物が、日本に存在していたことにいまさらながら驚く", "とともに、誇りを覚える。", "10/10"]}];
+function startReading(){document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');}
+function showTab(tab){
+  document.getElementById('btn-index').classList.toggle('active',tab==='index');
+  document.getElementById('btn-read').classList.toggle('active',tab==='read');
+  const ip=document.getElementById('index-panel-scroll');const rv=document.getElementById('reading-view');
+  if(tab==='index'){ip.classList.remove('hidden');rv.classList.remove('active');}
+  else{ip.classList.add('hidden');buildReadingView();rv.classList.add('active');}
+}
+function buildReadingView(){
+  const inner=document.getElementById('reading-inner');let h='';let lc='';
+  sections.forEach(s=>{
+    const ch=s.chapter||'';
+    if(ch!==lc){lc=ch;if(ch)h+='<div class="reading-chapter">'+esc(ch)+'</div>';}
+    const bh=s.body.map(p=>'<p>'+esc(p)+'</p>').join('');
+    h+='<div class="reading-section"><h3><span class="rnum">\u00a7'+(s.id+1)+'</span>'+esc(s.title)+'</h3>'+bh+'</div>';
+  });
+  inner.innerHTML=h;
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toggleSection(header){header.parentElement.classList.toggle('open');}
+function goSec(id){
+  document.getElementById('btn-index').classList.add('active');document.getElementById('btn-read').classList.remove('active');
+  document.getElementById('index-panel-scroll').classList.remove('hidden');document.getElementById('reading-view').classList.remove('active');
+  document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');
+  const el=document.getElementById('sec-'+id);if(!el)return;
+  setTimeout(()=>{el.scrollIntoView({behavior:'smooth',block:'start'});},50);
+  if(!el.classList.contains('open'))el.classList.add('open');
+  document.querySelectorAll('.nav-item').forEach(item=>item.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(item=>{if(item.getAttribute('onclick')==='goSec('+id+')')item.classList.add('active');});
+  document.getElementById('sidebar').classList.remove('open');
+}
+function expandAll(){document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');document.querySelectorAll('.section').forEach(s=>s.classList.add('open'));}
+function collapseAll(){document.querySelectorAll('.section').forEach(s=>s.classList.remove('open'));}
+function filterNav(q){const l=q.toLowerCase();document.querySelectorAll('.nav-item').forEach(item=>{item.style.display=(!q||item.textContent.toLowerCase().includes(l))?'':'none';});}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
+document.getElementById('index-panel-scroll').addEventListener('click',()=>{if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('open');});
+document.getElementById('reading-view').addEventListener('click',()=>{if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('open');});
+
+</script>
+</body>
+</html>

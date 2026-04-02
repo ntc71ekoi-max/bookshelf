@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>「うつ」をやめれば、楽になる | Claude本棚</title>
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;--text:#e6edf3;--text2:#8b949e;--accent:#f0883e;--accent2:#d29922;--chapter-color:#79c0ff;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Helvetica Neue','Hiragino Sans','Yu Gothic',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.7;}
+#app{display:flex;height:100vh;overflow:hidden;}
+#sidebar{width:300px;min-width:300px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+#header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;flex-shrink:0;}
+#header h1{font-size:15px;font-weight:700;color:var(--accent);line-height:1.4;}
+#header .subtitle{font-size:12px;color:var(--text2);margin-top:2px;}
+#header .meta{font-size:11px;color:var(--text2);margin-top:3px;}
+#top-nav{display:flex;align-items:center;gap:8px;padding:8px 24px;background:var(--surface2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;}
+.top-nav-btn{padding:5px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:inherit;transition:all 0.15s;white-space:nowrap;text-decoration:none;display:inline-block;}
+.top-nav-btn:hover{background:var(--surface);color:var(--text);border-color:var(--accent);}
+.top-nav-btn.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600;}
+#progress-area{margin-left:auto;font-size:11px;color:var(--text2);white-space:nowrap;}
+#search-bar{padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+#search-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:13px;font-family:inherit;outline:none;}
+#search-input:focus{border-color:var(--accent);}
+#nav-scroll{flex:1;overflow-y:auto;padding:8px 0;}
+#nav-scroll::-webkit-scrollbar{width:4px;}
+#nav-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.nav-chapter{padding:8px 16px 4px;font-size:10px;font-weight:700;color:var(--chapter-color);border-top:1px solid var(--border);margin-top:4px;}
+.nav-chapter:first-child{border-top:none;margin-top:0;}
+.nav-item{padding:5px 16px;font-size:12px;color:var(--text2);cursor:pointer;transition:all 0.1s;border-left:2px solid transparent;}
+.nav-item:hover{background:var(--surface2);color:var(--text);border-left-color:var(--accent2);}
+.nav-item.active{background:var(--surface2);color:var(--accent);border-left-color:var(--accent);}
+#index-panel-scroll{flex:1;overflow-y:auto;padding:24px;}
+#index-panel-scroll::-webkit-scrollbar{width:6px;}
+#index-panel-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.chapter-header{margin:18px 0 6px;padding:9px 16px;background:rgba(121,192,255,0.08);border-left:3px solid var(--chapter-color);border-radius:0 6px 6px 0;font-size:13px;font-weight:600;color:var(--chapter-color);}
+.chapter-header:first-child{margin-top:0;}
+.section{margin-bottom:5px;border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color 0.2s;}
+.section:hover{border-color:var(--accent2);}
+.section.open{border-color:var(--accent);}
+.section-header{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;background:var(--surface);user-select:none;transition:background 0.15s;}
+.section-header:hover{background:var(--surface2);}
+.sec-num{font-size:10px;color:var(--text2);min-width:28px;flex-shrink:0;}
+.sec-title{flex:1;font-size:13px;font-weight:500;color:var(--text);line-height:1.4;}
+.toggle-icon{font-size:10px;color:var(--text2);transition:transform 0.2s;flex-shrink:0;}
+.section.open .toggle-icon{transform:rotate(180deg);}
+.detail-body{display:none;padding:14px 20px;background:var(--bg);border-top:1px solid var(--border);}
+.section.open .detail-body{display:block;}
+.detail-body p{margin-bottom:10px;font-size:14px;color:#cdd9e5;line-height:1.85;text-align:justify;}
+.detail-body p:last-child{margin-bottom:0;}
+#reading-view{display:none;flex:1;overflow-y:auto;padding:40px;}
+#reading-view.active{display:block;}
+#reading-view::-webkit-scrollbar{width:6px;}
+#reading-view::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.reading-inner{max-width:780px;margin:0 auto;}
+.reading-chapter{margin:24px 0 8px;padding:9px 18px;border-left:3px solid var(--chapter-color);font-size:14px;font-weight:600;color:var(--chapter-color);}
+.reading-chapter:first-child{margin-top:0;}
+.reading-section{margin-bottom:18px;padding:16px 20px;background:var(--surface);border-radius:8px;border:1px solid var(--border);}
+.reading-section h3{font-size:14px;font-weight:700;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.reading-section h3 .rnum{font-size:11px;color:var(--text2);font-weight:400;}
+.reading-section p{font-size:14px;color:#cdd9e5;line-height:1.85;margin-bottom:8px;text-align:justify;}
+.reading-section p:last-child{margin-bottom:0;}
+#splash{text-align:center;padding:60px 24px;}
+#splash h2{font-size:22px;color:var(--accent);margin-bottom:8px;}
+#splash .sp-sub{color:var(--text2);font-size:14px;margin-bottom:32px;}
+#splash .stats{display:flex;justify-content:center;gap:40px;margin-bottom:32px;}
+#splash .stat .num{font-size:36px;font-weight:800;color:var(--accent2);}
+#splash .stat .lbl{font-size:12px;color:var(--text2);margin-top:2px;}
+#splash .start-btn{background:var(--accent);color:#000;border:none;padding:14px 44px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity 0.2s;}
+#splash .start-btn:hover{opacity:0.85;}
+#menu-toggle{display:none;background:transparent;border:none;color:var(--text);font-size:20px;cursor:pointer;padding:4px 8px;vertical-align:middle;margin-right:8px;}
+.hidden{display:none !important;}
+@media(max-width:768px){
+  #sidebar{position:fixed;top:0;left:0;bottom:0;z-index:100;transform:translateX(-100%);transition:transform 0.25s ease;width:280px;}
+  #sidebar.open{transform:translateX(0);}
+  #menu-toggle{display:inline-block;}
+  #index-panel-scroll{padding:14px;}
+  #top-nav{padding:8px 14px;}
+  #header{padding:11px 14px;}
+  #reading-view{padding:16px;}
+}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="sidebar">
+  <div id="search-bar"><input id="search-input" type="text" placeholder="🔍 節タイトルを検索..." oninput="filterNav(this.value)"></div>
+  <div id="nav-scroll">
+<div class="nav-chapter">（本文）</div>
+<div class="nav-item" onclick="goSec(0)">やっかいな心の荷物をおろ</div>
+<div class="nav-item" onclick="goSec(1)">「幸福」は選びとるものです――著者まえがきにかえて</div>
+<div class="nav-item" onclick="goSec(2)">２番目の課題は、読者に愛情、幸福、平安を得るための正しい人生の歩み方を提</div>
+<div class="nav-item" onclick="goSec(3)">皆さんに幸福な人生をすごしてほしいと願い、それを得るための、私が信じる正し</div>
+<div class="nav-chapter">第１章 うつの本当の正体は何か</div>
+<div class="nav-item" onclick="goSec(4)">どんな人でもうつになる可能性がある</div>
+<div class="nav-item" onclick="goSec(5)">精神科医の立場では、いわゆる「臨床的なうつ」に陥っている人（以下、単にうつと</div>
+<div class="nav-item" onclick="goSec(6)">ている人が、楽になれるよう、そしてまただれもが人生でかならず直面する試練やスト</div>
+<div class="nav-item" onclick="goSec(7)">うつになるとどんな症状が現れるのか？</div>
+<div class="nav-item" onclick="goSec(8)">１．悲しい感情につきまとわれる</div>
+<div class="nav-item" onclick="goSec(9)">うつの多くの人が、「にこにこうつ」として知られる状況（内面の悲しい感情をかくす</div>
+<div class="nav-item" onclick="goSec(10)">２．つらい思考に襲われる</div>
+<div class="nav-item" onclick="goSec(11)">も、あたかも大問題であるかのように評価し、それが全部自分の責任だとして自分を</div>
+<div class="nav-item" onclick="goSec(12)">また、自分が大切だとは考えず、知性、スピリチュアリティなどの点で、自分は务っ</div>
+<div class="nav-item" onclick="goSec(13)">３．うつにともなう身体的症状</div>
+<div class="nav-item" onclick="goSec(14)">体的変化に本人が驚いて、心気症（カラダの病気に対する過剰な懸念）になり、多く</div>
+<div class="nav-item" onclick="goSec(15)">４．不安と興奮が高まる</div>
+<div class="nav-item" onclick="goSec(16)">妄想には、自分は迫害されているとか、自分は神から特別の才能や洞察力を与え</div>
+<div class="nav-item" onclick="goSec(17)">大半のうつは、精神異常の段階まではいきませんが、悲しみ、つらい思考、身体的</div>
+<div class="nav-item" onclick="goSec(18)">次の質問の答えの大半が「はい」の場合は、うつの確率が非常に高いので、症状</div>
+<div class="nav-item" onclick="goSec(19)">うつから自殺に至るケースも</div>
+<div class="nav-item" onclick="goSec(20)">自殺は、離婚した人、連れ合いに先立たれた人、そして社会的、経済的に高いクラ</div>
+<div class="nav-item" onclick="goSec(21)">女性は、男性と比べて５倍ほど自殺を図る数が多いのですが、しかし実際に死亡し</div>
+<div class="nav-item" onclick="goSec(22)">次にあげる 10 の症状が危険信号</div>
+<div class="nav-item" onclick="goSec(23)">４ 自殺を企てたことがある人、あるいは人に自殺をほのめかしたことがある人（自</div>
+<div class="nav-item" onclick="goSec(24)">②自殺のあとに残された子どもたち、親戚たち、友人たちへの影響が極めて大きい</div>
+<div class="nav-item" onclick="goSec(25)">重大な喪失を経験すると、それが癒されるまでに次に説明するようなグリーフ（深い</div>
+<div class="nav-item" onclick="goSec(26)">第１段階：現実を否認する</div>
+<div class="nav-item" onclick="goSec(27)">第２段階：怒りが出てくる</div>
+<div class="nav-item" onclick="goSec(28)">重大な喪失が受け入れられ、神、その他の人たちへの怒りが出たあとは、かなり</div>
+<div class="nav-item" onclick="goSec(29)">第４段階：真の悲しみが訪れる</div>
+<div class="nav-item" onclick="goSec(30)">友人との死別などの重大な喪失では、成熟した大人でも全プロセスを超えるのに</div>
+<div class="nav-chapter">第２章 何が、うつをひきおこすのか</div>
+<div class="nav-item" onclick="goSec(31)">うつの原因は遺伝子にあるのか？</div>
+<div class="nav-item" onclick="goSec(32)">自分のつらさを自分自身の問題として取り組むよりは、ダメな親、相棒、社会の不遇</div>
+<div class="nav-item" onclick="goSec(33)">子ども時代にうつの根が植えつけられる</div>
+<div class="nav-item" onclick="goSec(34)">この極めて大切な時期に、親は親なりの理想に従い、普通は子どものためになるとい</div>
+<div class="nav-item" onclick="goSec(35)">親は、子どものいろいろな行動パターンを意識的、または無意識にほめたり罰を与え</div>
+<div class="nav-item" onclick="goSec(36)">子どものとき、父親に対して「お父さん、いま私はお父さんのこと、すごく怒ってるん</div>
+<div class="nav-item" onclick="goSec(37)">伝的素因がないかぎり、あるいは自分でも気づいていない大量の抑圧された怒りが</div>
+<div class="nav-item" onclick="goSec(38)">うつの根の大半が、自分自身に向けられた怒り、あるいは罪悪感、または他人に</div>
+<div class="nav-item" onclick="goSec(39)">１ 自己肯定感の欠如</div>
+<div class="nav-item" onclick="goSec(40)">たとえば末っ子は、親離れされることがいやでたまらない母親によって甘やかされ、</div>
+<div class="nav-item" onclick="goSec(41)">自分がかなわないと感じるしっかりしている十代の子どもたちを小ばかにしたりしま</div>
+<div class="nav-item" onclick="goSec(42)">自分の低い自尊心は、実につらい重荷であり、この怒りが、自分に向けられるとう</div>
+<div class="nav-item" onclick="goSec(43)">持つ子どもも、また自分の正常な依存したいという欲求が満たされなかったために自</div>
+<div class="nav-item" onclick="goSec(44)">２ 他者との親密さの欠如</div>
+<div class="nav-item" onclick="goSec(45)">人間は誰でも、内面の深い部分で神との関係を持つことでしか満たすことのできな</div>
+<div class="nav-item" onclick="goSec(46)">こうした痛みの原因のいずれかにとらわれてしまうと、恨みの感情を蓄積することに</div>
+<div class="nav-item" onclick="goSec(47)">あらゆる人格タイプのうち、他のどのタイプよりもうつにかかりやすいタイプ、いわゆ</div>
+<div class="nav-item" onclick="goSec(48)">としているのであり、また世に認められたいという願望と完璧でなければならぬという</div>
+<div class="nav-item" onclick="goSec(49)">強迫性人格は、「過剰に厳格で、生真面目、過剰に良心的、義務感が強く、なかな</div>
+<div class="nav-item" onclick="goSec(50)">１ いつも口先だけで、実際に体では動かずに、けっして子どもの言うことに耳を傾</div>
+<div class="nav-item" onclick="goSec(51)">程度の強迫性は、人生で有益であり、これによって勤勉になったり、良心的で道徳的</div>
+<div class="nav-item" onclick="goSec(52)">11 感情ではなく事実に興味がある</div>
+<div class="nav-item" onclick="goSec(53)">の良心は、親から教えられたことや、教師の意見など、多くの環境の影響によって形</div>
+<div class="nav-item" onclick="goSec(54)">「偽りの罪悪感」に対する治療は、なぜ本人が罪悪感を持つようになったかを理解し、</div>
+<div class="nav-item" onclick="goSec(55)">演技性人格障害の男性・女性は、非常に感情的で、外向的、ドラマティック、衝撃的、</div>
+<div class="nav-item" onclick="goSec(56)">１ 外向的でいっしょにいて楽しいと言われる</div>
+<div class="nav-item" onclick="goSec(57)">ストレスはうつを加速させる</div>
+<div class="nav-item" onclick="goSec(58)">●怒りが自分の内面に向かっている</div>
+<div class="nav-item" onclick="goSec(59)">たいていの場合、怒りは、うつの人の顔の表情、声、ジェスチャーなどに明らかに表</div>
+<div class="nav-item" onclick="goSec(60)">●自己イメージが傷つけられる</div>
+<div class="nav-item" onclick="goSec(61)">●ＰＴＳＤ（心的外傷後ストレス障害）</div>
+<div class="nav-item" onclick="goSec(62)">●偽りの罪悪感を持つ</div>
+<div class="nav-item" onclick="goSec(63)">真の罪悪感は、道徳的、倫理的あるいは宗教上の罪を犯した人の正常な反応で</div>
+<div class="nav-item" onclick="goSec(64)">●誤った見方</div>
+<div class="nav-item" onclick="goSec(65)">とか、自分自身の死と向き合うなど、私たちが対処しなければならない十分すぎるスト</div>
+<div class="nav-item" onclick="goSec(66)">うつがおこるメカニズムを解明する</div>
+<div class="nav-item" onclick="goSec(67)">●学習によるパターン化</div>
+<div class="nav-item" onclick="goSec(68)">●自分で自分を罰する人</div>
+<div class="nav-item" onclick="goSec(69)">●つらい思考がエスカレートする人</div>
+<div class="nav-item" onclick="goSec(70)">逆にして、人からの肯定的な評価を重要視するようにし、たまにしか出ない否定的な</div>
+<div class="nav-item" onclick="goSec(71)">たとえば、うつになると学校を休むことが許されて、余分に関心をかけてもらえるこ</div>
+<div class="nav-item" onclick="goSec(72)">●夢をみないとうつになる</div>
+<div class="nav-item" onclick="goSec(73)">●思春期のうつ</div>
+<div class="nav-item" onclick="goSec(74)">赤ちゃんを産むことの恐れが、母親にとって受け入れがたい場合、そしてこの感情</div>
+<div class="nav-item" onclick="goSec(75)">自分で設定した目標にけっして到達できないと感じている強迫的な人には、とくに顕</div>
+<div class="nav-item" onclick="goSec(76)">●高齢化とうつ</div>
+<div class="nav-item" onclick="goSec(77)">対照的に、人生を肯定的にとらえ、ありのままに自分に自己評価を感じている人は、</div>
+<div class="nav-item" onclick="goSec(78)">一方、年をとると、脳細胞の一部が減少していくために羞恥心が減っていき、罪悪</div>
+<div class="nav-item" onclick="goSec(79)">関心をひくためのうつは、伴侶や友人の喪失につながることが多く、さらなる深刻な</div>
+<div class="nav-item" onclick="goSec(80)">●仮面うつ</div>
+<div class="nav-item" onclick="goSec(81)">●生活の変化は想像以上のストレスとなり、うつを招く</div>
+<div class="nav-item" onclick="goSec(82)">変化適応ストレスチャート</div>
+<div class="nav-item" onclick="goSec(83)">配偶者の死</div>
+<div class="nav-item" onclick="goSec(84)">自分の事故、病気</div>
+<div class="nav-item" onclick="goSec(85)">仲たがいした夫婦の仲裁</div>
+<div class="nav-item" onclick="goSec(86)">家族の健康状態の変化</div>
+<div class="nav-item" onclick="goSec(87)">財政状況の変化</div>
+<div class="nav-item" onclick="goSec(88)">義理の家族とのトラブル</div>
+<div class="nav-item" onclick="goSec(89)">10/20</div>
+<div class="nav-item" onclick="goSec(90)">学校が始まる、終わるとき</div>
+<div class="nav-item" onclick="goSec(91)">生活状況の変化</div>
+<div class="nav-item" onclick="goSec(92)">自分の癖、習慣をなおすとき</div>
+<div class="nav-item" onclick="goSec(93)">上司とのトラブル</div>
+<div class="nav-item" onclick="goSec(94)">教会活動の変化</div>
+<div class="nav-item" onclick="goSec(95)">社会活動の変化</div>
+<div class="nav-item" onclick="goSec(96)">10,000 ドル以下の住宅ローン、その他のローン</div>
+<div class="nav-item" onclick="goSec(97)">睡眠習慣の変化</div>
+<div class="nav-item" onclick="goSec(98)">家族の集まる機会の変化</div>
+<div class="nav-item" onclick="goSec(99)">食生活の変化</div>
+<div class="nav-item" onclick="goSec(100)">クリスマス</div>
+<div class="nav-item" onclick="goSec(101)">軽度の法律違反</div>
+<div class="nav-item" onclick="goSec(102)">精神疾患の場合、遺伝的背景は,</div>
+<div class="nav-item" onclick="goSec(103)">26 他人に意地悪されていると感じる</div>
+<div class="nav-item" onclick="goSec(104)">●甲状腺機能低下症とうつ</div>
+<div class="nav-item" onclick="goSec(105)">●低血糖がうつの原因？</div>
+<div class="nav-item" onclick="goSec(106)">●生体アミンのアンバランス</div>
+<div class="nav-item" onclick="goSec(107)">脳内生体アミンに乱れがあれば、うつがおこり、また内分泌異常がおこる可能性が</div>
+<div class="nav-item" onclick="goSec(108)">ルチゾールレベルが上がると、抗体を作り出すリンパ球（白血球の１つ）が抑えられま</div>
+<div class="nav-item" onclick="goSec(109)">電解質は、うつ要因であるノルエピネフリンなどの神経伝達物質の合成、保存、放</div>
+<div class="nav-item" onclick="goSec(110)">ウィルスによる比較的軽度の呼吸器系感染症を持っている場合でも、気持ちが落ち</div>
+<div class="nav-chapter">第３章 どうやって、うつを克服するか</div>
+<div class="nav-item" onclick="goSec(111)">12/20</div>
+<div class="nav-item" onclick="goSec(112)">精神科医として私たちは、患者が「できない」という言葉を使うと悲しい気持ちでいっ</div>
+<div class="nav-item" onclick="goSec(113)">ば、現実を避けることをやめ、自分をあざむくことをやめて、真実に生きられるように</div>
+<div class="nav-item" onclick="goSec(114)">☆「７つの習慣」に従う人は、うつを克服したあとにうつが戻ることはまずありませ</div>
+<div class="nav-item" onclick="goSec(115)">私たちは、自己中心的な性質を持って生まれているので、時々間違ったこと（うつや</div>
+<div class="nav-item" onclick="goSec(116)">心に相当悪くプログラミングされた場合は、正しい方向にプログラムし直すためには、</div>
+<div class="nav-item" onclick="goSec(117)">６ 自分に満足をもたらす、決まった日課をする（仕事、遊び、家事、その他の活動な</div>
+<div class="nav-item" onclick="goSec(118)">13/20</div>
+<div class="nav-item" onclick="goSec(119)">から④によって、収入が減ることになっても（多くの家庭がそうでしょうか）、そう</div>
+<div class="nav-item" onclick="goSec(120)">⑥そして、時間が少しでも余ったなら、才能、特技を使って人のために役立つことを</div>
+<div class="nav-item" onclick="goSec(121)">肉体面で（たとえば家事を手伝うとか）、心で（本をプレゼントしたり、相談にのって</div>
+<div class="nav-item" onclick="goSec(122)">「７つの習慣」は、熱心に（いい加減な気持ちでなく）実践する人には、数ヶ月のうち</div>
+<div class="nav-item" onclick="goSec(123)">その怒りが適切か、不適切かを分析すれば、怒りによく対処でき、なぜ自分が怒り</div>
+<div class="nav-item" onclick="goSec(124)">①自分の自己中心的な欲求が満たされないゆえの怒り</div>
+<div class="nav-item" onclick="goSec(125)">②完全主義的期待が満たされない場合に出てくる怒り</div>
+<div class="nav-item" onclick="goSec(126)">③疑惑からでる怒り</div>
+<div class="nav-item" onclick="goSec(127)">強迫性人格、完全主義者の人が、過剰に厳しい見方で人を見ていることに気づけ</div>
+<div class="nav-item" onclick="goSec(128)">２ 怒りを口に出してみる</div>
+<div class="nav-item" onclick="goSec(129)">でなく、私たちが真実、すなわち自分が本当に怒っていることに気づくのに役立ち</div>
+<div class="nav-item" onclick="goSec(130)">③私たちが怒りをうまく口に出すことができれば、相手に問題を自覚させることがで</div>
+<div class="nav-item" onclick="goSec(131)">んとコントロールしていて、(c)責任もって怒りに対処しているために、以前にもま</div>
+<div class="nav-item" onclick="goSec(132)">少しでも怒りを感じたときは、すべてその怒りを口に出すようにしなさいと言っている</div>
+<div class="nav-item" onclick="goSec(133)">になるなら、上司にではなく、だれか別の人に話を聞いてもらって、上司を許すための</div>
+<div class="nav-item" onclick="goSec(134)">たが言ったことで怒りを感じているけれど、何とか話し合って解決したいので、時間を</div>
+<div class="nav-item" onclick="goSec(135)">基本的に怒りと許しの対象である相手は、５つのグループに分けることができま</div>
+<div class="nav-item" onclick="goSec(136)">がもし本当に私を見守っていてくださるというのなら、あの状況だって防げたはず</div>
+<div class="nav-item" onclick="goSec(137)">３ 報復したい、という気持ちを手放す</div>
+<div class="nav-item" onclick="goSec(138)">15/20</div>
+<div class="nav-item" onclick="goSec(139)">患者がうつ状態で、不眠や自殺願望を訴えてオフィスにやってくると、私たちは、３</div>
+<div class="nav-item" onclick="goSec(140)">軽度のうつなら、薬は高価ですし、口が渇く、車の運転時に反応が鈍るなど、軽度</div>
+<div class="nav-item" onclick="goSec(141)">●入院の利点、短所</div>
+<div class="nav-item" onclick="goSec(142)">１ 依存性の強い人のなかには、うつのふりをしていることで、さまざまな責任から</div>
+<div class="nav-item" onclick="goSec(143)">●うつの処方薬</div>
+<div class="nav-item" onclick="goSec(144)">患者の健康への悪影響の可能性があるし、多くの場合、これらはほんの一時的な軽</div>
+<div class="nav-item" onclick="goSec(145)">●不安の症状</div>
+<div class="nav-item" onclick="goSec(146)">不安は、普通、自分の思考、感情、動機の真実を見つめることへの恐れからおこる</div>
+<div class="nav-item" onclick="goSec(147)">ちは、現在の状況に反応しているのみならず、また同時に子ども時代の抑圧された感</div>
+<div class="nav-item" onclick="goSec(148)">16/20</div>
+<div class="nav-item" onclick="goSec(149)">どうすれば幸福な一生を送ることができるのか？</div>
+<div class="nav-item" onclick="goSec(150)">うつを克服するには、「自分の行動を変えなくちゃ」と自分に言い聞かせるだけでは、</div>
+<div class="nav-item" onclick="goSec(151)">は、朝早く起きる、②社交づきあいを増やす、③しなくてはならない、そしてやればい</div>
+<div class="nav-item" onclick="goSec(152)">妻をデートに連れ出す、あるいは単に帰宅の道順を変えてみる、新しい友達を作る、</div>
+<div class="nav-item" onclick="goSec(153)">17/20</div>
+<div class="nav-item" onclick="goSec(154)">友人とは暖かく、懸念し、気づかい、問題をいかに克服したかを心を開いて分かち</div>
+<div class="nav-item" onclick="goSec(155)">的－自分の意見を言うべきときに言わないで、感情を内向させ、苦々しくなる－なの</div>
+<div class="nav-item" onclick="goSec(156)">甘えの欲求が多い一方で、ちょうど親が彼のニーズにそえなかったように、人もどう</div>
+<div class="nav-item" onclick="goSec(157)">人に近づけるということ、いつも失望させる人ばかりではないことを、学ばなくてはな</div>
+<div class="nav-item" onclick="goSec(158)">うつの人は、怒りを持っていることが多いのですが、しかし大半がそれを認識してい</div>
+<div class="nav-item" onclick="goSec(159)">洞察は人がうつを克服する助けになりますが、一方、健全な洞察の度を越して内省</div>
+<div class="nav-item" onclick="goSec(160)">ときに、自分が当然あるべき姿になっていると信じているのであり、ある意味で、彼は</div>
+<div class="nav-item" onclick="goSec(161)">18/20</div>
+<div class="nav-item" onclick="goSec(162)">人を助けることに焦点を当ててみると、それが結局は自分の問題と向き合う助けと</div>
+<div class="nav-item" onclick="goSec(163)">罪悪感が、真の罪悪感なら、それをどこか安全な場で告白するか、または人との関</div>
+<div class="nav-item" onclick="goSec(164)">うつは、ひとつには働きすぎによってもたらされているため、労働時間を削るなど、</div>
+<div class="nav-item" onclick="goSec(165)">スの量を操作するのに、個人ができることは実に多くあり、それによってうつが相当に</div>
+<div class="nav-item" onclick="goSec(166)">反応するかわりに正しく適切に対応することを学ぶと、自分のこと、状況の対処の仕</div>
+<div class="nav-item" onclick="goSec(167)">自分のことが低くしか見られなければ、自分のことばかりで手一杯で、人には何もして</div>
+<div class="nav-item" onclick="goSec(168)">どうやって適切なレベルに自己イメージを高めることができるか？</div>
+<div class="nav-item" onclick="goSec(169)">Ｄ 精神病</div>
+<div class="nav-item" onclick="goSec(170)">Ｅ 生物化学的うつ</div>
+  </div>
+</div>
+<div id="main">
+  <div id="header">
+    <button id="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <h1>「うつ」をやめれば、楽になる</h1>
+    <div class="subtitle">やっかいな心の荷物をおろしなさい</div>
+    <div class="meta">フランク・ミナース＋ポール・メイヤー 著</div>
+  </div>
+  <div id="top-nav">
+    <button class="top-nav-btn active" id="btn-index" onclick="showTab('index')">目次モード</button>
+    <button class="top-nav-btn" id="btn-read" onclick="showTab('read')">通読モード</button>
+    <button class="top-nav-btn" onclick="expandAll()">全展開</button>
+    <button class="top-nav-btn" onclick="collapseAll()">全折畳</button>
+    <a href="top.html" class="top-nav-btn">← 本棚へ</a>
+    <span id="progress-area">171節</span>
+  </div>
+  <div id="index-panel-scroll">
+    <div id="splash">
+      <h2>「うつ」をやめれば、楽になる</h2>
+      <p class="sp-sub">やっかいな心の荷物をおろしなさい</p>
+      <div class="stats"><div class="stat"><div class="num">171</div><div class="lbl">節</div></div></div>
+      <button class="start-btn" onclick="startReading()">読み始める</button>
+    </div>
+    <div id="content-area" class="hidden">
+<div class="section" id="sec-0">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§1</span>
+    <span class="sec-title">やっかいな心の荷物をおろ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>しなさい</p><p>著者：フランク・ミナース＋ポール・メイヤー 訳：水澤都加佐</p></div>
+</div>
+<div class="section" id="sec-1">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§2</span>
+    <span class="sec-title">「幸福」は選びとるものです――著者まえがきにかえて</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>私は今、ダラス・フォートワース空港の待合エリア。</p><p>ANGST とは、何とも言葉に表しがたい内面の不安のことをいいますが、現在、自分</p><p>のまわりの人々の状況を考えると、ANGST を感じる。大多数の人々は、私が考えて</p><p>いる内なる平安や喜びを持っていない。多くの人にとって、「平安と幸福よりも、不幸と</p><p>うつを選ぶ人がいる」。自分では気がつかないまま、いろいろな理由によってそうして</p><p>いる。多くの人々は、幸福を選ぶことができるにもかかわらず、それを手に入れていな</p><p>い。その理由は、幸福を誤ったところに求めているから。</p><p>幸福は、ものに求めても見出せません。性的なふれあいによって自分を満たそうと</p><p>しても、束の間の快楽と長いつらい絶望に終わるだけ。会社、政治、家庭内ですらも</p><p>パワーのある位置を得ることにやりがいを求めます。しかしうまくいきません。</p><p>この本は、おもに２つの課題を解決します。</p><p>まず、読者にうつを手放して幸せを選ぶように説得すること。</p></div>
+</div>
+<div class="section" id="sec-2">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§3</span>
+    <span class="sec-title">２番目の課題は、読者に愛情、幸福、平安を得るための正しい人生の歩み方を提</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>案すること。</p></div>
+</div>
+<div class="section" id="sec-3">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§4</span>
+    <span class="sec-title">皆さんに幸福な人生をすごしてほしいと願い、それを得るための、私が信じる正し</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>い道を提案することのみ。それを選んで実践するかどうかは、あなた次第。</p></div>
+</div>
+<div class="chapter-header">第１章 うつの本当の正体は何か</div>
+<div class="section" id="sec-4">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§5</span>
+    <span class="sec-title">どんな人でもうつになる可能性がある</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>現在、アメリカ人の 20 人に１人が、うつという診断。もちろんもっと多くの人が、うつ</p><p>状態にありますが、治療や援助を受けていません。</p><p>うつは、自殺のおもな原因。うつは、男性よりも女性に２倍多く見られ、また経済的</p><p>にクラスが高い人々には３倍多く見られます。</p></div>
+</div>
+<div class="section" id="sec-5">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§6</span>
+    <span class="sec-title">精神科医の立場では、いわゆる「臨床的なうつ」に陥っている人（以下、単にうつと</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>表記する）、つまりうつ症状ゆえに生理機能の症候が現れている人たちを治療する。</p><p>実は、人生のある時期、ほとんどだれもがうつを経験する。深刻なうつを患っている</p><p>人でも、何とかつらさから抜け出る道、希望はある。うつは、普通正しい治療と援助に</p><p>よって治ります。生理的理由によっておこるうつでさえも、治るまではいかなくても、大</p><p>半は正しい処方薬とカウンセリングでコントロールできます。現在つらい痛みを経験し</p></div>
+</div>
+<div class="section" id="sec-6">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§7</span>
+    <span class="sec-title">ている人が、楽になれるよう、そしてまただれもが人生でかならず直面する試練やスト</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>レスにも、できるだけその痛みが軽くあってほしいという願いから、本書を執筆した。</p></div>
+</div>
+<div class="section" id="sec-7">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§8</span>
+    <span class="sec-title">うつになるとどんな症状が現れるのか？</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>うつは、存在のすべて―身体、感情、スピリチュアリティ―に影響をおよぼす病気。</p><p>うつの感情的な痛みは、骨折による身体的な痛みよりもはるかに深刻。うつの痛みは、</p><p>1/20</p><p>うつの症状は、臨床的に見て大きく５つ。悲しい感情、つらい思考、身体的諸症状、</p><p>不安、そして妄想的思考。</p></div>
+</div>
+<div class="section" id="sec-8">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§9</span>
+    <span class="sec-title">１．悲しい感情につきまとわれる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ふさぎこんだ顔つきで、落ち込んで見えます。また、泣きたい気分になりがち。視線</p><p>は、下を向いて悲しそう。口元は下がり、額はしわを寄せています。疲れて、がっかり</p><p>したように見え、顔つきは緊迫した感じ。</p><p>うつが進行すると、しだいに身だしなみに興味を示さなくなります。男性はひげを剃</p><p>らなくなり、女性は化粧をしなくなります。</p></div>
+</div>
+<div class="section" id="sec-9">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§10</span>
+    <span class="sec-title">うつの多くの人が、「にこにこうつ」として知られる状況（内面の悲しい感情をかくす</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ために不適当に笑顔を見せる）を持っています。</p></div>
+</div>
+<div class="section" id="sec-10">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§11</span>
+    <span class="sec-title">２．つらい思考に襲われる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>うつの人は、感情的な痛みを経験。何度もくりかえして内省的に過去のあやまちに</p><p>関して、自分を責めます。過去のうまくいかなかったことも、それが事実であれ、想像</p><p>上のことであれ、あらゆる事柄を過剰に心配します。問題がささいなことでしかなくて</p></div>
+</div>
+<div class="section" id="sec-11">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§12</span>
+    <span class="sec-title">も、あたかも大問題であるかのように評価し、それが全部自分の責任だとして自分を</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>責めます。</p></div>
+</div>
+<div class="section" id="sec-12">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§13</span>
+    <span class="sec-title">また、自分が大切だとは考えず、知性、スピリチュアリティなどの点で、自分は务っ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ていると感じています。</p><p>多くの場合、まわりの人たちからはサポートがなく、空虚で孤独だと感じています。</p><p>こうしたつらい痛みをともなう思考は、罪悪感が中心。うつ患者の場合は、擬似罪</p><p>悪感が大きな問題。うつの人のつらさは、個人のコントロールのおよばない行動や出</p><p>来事の責任を取るところからきています。圧倒的な力量不足を感じており、自分は価</p><p>値のない、箸にも棒にもかからないダメな人間だと思いこんでいます。</p><p>人を避けるようになり、一人にしてほしいと願う。ユーモアのセンスも失われ、なか</p><p>なか決心がつかなくなります。そしてしだいに自殺のことばかりが頭を占める。</p></div>
+</div>
+<div class="section" id="sec-13">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§14</span>
+    <span class="sec-title">３．うつにともなう身体的症状</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>カラダの動きが減り、睡眠が影響を受ける。最初では、睡眠が短くなるより、眠りす</p><p>ぎることが多い。食欲も変化し、過食かまったく食べなくなり、それによる体重の減少、</p><p>または増加が見られます。</p><p>女性では、生理が何ヶ月も止まったり、不順になったりします。</p><p>セックスへの興味が薄れる、緊張からくる頭痛、頭部の張りつめた感じ。こうした身</p></div>
+</div>
+<div class="section" id="sec-14">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§15</span>
+    <span class="sec-title">体的変化に本人が驚いて、心気症（カラダの病気に対する過剰な懸念）になり、多く</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>がガンや低血糖、栄養障害だと思いこんだりします。</p></div>
+</div>
+<div class="section" id="sec-15">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§16</span>
+    <span class="sec-title">４．不安と興奮が高まる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>不安のため、普段よりイライラしやすくなります。またうつがひどくなると、興奮も高</p><p>まります。緊張して、じっと座っていることができません。</p></div>
+</div>
+<div class="section" id="sec-16">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§17</span>
+    <span class="sec-title">妄想には、自分は迫害されているとか、自分は神から特別の才能や洞察力を与え</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>られたと考えるなど、誇大妄想的思いこみ。実際にはない声が聞こえる幻聴や、人に</p><p>は見えないものを見る幻視。</p><p>2/20</p><p>せます。１，２ヵ月の入院が必要。</p></div>
+</div>
+<div class="section" id="sec-17">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§18</span>
+    <span class="sec-title">大半のうつは、精神異常の段階まではいきませんが、悲しみ、つらい思考、身体的</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>症状、不安（または興奮）をともないます。</p><p>きちんとした専門の精神療法に積極的に取り組めば、治ります。</p><p>これに加えて妄想や幻視、幻聴があれば、精神病的うつと言えます。精神病性のう</p><p>つも、早期に発見されれば、かなり治療は難しいですが、普通は治ります。</p></div>
+</div>
+<div class="section" id="sec-18">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§19</span>
+    <span class="sec-title">次の質問の答えの大半が「はい」の場合は、うつの確率が非常に高いので、症状</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>が悪化しないうちに専門家のアドバイスを受けてください。</p><p>１ １年前と比べて、よく泣きたくなる気分になる。</p><p>２ 気分が滅入って悲しい。</p><p>３ 希望がなく、ほとんどいつも無力感にとらわれている。</p><p>４ やる気、動機（モティベーション）が、ほとんどなくなってしまった。</p><p>５ かつては楽しめたものへの興味が、失せてしまった。</p><p>６ 生きることは価値がないという考えが、よく浮かぶ。</p><p>７ 睡眠パターンが最近変わって、極端に多く、あるいは少なくなった。</p><p>８ 食欲がなくなっている。</p><p>９ しょっちゅうイライラする。</p><p>10 よくそわそわした感じになる。</p><p>11 エネルギーが、なかなか湧いてこない。</p><p>12 朝は、１日のうちでも一番気分が滅入る。</p><p>13 よく過去のことを思い巡らしている。</p><p>14 鏡に映った自分は、悲しそうだ。</p><p>15 自己否定感を持ってしまう。</p><p>16 過去のことを気にしすぎる。</p><p>17 １年前より多くの身体症状（頭痛、胃の痛み、便秘、動悸など）がある。</p><p>18 かつてのように仕事がうまくできていないと、まわりの人は気づいていると思う。</p></div>
+</div>
+<div class="section" id="sec-19">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§20</span>
+    <span class="sec-title">うつから自殺に至るケースも</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>うつは、自殺の最大原因。世界中で、自殺は増加の一途をたどっており、年間 50 万</p><p>件が報告されている。人間だけが自殺をする。</p><p>自殺をする人の大半が、だれかにそのことをほのめかしています。</p></div>
+</div>
+<div class="section" id="sec-20">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§21</span>
+    <span class="sec-title">自殺は、離婚した人、連れ合いに先立たれた人、そして社会的、経済的に高いクラ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>スの人、また独身の大人の男性に多く見られます。</p></div>
+</div>
+<div class="section" id="sec-21">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§22</span>
+    <span class="sec-title">女性は、男性と比べて５倍ほど自殺を図る数が多いのですが、しかし実際に死亡し</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>てしまうのは、男性のほうが２倍も多い。この理由は、男性のほうがより確実な自殺の</p><p>方法を選ぶのと、人を操作するために自殺を用いることが女性ほど多くないから。</p></div>
+</div>
+<div class="section" id="sec-22">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§23</span>
+    <span class="sec-title">次にあげる 10 の症状が危険信号</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>3/20</p><p>２ 強烈な絶望感を感じている人。</p><p>３ 45 歳を過ぎた単身の白人男性。</p></div>
+</div>
+<div class="section" id="sec-23">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§24</span>
+    <span class="sec-title">４ 自殺を企てたことがある人、あるいは人に自殺をほのめかしたことがある人（自</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>殺をする人の 10 人のうち 8 人は、はっきりした警告を出している）。</p><p>５ 深刻な健康問題を抱えている人。</p><p>６ 何らかの重要な喪失（配偶者との死別、失業など）を経験していること。</p><p>７ 具体的に自殺の計画を立てている人。プロセスは、自殺の考えがよぎり、自殺</p><p>を真剣に考えるようになり、実際に実行する。</p><p>８ 慢性的な自己破壊行為（アルコールや薬物の乱用など）をする人。</p><p>９ 強烈な達成のニーズがある人。</p><p>10 過去半年の間にショックな出来事に遭遇した人。</p><p>自殺は、非常に破壊的な行為です。</p><p>①自殺を図る人の多くが、ものごとを現実的に見ることができずにいること。</p></div>
+</div>
+<div class="section" id="sec-24">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§25</span>
+    <span class="sec-title">②自殺のあとに残された子どもたち、親戚たち、友人たちへの影響が極めて大きい</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>こと。</p><p>③自殺は、他殺が罪であるように罪であるということ。</p></div>
+</div>
+<div class="section" id="sec-25">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§26</span>
+    <span class="sec-title">重大な喪失を経験すると、それが癒されるまでに次に説明するようなグリーフ（深い</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>悲しみ）の５段階を全部通ります。</p></div>
+</div>
+<div class="section" id="sec-26">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§27</span>
+    <span class="sec-title">第１段階：現実を否認する</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>自分の身におこっていることを信じないことで、これは、通常長くはつづきません。</p></div>
+</div>
+<div class="section" id="sec-27">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§28</span>
+    <span class="sec-title">第２段階：怒りが出てくる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>死んだその人に怒りを感じたりします。これは、親の死や離婚を経験した子どもに</p><p>は</p><p>かならずおこる。</p></div>
+</div>
+<div class="section" id="sec-28">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§29</span>
+    <span class="sec-title">重大な喪失が受け入れられ、神、その他の人たちへの怒りが出たあとは、かなり</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>の罪悪感を感じる。「ああすれば、この喪失はおこらなかっただろうに」という想いを</p><p>禁じ得ない。</p></div>
+</div>
+<div class="section" id="sec-29">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§30</span>
+    <span class="sec-title">第４段階：真の悲しみが訪れる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>重大な喪失を体験する場合はつねに、男女ともにしっかり泣くことが大切。思いき</p><p>り</p><p>泣いてしまえばよい。</p></div>
+</div>
+<div class="section" id="sec-30">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§31</span>
+    <span class="sec-title">友人との死別などの重大な喪失では、成熟した大人でも全プロセスを超えるのに</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>３～</p><p>６週間かかります。</p></div>
+</div>
+<div class="chapter-header">第２章 何が、うつをひきおこすのか</div>
+<div class="section" id="sec-31">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§32</span>
+    <span class="sec-title">うつの原因は遺伝子にあるのか？</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>4/20</p></div>
+</div>
+<div class="section" id="sec-32">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§33</span>
+    <span class="sec-title">自分のつらさを自分自身の問題として取り組むよりは、ダメな親、相棒、社会の不遇</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>のせいにしたほうがはるかに楽。</p><p>１ これまでの科学的研究によると、女性は、明らかに男性よりうつになりやすい。</p><p>この性差要因は、遺伝子レベルにあるらしい。</p><p>２ うつの人の血縁関係者は、うつになる確率が高い。</p></div>
+</div>
+<div class="section" id="sec-33">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§34</span>
+    <span class="sec-title">子ども時代にうつの根が植えつけられる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>大人の行動パターンの約 85％は、６歳までに深く刻み込まれる。この大切な人生最</p><p>初の６年で、子どもは親の行動パターン、とくに同性の親の行動パターンをコピーする。</p></div>
+</div>
+<div class="section" id="sec-34">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§35</span>
+    <span class="sec-title">この極めて大切な時期に、親は親なりの理想に従い、普通は子どものためになるとい</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>う良い動機をもっているのですが、しかしまずいやり方で子どもを型にはめていきます。</p></div>
+</div>
+<div class="section" id="sec-35">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§36</span>
+    <span class="sec-title">親は、子どものいろいろな行動パターンを意識的、または無意識にほめたり罰を与え</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>たりします。</p></div>
+</div>
+<div class="section" id="sec-36">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§37</span>
+    <span class="sec-title">子どものとき、父親に対して「お父さん、いま私はお父さんのこと、すごく怒ってるん</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>だけど、話を聞いてくれる？」と言ったことが、はたしてあったでしょうか？ おそらく怒</p><p>りを伝えようとすると、拒否や罰を受けたために、怒りを恐れるようになってしまってい</p><p>る。そうなると、「まあ、どうでもいいや」と怒りをごまかすように学習してしまいます。そ</p><p>して怒りを抑圧すると、かわりに犬を蹴ったり、兄弟ゲンカをするようになります。その</p><p>子が、35 年後、昇進の機会を逃したとします。もちろん正常な怒りを経験しますが、そ</p><p>ういう感情は抑圧するよう３歳の時に学んでいるので、怒りに気づきません。無意識</p><p>に上司のことを幾晩も恨みます。</p><p>次第にセロトニンとノルエピネフリンが、脳内アミンから枯渇していき、不眠、倦怠感、</p><p>食欲低下、その他多くのうつの症状が出てきます。もしすべてのクリスチャンが、聖書</p></div>
+</div>
+<div class="section" id="sec-37">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§38</span>
+    <span class="sec-title">伝的素因がないかぎり、あるいは自分でも気づいていない大量の抑圧された怒りが</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ないかぎりは、うつにおちいる人は一人もいなくなる。</p></div>
+</div>
+<div class="section" id="sec-38">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§39</span>
+    <span class="sec-title">うつの根の大半が、自分自身に向けられた怒り、あるいは罪悪感、または他人に</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>向けられた行き場のない怒りや恨み。こうした恨みは、普通 無意識（つまり気づいて</p><p>いない）のものです。なぜなら、それを自分で認めることは恥であり、怖いと思ってい</p><p>るから。</p></div>
+</div>
+<div class="section" id="sec-39">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§40</span>
+    <span class="sec-title">１ 自己肯定感の欠如</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>自尊心が低いこと。たとえば成功した人の二世。親は、第一子に多大な期待をかけ</p><p>る。そのためか長子は、職業の面では成功していることが多いのですが、本人は、そ</p><p>のことを少しも楽しんでいないことが多い。</p></div>
+</div>
+<div class="section" id="sec-40">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§41</span>
+    <span class="sec-title">たとえば末っ子は、親離れされることがいやでたまらない母親によって甘やかされ、</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>過保護になる。このような末っ子は、アルコールや薬物を乱用することで、仲間に合</p><p>わせようとします。もはや母親には手や口を出してほしくないので、今度は、母親のか</p><p>わりに考えてくれる役割を仲間に求める。しかし自尊心の低さをカバーするために、</p></div>
+</div>
+<div class="section" id="sec-41">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§42</span>
+    <span class="sec-title">自分がかなわないと感じるしっかりしている十代の子どもたちを小ばかにしたりしま</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>す。</p></div>
+</div>
+<div class="section" id="sec-42">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§43</span>
+    <span class="sec-title">自分の低い自尊心は、実につらい重荷であり、この怒りが、自分に向けられるとう</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>5/20</p><p>過剰に厳しい親もまた、子どもの自尊心が低くなる要因。子どもは、親は正しく、自</p><p>分が完璧でないのは自分のせいだと思ってしまう。</p></div>
+</div>
+<div class="section" id="sec-43">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§44</span>
+    <span class="sec-title">持つ子どもも、また自分の正常な依存したいという欲求が満たされなかったために自</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>尊心が低く、うつになりやすい。</p></div>
+</div>
+<div class="section" id="sec-44">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§45</span>
+    <span class="sec-title">２ 他者との親密さの欠如</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>親密な友情を築くことは、何らかのトラブルもともなう。でもたまに友人と衝突するこ</p><p>とは、一貫した絶え間ない孤独の痛みよりはるかにまし。</p><p>孤独は、鬱と同じように、自分で選択した結果。孤独を味わう人は、「必要な努力を</p><p>しない」ことを選んでいる（たまに拒否されることも含めて）。でも自分自身の無責任さ</p><p>に気づかないために、人を責める。この防除メカニズムは、「投影」とよばれる。彼ら</p><p>は、自分自身の拒否行為を他人に、スクリーンに写すかのように他人に投影する。</p><p>孤独は、鬱とは同義語ではないにしても、たしかに人をうつに陥れる要因。</p></div>
+</div>
+<div class="section" id="sec-45">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§46</span>
+    <span class="sec-title">人間は誰でも、内面の深い部分で神との関係を持つことでしか満たすことのできな</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>い空虚さを持っています。たとえば自分自身の罪深い状況や、清浄にないたい願望</p><p>など。</p></div>
+</div>
+<div class="section" id="sec-46">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§47</span>
+    <span class="sec-title">こうした痛みの原因のいずれかにとらわれてしまうと、恨みの感情を蓄積することに</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>なり、そして結局はうつにつながっていきます。</p></div>
+</div>
+<div class="section" id="sec-47">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§48</span>
+    <span class="sec-title">あらゆる人格タイプのうち、他のどのタイプよりもうつにかかりやすいタイプ、いわゆ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>る「いい子」たち。自分を犠牲にして、頑張りすぎることが多く、まじめでそしてかなり宗</p><p>教的なタイプ。精神科医は、このタイプを強迫性人格と呼ぶ。一般的には、完全主義</p><p>と言われ、Ａ型人格、仕事中毒、献身的召使いなど。</p><p>多くの人は驚く。勤勉でなくわがままで、あまり社会や人のために役に立つとは考</p></div>
+</div>
+<div class="section" id="sec-48">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§49</span>
+    <span class="sec-title">としているのであり、また世に認められたいという願望と完璧でなければならぬという</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>欲求を、満たす手段としてひたすら働いている。</p></div>
+</div>
+<div class="section" id="sec-49">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§50</span>
+    <span class="sec-title">強迫性人格は、「過剰に厳格で、生真面目、過剰に良心的、義務感が強く、なかな</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>かリラックスできない」人の診断名。</p></div>
+</div>
+<div class="section" id="sec-50">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§51</span>
+    <span class="sec-title">１ いつも口先だけで、実際に体では動かずに、けっして子どもの言うことに耳を傾</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>けない。</p><p>２ 子どもに完全なエチケットとマナーを期待する。ミスを許さない。</p><p>３ 内向的で、他人と健全にやりとりをする姿を子どもに見せない。</p><p>４ まわりの人に極めて批判的。</p><p>５ 実にいやみな人間として振舞う。</p><p>６ 夫、子どもを支配する。</p><p>７ 他の子どもよりも、つねにすぐれていることを要求する。</p><p>6/20</p><p>９ 子どもに父親を尊敬するように言って、実際は夫をないがしろにする。</p><p>10 子どもに、12 ヵ月めで完全におむつがとれることを期待する。</p><p>11 将来のための貯金と称して、常識を越えた守銭奴になる。</p><p>12 規制をごく厳格にし、例外をけっして認めない。</p><p>13 子どもの性的関心を、恥ずかしいことだと決めつける。</p><p>強迫的になる子どもの親は、どうやらこうしたルールに従っているよう。しかし、ある</p></div>
+</div>
+<div class="section" id="sec-51">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§52</span>
+    <span class="sec-title">程度の強迫性は、人生で有益であり、これによって勤勉になったり、良心的で道徳的</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>な行動をとることが可能になるという側面もある。</p></div>
+</div>
+<div class="section" id="sec-52">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§53</span>
+    <span class="sec-title">11 感情ではなく事実に興味がある</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>真の罪悪感とは、自分が神の道徳律を犯したという「内なる不快な気づき」。私たち</p></div>
+</div>
+<div class="section" id="sec-53">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§54</span>
+    <span class="sec-title">の良心は、親から教えられたことや、教師の意見など、多くの環境の影響によって形</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>成される。</p><p>神が間違っていると認めないものに対しても、良心がとがめられる。これが誤った</p><p>罪悪感、つまり神や神の言葉が、まったく非難しないものに対して罪悪感を持つこと。</p></div>
+</div>
+<div class="section" id="sec-54">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§55</span>
+    <span class="sec-title">「偽りの罪悪感」に対する治療は、なぜ本人が罪悪感を持つようになったかを理解し、</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>自分の真の姿を評価すること。</p></div>
+</div>
+<div class="section" id="sec-55">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§56</span>
+    <span class="sec-title">演技性人格障害の男性・女性は、非常に感情的で、外向的、ドラマティック、衝撃的、</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>純真、そして非常に誘惑的。演技性人格障害の人は、うつの演技をします。人の関心</p><p>を向けたいとき、権威ある人（普通、親、友人、伴侶など）の言いなりになりたくないと</p><p>きに、そうする。もし女の赤ちゃんを演技性人格障害を持つ女性に育てたいと思うなら、</p><p>母親は、次の 12 のルールに従えばいい。</p><p>１ いつも母親に意思決定を頼るようにし向け、自分で考えなくていいようにする。</p><p>２ 彼女を甘やかし、つねにいいなりになる。</p><p>３ けっして夫の性的ニーズを満たさない。暖かさと愛情を求めて、夫は妻のかわり</p><p>に</p><p>娘に過剰な愛情を注ぐようになる。</p><p>４ 娘が自分を否認するテクニックを学べるよう、たくさん嘘をつく。</p><p>５ つねに性格ではなく、ルックスをほめる。</p></div>
+</div>
+<div class="section" id="sec-56">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§57</span>
+    <span class="sec-title">１ 外向的でいっしょにいて楽しいと言われる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>7/20</p></div>
+</div>
+<div class="section" id="sec-57">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§58</span>
+    <span class="sec-title">ストレスはうつを加速させる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ほとんどの人は、自分の異性の親とよく似た人と結婚します。</p><p>深刻なうつの 85％が、ストレスによってもたらせること。さらに自殺を企てる人の環</p><p>境は、極めてストレスの多い状況である。</p><p>以下は、うつの原因としてよく見られる大きなストレスをリストップしたもの。</p></div>
+</div>
+<div class="section" id="sec-58">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§59</span>
+    <span class="sec-title">●怒りが自分の内面に向かっている</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>怒りが抑圧されると、うつになる。たとえば、ある人が死んだ人に怒りを抱いていた</p><p>とします。死人に怒りを表すことは、自分にとってとても受け入れがたいことであるた</p><p>め、怒りは内側に向かい、その結果がうつとなる。子どものとき虐待された人もまた、</p><p>かなりの怒りが内側に渦巻いています。</p></div>
+</div>
+<div class="section" id="sec-59">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§60</span>
+    <span class="sec-title">たいていの場合、怒りは、うつの人の顔の表情、声、ジェスチャーなどに明らかに表</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>れます。</p></div>
+</div>
+<div class="section" id="sec-60">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§61</span>
+    <span class="sec-title">●自己イメージが傷つけられる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>離婚した人の多くは、自分が拒絶されたと感じ、自己イメージが傷ついています。</p><p>罪を犯すと、良心が痛み、自己イメージは、自動的に低くなります。この状態は、その</p><p>罪が神と自分自身によって許されるまで続きます。</p></div>
+</div>
+<div class="section" id="sec-61">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§62</span>
+    <span class="sec-title">●ＰＴＳＤ（心的外傷後ストレス障害）</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ときに深刻な問題を経験し、不安にかられたり、落ち込んだりします。しかし普通私</p><p>たちは、問題に対処でき、それがうつに発展する前に何とか対処できる。しかし、深刻</p><p>なストレスは、悪夢、パニック障害、うつにつながります。</p></div>
+</div>
+<div class="section" id="sec-62">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§63</span>
+    <span class="sec-title">●偽りの罪悪感を持つ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>強迫神経症の人は、自分に厳しく、批判的です。</p></div>
+</div>
+<div class="section" id="sec-63">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§64</span>
+    <span class="sec-title">真の罪悪感は、道徳的、倫理的あるいは宗教上の罪を犯した人の正常な反応で</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>す。</p></div>
+</div>
+<div class="section" id="sec-64">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§65</span>
+    <span class="sec-title">●誤った見方</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>私たちは、豊かな社会に生き、多くのかたよった情報や誘惑にさらされています。</p><p>そのため、容易に誤った見方におちいってしまう。人生には、たとえば愛する人を失う</p></div>
+</div>
+<div class="section" id="sec-65">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§66</span>
+    <span class="sec-title">とか、自分自身の死と向き合うなど、私たちが対処しなければならない十分すぎるスト</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>レスがあります。本書でふれたストレス誘因に、もし私たちが責任もって対処すれば、</p><p>うつをひきおこすことはありません。</p></div>
+</div>
+<div class="section" id="sec-66">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§67</span>
+    <span class="sec-title">うつがおこるメカニズムを解明する</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>まだふれていないうつの心理的、生理的メカニズムには、以下のものがあり。不健</p><p>全な家族パターン。幼いときに、怒りをうまく建設的に表現するかわりに、怒りを抑圧</p><p>することを教えられること。</p></div>
+</div>
+<div class="section" id="sec-67">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§68</span>
+    <span class="sec-title">●学習によるパターン化</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>親がうつだと、子どもも、同様にうつのライフスタイルを発達させる。</p><p>8/20</p><p>鬱は人を操作し、自分の思い通りにするためのパワフルな手段となりえる。</p></div>
+</div>
+<div class="section" id="sec-68">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§69</span>
+    <span class="sec-title">●自分で自分を罰する人</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>うつを感じ、みじめになると、それで当然だと思ってしまう。そして、自分で自分を罰</p><p>してしまう。</p></div>
+</div>
+<div class="section" id="sec-69">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§70</span>
+    <span class="sec-title">●つらい思考がエスカレートする人</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>自己批判が強くなると、自己評価も低くなります。うつの人は、20 人からほめられて</p><p>も、たった一人に批判されると、20 人からほめられたことを忘れてしまいます。これを</p></div>
+</div>
+<div class="section" id="sec-70">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§71</span>
+    <span class="sec-title">逆にして、人からの肯定的な評価を重要視するようにし、たまにしか出ない否定的な</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>意見ばかりに気を集中させないことが大切。</p></div>
+</div>
+<div class="section" id="sec-71">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§72</span>
+    <span class="sec-title">たとえば、うつになると学校を休むことが許されて、余分に関心をかけてもらえるこ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>とを学んだ子ども。</p></div>
+</div>
+<div class="section" id="sec-72">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§73</span>
+    <span class="sec-title">●夢をみないとうつになる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>身体的、精神的に頑張りすぎると、うつがおこります。よく学生が徹夜して勉強した</p><p>り、幾晩も連続で５，６時間の睡眠ですませようとしたりします。健康を保つには、夢を</p><p>見る時間も必要。大人は、みな寝ている間、90 分につき約 20 分は夢をみています。</p></div>
+</div>
+<div class="section" id="sec-73">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§74</span>
+    <span class="sec-title">●思春期のうつ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>嘘をついたり、不法薬物に手を出したり、性的にまずい行動をしたりします。</p><p>親が離婚すると、子どもがうつにおちいることはよくあります。親の離婚に関する子</p><p>どもの怒りを話し合い、そして親を許すことができれば、子どもは良くなります。</p></div>
+</div>
+<div class="section" id="sec-74">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§75</span>
+    <span class="sec-title">赤ちゃんを産むことの恐れが、母親にとって受け入れがたい場合、そしてこの感情</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>を抑圧すると、うつがおこります。こうした恐れを素直に認めて、夫や友人に話をする</p><p>ほうが、はるかに簡単ですし重要。</p></div>
+</div>
+<div class="section" id="sec-75">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§76</span>
+    <span class="sec-title">自分で設定した目標にけっして到達できないと感じている強迫的な人には、とくに顕</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>著に見られます。逆に、目標を達してうつにおちいる人もいます。目標に達しても不安</p><p>定に感じているから。</p><p>中年期には、多くの喪失がおこり得ます。</p><p>中年女性の最大の恐れは、美貌が衰えるということ。伴侶に先立たれ、一人になっ</p><p>てしまうのではないかという恐れ。子離れもあります。閉経にともなうホルモンの変化</p><p>によって、うつになる場合もあります。</p><p>男性も中年期にうつになり、これを不適切な性的行動で表すことがあります。自分</p><p>がまだ若いことを確認するように、若い女性にひかれたりします。</p></div>
+</div>
+<div class="section" id="sec-76">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§77</span>
+    <span class="sec-title">●高齢化とうつ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>うつの症状があった人は、加齢とともにいっそううつの症状がひどくなります。</p></div>
+</div>
+<div class="section" id="sec-77">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§78</span>
+    <span class="sec-title">対照的に、人生を肯定的にとらえ、ありのままに自分に自己評価を感じている人は、</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>成長し続けるために加齢とともにいっそう満ち足りて、賢くなっていきます。</p></div>
+</div>
+<div class="section" id="sec-78">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§79</span>
+    <span class="sec-title">一方、年をとると、脳細胞の一部が減少していくために羞恥心が減っていき、罪悪</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>感が増えることが問題。老人はまた、孤独になるためにつうになることがあります。伴</p><p>侶を失って落ちこむこともよくある。</p><p>9/20</p><p>多くの人が、仕返しのための手段として、うつ、怒りを吐き出します。こうしてある程</p><p>度の怒りは、出せます、しかし他者もみじめにしてしまいます。</p></div>
+</div>
+<div class="section" id="sec-79">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§80</span>
+    <span class="sec-title">関心をひくためのうつは、伴侶や友人の喪失につながることが多く、さらなる深刻な</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>う</p><p>つにおちいることになります。</p></div>
+</div>
+<div class="section" id="sec-80">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§81</span>
+    <span class="sec-title">●仮面うつ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>病理学的には何の根拠も持たないように見える体の不調をいいます。この状況に</p><p>は、抗</p><p>うつ剤が効果的です。</p></div>
+</div>
+<div class="section" id="sec-81">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§82</span>
+    <span class="sec-title">●生活の変化は想像以上のストレスとなり、うつを招く</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ホームズとラヘが作った「変化適応ストレスチャート」。人生の変化のポイントが、年</p><p>間</p><p>で合計 200 以上の場合、精神障害の深刻な増加につながる。喪失のひとつである引</p><p>越し。子どもにとっては、親の死がもっともつらいもの。</p></div>
+</div>
+<div class="section" id="sec-82">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§83</span>
+    <span class="sec-title">変化適応ストレスチャート</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>出来事</p></div>
+</div>
+<div class="section" id="sec-83">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§84</span>
+    <span class="sec-title">配偶者の死</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>離婚</p><p>別居</p><p>服役</p></div>
+</div>
+<div class="section" id="sec-84">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§85</span>
+    <span class="sec-title">自分の事故、病気</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>結婚</p><p>解雇</p></div>
+</div>
+<div class="section" id="sec-85">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§86</span>
+    <span class="sec-title">仲たがいした夫婦の仲裁</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>退職</p></div>
+</div>
+<div class="section" id="sec-86">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§87</span>
+    <span class="sec-title">家族の健康状態の変化</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>妊娠</p></div>
+</div>
+<div class="section" id="sec-87">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§88</span>
+    <span class="sec-title">財政状況の変化</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>親友の死</p><p>転職</p></div>
+</div>
+<div class="section" id="sec-88">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§89</span>
+    <span class="sec-title">義理の家族とのトラブル</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>影響度</p><p>100</p><p>73</p><p>65</p><p>63</p><p>63</p><p>53</p><p>50</p><p>47</p><p>45</p><p>45</p><p>44</p><p>40</p><p>39</p><p>39</p><p>38</p><p>37</p><p>36</p><p>35</p><p>29</p><p>29</p><p>29</p></div>
+</div>
+<div class="section" id="sec-89">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§90</span>
+    <span class="sec-title">10/20</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>26</p></div>
+</div>
+<div class="section" id="sec-90">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§91</span>
+    <span class="sec-title">学校が始まる、終わるとき</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>26</p></div>
+</div>
+<div class="section" id="sec-91">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§92</span>
+    <span class="sec-title">生活状況の変化</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>25</p></div>
+</div>
+<div class="section" id="sec-92">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§93</span>
+    <span class="sec-title">自分の癖、習慣をなおすとき</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>24</p></div>
+</div>
+<div class="section" id="sec-93">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§94</span>
+    <span class="sec-title">上司とのトラブル</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>23</p><p>引越し</p><p>20</p><p>転校</p><p>20</p></div>
+</div>
+<div class="section" id="sec-94">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§95</span>
+    <span class="sec-title">教会活動の変化</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>19</p></div>
+</div>
+<div class="section" id="sec-95">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§96</span>
+    <span class="sec-title">社会活動の変化</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>18</p></div>
+</div>
+<div class="section" id="sec-96">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§97</span>
+    <span class="sec-title">10,000 ドル以下の住宅ローン、その他のローン</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>17</p></div>
+</div>
+<div class="section" id="sec-97">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§98</span>
+    <span class="sec-title">睡眠習慣の変化</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>16</p></div>
+</div>
+<div class="section" id="sec-98">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§99</span>
+    <span class="sec-title">家族の集まる機会の変化</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>15</p></div>
+</div>
+<div class="section" id="sec-99">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§100</span>
+    <span class="sec-title">食生活の変化</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>15</p><p>休暇</p><p>13</p></div>
+</div>
+<div class="section" id="sec-100">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§101</span>
+    <span class="sec-title">クリスマス</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>12</p></div>
+</div>
+<div class="section" id="sec-101">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§102</span>
+    <span class="sec-title">軽度の法律違反</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>12</p></div>
+</div>
+<div class="section" id="sec-102">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§103</span>
+    <span class="sec-title">精神疾患の場合、遺伝的背景は,</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>重要。とりわけ躁うつ病（気分障害）の場合、血縁者のなかに同じ症状を持つ人が</p><p>いる確率が高い。また、統合失調症（精神分裂病）の親を持つ子どもは、子どもがたと</p><p>え親から離れて育てられても、同じく統合失調症になる確率が高い。</p><p>大人も子どもも、体が不調だと感情的ストレスに堪える能力が低くなります。普通、</p><p>心理的な問題にもっとも大きな影響を与えるのは、やはりストレス。何らかの急性スト</p><p>レスが生じなければ、心理的問題は、おこらずにすむかもしれません。</p><p>遺伝が要因と強調されるうつは、内因性うつ。環境が要因となるものは、神経症性</p><p>うつ。急性のストレスが原因とされるうつは、反応性うつ。</p></div>
+</div>
+<div class="section" id="sec-103">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§104</span>
+    <span class="sec-title">26 他人に意地悪されていると感じる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>27 人に過剰に期待し、かといって拒否されるのを恐れる。この恐れは、悪循環に</p><p>なる</p><p>28 「超人」の感覚。こうした感覚はうつにおちいる前に、低い自己評価にきづかな</p></div>
+</div>
+<div class="section" id="sec-104">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§105</span>
+    <span class="sec-title">●甲状腺機能低下症とうつ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>うつは、甲状腺に影響を与え、低甲状腺症の発症を促す。</p></div>
+</div>
+<div class="section" id="sec-105">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§106</span>
+    <span class="sec-title">●低血糖がうつの原因？</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>疲労、うつ、その他ありとあらゆる病気の原因が、低血糖とされてきました。この考</p><p>えについては、医学界で疑義を抱く人も多い。</p></div>
+</div>
+<div class="section" id="sec-106">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§107</span>
+    <span class="sec-title">●生体アミンのアンバランス</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>脳内アミン（とくにセロトニン、ノルエピネフリン）が、神経細胞間のシナプスを行き来</p><p>している神経伝達物質。こうした神経伝達物質の減少は、うつの一大原因。</p></div>
+</div>
+<div class="section" id="sec-107">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§108</span>
+    <span class="sec-title">脳内生体アミンに乱れがあれば、うつがおこり、また内分泌異常がおこる可能性が</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>あります。またうつの場合、血中コルチゾール（ストレスホルモン）レベルが上がる。コ</p></div>
+</div>
+<div class="section" id="sec-108">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§109</span>
+    <span class="sec-title">ルチゾールレベルが上がると、抗体を作り出すリンパ球（白血球の１つ）が抑えられま</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>す。抗体が減少すれば、人はありとあらゆる病気にかかりやすくなります。</p><p>リビドー（性衝動）の低下は、うつの場合によくおこる。</p></div>
+</div>
+<div class="section" id="sec-109">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§110</span>
+    <span class="sec-title">電解質は、うつ要因であるノルエピネフリンなどの神経伝達物質の合成、保存、放</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>出、不活性化に重要な役割をはたしています。</p></div>
+</div>
+<div class="section" id="sec-110">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§111</span>
+    <span class="sec-title">ウィルスによる比較的軽度の呼吸器系感染症を持っている場合でも、気持ちが落ち</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>こむことがあります。</p></div>
+</div>
+<div class="chapter-header">第３章 どうやって、うつを克服するか</div>
+<div class="section" id="sec-111">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§112</span>
+    <span class="sec-title">12/20</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>は避けられる。だれでも同じようなグリーフ反応（喪失による深い悲しみに対する反応）</p><p>は、あるでしょうが、それでも（遺伝的な障害がないかぎりは）うつの症状は軽くなる。</p></div>
+</div>
+<div class="section" id="sec-112">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§113</span>
+    <span class="sec-title">精神科医として私たちは、患者が「できない」という言葉を使うと悲しい気持ちでいっ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ぱいになる。たとえば、「夫と仲良くできません」、「やってみたけど妻を愛せない」等々。</p><p>私たちは、自分に正直になって、状況の真実を表す言葉を使ってほしい。患者に「で</p><p>きない」のかわりに「しない」を使ってもらいます。「夫とは仲良くしません」、「妻のこと</p><p>は愛していません。少しは愛そうとしたのですが、うまくいかない」。「しない」にかえれ</p></div>
+</div>
+<div class="section" id="sec-113">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§114</span>
+    <span class="sec-title">ば、現実を避けることをやめ、自分をあざむくことをやめて、真実に生きられるように</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>なります。</p></div>
+</div>
+<div class="section" id="sec-114">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§115</span>
+    <span class="sec-title">☆「７つの習慣」に従う人は、うつを克服したあとにうつが戻ることはまずありませ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ん。</p><p>１ 毎日、人生に感謝し、生きる決心をする。</p><p>朝起きて、また１日、人生を楽しめる日を与えられたことを感謝します。自分自身を</p><p>よりいっそう愛すること、自己批判的にならないことを決心します。</p><p>２ 毎日、黙想する時間を持ち、生活に取り入れる。</p></div>
+</div>
+<div class="section" id="sec-115">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§116</span>
+    <span class="sec-title">私たちは、自己中心的な性質を持って生まれているので、時々間違ったこと（うつや</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>自己破壊につながるようなこと）をしてしまいがち。脳を、自分のおかしな思考ではなく、</p><p>健康な状態にプログラムすることを選ばなくてはなりません。黙想することによっての</p><p>み、それができる。</p></div>
+</div>
+<div class="section" id="sec-116">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§117</span>
+    <span class="sec-title">心に相当悪くプログラミングされた場合は、正しい方向にプログラムし直すためには、</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>何年もかかるかもしれません。再プログラミングする方法は、自分が何を考えている</p><p>かをチェックしてみること。批判的、否定的思考は、うつの気分を強化します。その考</p><p>え方を変えることで、気分をよくすることができます。</p><p>３ 怒りを翌日にもち越さない。</p><p>怒ったままで日が暮れないようにつとめましょう。それができれば、怒りは、まったく</p><p>蓄積されません。</p><p>４ 伴侶、子どもたち、親、兄弟姉妹、親しい友人たちと、時間をともにすごすことを毎</p><p>日心がける。</p><p>家族との親しさは、自己肯定感、そして心の健康にとってとても大切。</p><p>ときとして家族の衝突は、未解決のまま、何年も続きます。今日の社会のいい例は、</p><p>アラブとイスラエル間の絶え間ない「家族戦争」です。</p><p>５ 毎週、友人１～２人と時間をともにすごす。</p><p>「知恵のある者とともに歩むものは、知恵を得る。おろかな者の友となる者は害を、</p><p>受ける」という言葉があります。友人は、注意深く選ぶこと。だれも、一人では生きられ</p><p>ません。一人で幸福にはなれません。孤独はつらいもの。もし友人がほしいなら、自</p><p>分から出かけていって、親しくなること。友人は、自分で得るもの。数多くの友人はい</p><p>りません。親しい人が、２，３人いればいい。「世には友らしい見せかけの友がある。し</p><p>かし兄弟よりたのもしい友もある」という言葉。親密さが必要なのであって、数ではあ</p><p>りません。</p></div>
+</div>
+<div class="section" id="sec-117">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§118</span>
+    <span class="sec-title">６ 自分に満足をもたらす、決まった日課をする（仕事、遊び、家事、その他の活動な</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>どを含む）。</p></div>
+</div>
+<div class="section" id="sec-118">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§119</span>
+    <span class="sec-title">13/20</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>①祈りと黙想の時間を作る。</p><p>②自分の心の健康のための時間をとる。これには、骨休めしてリラックスする時間</p><p>も含まれます。伴侶や他の夫婦らとの交流、また運動なども含みます。</p><p>③伴侶とのより親密な関係を築いて継続していくための時間を十分に設ける。これ</p><p>には楽しみを共有する真剣な会話、いい性生活も含まれます。伴侶は、子どもよ</p><p>りも優先順位を高くするべき。</p><p>④子どもをしつける時間を十分にとる。これには、子どもと遊び、彼らの問題に耳を</p><p>傾け、学校の活動に参加するなど。</p><p>⑤その残りの時間の一部を、生活の糧を得るためにすごす。たとえ優先順位の①</p></div>
+</div>
+<div class="section" id="sec-119">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§120</span>
+    <span class="sec-title">から④によって、収入が減ることになっても（多くの家庭がそうでしょうか）、そう</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>あるべき。家族は、あなたのお金よりも、あなたのことを数千倍必要としている。</p></div>
+</div>
+<div class="section" id="sec-120">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§121</span>
+    <span class="sec-title">⑥そして、時間が少しでも余ったなら、才能、特技を使って人のために役立つことを</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>する。</p><p>７ 週１回、だれか一人のために何かいいことをする。</p></div>
+</div>
+<div class="section" id="sec-121">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§122</span>
+    <span class="sec-title">肉体面で（たとえば家事を手伝うとか）、心で（本をプレゼントしたり、相談にのって</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>あげたり）、あるいは精神面のもの（ともに献身、祈りを捧げる）でもいい。</p></div>
+</div>
+<div class="section" id="sec-122">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§123</span>
+    <span class="sec-title">「７つの習慣」は、熱心に（いい加減な気持ちでなく）実践する人には、数ヶ月のうち</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>の幸福をもたらします。幸福は、自分で選びとることができるもの。</p></div>
+</div>
+<div class="section" id="sec-123">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§124</span>
+    <span class="sec-title">その怒りが適切か、不適切かを分析すれば、怒りによく対処でき、なぜ自分が怒り</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>を感じたのかの洞察も得られる。しかし、怒りの多くは、不適切。不適切な怒りには、</p><p>３つの原因がある。</p></div>
+</div>
+<div class="section" id="sec-124">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§125</span>
+    <span class="sec-title">①自分の自己中心的な欲求が満たされないゆえの怒り</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>わがままがすぎるほどに、怒りはますます増大します。</p></div>
+</div>
+<div class="section" id="sec-125">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§126</span>
+    <span class="sec-title">②完全主義的期待が満たされない場合に出てくる怒り</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>完全主義者（強迫性人格）は、自他ともに、多くを期待しすぎています。その結果、</p><p>彼らは、よく自他（たいていは自分自身）に恨みを持ちます。</p></div>
+</div>
+<div class="section" id="sec-126">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§127</span>
+    <span class="sec-title">③疑惑からでる怒り</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>妄想を持ちやすい人格傾向がある場合、よく人の意図を誤解します。ある人が本</p><p>人のことに気づかないとすると、わざと避けられているのだと決めつける。</p><p>不適切な怒りの主要な３つの原因は、①自己中心性、②完全主義、③疑惑、です。</p><p>洞察力を得ることは、うつを克服するのにも大きな助け。第１ステップは、自分が怒っ</p><p>ていることを認識すること。たとえば、友達に軽くあしらわれたようなときに極端にかっ</p><p>となる。おそらく反応の 25％は現在の状況への、そして 75％はずっと昔に抑圧した感</p><p>情への反応。</p></div>
+</div>
+<div class="section" id="sec-127">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§128</span>
+    <span class="sec-title">強迫性人格、完全主義者の人が、過剰に厳しい見方で人を見ていることに気づけ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ば、今後は不適切な怒りをコントロ－ルできるようになる。</p></div>
+</div>
+<div class="section" id="sec-128">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§129</span>
+    <span class="sec-title">２ 怒りを口に出してみる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>もし自分の怒りが適切だと確信できるなら、この怒りを何とかして口に出すこと。そ</p><p>して、相手と仲直りをしましょう。怒りを口に出す心理的な利点。</p></div>
+</div>
+<div class="section" id="sec-129">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§130</span>
+    <span class="sec-title">でなく、私たちが真実、すなわち自分が本当に怒っていることに気づくのに役立ち</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ます。</p><p>②許すのに役立ちます。</p></div>
+</div>
+<div class="section" id="sec-130">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§131</span>
+    <span class="sec-title">③私たちが怒りをうまく口に出すことができれば、相手に問題を自覚させることがで</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>きます。</p><p>④怒りをうまく口に出すことは、結婚や友情をよりいっそう親密なものにします。</p><p>⑤怒りをうまく表すと、相手はたいていの場合、私たちが、(a)率直で、(b)感情をきち</p></div>
+</div>
+<div class="section" id="sec-131">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§132</span>
+    <span class="sec-title">んとコントロールしていて、(c)責任もって怒りに対処しているために、以前にもま</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>して私たちを尊敬する。</p><p>⑥ゴシップになるのを防ぎます。</p></div>
+</div>
+<div class="section" id="sec-132">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§133</span>
+    <span class="sec-title">少しでも怒りを感じたときは、すべてその怒りを口に出すようにしなさいと言っている</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>のではない。上司に怒りがあるなら、そしてそれを口に出すことによってあなたがクビ</p></div>
+</div>
+<div class="section" id="sec-133">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§134</span>
+    <span class="sec-title">になるなら、上司にではなく、だれか別の人に話を聞いてもらって、上司を許すための</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>助けを得るようにしたほうがいい。</p><p>だれかが私たちの感情を傷つけたとします。私たちが攻撃的だと、相手を個人攻撃</p><p>して、その人を侮辱するようなことを口にすることで相手の人格を攻撃します。受動的</p><p>なら、何も言いはしないのですが、単にこのことに関してふくれっ面を見せる（そしてお</p><p>そらく本人のいないところで陰口をたたく）。</p><p>アサーティブならどうかというと、本人のところへ行って、このように伝えます。「あな</p></div>
+</div>
+<div class="section" id="sec-134">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§135</span>
+    <span class="sec-title">たが言ったことで怒りを感じているけれど、何とか話し合って解決したいので、時間を</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>とってくれませんか？」。</p><p>どんなに怒りを口にしても、許さなくてはならないことを忘れないでください。</p></div>
+</div>
+<div class="section" id="sec-135">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§136</span>
+    <span class="sec-title">基本的に怒りと許しの対象である相手は、５つのグループに分けることができま</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>す。</p><p>①まずは親です。親への抑圧された怒りはよく見られます。</p><p>②次に、私たちは自分自身を許さなくてはなりません。人に腹が立つのと同様に、</p><p>あのときああすれば、こうしたらよかったのに･･･と自分に怒りを抱きます。</p><p>③３番目に、私たちは、神への抑圧された怒りを向き合わなくてはなりません。「神</p></div>
+</div>
+<div class="section" id="sec-136">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§137</span>
+    <span class="sec-title">がもし本当に私を見守っていてくださるというのなら、あの状況だって防げたはず</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>だし、何とかしてくれることができたはずだ」と。</p><p>④４番目に、伴侶への抑圧された怒りと向き合わなくてはなりません。</p><p>⑤５番目は、その他の人々です。怒りを告白し、相手を許す必要があります。</p></div>
+</div>
+<div class="section" id="sec-137">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§138</span>
+    <span class="sec-title">３ 報復したい、という気持ちを手放す</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>怒りをとどめておく（恨みをもつ）無意識の動機は、たったひとつしかありません。そ</p><p>れは、復讐です。個人的復讐は、まったく不必要、かつ愚かです。復讐するか、恩寵</p><p>を見せるかは、神が決めること。</p></div>
+</div>
+<div class="section" id="sec-138">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§139</span>
+    <span class="sec-title">15/20</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>要で、適切な怒りを口に出し、就寝前に許す、③けっして人に仕返しをしない。</p></div>
+</div>
+<div class="section" id="sec-139">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§140</span>
+    <span class="sec-title">患者がうつ状態で、不眠や自殺願望を訴えてオフィスにやってくると、私たちは、３</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>つの方法で治療します。</p><p>ひとつは、処方薬なしで毎週の面接治療を続けること。これだとうつは平均して６～</p><p>12 ヵ月で治ります。</p><p>もうひとつは、毎週の精神療法とあわせて抗うつ剤を出すこと。この場合だと、おそ</p><p>らく３～６ヵ月でうつがなくなる。</p><p>３番目の方法は、入院型のプログラム。毎日精神療法と投薬を続ければ１週間以</p><p>内で楽になり、うつも３～６週間でなくなり、そのあと外来ベースで１，２ヵ月の精神療</p><p>法を続けるだけで良くなります。</p></div>
+</div>
+<div class="section" id="sec-140">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§141</span>
+    <span class="sec-title">軽度のうつなら、薬は高価ですし、口が渇く、車の運転時に反応が鈍るなど、軽度</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>の一時的副作用がありますので、投薬はしないほうがいい。</p></div>
+</div>
+<div class="section" id="sec-141">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§142</span>
+    <span class="sec-title">●入院の利点、短所</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>１ 患者は、集中的精神療法が受けられる。</p><p>２ すぐに投薬調整が行える。</p><p>３ ストレスの環境から安全な環境へ逃れられる。</p></div>
+</div>
+<div class="section" id="sec-142">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§143</span>
+    <span class="sec-title">１ 依存性の強い人のなかには、うつのふりをしていることで、さまざまな責任から</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>逃れようとする者がいる。</p><p>２ 精神科への入院に対して、社会的不名誉がついてまわることがある。昇給や</p><p>求職を困難にすることがある。</p></div>
+</div>
+<div class="section" id="sec-143">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§144</span>
+    <span class="sec-title">●うつの処方薬</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>私たちは、けっしてインシュリンのショック療法や、電気ショック療法を使いません。</p></div>
+</div>
+<div class="section" id="sec-144">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§145</span>
+    <span class="sec-title">患者の健康への悪影響の可能性があるし、多くの場合、これらはほんの一時的な軽</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>減にしかならないため。</p><p>私たちは、また依存性のある処方薬も使いません。トフラニール、エラヴィル、シネ</p><p>カンなどの３環系抗うつ薬は、依存性がありません。1994 年でのもっとも効果的な抗</p><p>うつ剤は、パキシル、ゾロフト、エフレクソール、そしてプロザックです。プロザックやゾ</p><p>ロフトを使うと、大半の人が週に１ポンドから数ポンド、体重が減ります。患者がやせ</p><p>すぎるようだったら、これらの投薬をやめなくてはいけません。</p></div>
+</div>
+<div class="section" id="sec-145">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§146</span>
+    <span class="sec-title">●不安の症状</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>不安な人は、過剰に警戒し、イライラ、そわそわし、依存的です。しゃべりすぎたり、</p><p>入眠困難もあります。集中力は欠如し、記憶力も働きません。</p></div>
+</div>
+<div class="section" id="sec-146">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§147</span>
+    <span class="sec-title">不安は、普通、自分の思考、感情、動機の真実を見つめることへの恐れからおこる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>もの。私たちはみな、幼児期に不安をかりたてる経験をしています。現在、不安をひき</p><p>おこされるような状況、経験に出会うと、幼児期からの不安にかりたてられます。私た</p></div>
+</div>
+<div class="section" id="sec-147">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§148</span>
+    <span class="sec-title">ちは、現在の状況に反応しているのみならず、また同時に子ども時代の抑圧された感</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>情にも反応している。</p></div>
+</div>
+<div class="section" id="sec-148">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§149</span>
+    <span class="sec-title">16/20</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>１ 肯定的な考えについて黙想する。</p><p>「心配するのはよして、リラックスしよう。不安はリラックスのための合図だ。さあ、</p><p>リラックスしよう」。</p><p>２ 神の意にかなう行為に焦点を当てる。</p><p>３ 満足できることに専念する。</p><p>４ 貧困の恐れを取り除く。</p><p>５ 神の恩寵が自分とともにあることを知る。</p><p>６ 音楽を聴く。</p><p>７ 適度な運動をする。</p><p>８ 十分な睡眠をとる。</p><p>９ 不安をおこす問題、恐れと向き合うために、自分でできることをする。</p><p>10 週に少なくとも１回は、自分の欲求不満について親しい友人に話す。</p><p>11 適切なレクレーションをする。できれば週に２，３回。</p><p>12 その日１日だけを十分に生きる。</p><p>13 最悪の場合、何がおこりうるか考える。するとそれもそれほど悪くはないことを</p><p>考えてみる。</p><p>14 ものごとを先のばしにしない。そうするほどに不安が増す。</p><p>15 心配することに時間制限を設ける。</p><p>１日夜 15 分など時間を決めて、自分の問題について考える時間を設ける。そして</p><p>その時間外に問題が心に浮かんできたら、「今は考えてはいけない。あとで決められ</p><p>た時間にゆっくり考えることにしよう。今はそうしてはいけないのだ」と自分に言い聞か</p><p>せる。</p></div>
+</div>
+<div class="section" id="sec-149">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§150</span>
+    <span class="sec-title">どうすれば幸福な一生を送ることができるのか？</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>●自分で自分に話しかける方法を変える。</p><p>自分を責めるのは、やめましょう。肯定的なことがらに目を向けてください。過去の</p><p>失敗に居座るのではなく、なしとげたことに目を向けてみましょう。</p><p>●自分の感情を理解する。しかし行動に焦点をおく。</p><p>感情について話し合う友人が必要であり、こうした感情に向き合う必要があります。</p><p>しかし、その時点で私たちは感情を超えて、行動に焦点を当てる必要があります。生</p><p>き方を定着させるもっと安定した基盤は、行動です。</p><p>●具体的行動プランに焦点をおく。</p></div>
+</div>
+<div class="section" id="sec-150">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§151</span>
+    <span class="sec-title">うつを克服するには、「自分の行動を変えなくちゃ」と自分に言い聞かせるだけでは、</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ダメです。その行動を変えるための、具体的な行動プランが必要です。</p><p>非常に重いうつ状態のある主婦のケース。彼女は、朝気分が落ちこんで起き上が</p><p>りたくないので、いつも遅くまでベッドに入っている。①気分がどうあれ、７日のうち３日</p></div>
+</div>
+<div class="section" id="sec-151">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§152</span>
+    <span class="sec-title">は、朝早く起きる、②社交づきあいを増やす、③しなくてはならない、そしてやればい</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>い気分になれる家事をする。</p><p>●新しい興味、行動を見つける。</p></div>
+</div>
+<div class="section" id="sec-152">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§153</span>
+    <span class="sec-title">妻をデートに連れ出す、あるいは単に帰宅の道順を変えてみる、新しい友達を作る、</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>何か運動をするなど。</p><p>●祈ることでエネルギーを取り入れる。</p></div>
+</div>
+<div class="section" id="sec-153">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§154</span>
+    <span class="sec-title">17/20</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>●私たちが宇宙に属していることを思い出す。</p><p>宇宙がいかに大きいかを考えると、これは驚くべきこと。光のスピードで数百、数千</p><p>億の銀河のひとつである天の川だけを通過しても、通過し終わるまでに 10 万歳にな</p><p>っている。</p><p>●友情を育てる。</p></div>
+</div>
+<div class="section" id="sec-154">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§155</span>
+    <span class="sec-title">友人とは暖かく、懸念し、気づかい、問題をいかに克服したかを心を開いて分かち</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>合ってくれる人。</p><p>●フェローシップ（仲間）のなかで成長する。</p><p>引きこもって、一人でいることは、うつを悪化させる最悪のこと。</p><p>●だれ一人完璧な人はいないことを知る。</p><p>だれもがときにミスを犯し、罪を行うことを知る。</p><p>●アサーティブネスに焦点をおく。</p><p>うつの人の大半は、アサーティブではない、すなわち率直ではありません。攻撃的</p><p>になり、人を平気でふみにじり、不必要に傷つけるのは間違っています。しかし、受動</p></div>
+</div>
+<div class="section" id="sec-155">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§156</span>
+    <span class="sec-title">的－自分の意見を言うべきときに言わないで、感情を内向させ、苦々しくなる－なの</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>も、また間違っています。うつの人は、受動的になりがち。</p><p>●依存のニーズと向き合う。</p><p>うつの人には、何かに依存したいという依存のニーズが多くあります。こうした依存</p><p>のニーズを、自分からあえて人に近づく努力をすることで学ばなくてはなりません。</p><p>●拒否されることの恐れを認識する。</p></div>
+</div>
+<div class="section" id="sec-156">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§157</span>
+    <span class="sec-title">甘えの欲求が多い一方で、ちょうど親が彼のニーズにそえなかったように、人もどう</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>せそれにはそえないだろうと一歩ひいて期待する。そして彼らは、怒り、敵意を持ち、</p><p>いろいろ要求してみて相手がどこで背を向けるか愛情のテストをするようになります。</p><p>●行動を変えることで、拒否される恐れと向き合う。</p></div>
+</div>
+<div class="section" id="sec-157">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§158</span>
+    <span class="sec-title">人に近づけるということ、いつも失望させる人ばかりではないことを、学ばなくてはな</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>りません。</p><p>●怒りを認識する。</p></div>
+</div>
+<div class="section" id="sec-158">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§159</span>
+    <span class="sec-title">うつの人は、怒りを持っていることが多いのですが、しかし大半がそれを認識してい</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ません。</p><p>●内省に注意を払う。</p></div>
+</div>
+<div class="section" id="sec-159">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§160</span>
+    <span class="sec-title">洞察は人がうつを克服する助けになりますが、一方、健全な洞察の度を越して内省</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>まで進むと、非常に危険です。内省がうつの人によくないひとつの理由は、彼らの内</p><p>省の多くが客観性を欠くから。うつの人が内省的になりそうなら、何か別のことに没頭</p><p>して、できるかぎり内省をやめる。</p><p>●神のようなふるまいをやめる。</p><p>怒りを自分に向け、自分が罰を受けるべきだと感じている。みじめで落ちこんでいる</p></div>
+</div>
+<div class="section" id="sec-160">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§161</span>
+    <span class="sec-title">ときに、自分が当然あるべき姿になっていると信じているのであり、ある意味で、彼は</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>神を演じている。</p><p>●仕返しをするのをやめる。</p><p>恨みを晴らすには、もっと健全な方法を探さなくてはなりません。</p><p>人の関心をひくには、他にたくさんの生産的、健全な方法があります。</p></div>
+</div>
+<div class="section" id="sec-161">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§162</span>
+    <span class="sec-title">18/20</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>自分の生命の責任を自分でとることで、良くなっていく。</p><p>●健全な対処術を選ぶ。</p><p>運動は、敵意のエネルギーを取り出して、生産的な健全な方向に向ける。</p><p>関心を自分からそらして、人に向けることは健康なこと。</p></div>
+</div>
+<div class="section" id="sec-162">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§163</span>
+    <span class="sec-title">人を助けることに焦点を当ててみると、それが結局は自分の問題と向き合う助けと</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>なる。</p><p>●希望があることを認識する。</p><p>●罪の罠を避ける。</p><p>人がうつにおちいる理由のひとつは、彼らが罪を犯しているから。たとえば、女性の</p><p>多くの後悔のひとつに、中絶をしたこと。婚外交渉など、不適切な性的関係もまた大</p><p>変なグリーフを残します。</p><p>●罪悪感の罠を避ける。</p></div>
+</div>
+<div class="section" id="sec-163">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§164</span>
+    <span class="sec-title">罪悪感が、真の罪悪感なら、それをどこか安全な場で告白するか、または人との関</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>係においては、つねに良心に責められることのないようにつとめるだけでよい。</p><p>●環境操作する。</p></div>
+</div>
+<div class="section" id="sec-164">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§165</span>
+    <span class="sec-title">うつは、ひとつには働きすぎによってもたらされているため、労働時間を削るなど、</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>外的要素を操作することで外部ストレスを軽減する。自分が経験している外的ストレ</p></div>
+</div>
+<div class="section" id="sec-165">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§166</span>
+    <span class="sec-title">スの量を操作するのに、個人ができることは実に多くあり、それによってうつが相当に</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>軽くなります。</p><p>●過剰に反応しない。</p></div>
+</div>
+<div class="section" id="sec-166">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§167</span>
+    <span class="sec-title">反応するかわりに正しく適切に対応することを学ぶと、自分のこと、状況の対処の仕</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>方について自信が持てるようになります。</p><p>●自尊心を高める。</p><p>うつの人は、非常に自尊心が低いことが多く、これを高めなければいけません。もし</p></div>
+</div>
+<div class="section" id="sec-167">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§168</span>
+    <span class="sec-title">自分のことが低くしか見られなければ、自分のことばかりで手一杯で、人には何もして</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>あげられない。</p></div>
+</div>
+<div class="section" id="sec-168">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§169</span>
+    <span class="sec-title">どうやって適切なレベルに自己イメージを高めることができるか？</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>まず第１に、他の人たちとの関係において成長すること。</p><p>第２に、現実的目標を定めて、それらに向かって励むこと。</p><p>●心理的、身体的レベルでうつに対処する。</p><p>特定の問題、カテゴリーを理解することで、問題に対処できる。</p></div>
+</div>
+<div class="section" id="sec-169">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§170</span>
+    <span class="sec-title">Ｄ 精神病</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>②身体的問題 以下の問題にはとりわけ注意を要する。</p></div>
+</div>
+<div class="section" id="sec-170">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§171</span>
+    <span class="sec-title">Ｅ 生物化学的うつ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>●笑うことを学ぶ。</p><p>もっと多くのユーモアを生活にとりいれ、もっと笑うことを学ぶ。リラックスするのに笑</p><p>いにまさるものはありません。</p><p>また、本書の内容を実践することで、うつは 100％治療可能です。</p></div>
+</div>
+    </div>
+  </div>
+  <div id="reading-view"><div class="reading-inner" id="reading-inner"></div></div>
+</div>
+</div>
+<script>
+
+const sections = [{"id": 0, "chapter": "", "title": "まえがき", "body": ["まえがき", "昭和 20 年９月、広島で行った私の講演速記を基礎に「自由国民」主筆。", "この３ヵ月の変化のうち、特に身に染みて感じますことは、進駐軍の態度によって、我々日本人は、単に物質的方", "面ばかりでなく精神的方面においても大いに学ばなければならない点が多々あることを教えられた。そうして真の自", "由主義的生活をするためには、いたずらにその形を真似るばかりでなく、その心構えから鍛え直さなければならない", "のですが、ともすると自由主義と無責任・無秩序とを履き違えた行動の多いことを痛感する。これは、終戦前の独善", "の圧制と同じように、日本国民の文化的水準の低さを示す以外の何物でもない。", "真剣な反省と努力とによって、日本国民の文化水準の向上をはかり、軍備より解放せられたる文化大国を再建する", "ことによって、今日の敗戦の弔鐘を、明日の勝利の暁鐘と転化し得る。", "敗戦の真相を明らかにしたのは、日本が敗れたのは、ひとえに武力ばかりではなかったことを反省したいため。", "昭和 20 年 11 月 23 日", "戦争はどのようにして起こったのか", "はっきり敗けたとは理屈の上では考えながら、どうも本当に敗けたという気持になれない。いわゆる、勝負には負", "けたが、角力には勝っていたのではないか。こういう気持は、実は非常に危険。", "第１次世界大戦の後に、ドイツ人の胸中に普遍的にわだかまっていた思想と同一。本当に敗けたという気持が、ど"]}, {"id": 1, "chapter": "", "title": "うしてもピッタリこなかったので、その結果、何が故に敗けたかという理由を自分の中に求めないで、第三者に", "body": ["うしてもピッタリこなかったので、その結果、何が故に敗けたかという理由を自分の中に求めないで、第三者にその", "原因を求めていった。特に敗因の最も大きい部分をユダヤ人の責に帰して、有名なユダヤ人征伐というものを始めて、", "そうして、さあこれで本当にゲルマン一色でドイツ人を形成し得たから、もう一遍、角力を取ってみようという気持", "になったのが、第２次世界大戦勃発の大きな原因。", "日本が、ここでドイツの二の舞いをして、すなわち自分の内部にその敗因を求めないで、外部にこれを求めるとい", "う風な態度に出ると、せっかくいま、2600 年の歴史をとにもかくにも食い止め得ているのに、この次には、日本人", "が本当に地球上から抹殺されるというようなひどい目に、遭わないとも限らない。", "この戦争の最も根本的な原因は、日本の国策の基本的理念が間違っておったということ。換言すれば、日本が、口", "先では万邦共栄というようなことを言いながら、肚の中では日本だけ栄えるという日本本意の考え方を、あらゆる国", "策の指導理念にしておった。", "開国当時は、どうひいき目に見ても、４等国以下の国力。日清・日露の両戦役を終わると、１等国の仲間に入った", "と自負するに至り、さらに第１次欧州大戦に連合国側に参加して勝利を占めると、もう押しも押されもせぬ世界の５", "大強国の１つ。この昇る旭のような日本の国運を寿いでいる、その１番得意な時代に、今日の日本の禍因が、その種", "を蒔かれた。", "「事を敗るは、多く得意のときに因す」"]}, {"id": 2, "chapter": "", "title": "。", "body": ["。", "積極的に、日本の国が、他の国の御世話にならないで、日本の国だけで立ち行くことのできるような、いわゆる自", "給自足の体制を取ろうという考え方が、国民の間に一般的に盛り上がってきた。尐なくとも軍部の指導者は、東亜 10", "億の支配者たる位置は、日本国民に対し天から授けられたる任務であるとさえ自負するに至りました。", "日本の政治勢力を独占した軍部が、この目的を実現するためにとった手段は、非常に拙务。日清、日露の両戦争ま", "では、日本の軍部の指導者も、事を起こす前には、非常な細心の注意を払い、いわゆる薄氷を踏む思いで戦争に入っ", "た。その切り上げどきについても、戦争の始まる前から十二分に研究しておいて、尐しでも早く戦争を切り上げたい", "と念願しておりました。これを、支那事変の最中、せっかく到来した２度までの全面和平のチャンスを、いたずらに", "思い上がって取り逃がした東条英機軍閥定見と軍統制力の欠如と比較すると、まさに天地雲泤の相違。", "戦争の原因を深く突き詰めて考えますと、日本の勢力範囲内に、戦争のための必要とするあらゆる物質を皆収めて", "おかなければならないという日本本位の自給自足主義が、根本的なガンである。一度、この自給自足主義を肯定した", "以上は、他国の資源・領土を侵略していくという結果を招来することは、資源の不足している日本の行き方として当", "然の帰結。満州事変が突発し、それが支那事変へと発展し、さらに大東亜戦争へと進んでいった経緯は、ちょうど一", "定の鉄道のレールの上を急行列車が進んでいくようなもの。その鉄道の工事はすこぶる不十分なもので、無理にその", "上に急行列車を走らせたものだから、ついに転覆してしまったような結果。"]}, {"id": 3, "chapter": "", "title": "この日本の国策決定の根本方針が間違っておったことが、今度の戦争が生まれた基本的原因。", "body": ["この日本の国策決定の根本方針が間違っておったことが、今度の戦争が生まれた基本的原因。", "自給自足主義という戦争の胚子を、この大戦争にまで育て上げた諸事情を進んで指摘してみたい。", "諸事情の第１には、日本の指導者がドイツの物真似をしたということ。日本国民が、万世一系の天皇を戴いて、世", "界無比の国体であり、世界で最も優れた忠勇な国民であるというような自負心を持っておったと同じように、ドイツ", "民族は、世界で最も優れた文化を持って、神に選ばれたる民族、いわゆる選民であるという自惚れた思想の下に、欧", "州新秩序の建設という美名を掲げてドイツ民族生活圏確保の侵略戦争に驀進していた。軍部は、一も二もなくナチス", "ドイツの真似をする。ドイツの物真似をしただけでは物足らず、その弟分のイタリアと一緒になって、３人で兄弟分", "1/10", "の盃をしようじゃないかという、いわゆる三国同盟の提唱を始める。ドイツ軍はいわゆる電撃戦術により、疾風枯れ", "葉を捲く勢いで全欧州を席捲きし始めたので、ついに三国同盟が単に軍部の主張のみならず、おそらく、当時の国民", "の大多数の世論として締結されるに至り、日本における英米派の勢力は、完全に一掃されてしまった。", "第２の事情として、軍部が己を知らず、敵を知らなかったこと。元来、戦争というものは、洋の東西を問わず、ま", "た時の古今を論ぜず、すべて誤解の産物である。何人といえども、最初から到底勝つ見込みのない戦争を仕掛けるも", "のはないはずで、お互いにどうしても勝つと思い込んだところに戦争は始まる。今度の戦争についてみても、英米側", "は、最初からその物量の力に絶対の自信を持ち、日本と戦争して負けるなどとは、ただの一度だって考えたこはない。"]}, {"id": 4, "chapter": "", "title": "むしろ日本が、あんな貧弱な物的資源をもって本当に戦争をするはずはない、戦争をするというかけ声は、外交", "body": ["むしろ日本が、あんな貧弱な物的資源をもって本当に戦争をするはずはない、戦争をするというかけ声は、外交上の", "掛け引きにすぎないと、最後まで信じていた。これに対して日本の軍部は、総力戦とか近代戦とかけ声ばかりしてい", "ましたが、その実、依然として日本の軍隊の精神力なるものは、英米の物的勢力を征服して余りあり、と自惚れてい", "る。このように、日本の軍部が、近代戦の実体も英米の実情をも知らず、また知ろうともせずして、いたずらに我が", "民族の精神力なるものを過大評価して、米軍ごときは、皇軍の前には鎧袖一触にも値しないということを信じておっ", "たという宿命的なる独断。", "この種の宿命的な３つの見込み違い。", "第１は、日本の支那［中国］に対する見込み違い。はじめ支那事変が勃発するや、日本は、まさか、こんなえらい", "ことになろうと思わず、上海、南京ぐらい占領すれば、この前と同じように簡単に事変は収まるだろうと考えておっ", "た。", "第２は、ドイツのソ連に対する見込み違い。ヒトラーは、確かに２ヵ月以内にソ連を征服し得るものと考えていた", "らしい。", "第３は、アメリカの日本に対する見込み違い。アメリカは、日本が戦争を仕掛けようとは思わなかった。昭和 16", "年 11 月にアメリカは、コンフィデンシャル（秘密）", "・テンタテーフ（試案）を通牒してきたのですが、まさか日本政"]}, {"id": 5, "chapter": "", "title": "府が、これを最後通牒と解釈して、真珠湾に不意打ちを食らわせようとは思わなかった。第１の場合の見込み違", "body": ["府が、これを最後通牒と解釈して、真珠湾に不意打ちを食らわせようとは思わなかった。第１の場合の見込み違いは、", "日本が支那の民族的統一力に対する計算を誤ったこと。", "第２に場合は、ドイツがソ連の共産主義的力量に対する観察を誤ったことに起因する。", "第３の場合は、米英が日本はもっと近代戦争に対する理解と準備を有しているだろうという、いわば日本を実際以", "上に買いかぶった角度からの見込み違い。", "今日の事態を招いた日本軍部の独善主義は、そもそも何故か。幼年学校教育。精神的にも身体的にも全く白紙な尐", "年時代から、極端な天皇中心の神国選民主義、軍国主義、独善的画一主義を強制され注入されたから。", "第３の事情として、世論本位の政治を行わなかったこと。すでにドイツの戦勝に眩惑せられたうえに、我が兵力を", "過信した日本の軍部が広く天下の世論を聞く余裕を持たず、ひたすらに戦争遂行に驀進した。5･15 事件、2･26 事件", "以後には、従来日本の指導的立場にあった上層階級のいわゆる穏健層の人々は、全く口を封ぜられてしまい、議会人", "すら、政府の鼻息を窺う一途に退けられてしまい、また、社会の木鐸と自認する新聞、雑誌も戦争に対する一切の主", "張を封じられてしまった。さらに、東条内閣が成立するとともに、いわゆる憲兵政治が、非常に目立ってきた。この", "ような憲兵政治によって弾圧されたのは、ひとり代議士や民間人ばかりでなく、軍人の中でも反東条と目されている", "ものは、遠慮なくやられている。また重臣方面に対しても、各種の手段で軍は押さえつけていた。例えば現在の外務", "大臣、吉田茂氏は、反戦的な言葉を弄したという理由で、終戦直前まで憲兵隊の留置場につながれていた。日本を名"]}, {"id": 6, "chapter": "", "title": "実ともに軍部一色化し、いわゆる本土決戦で 7000 万国民を最後まで道連れにする計画だったのが、その", "body": ["実ともに軍部一色化し、いわゆる本土決戦で 7000 万国民を最後まで道連れにする計画だったのが、その危うい直前", "に「万世のために泰平を開く」の御聖断が下されたわけ。", "日本にとって最も不幸だったことは、諸種の事情が、日本有史以来の大人物の端境期に起こったということ。ただ", "器用に目先の雑務をごまかしていく式の官僚がたくさん集まって、わいわい騒ぎながら、あれよあれよという間に世", "界的大波瀾の中に捲き込まれたのである。日本の代表的政治家は、近衛文麿、東条英機、小磯国昭。これを米国のル", "ーズベルト、英国のチャーチル、支那の蒋介石、ソ連のスターリン、ドイツのヒトラー、イタリアのムッソリーニな", "ど、いずれも世界史的な傑物が、百花繚乱の姿で並んでいる。千両役者のオールスターキャストの一座の中に、我が", "国の指導者の顔ぶれの如何に大根役者然たるものであったか。どの方面も非常な人物飢饉であり、そのために本筋の", "大道を見損なって、とんでもない方面に日本国民を引っ張っていく１つの大きな原因になった。", "どのようにして戦いに敗れたのか", "発生原因それ自体が、すでに敗北の要素を内包しておるといっていい。種が腐っていたのですから、良い樹が育つ", "わけはない。", "各種の政治的成功に慢心した軍部指導者が、我が国勢の根本方針を各国共存共栄の自由通商主義に置かずに、我が", "国一国を中心にした自給自足主義に置いたところにある。我が勢力下に帰した土地の経営が、自ずから日本本位とな", "り、その土地の原住民の福祉を二の次にする。"]}, {"id": 7, "chapter": "", "title": "私の極めて懇意にしている、ある満州人は、満鉄に十数年も勤め、「万一日本が、ロシアと戦争でもするような", "body": ["私の極めて懇意にしている、ある満州人は、満鉄に十数年も勤め、「万一日本が、ロシアと戦争でもするようなこ", "とがあったら、私は、遺憾ながらロシア側に付きますよ」と。「実は、日本人にいろいろ御世話にもなっているから、", "2/10", "こうやって今日まで辛抱しておるのだけれども、本当に腹に据えかねることがある」", "。", "だから今度いよいよ終戦になってソ連軍が侵入してきた後で、邦人がいかに満州人から冷酷な取り扱いを受けてい", "るか、思い半ばにすぎるものがある。", "フィリピンにおける日本の敗因中、フィリピン人が日本人に協力せず、ことごとにアメリカ人と協力したことが、", "日本の作戦に齟齬をきたした大きな原因。", "すべてこういうことは、日本本位の自給自足主義の当然の結果ですが、それと同時に行政の最末端に行く日本の役", "人の人柄によるところも大きい。末端の日本官吏は、具体的に言えば巡査。これがろくでもない人物が多く、例えば", "満人経営の料理屋なんかに行って無銭遊興をする。日本人だけが特権を持った民族であるという神国独善思想が、こ", "ういう末端官吏の行動にまで現れていた。こういう事情ですから、日本人の勢力地域が拡大すればするほど、反対に", "日本の戦力は脆弱になるという奇妙な論理が成り立つようになる。", "要するに第１の敗因は、日本の戦争目的が、東亜の諸民族を納得させて、随いて来さしめるような公明正大な目標"]}, {"id": 8, "chapter": "", "title": "を欠いておったところにある。例えば、ソ連がドイツの侵略戦争から「祖国を護れ」という極めて直截簡明な言", "body": ["を欠いておったところにある。例えば、ソ連がドイツの侵略戦争から「祖国を護れ」という極めて直截簡明な言葉を", "戦争目的として掲げ、何が故に戦うかという意味を、１億 6,000 万人のロシア人の心魂に強くぴたっと焼き付けてい", "る。数千マイル離れているインドネシア民族のために、自分らの良人の命、子供の命を献げなければならないという", "ことを納得していた日本国民は、ほとんど一人もなかった。", "第２の敗因として日本の軍部が、自己の力を計らず、敵の力を研究せず、ただ自己の精神力を過大評価して、これ", "に慢心したこと。敵の力を研究するという点において世界的に有名なのは、イギリスの諜報網。第１次欧州戦の時に", "は、ノースクリフが長官となりまして、世界各国のすみずみまで、有名な諜報網を張りめぐらし、時々刻々の情報を", "手に取るがごとく集めて、これを作戦外交の資料となし、それに対する宣伝対策を適当に打っていった。ヒトラーを", "して「第１次対戦は、ノースクリフの紙の弾丸のために敗れた」と嘆ぜしめたぐらい。", "例えば日本で虎の子のように大事にしている石油のタンクを敵機が爆撃する場合に、チャンと本物の石油タンクば", "かりに爆弾を落として、せっかく偽装してずらりと並べてある水タンクのほうには、１つも落とさないような事実も", "ある。ところが反対に日本のほうはどうかというと、大衆雑誌、それも数ヶ月遅れたものを中立国を介して手に入れ", "て、アメリカではこんなことを考えているということを種にして戦争しているのですから、その勝負はもう初めから", "わかっていたというべき。", "日本の諜報機関が何故こんなに無力であるかと申しますと、そういうトレーニングが平素からできていないという"]}, {"id": 9, "chapter": "", "title": "こと、資金的な力が足りないということが、その原因。根本的には相手方の事情を研究しなければ戦争ができな", "body": ["こと、資金的な力が足りないということが、その原因。根本的には相手方の事情を研究しなければ戦争ができない、", "ということに対する認識が足りないということに帰着する。", "米国においては、平素は日本語の研究機関などはたいしてなかったのですが、大東亜戦争になってから、さあ大変", "だというので、教科書をたくさん第三国を通して輸入して、それによって日本の歴史、地理から倫理まで研究して、", "日本人はどういう人情であり風俗であるか、産物にはどういうものがあるかということを十分呑み込んでから、それ", "に対する手を打ってきた。", "ところが、日本のほうは、それとまるで正反対。本当に英語が必要になった時には、反対に敵性語だといって英語", "を教室から駆逐してしまった。すなわち相手方の力量とか実情というものを研究しないで戦争をしたのだから、めく", "らと目明きが［剣術］をするようなもの。", "第３の敗因は、軍の指導者が、国民の良識や感覚を無視して、一人よがりで自分のいいと信じたところに国民を連", "れていこうとした点。何が故に戦争をしなければならないのか、十分理解せしむることなくして、法律規則と権力で", "もって強引に押し切ろうとしたために、かえって国民の間に一種の反感的な気分が起こってきた。", "日本の各重要産業の出勤率は、戦争をやっていけないというほど重要な関係にある工場にして、なお２割か３割と", "いう情けない低率。8 月 15 日以後の戦争が済んでしまって、反対にこれらの工場が俄然 90％、95％という非常によ", "い出勤率を示すようになった。8 月 15 日以後になりますと、問題が端的に国民の頭に浮かんできて、怠けて馘にな"]}, {"id": 10, "chapter": "", "title": "っては生活が脅かされるというので、自発的に進んで出勤するようになった。", "body": ["っては生活が脅かされるというので、自発的に進んで出勤するようになった。", "先年、朝のラジオ放送で「歴史というものは、過去のことをただ空暗記する学問ではなく、過去のことを推して将", "来のことを判断する学問である」", "。いろいろ実例を挙げられた際に「軍人がやった戦争で勝った例はない。必ず政治", "家の率いている軍隊に敗けている。歴史が、はっきりそれを示している」。結局、戦争に勝つためには、どうしても", "国民の総意を結集する以外にはない。その点においては政治家のほうが軍人よりもはるかに優れているという教訓。", "「科学無き者の最後」", "最も現実的に日本をギュッと参らせたのは、英米の科学の進歩。１つは、化学兵器の進歩があまりに違っておった", "ことであり、他の１つは、マネージメントの科学性の問題。", "残念ながら何一つ日本の兵器が、英米側より優れておるというものはない。その中で一番、日本に手痛い打撃を与", "えたのは、ラジオロケーター。", "原子爆弾、ラジオロケーターというような新しい有力な兵器は、全部イギリスで発明され、アメリカはこれを工業", "化したにすぎません。第１次世界大戦は、イギリス人がタンク（戦車）を発明したことによって勝負がついたと言わ", "3/10", "れている。今度の戦争においてもまた、ラジオロケーターによって勝負が決したといって言い過ぎではない。"]}, {"id": 11, "chapter": "", "title": "今度の戦争も最初のうちは、ドイツの潜水艦が、花形武器であって、開戦２年後の 1940 年には毎月 1", "body": ["今度の戦争も最初のうちは、ドイツの潜水艦が、花形武器であって、開戦２年後の 1940 年には毎月 100 万トン以", "上、１年には千数百万トンの船舶を撃沈して明らかに英米両国の造船率を超過した撃沈率を示しておりました。", "この危機一髪の際に、イギリスにラジオロケーターという救いの神が現れました。ラジオロケーターだと、暗夜の", "海上でも潜水艦の所在点が発見され、ちょっとでも潜望鏡を出すと飛行機から爆弾を投げられる。今度は逆にドイツ", "の潜水艦は、イギリスの飛行機のために、えらい目に遭わされるようになり、爾来１年にして、ほとんど大西洋から", "姿を没した。", "このラジオロケーターは、アメリカに渡って、さらに急激に進歩し、日本に爆撃に来た際、真っ暗な闇夜に来ても", "白昼と同じような正確な写真を撮っております。日本の潜水艦が、あの広い太平洋のまん中にちょっとでも潜望鏡を", "出すと、すぐ米国のレーダーにつかまってしまい、即座に飛行機がやって来て、アメリカ自慢の照準機で投弾するか", "ら、ほとんど百発百中でやられてしまう。これが、日本の潜水艦および諸艦船がほとんど全滅的打撃を受けた大きな", "原因。特攻機が目的の軍艦の上に行かない前に、ほとんどみなラジオロケーターにつかまってしまい、大部分は中途", "で敵戦闘機の餌。また、日本の運送船の所在も、たちまち発見されてしまう。", "この戦争に最後の止めを刺したのは、何と言っても原子爆弾。1919 年にロシアの学者が、その原理を発見したと", "いう話しですが、完成したのはイギリスで、工業化したのはアメリカです。ドイツでもソ連でもイタリアでもフラン", "スでも、日本においても、理論だけはわかっていたのですが、ウラン 235 と 238 を分離することが実験できなかった。"]}, {"id": 12, "chapter": "", "title": "一言にしていえば、広島全市が、１発の爆弾で消失した。その爆弾の中に使用したウラン 235 は、わずか", "body": ["一言にしていえば、広島全市が、１発の爆弾で消失した。その爆弾の中に使用したウラン 235 は、わずか１グラム", "にすぎなかったそうです。しかし、これを火薬に換算すると 80 万トンという想像もできない大量の火薬の爆発力に", "相当。", "この爆弾の性能は、物理的な破壊力の素晴らしさよりも、人間に与える生理的な影響の深刻さのほうが、聞けば聞", "くだけひどい。そのむごたらしさは到底聞くに堪えぬほどでありまして、中には近所の川にピクニックに行っていた", "何百人の女学生の皮膚が、まるで舵の皮が抜けるようにツルリと剥げて肉がまる出しになったような生き地獄を現出。", "この他、科学兵器については、日本人として目を見張るような実例がたくさんある。", "土木機械の一例。厚木と横浜の 40 キロの間に 27 時間で５インチのガソリンパイプの敷設を完成した。8 月 29 日", "に初めてアメリカの飛行機が、厚木に着いた。到着するとすぐその飛行機に給油をしなければならない。アメリカの", "タンカーは横浜に着いているので、これを厚木まで送油しなければならない。アメリカでは、すぐこの間にパイプを", "敷くと言い出した。これを聞いた日本の軍人は、横浜から厚木まで４０キロ、その間には山あり谷あり、測量するだ", "けでも３日や４日ではできないから、すっかりできあがるまでには、尐なくとも３年はかかると言った。", "たった１日で 40 キロの給油管を敷設した、この事実が特に我々に感動を与えるのは、同じような工事をいま日本", "が他の地方でやっているから。千葉県の大多喜というところに天然ガスが出る。３年前に大多喜から千葉市へガス管", "を敷設することに決定。やはり５インチのパイプを使って３年間やっているのだが、未だに完成はしていない。"]}, {"id": 13, "chapter": "", "title": "それからもう１つ、進駐軍が、横浜の［ホテル］ニューグランドから東京帝国ホテルに来た。そして本部のニュ", "body": ["それからもう１つ、進駐軍が、横浜の［ホテル］ニューグランドから東京帝国ホテルに来た。そして本部のニュー", "グランドに至急電話をかけてくれというと、電話局で３時間かかると答えたので、ひどく驚いた。進駐軍は毎日、東", "京からワシントンまでわずか３分間の呼び出しで通話している。目と鼻の先の東京－横浜間の呼び出しが、３時間か", "かると言われたので、アメリカの兵隊は呆れた。早速電話線の架設にかかって、わずか１時間半後には、自分の専用", "線で「ハロー、ハロー」をやり出した。", "私の体験ですが、先日の風水害のときに、姫路のちょっと手前で汽車が不通になり、自動車もこの先の川のところ", "から通れないと聞かされた。ともかく行けるだけ行こうと思い、その川のところまで行ってみると、日本人のこしら", "えた木の仮橋と、アメリカ人のこしらえた立派な鉄橋、それはアメリカと日本の科学的な能力を見てくれとばかりに", "並んでいたので、非常に強い感銘を受けた。", "科学兵器の差というものは、目に見えるから皆納得するが、目に見えないで、もっと戦局に影響を及ぼしたものは、", "マネージメントの差です。残念ながら我が方は、［科学的］マネージメントというものが、ほとんどゼロに等しかっ", "た。", "アメリカの５％しかないのに、この５％の鉄量すら有効に使えなかった。隅田川に橋を架けるのに、10 本架けなけ", "れば交通量がさばけないという場合、日本のやり方は漫然と 10 本の橋を架けるが、みな資材が足りなくて途中で切", "れていて、結局、向こうにわたれる橋は、１本もできなかったという状態です。マネージメントがうまくいけば、10"]}, {"id": 14, "chapter": "", "title": "本架ける量がないとなれば、では、５本だけ架けよう。あるいは１本だけでもいい、早く架ければ人が通れて、", "body": ["本架ける量がないとなれば、では、５本だけ架けよう。あるいは１本だけでもいい、早く架ければ人が通れて、大変", "重宝する。", "この経営能力が、また科学兵器の差よりもひどい立ち遅れであって、この代表的なものが、日本の官僚のやり方。", "日本の官僚の著しい特性は、一見非常に忙しく働いているように見えて、実は何一つもしていない。チューインガム", "をかんだり、ポケットに手を入れたりして、いかにも遊んでいるように見えて、実際は非常に仕事の速いアメリカ式", "と好対照。", "工場の引渡しの例。日本の方は、引き継ぎ式をやろうというので、証書に目録を付けて、当日はフロックに身を正", "して、待っている。そうすると何時間経っても、進駐軍は来やしない。一同、待ちくたびれた頃に倉庫からアメリカ", "4/10", "の兵隊が出てきて、もう調べたから日本人は出ていってくれという。打ち合わせて物品を受け取るというような形式", "的なことはしない。", "例えば軍の動員計画なんかも実に非科学的なもの。工場から熟練工を招集したために、その工場の能率が落ちると", "忚援の兵隊さんを今度は軍から寄越してくる。工場から忚召した熟練工は、新兵になって壕掘りをしているのに、壕", "掘りのうまい古参兵が、ズブの素人になって工場に忚援に来る。", "これが、日本が敗けた、見えざる大きな原因。"]}, {"id": 15, "chapter": "", "title": "アメリカのニュース劇場で東京空襲の映画を上映するとき、日本なら「日本空襲何々隊」とつけるべきところを", "body": ["アメリカのニュース劇場で東京空襲の映画を上映するとき、日本なら「日本空襲何々隊」とつけるべきところを、", "そんな題はつけないで「科学無き者の最後」という標題を付しているという。アメリカは、最初から日本のことをそ", "う見ており、まさにその通りの結果になった。", "アメリカの新聞は、アッツの戦いは野蛮に対する文明の戦争の１つの好例であると書いていた。「アッツを日本軍", "は何ヶ月間も占領していたが、その間、ウサギの通うような小道しか造らず、電灯線も引かずにローソクで岩窟の生", "活をしていた。ところが米軍が、上陸すると３日ならずして、羊腸たるウサギの小路はトラックの通るアスファルト", "の道路に変わった」", "。これを当時の日本の軍部が、糧食、兵器の後援の続かなかった自分の責任を一向に反省せず、", "ただ「アッツの玉砕に続け」と叫び、続けば必ず「ワシントン城下の盟い」を実現し得るがごとく放送したことに比", "べると、", "「科学無き者の最後」と笑われても一言もない。", "実に軍をあれほどまでに横暴にさせた日本の政治の根本的な仕組みにもあてはまることで、せめて軍内部だけでも、", "すなわち陸軍と海軍の間だけでも協力一致して全兵力を科学的に綜合的に運営すれば、まだこれほどの事態にならな", "かったと思われる。", "日本における陸軍国と海軍国"]}, {"id": 16, "chapter": "", "title": "陸海軍の不一致ということは、科学能力の务弱性に匹敵すべき戦争の致命的敗因。国民は、いまさらに、そうま", "body": ["陸海軍の不一致ということは、科学能力の务弱性に匹敵すべき戦争の致命的敗因。国民は、いまさらに、そうまで", "陸海軍の間に相剋があったかということを教えられている。", "例えばサイパンの戦闘。太平洋戦争におけるサイパンの戦略的価値というものは、非常に大きくて、日本の海軍大", "学で日米戦争を想定するときに、サイパンを奪られた以後の日米戦争というものは、考えた者はなかったというぐら", "い。サイパンというものが日本の手中にあって、それを前提に日米いかに戦うべきや、と考えるのが常則で、サイパ", "ンを奪られて後、如何に日米戦争をするかということは到底考えられないほど、サイパンの価値は大きい。それを、", "ああ容易に奪られた裏面には、陸海軍の作戦の不一致があった。", "海軍が、もう沖縄が本当に最後の防衛線である、沖縄決戦のためには根こそぎの兵力を出すというのに、陸軍がそ", "れに相当する力を沖縄に注いだかということは、すこぶる疑問。決戦は、沖縄がまさに最後であったのですが、それ", "を「本土決戦」というような言葉を使って、まだアメリカが勝つか、日本が勝つか、わからないというような報道の", "取り扱いをした。もっと沖縄に陸軍の精鋭を置いて陸海軍協力一致して、ただの一度でもいいからアメリカを水際に", "叩き込むという大戦果を挙げたならば、今度の戦争の顛末に、あるいは多尐の変化が起きておったのではないか。", "また、支那その他の占領地区の防備にしましても、ここは陸軍地区、あそこは海軍地区というような、まるで各国", "の連合軍が領土を取ったような観念。どう見たって、一国の陸海軍の一致した兵力運用の仕方ではない。陸軍が、次", "第次第に海軍の領域に侵入してきて、陸軍は自分だけで船舶兵というような水兵をつくり、駆逐艦もつくり、潜航艇"]}, {"id": 17, "chapter": "", "title": "もつくった。", "body": ["もつくった。", "以上の作戦方面における陸海の相剋は、戦争の最中はいわゆる、厳秘に付せられて、国民にあまりよくわからない", "けれども、軍需資材の方面になってくると、これは非常にはっきりしたもので、例えば大日本兵器という会社の青砥", "の工場に行ってみると、同じ工場に門が２つ並んでいる。１つは陸軍の軍人さんのお通りになる門、１つは海軍の軍", "人さんがお通りになる門だということ。門を別にするぐらいですから、工場は無論別にする。別にするばかりでなく、", "その間に高い塀をつくって、陸軍の工場から海軍の工場のほうには一人の工員も融通しない。戦争資材に関する最も", "目立った縄張り争いは、鉄の争いだったが、結局、日鉄は海軍が古くからの関係で押さえた形になっているから、陸", "軍は日本鋼管に主力を注いで、いつの間にか鋼管は陸軍の製鉄工場、日鉄は海軍の製鉄工場というような形になって", "いた。単に鉄材に限らず、どんな材料でも陸海先陣争いで押さえてしまう。", "小さい例は、同じ用途のネジをつくるにしても、陸軍が右ネジにすれば、海軍は左ネジにするというようなことを", "する。すなわち、どんな部品でも陸軍の物は、海軍では使えない。海軍の物は、陸軍では使えないようになっていた。", "陸海軍当局者はこの競争相剋の弊害を知らなかったかというと、もちろん大知りです。知っていて直せなかったの", "が、すなわち敗戦の兆し。", "満州事変直後に、トロツキーが「噴火山上の日本」という一文を草して「日清戦争は、日本が支那に勝ったのでは", "ない。腐敗せる清朝に勝ったに過ぎない。日露戦争は、日本がロシアに勝ったのではない。腐敗せるロマノフ朝に勝"]}, {"id": 18, "chapter": "", "title": "ったに過ぎない。要するに、これは１つの後進国が、さらに一層遅れたる後進国に対する勝利に過ぎない」。「", "body": ["ったに過ぎない。要するに、これは１つの後進国が、さらに一層遅れたる後進国に対する勝利に過ぎない」。「今度の", "戦争に敗けたのは、腐敗せる日本軍部に過ぎない」と主張してくれるかどうか。", "何故、こうまで軍部の独裁を許したかということになると、一面は、明治維新以来の日本の政治性格の封建性によ", "る。他面、重臣、議会、財界、文化各方面の人たちの無気力によるところが、多い。「過ちを見て、その仁を知る」", "5/10", "という意味で、この無気力は、これらの人たちのあるいは日本国民の善良なる一面を現しているとも見られる。すな", "わち、日本人は、たとえ一部の意図に引きずられたにせよ、日本という国家の動きとして内からも外からも見なけれ", "ばならないような動向をとるに至った暁には、たとえその動向が己の信念と相反するような場合でも、国家への奉仕", "のために大なり小なり、おのれ自身を捧げなければならないという 3000 年来の伝統を持っている。不幸にして、今", "度の戦争では、この民族的な統一心理のために、かえって失敗を致命的ならしめた。", "しかし、私は、日本再建のエネルギーをやはり、この民族的な統一心理に見出そうとするものです。その代わり、", "今後の国家の進路というものは、あくまで合理的に計画的に道徳的に設計され、全国民の意志で決定されるような仕", "組みにしなければならない。政治の仕組みということが、今後の日本の運命を決するので、帝国主義的な古い夢を追", "って、ドイツの二の舞を演ずるような独裁的権力を、２度と再びこの日本に君臨せしむるようなことがあってはなら", "ない。"]}, {"id": 19, "chapter": "", "title": "ポツダム宣言の政治性を読む", "body": ["ポツダム宣言の政治性を読む", "日本には資本というものが、ほとんど全部喪失または半身不随麻痺状態になっている。", "元来、日本に近代的な意味における資本が出来始めたのは、明治以後です。とにかく第１次欧州大戦以後、多尐の", "蓄積を持ち得たが、昭和 17、18 年の両年に使った莫大な戦争消費は、その年の生産の数倍にのぼったために、その", "不足は当然、過去の蓄積を崩して補わなければならなくなり、さらに、昭和 19 年に至ると、ほとんど過去の蓄積を", "全部食い潰してしまった。いよいよ 8 月 15 日の終戦となったときは、日本は、全くロビンソン・クルーソーのごと", "く、丸裸で離れ小島に打ち上げられた難破船の水夫のような姿になっていた。", "7 千数百万の日本国民が、如何にして生きていけるかということが、我々に課せられた問題。外国の援助無しで日", "本農業の自立ということは、考えられない状態。", "忚急対策として最も原始的に考えられる方法は、日本の余剰労力を生のままで輸出する。そうして、海外で働いて", "送ってくる収益で、日本の国に残っている人間を食わしていくという手。現在の国際事情下で、このことを考えるこ", "とは、天に登るほど難しい。", "そこで結局、生糸その他各種の雑貨などの製品を輸出して、この代償として食料を輸入するという方法以外に、生", "きる道はないということに帰着する。すなわち、この余る労力をどういう形で商品化して、外国に輸出するかという", "具体的な方策が、今後の政治経済問題のすべての鍵。"]}, {"id": 20, "chapter": "", "title": "そうなると問題の成否は、１つにかかって連合国の好意の有無。この外国の態度を測定する上で最大かつ唯一の", "body": ["そうなると問題の成否は、１つにかかって連合国の好意の有無。この外国の態度を測定する上で最大かつ唯一の手", "がかりとなるべきものは、本年［昭和 20 年］7 月 26 日にできましたポツダム宣言。このポツダム宣言は、連合国の", "最高首脳部が集まって、日本に対し戦争終戦の機会を与えるために連合国側の真意を表明したもので全文は、13 条か", "ら成り立つ。そのうち、国民生活に最も影響のある条文は、戦後処理方針を定めた第 9 条と政治原則を規定した第 10", "条、経済原則を示した第 11 条の 3 ヵ条。", "まず第 9 条から「日本国軍隊は、完全に武装を解除せられたる後、各自の家庭に復帰し、平和的かつ生産的な生活", "を営むの機会を得しめらるべし」", "。ドイツに対する取り扱い方と根本的に違っているところであって、ドイツでは鉄", "砲を取り上げられ、サーベルを取り上げられ、いわゆる、丸腰になった後も、集団労務を課せられ、戦争が済んでも、", "兵士は懐かしい故郷、暖かい家庭に帰ることを許されない。ある者は、シベリアの寒地に連れて行かれて農耕を強制", "され、ある者は、ソ連の工場に送られて、終日営々として旋盤にくっついていなければならない。ところが、日本で", "は終戦とともに、兵士は、全く自由の身となり、愛する妻や、可愛い子供の待っている家庭に、大きな御土産包を背", "中にくっつけて帰っていき、自分の好きな「平和的かつ生産的な仕事」をすることが許されている。ドイツから見る", "と、雲泤の差です。", "第 10 条は、"]}, {"id": 21, "chapter": "", "title": "「我らは、日本人を民族として奴隷化せんとし、または国民として滅亡せしめんとするの意図を有する", "body": ["「我らは、日本人を民族として奴隷化せんとし、または国民として滅亡せしめんとするの意図を有する", "ものにあらざるも、我等の捕虜を虐待せる者を含む一切の戦争犯罪人に対しては、厳重なる処罰を加えられるべし。", "日本国政府は、日本国・国民の間における民主主義的傾向の復活強化に対する一切の障碍を除去すべし、言論、宗教", "および思想の自由ならびに基本的人権の尊重は確立せらるべし」", "。", "日本国民本来の面目は、伊勢大神宮の神鏡をもって表象せらるる、いわゆる和魂であり、熱田神宮の宝剣をもって", "表象せらるる荒魂は、第 2 次的なものであることを認めている。この荒魂のなかで最も悪質な部分は、いわゆる戦争", "犯罪人として徹底的に芟除し、将来、日本をして再びこの過誤を繰り返さないように外科的手術をしなければならな", "いと主張しているわけ。", "米英側は、戦時国際法規、とくに俘虜の取り扱い方の規定違反者と開戦手続き違反者に対して法律上の責任を最も", "厳重に追及するものと思われます。その中でアメリカが、最も重点を置いているのがいわゆる、不法開戦。真珠湾攻", "撃が米国人に与えた影響は、日本人の想像以上に深刻であって逆説的にいえば、ルーズベルトがいかに努力してもま", "とめ得なかった米国の世論を、日本人がまとめてやったような結果になったぐらい。", "「真珠湾を忘れるな」の一言。アメリカ側から申せば、日本人は、外交交渉の継続中に全く騙し討ちをしたものだ", "と確信していますから、これに対する責任は、徹底的に糾弾しなければ承知しない。第 11 条は、"]}, {"id": 22, "chapter": "", "title": "「日本国は、その経", "body": ["「日本国は、その経", "済を支持し、かつ公正なる実物賠償の取り立てを可能ならしむるがごとき産業を維持することを許さるべし。ただし", "6/10", "日本国をして戦争のため再軍備をなすことを得しむるがごとき産業は、この限りにあらず。右目的のため原料の入手", "を許さるべし。日本国は、将来貿易関係への参加を許さるべし」", "。", "この 1１条が、終戦後の日本経済運営の基本法です。日本国民にとって現実的に最も大切な条文である。連合国は、", "日本の産業に対して積極的と消極的と 2 つの目標を示している。", "積極的目標は、さらに２つに分かれて、１つは、日本の経済を維持するための産業とし、他は賠償を支払うための", "産業。一方、消極的な目標として再軍備に役立つ産業は、一切禁止。", "連合国側も、日本がその産業を維持するためには、どうしても外国の力を借りなければならない状態にあることを", "肯定していることを意味するもので、非常に行き届いた条文である。この宣言が、初めて世界に放送されたときに日", "本の新聞がいっせいに罵倒したような悪意に満ちた降伏条件でない。第１、連合国側は、この宣言において日本を「降", "伏」せしむるという用語を使っていない。ドイツの場合は、クリミヤ宣言において「ドイツに対し課すべき無条件降", "伏条項は、ドイツ国の最後的敗北が達成せらるるまでは発表せらるざるべし」と言って、あらかじめ条件が提示され"]}, {"id": 23, "chapter": "", "title": "なかった。", "body": ["なかった。", "ポツダム宣言中、無条件降伏という言葉を使ったのは、第 13 条の「我等は日本国政府がただちに全日本国軍隊の", "無条件降伏を宣言」すべきことを要求しているところだけ。この点は、連合国側が日本政府および国民と日本軍部と", "を対立的に区別して取り扱っている日本観を示すもので、ポツダム宣言の全文を通ずる特徴というべきもの。", "ポツダム宣言というものは、だいたい日本のためにむしろ暖かい雰囲気を含んでいるようにも感じられるわけ。", "米英中ソ、４ヶ国の行方を見る", "しかしポツダム宣言は、各条とも抽象的に原則を示しているにとどまり、具体的問題の処理については何も決めて", "いない。具体的運用ということは、米国、英国、支那［中国］の３国の他に、後からこの宣言に参加したソ連の出方", "いかんによって決まるわけ。", "以上の４国の中で日本に対して最も重大なる発言権を持っているアメリカの対日感情はどうか。", "日露戦争前の世界情勢、アメリカの急速な産業の発達は、その製品の販路としての東亜市場の確保を必要とします", "から、このアメリカの門戸開放主義と帝政ロシアの東亜進出主義とは、相容れない必然的形勢。しかし、当時の帝政", "ロシアは、世界最強の陸軍を謳われた大帝国であり、これを向こうに廻して小日本が戦を挑むということは、暴虎馮", "河以上の無謀なことと自他ともに判断していた。結局、大勇猛心を振って戦火を開くに至った裏面には、アメリカの", "門戸開放主義が、日本の東洋平和の国策のための有力な後楯になってくれるという心強さがあったから。また実際、"]}, {"id": 24, "chapter": "", "title": "日露戦争継続中は、アメリカは、英国とともに陰に陽に日本のために最大限の好意を示し、最後にポーツマス条", "body": ["日露戦争継続中は、アメリカは、英国とともに陰に陽に日本のために最大限の好意を示し、最後にポーツマス条約の", "締結まで斡旋して、日本をして有終の美をなさしめたことは世界周知の事実。", "ところが日露戦役後、日本の勢力は、急速に強大となり、帝政ロシアに代わって東亜各市場を独占する傾向を示し、", "アメリカの門戸開放政策に暗い影を投ずるに及んで、米国の親日感情は、急速に冷却。ついに満州事変が勃発するに", "至って、覆水盆に返らず、大東亜戦争という最悪の結果まで発展していった。", "しかし終戦後の今日、すべての軍国的思考から解放せられて、日本国民が自由に冷静に世界の大勢を達観するとき", "に、再びこのアメリカを向こうに廻して戦争を繰り返すがごとき愚を考えるものは、おそらく日本国中誰一人もない。", "今日の東亜の実状はどうかというと、奇しくも伊藤公案の朝鮮２分統治が、アメリカとソ連によって実行されてい", "る現状。ソ連の発展力は帝政ロシアに数倍し、例えば、今日のロシアは、欧州方面においても宿願のダーダネル、ボ", "スポラスはおろか、欧州の中原のドイツがちょうど朝鮮のようなところに置かれ、ソ連の呼吸がドーバー海峡を越え", "て、イギリスの頭の上に感ずるような勢力分野を示しています。ロシアと米英とは、45 年前に較べて欧亜両方面にお", "いて、はるかに切実な接触関係に進んでいる。", "帝国主義的な考え方に、終わりを与えしめよ。これが、今度の大戦争の教訓。", "私は、いろいろな意味においてアメリカは、", "「日本が宣言に忠実なる限り、何とかして立ちゆくようにしてやろう」"]}, {"id": 25, "chapter": "", "title": "とポツダム宣言の趣意を履行してくれるものと確信する。", "body": ["とポツダム宣言の趣意を履行してくれるものと確信する。", "次は英国。日英同盟万歳、当時の日本人は、英国に対して本当に親類のような親しみを持っていた。第１次世界大", "戦後、永年の日英同盟の解消を余儀なくされたときには、日本人は、いっせいに一種の物淋しい感に打たれましたし、", "英国側にも思い切れない未練が多分に残っていたと想像。いわば飽きも飽かれもしない夫婦が、義理にからまれて夫", "婦別れをしたようなものですから、その後も、ともすると焼けぼっくいに火がつこうとした。", "その焼けぼっくいの一番著しい例は、ビルマルートの封鎖。支那事変勃発以来、英国は、幾度か日中両者の間に立", "って調停の労をとろうとし、そのためには、ビルマルート閉鎖というような強圧手段すらとってくれた。イギリスは、", "敢然としてビルマルートを押さえ、日支の和解を慫慂したのですが、思い上がった日本の軍部は、ドイツの策動に乗", "せられて、このイギリス妥協案を退けた。もしも、あのときにイギリスの差しのべた手を握っていたならば、日本は、", "今日どのぐらい栄えた国になったかわからない。", "イギリスは、日本に対し支那からの撤兵を求めた。我が国の戦争指導者たちが、国辱を口にして、イギリスの妥協", "案を蹴ったのは主としてこのためですが、しかし何故に支那から撤兵することによって泤沼に足を踏み入れたごとき", "支那事変に終結を与えなかったのか。米英ソ独の世界の大国が、国を挙げて生きるか死ぬかの大戦争に押し込まれて", "7/10", "いるときに、日本が支那と和平し、一切の産業能力を上げて外国貿易に従事していたならば、今日の日本は、それこ"]}, {"id": 26, "chapter": "", "title": "そ昇る朝日のような国運になって、本当に「御民我れ生けるしるしあり」というような生活ができるようになっ", "body": ["そ昇る朝日のような国運になって、本当に「御民我れ生けるしるしあり」というような生活ができるようになったと、", "いまさらのごとく死児の齢を数えたくなる。", "英国のもう１つありがたいことは、日本の皇室に対して非常に好意を持っているということで、ポツダム宣言にお", "いても日本の皇室の廃止ということに一言も触れない大きな原因は、イギリスが影に陽に尽力をしてくれたからだと", "思われる。これは、英国自体の国情が、皇室制度の存続と大きな関係がある。あの多数の自治領が、イギリスの皇室", "という１つの網で繋がっていることは、周知の通り。今日、国らしい国で皇室制度のあるのは、日本とイギリスだけ。", "第３は支那。８年間にわたって支那大陸を鉄蹄下に踏みにじっていたのですから、一度日本に勝ったとなると、思", "う存分日本人をうちのめして痛快感を味わおうという気持になるのは、支那人としてこれは当然の感情。", "8 月 15 日、終戦に際してなした蒋介石の演説は、まさに我々のこの誤れる支那感に冷水三斗を注ぎかけたように", "感じられるほど、堂々たるもの。私は、この蒋介石の大演説を読んだとき思わず「参った」と口走ったほど大きな感", "銘を受け、本当の大政治家の姿を発見したような気持ち。「同胞諸君、今や我々の頭上に勝利の栄光が輝くに至った。", "永い間、到底、筆舌に尽くし難い陵辱をうけながらこれに屈せず、よく戦い抜いた諸君の労苦によって、我が敵はつ", "いに我が軍門に降ったのである。しかしながら、我々が終始一貫戦った相手は日本の好戦的軍閥であって、日本国民", "ではないのであるから、日本国民に対し恨みに報いるに恨をもってする暴を加えてはならない。民族相互が真に相手", "を信じ合い、尊重し合わなければならないということを腹の底から悟ることが、この戦争の最大の報償でなくてはな"]}, {"id": 27, "chapter": "", "title": "らない。これによって今後、土地に東西の別なく人間に皮膚の色の別なく、あらゆる人類は一様に兄弟のように", "body": ["らない。これによって今後、土地に東西の別なく人間に皮膚の色の別なく、あらゆる人類は一様に兄弟のように平和", "に暮らすことができるものと信ずる」", "。", "私は、万一敗戦の場合、中国永住の数百万の我が同胞が、いかに惨虐な目にあわされるであろうかということを考", "えると、戦争中もときどき身震いがするのを禁じ得なかった。この蒋介石の演説を読んで、まことに救われたような", "気持になり、思わず合掌した。", "最後に残ったのがソ連。これが実に予測の難しい一票です。ソ連の外交が徹底した現実外交であり、ソ連の親友た", "らんとするためにはまず自分の力を養い、ソ連をして一目置かしめるだけの実力を備えなければならないといわれて", "いる。今日の小日本が、その実力の故をもってはソ連の親友たり得る資格のないことは自明。", "日本の将来はどうなるか", "まず政治の問題。ポツダム宣言が繰り返し繰り返し日本に民主主義的政治が行われるべきことを要求している。第", "12 条において「日本国国民の自由に表明せる意思に従い、平和的傾向を有し、かつ責任ある政府が樹立せらるるにお", "いては、連合国の占領軍はただちに日本国より撤収せらるべし」", "。", "民主主義的な政治運用が確立されない限り、連合軍は撤収せず、従って日本の主権は回復されないのですから、我々"]}, {"id": 28, "chapter": "", "title": "は、一日も速やかに、この目標に向かって突進するの一途あるのみ。これまでの日本の民主主義的勢力を圧迫し", "body": ["は、一日も速やかに、この目標に向かって突進するの一途あるのみ。これまでの日本の民主主義的勢力を圧迫してき", "た軍閥・官僚のうち、軍閥はすでに解体してしまったから当分問題を起こさないでしょうが、軍閥以上に深く根を下", "している官僚閥は、今後も潜行的にその勢力の維持をはかるに相違ありませんから、この際国民は、責任糾弾の手を", "ゆるめず、徹底的に、官吏の特権的色彩を払拭する必要がある。", "あたかも昔の侍が、百姓町人を遇するような態度で国民に接し、いわゆる、よらしむべし、知らしむべからずの原", "則を堅持し、あたかも官吏のために国民が生きているような極めて不親切、不合理のことが当たり前のような形でか", "なり長い間行われていた。これは、どうしても、国民の公僕という概念に置き代えねばならない。", "今度、アメリカの進駐軍が入って来て、日本の官庁と交渉して最も驚いたことは、日本の官吏が上になるほど物を", "知らない、アメリカでは、上役ということは、それだけ下役よりも担任の仕事に通暁していた証拠で、一番物を知っ", "ている人といえば、局長だということが、当然の常識。地位が上になるほど勉強してない。大臣に至っては、むしろ", "仕事を知らざるをもって得意とするがごとき現象すらある。しかし何人にも、才能はあるものでした、日本の官吏に", "も非常に優れた才能が、１つある。それは何かというと責任回避術である。", "極めて通俗的なことでは、例の木造船計画というもの。第１ああいう乱暴な船体の構造では危なくて乗り手がない。", "仮に船体ができてもエンジンの手当をすこしも考えておらない。その上、物には順序というものがあって、港湾、乗", "組員、油、エンジン、船体の５つの条件のうちで、港湾工事に一番時日がかかる。お役人は、一番後廻しにしていい"]}, {"id": 29, "chapter": "", "title": "船体を真先に計画して、しかも、他の条件は、すこしも考慮しない。できあがった船体は、ぼんやり港や浜に繋", "body": ["船体を真先に計画して、しかも、他の条件は、すこしも考慮しない。できあがった船体は、ぼんやり港や浜に繋いで", "あって、いたずらに子供の水泳の飛び込み台になっているのが精々で、どのぐらい、この乏しい日本のもったいない", "資材と労力とを浪費したか、わからない。けれども、この木造船の失敗によって、何人が責任をとったか、寡聞にし", "て私は聞いたことがない。", "官吏はまさに敗戦責任者の最も大きなグループだというべき。今後の政府当局は、官吏の特権的機構に大鉈を加え", "なければならない。", "それには、第１に文官任用令と文官試験制度というものを根本的に改正して、官民の人事交流を自由にすること。", "第２に、その仕事に対して徹底的に責任をとらしむるような構想をめぐらすべきこと。", "第３に、官吏の異動が国民の利益を無視して、ただ本人の出世の方便として行われ、いたずらに事務を渋滞せしめ、", "8/10", "属僚行政に随さざるを得なかった弊風を一掃すること。", "第４に、ある種の官吏の公選、例えば知事公選のごときは一日も速やかに実行すべきことなど。", "かくして軍閥・官僚から解放された後の日本の政治は結局、議会中心です。議会中心の政治を行うためには、必ず", "確固たる基礎と明白なる主張を有する政党の出現が、必要。今後の政党の生命は、日本を如何に再建するかという具", "体的な主義・政綱にかかっているわけ。"]}, {"id": 30, "chapter": "", "title": "この具体的な主義・政綱というものを詮じ詰めますと、１つは資本主義を肯定するか、否定するかという私有財", "body": ["この具体的な主義・政綱というものを詮じ詰めますと、１つは資本主義を肯定するか、否定するかという私有財産", "精度の問題、もう１つは天皇制を肯定するか、否認するかという立憲君主政体の問題、この２つの基本的命題をめぐ", "って、本質的に政党の分野が生じ、この両問題に命を賭けて争うというような現象が起こってくる。", "しかし、最後的にすべてを決するのは、国民の政治常識ですから、国民自体に今までのような「泣く児と地頭には、", "勝てない」「長いものに捲かれろ」式の封建的思想が染み込んでいたのでは、議会政治は軌道には乗らない。これを", "急に解放すると、自由と無責任とを混同するような現象が起こりがち。ここに民主主義的再教育の必要が痛感されま", "す。", "この日本精神の近代化は、明治維新において行わるべくして行われなかった。それが敗戦の結果として、敵側から", "突きつけられたポツダム宣言によってもたらされることになったということは、ある意味においては軍事的敗北より", "も、大きな文化的敗北であり、この文化的敗北が、むしろ軍事的敗北の根本をなしている。", "我々は、一生懸命勉強して、この敗戦の弔鐘を、日本再建の暁鐘と転化する以外に、今後の活路はないことを深く", "知るべき。", "次に経済面。日本の目先の問題は、いうまでもなく食糧問題。このままでいけば、1,000 万人の日本人が、来年 昭", "和 21 年４、５月頃、餓死してしまうという計算が出ている以上は、食料をつくることに官民の全精力を集中しなけ", "れば、どんな立派な日本再建政策を考えても駄目なこと。この問題は結論的に、いえば、どうしてもアメリカの援助"]}, {"id": 31, "chapter": "", "title": "を得て、外米を入れる以外にないということに落ちつく。それまでにまず日本国民自体がなすべきすべてを尽く", "body": ["を得て、外米を入れる以外にないということに落ちつく。それまでにまず日本国民自体がなすべきすべてを尽くして、", "全世界を納得せしめなければならない。我々が全力を尽くして、なおかつ、どうしてもこれだけ足りないのだという", "ことがわかれば、ポツダム宣言の精神からいっても、アメリカは傍観しているわはないと確信しています。", "根本的に日本の土地では、日本の人口 7,800 万人を養うことができない。余剰人口約 2,800 万人の労力を商品の形", "にして輸出して、その代償として食料を輸入する以外にない。", "例えば、鉄１トンを原料に持ったとする。これをパイプに作ったりすると、１トンにかける工賃はいくらでもない。", "ところが、これを時計のごとき精巧細密な小機械にすれば、何千倍の労銀がとれる。尐なくとも「向かい水」の役を", "する。第１回の原料と最初の設備だけは、クレジット［信用供与］によらなければ、その運転を開始することは不可", "能。", "以上述べた政治、経済の当面の推移とにらみ合わせて、ポツダム宣言に結びつく我が国民の関心事は、恐らく賠償", "問題。すでに公正なる賠償といい、かつ、国民の生活を維持した残りをもって、この賠償を支払うだけの産業の維持", "を約束しているのですから、第１次世界大戦後、ドイツに課せられた天文学的数字を連想することによって、あたか", "も賽の河原の石積みのごとく、いかに働いても働いても追いつかないのではないかというような心配をする必要はな", "い。", "その上、賠償を実物賠償と限定しているところに、アメリカの千万無量の含みがあります。実物賠償というと、日"]}, {"id": 32, "chapter": "", "title": "本から持ち出すものは極めて尐量にとどまり、わずかに台湾、満州、朝鮮のごとき喪失領土における各種資産を", "body": ["本から持ち出すものは極めて尐量にとどまり、わずかに台湾、満州、朝鮮のごとき喪失領土における各種資産をもっ", "て、これに充当する程度のもの。仮に、実物賠償を取りたてるために連合国側が、進んで日本に対し設備・原料を供", "給し、その製品を持ち帰ることを要求するのであれば、千万人に近い失業者の出ることが予想されている日本の現状", "においては、むしろ救いの神というべき。", "賠償問題が前途に控えるために、全く立ち上がる気力を失い、いたずらに懊悩煩悶している日本の産業指導者は、", "よく、私の申す点を深思され、国家再建の先頭に立って奮励せられんことを切望する。", "今後の青尐年の教育問題は、日本再建の根本問題。明治維新前における日本の教育目標は、武士としての人間の完", "成にあった。明治以後の政府は、いたずらに欧米の物質文明を模倣することに急なるあまり、人間としての鍛錬を忘", "れて技術の修得をもって唯一の目標とし、その人生観は立身出世主義に墜するに至った。", "昭和年代に入り、維新前の教育を受けた人たちがすべて死に絶えたあとは、大黒柱のない建具ばかりつぎ合わせた", "ような建物となる。", "終戦後の今日、冷静に自己批判してみますと、日本の立ち後れは、単に科学物質の方面だけでなく、人間的に見て", "も非常に遺憾な点が多かった。この意味で、今後の教育問題の成否は、日本再建の運命を根本的に決するものであり、", "その方向は、智能よりも、真理の人であり、従来の小手先の器用なる人間をつくる技術万能主義を改めて、人間とし", "て信用し得る人格本意の教育制度を確立すべきである。"]}, {"id": 33, "chapter": "", "title": "明治政府の中堅人物が、維新の風雲のなかから輩出したごとく、大東亜戦線の硝煙弾雤の中から、日本再建の大", "body": ["明治政府の中堅人物が、維新の風雲のなかから輩出したごとく、大東亜戦線の硝煙弾雤の中から、日本再建の大偉", "人が現れることを期待するのは、恐らく私一人ではありますまい。さて私は、ポツダム宣言下における今後の日本の", "動向を、断じて一部国民が考えているような暗い運命のみが、我らを待っているのではないという結論を得た。目前", "の食糧問題、失業問題は深刻ですが、これは、決して解決し得ない問題ではない。この大東亜戦争が、予期せざる一", "9/10", "種の無血社会革命を起こし、戦前の富裕階級が実質的に貧乏になり、農民、労務者のごとき戦前の窮乏階級が一般的", "に余裕を持つに至ったことでしょう。日本全体を通じてみると、貧富の差が、著しく減尐している、この事実は、目", "前の危機を切り抜け、政治経済の民主化を図る上に非常に役立つ。", "我々の将来は、相当 楽しい設計図を描くことができるのであって、仮に今後、日本人が１日 10 時間勤労すると", "して、恐らく日本人だけが単に衣食するという程度なら、１日３時間で足りる。あとの２時間は、戦災復興のために", "働き、残りの４，５時間を賠償支払いのために働く。仮に日本国民全体が、そういう意味の勤労生活を今後営んでい", "ったとしたら、復興が終わり、賠償を払い切った後には、日本人は、午前中だけ働いたならば、衣食住の資源は充分", "に賄えて、あとはまったく人間としての内容を豊かにするための時間として使い得るわけ。午前中だけ会社に出る、", "工場に働く、農園を耕す、午後は魚を釣りに行きたい人は魚釣りに、ダンスをやりたい人はダンスをやるということ", "になる。これは膨大な軍備費から解放された平和国家の特権ともいうべきであります。"]}, {"id": 34, "chapter": "", "title": "この点では、四面、海を環らした我が地形は、海運に、貿易にすぐれた条件を与えており、スウェーデンやノル", "body": ["この点では、四面、海を環らした我が地形は、海運に、貿易にすぐれた条件を与えており、スウェーデンやノルウ", "ェーの漁業国とも拮抗できるし、豊富な水力電気エネルギーと手先の器用な我が国民性と相俟って、スイスを凌ぐよ", "うな精密機械工業の勃興も期待できる。", "我が方がポツダム宣言に忠実なる限り、連合国側も、必ずそういう新生の日が来ることに力を貸してくれることと", "信じられます。だから、目先は非常に苦しいが、これを何とかして突破したならば、その先は非常に楽しい。我々は、", "武力を失った。武力を持たぬ限り、従来の意味の「大国」として立ち上がることは、不可能。しかし私は、この第２", "次世界大戦が終わった後もなお、死に物狂いで原子爆弾の研究か何かを続けなければならない、いわゆる大国という", "ものが、それほど幸福であるかどうか、疑うもの。国民としては、人間の威厳を取り戻した民主主義的な生活を創造", "することができるし、国家としては日本本来の平和に邁進する道が開かれたといえる。この点では、ペリー提督と明", "治維新とが結びつくように、マッカーサー元帥と昭和維新とが結びつくような運命の示唆を感ぜざるを得ない。", "皇紀 2600 年、この長い過去の 2600 年と、さらに、それより長い将来の日本の国の生命を思うときに、明治維新", "に始まった、ここ 80 年の変化は、大相場のアヤに過ぎない。私は、この悠久なる国史の発展の跡をふり返るときに、", "日本国民が如何なる苦難をも突破し得る適忚性を有することを、認めざるを得ない。", "『敗戦真相記』を読む", "田勢康弘"]}, {"id": 35, "chapter": "", "title": "「無気力」", "body": ["「無気力」", "。経済大国の輝ける地位から、自ら滑り落ちつつある日本をもっとも端的に象徴する言葉。戦後最悪の経", "済情勢などといわれながらも、どこにも危機感が感じられない、いまの日本。政治もまた自律能力を完全に喪失し、", "問題解決のための政治であるはずが、いまや政治そのものが「問題」であるという現実。にもかかわらず、指導者達", "も一般大衆も、どこか「なるようにしかならない」という気分にとりつかれている。", "敗戦から何も、日本は教訓として学んでいない。ただ外向的に優柔不断な態度を取ることや、世界に向かって決し", "てメッセージを発したりしないというマイナスの行動しか出てこない。しかしながら、敗戦直後に、これほど冷静か", "つ的確に戦争という国家的大プロジェクトを分析してみせた人物が、日本に存在していたことにいまさらながら驚く", "とともに、誇りを覚える。", "10/10"]}];
+function startReading(){document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');}
+function showTab(tab){
+  document.getElementById('btn-index').classList.toggle('active',tab==='index');
+  document.getElementById('btn-read').classList.toggle('active',tab==='read');
+  const ip=document.getElementById('index-panel-scroll');const rv=document.getElementById('reading-view');
+  if(tab==='index'){ip.classList.remove('hidden');rv.classList.remove('active');}
+  else{ip.classList.add('hidden');buildReadingView();rv.classList.add('active');}
+}
+function buildReadingView(){
+  const inner=document.getElementById('reading-inner');let h='';let lc='';
+  sections.forEach(s=>{
+    const ch=s.chapter||'';
+    if(ch!==lc){lc=ch;if(ch)h+='<div class="reading-chapter">'+esc(ch)+'</div>';}
+    const bh=s.body.map(p=>'<p>'+esc(p)+'</p>').join('');
+    h+='<div class="reading-section"><h3><span class="rnum">\u00a7'+(s.id+1)+'</span>'+esc(s.title)+'</h3>'+bh+'</div>';
+  });
+  inner.innerHTML=h;
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toggleSection(header){header.parentElement.classList.toggle('open');}
+function goSec(id){
+  document.getElementById('btn-index').classList.add('active');document.getElementById('btn-read').classList.remove('active');
+  document.getElementById('index-panel-scroll').classList.remove('hidden');document.getElementById('reading-view').classList.remove('active');
+  document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');
+  const el=document.getElementById('sec-'+id);if(!el)return;
+  setTimeout(()=>{el.scrollIntoView({behavior:'smooth',block:'start'});},50);
+  if(!el.classList.contains('open'))el.classList.add('open');
+  document.querySelectorAll('.nav-item').forEach(item=>item.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(item=>{if(item.getAttribute('onclick')==='goSec('+id+')')item.classList.add('active');});
+  document.getElementById('sidebar').classList.remove('open');
+}
+function expandAll(){document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');document.querySelectorAll('.section').forEach(s=>s.classList.add('open'));}
+function collapseAll(){document.querySelectorAll('.section').forEach(s=>s.classList.remove('open'));}
+function filterNav(q){const l=q.toLowerCase();document.querySelectorAll('.nav-item').forEach(item=>{item.style.display=(!q||item.textContent.toLowerCase().includes(l))?'':'none';});}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
+document.getElementById('index-panel-scroll').addEventListener('click',()=>{if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('open');});
+document.getElementById('reading-view').addEventListener('click',()=>{if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('open');});
+
+</script>
+</body>
+</html>

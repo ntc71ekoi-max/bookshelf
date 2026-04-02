@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>生き方 | Claude本棚</title>
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;--text:#e6edf3;--text2:#8b949e;--accent:#f0883e;--accent2:#d29922;--chapter-color:#79c0ff;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Helvetica Neue','Hiragino Sans','Yu Gothic',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.7;}
+#app{display:flex;height:100vh;overflow:hidden;}
+#sidebar{width:300px;min-width:300px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+#header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;flex-shrink:0;}
+#header h1{font-size:15px;font-weight:700;color:var(--accent);line-height:1.4;}
+#header .subtitle{font-size:12px;color:var(--text2);margin-top:2px;}
+#header .meta{font-size:11px;color:var(--text2);margin-top:3px;}
+#top-nav{display:flex;align-items:center;gap:8px;padding:8px 24px;background:var(--surface2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;}
+.top-nav-btn{padding:5px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:inherit;transition:all 0.15s;white-space:nowrap;text-decoration:none;display:inline-block;}
+.top-nav-btn:hover{background:var(--surface);color:var(--text);border-color:var(--accent);}
+.top-nav-btn.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600;}
+#progress-area{margin-left:auto;font-size:11px;color:var(--text2);white-space:nowrap;}
+#search-bar{padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+#search-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:13px;font-family:inherit;outline:none;}
+#search-input:focus{border-color:var(--accent);}
+#nav-scroll{flex:1;overflow-y:auto;padding:8px 0;}
+#nav-scroll::-webkit-scrollbar{width:4px;}
+#nav-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.nav-chapter{padding:8px 16px 4px;font-size:10px;font-weight:700;color:var(--chapter-color);border-top:1px solid var(--border);margin-top:4px;}
+.nav-chapter:first-child{border-top:none;margin-top:0;}
+.nav-item{padding:5px 16px;font-size:12px;color:var(--text2);cursor:pointer;transition:all 0.1s;border-left:2px solid transparent;}
+.nav-item:hover{background:var(--surface2);color:var(--text);border-left-color:var(--accent2);}
+.nav-item.active{background:var(--surface2);color:var(--accent);border-left-color:var(--accent);}
+#index-panel-scroll{flex:1;overflow-y:auto;padding:24px;}
+#index-panel-scroll::-webkit-scrollbar{width:6px;}
+#index-panel-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.chapter-header{margin:18px 0 6px;padding:9px 16px;background:rgba(121,192,255,0.08);border-left:3px solid var(--chapter-color);border-radius:0 6px 6px 0;font-size:13px;font-weight:600;color:var(--chapter-color);}
+.chapter-header:first-child{margin-top:0;}
+.section{margin-bottom:5px;border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color 0.2s;}
+.section:hover{border-color:var(--accent2);}
+.section.open{border-color:var(--accent);}
+.section-header{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;background:var(--surface);user-select:none;transition:background 0.15s;}
+.section-header:hover{background:var(--surface2);}
+.sec-num{font-size:10px;color:var(--text2);min-width:28px;flex-shrink:0;}
+.sec-title{flex:1;font-size:13px;font-weight:500;color:var(--text);line-height:1.4;}
+.toggle-icon{font-size:10px;color:var(--text2);transition:transform 0.2s;flex-shrink:0;}
+.section.open .toggle-icon{transform:rotate(180deg);}
+.detail-body{display:none;padding:14px 20px;background:var(--bg);border-top:1px solid var(--border);}
+.section.open .detail-body{display:block;}
+.detail-body p{margin-bottom:10px;font-size:14px;color:#cdd9e5;line-height:1.85;text-align:justify;}
+.detail-body p:last-child{margin-bottom:0;}
+#reading-view{display:none;flex:1;overflow-y:auto;padding:40px;}
+#reading-view.active{display:block;}
+#reading-view::-webkit-scrollbar{width:6px;}
+#reading-view::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.reading-inner{max-width:780px;margin:0 auto;}
+.reading-chapter{margin:24px 0 8px;padding:9px 18px;border-left:3px solid var(--chapter-color);font-size:14px;font-weight:600;color:var(--chapter-color);}
+.reading-chapter:first-child{margin-top:0;}
+.reading-section{margin-bottom:18px;padding:16px 20px;background:var(--surface);border-radius:8px;border:1px solid var(--border);}
+.reading-section h3{font-size:14px;font-weight:700;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.reading-section h3 .rnum{font-size:11px;color:var(--text2);font-weight:400;}
+.reading-section p{font-size:14px;color:#cdd9e5;line-height:1.85;margin-bottom:8px;text-align:justify;}
+.reading-section p:last-child{margin-bottom:0;}
+#splash{text-align:center;padding:60px 24px;}
+#splash h2{font-size:22px;color:var(--accent);margin-bottom:8px;}
+#splash .sp-sub{color:var(--text2);font-size:14px;margin-bottom:32px;}
+#splash .stats{display:flex;justify-content:center;gap:40px;margin-bottom:32px;}
+#splash .stat .num{font-size:36px;font-weight:800;color:var(--accent2);}
+#splash .stat .lbl{font-size:12px;color:var(--text2);margin-top:2px;}
+#splash .start-btn{background:var(--accent);color:#000;border:none;padding:14px 44px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity 0.2s;}
+#splash .start-btn:hover{opacity:0.85;}
+#menu-toggle{display:none;background:transparent;border:none;color:var(--text);font-size:20px;cursor:pointer;padding:4px 8px;vertical-align:middle;margin-right:8px;}
+.hidden{display:none !important;}
+@media(max-width:768px){
+  #sidebar{position:fixed;top:0;left:0;bottom:0;z-index:100;transform:translateX(-100%);transition:transform 0.25s ease;width:280px;}
+  #sidebar.open{transform:translateX(0);}
+  #menu-toggle{display:inline-block;}
+  #index-panel-scroll{padding:14px;}
+  #top-nav{padding:8px 14px;}
+  #header{padding:11px 14px;}
+  #reading-view{padding:16px;}
+}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="sidebar">
+  <div id="search-bar"><input id="search-input" type="text" placeholder="🔍 節タイトルを検索..." oninput="filterNav(this.value)"></div>
+  <div id="nav-scroll">
+<div class="nav-chapter">（本文）</div>
+<div class="nav-item" onclick="goSec(0)">、せっかくの高い能力を正しい方向に活かしていくことができず、道</div>
+<div class="nav-item" onclick="goSec(1)">人生の真理は懸命に働くことで体得できる</div>
+<div class="nav-item" onclick="goSec(2)">人生・仕事の結果＝考え方×熱意×能力</div>
+<div class="nav-item" onclick="goSec(3)">心に描いたものが実現するという宇宙の法則</div>
+<div class="nav-item" onclick="goSec(4)">人類に叡智をもたらしつづける「知恵の蔵」がある</div>
+<div class="nav-item" onclick="goSec(5)">いまつを与えるように、</div>
+<div class="nav-item" onclick="goSec(6)">自己を厳しく律しつづける「王道」の生き方をせよ</div>
+<div class="nav-chapter">第１章 思いを実現させる</div>
+<div class="nav-item" onclick="goSec(7)">求めたものだけが手に入るという人生の法則</div>
+<div class="nav-item" onclick="goSec(8)">寝ても覚めても強烈に思いつづけることが大切</div>
+<div class="nav-item" onclick="goSec(9)">現実になる姿が「カラーで」見えているか</div>
+<div class="nav-item" onclick="goSec(10)">すみずみまでイメージできれば実現できる</div>
+<div class="nav-item" onclick="goSec(11)">細心の計画と準備なくして成功はありえない</div>
+<div class="nav-item" onclick="goSec(12)">運命は自分の心次第という真理に気づく</div>
+<div class="nav-item" onclick="goSec(13)">あきらめずやり通せば成功しかありえない</div>
+<div class="nav-item" onclick="goSec(14)">努力を積み重ねれば平凡は非凡に変わる</div>
+<div class="nav-item" onclick="goSec(15)">毎日の創意工夫が大きな飛躍を生み出す</div>
+<div class="nav-item" onclick="goSec(16)">「創意工夫する心」</div>
+<div class="nav-item" onclick="goSec(17)">現場に宿る「神の声」が聞こえているか</div>
+<div class="nav-item" onclick="goSec(18)">「こうしたらど</div>
+<div class="nav-item" onclick="goSec(19)">つねに「有意注意」の人生を心がけよ</div>
+<div class="nav-item" onclick="goSec(20)">あふれるほどの夢を描け、人生は大飛躍する</div>
+<div class="nav-chapter">第２章 原理原則から考える</div>
+<div class="nav-item" onclick="goSec(21)">人生も経営も原理原則はシンプルがいい</div>
+<div class="nav-item" onclick="goSec(22)">迷ったときの道しるべとなる「生きた哲学」</div>
+<div class="nav-item" onclick="goSec(23)">世の風潮に惑わされず、原理原則を死守できる</div>
+<div class="nav-item" onclick="goSec(24)">知っているだけではダメ、貫いてこそ意味がある</div>
+<div class="nav-item" onclick="goSec(25)">「人生・仕事の結果＝考え方×熱意×能力」</div>
+<div class="nav-item" onclick="goSec(26)">「１日１日をど真剣に生きる」</div>
+<div class="nav-item" onclick="goSec(27)">「知識より体得を重視する」</div>
+<div class="nav-item" onclick="goSec(28)">「できる」と「知っている」の間には、深</div>
+<div class="nav-item" onclick="goSec(29)">ただいま、このときを必死懸命に生きる</div>
+<div class="nav-item" onclick="goSec(30)">「好き」であればこそ「燃える」人間になれる</div>
+<div class="nav-item" onclick="goSec(31)">自分に打ち勝ち前に進め、人生は大きく変わる</div>
+<div class="nav-item" onclick="goSec(32)">複雑な問題も解きほぐせばクリアに見えてくる</div>
+<div class="nav-item" onclick="goSec(33)">「世界連邦政府構想」</div>
+<div class="nav-item" onclick="goSec(34)">外国との交渉は常識より「リーズナブル」</div>
+<div class="nav-chapter">第３章 心を磨き、高める</div>
+<div class="nav-item" onclick="goSec(35)">日本人はなぜその「美しい心」を失ってしまったか</div>
+<div class="nav-item" onclick="goSec(36)">リーダーには才よりも徳が求められる</div>
+<div class="nav-item" onclick="goSec(37)">西郷隆盛も、</div>
+<div class="nav-item" onclick="goSec(38)">つねに内省せよ、人格を磨くことを忘れるな</div>
+<div class="nav-item" onclick="goSec(39)">「私」「放」「奢」</div>
+<div class="nav-item" onclick="goSec(40)">心を磨くために必要な「６つの精進」</div>
+<div class="nav-item" onclick="goSec(41)">③反省ある日々を送る</div>
+<div class="nav-item" onclick="goSec(42)">⑥感性的な悩みをしない</div>
+<div class="nav-item" onclick="goSec(43)">幼い心に感謝の思いを植えつけた「隠れ念仏」</div>
+<div class="nav-item" onclick="goSec(44)">どんなときも「ありがとう」といえる準備をしておく</div>
+<div class="nav-item" onclick="goSec(45)">うれしいときは喜べ、素直な心が何よりも大切</div>
+<div class="nav-item" onclick="goSec(46)">トルストイも感嘆した仏教説話が描く人間の欲深さ</div>
+<div class="nav-item" onclick="goSec(47)">人を惑わせる「三毒」をいかに断ち切るか</div>
+<div class="nav-item" onclick="goSec(48)">「その思いには、おのれの欲が働いていないか、私心が交じっていないか」</div>
+<div class="nav-item" onclick="goSec(49)">「邪剣」を抜いたら墓穴を掘る</div>
+<div class="nav-item" onclick="goSec(50)">働く喜びは、この世に生きる最上の喜び</div>
+<div class="nav-item" onclick="goSec(51)">お釈迦さまが説く「六波羅蜜」を心に刻め</div>
+<div class="nav-item" onclick="goSec(52)">日々の労働によって心は磨かれる</div>
+<div class="nav-item" onclick="goSec(53)">労働の意義、勤勉の誇りを取り戻そう</div>
+<div class="nav-chapter">第４章 利他の心で生きる</div>
+<div class="nav-item" onclick="goSec(54)">托鉢の行をして出会った人の心のあたたかさ</div>
+<div class="nav-item" onclick="goSec(55)">心の持ち方ひとつで地獄は極楽になる</div>
+<div class="nav-item" onclick="goSec(56)">「他を利する」ところにビジネスの原点がある</div>
+<div class="nav-item" onclick="goSec(57)">利他に徹すれば物事を見る視野も広がる</div>
+<div class="nav-item" onclick="goSec(58)">「自分の家族さえよければいい」と思ったとたんに、それはエゴへとす</div>
+<div class="nav-item" onclick="goSec(59)">毎夜自らの心に問いかけた新規事業参入の動機</div>
+<div class="nav-item" onclick="goSec(60)">「国民のために長距離電話料金を安くしよう」</div>
+<div class="nav-item" onclick="goSec(61)">発展に貢献する」</div>
+<div class="nav-item" onclick="goSec(62)">「富国有徳」を国是とせよ</div>
+<div class="nav-item" onclick="goSec(63)">「富国有徳」</div>
+<div class="nav-item" onclick="goSec(64)">このまっとうな「美徳」を忘れてしまっていないか</div>
+<div class="nav-item" onclick="goSec(65)">いまこそ道徳に基づいた人格教育へとシフトせよ</div>
+<div class="nav-item" onclick="goSec(66)">同じ歴史をくり返すな、新しい日本を築け</div>
+<div class="nav-item" onclick="goSec(67)">自然の理に学ぶ「足るを知る」という生き方</div>
+<div class="nav-item" onclick="goSec(68)">人類が目覚めたとき「利他」の文明が花開く</div>
+<div class="nav-chapter">第５章 宇宙の流れと調和する</div>
+<div class="nav-item" onclick="goSec(69)">人生をつかさどる見えざる大きな２つの力</div>
+<div class="nav-item" onclick="goSec(70)">因果応報の法則を知れば運命も変えられる</div>
+<div class="nav-item" onclick="goSec(71)">結果を焦るな、因果の帳尻はきちんと合う</div>
+<div class="nav-item" onclick="goSec(72)">「善を為すもその益を見ざるは、草裡の東瓜のごとし」</div>
+<div class="nav-item" onclick="goSec(73)">森羅万象を絶え間なく成長させる宇宙の流れ</div>
+<div class="nav-item" onclick="goSec(74)">偉大な力がすべてに生命を吹き込んでいる</div>
+<div class="nav-item" onclick="goSec(75)">私はなぜ仏門に入ることを決意したか</div>
+<div class="nav-item" onclick="goSec(76)">不完全でもいい、精進を重ねることこそが尊い</div>
+<div class="nav-item" onclick="goSec(77)">心の中心に真理とつながる美しい「核」がある</div>
+<div class="nav-item" onclick="goSec(78)">④魂･････真我が現世での経験や業をまとったもの</div>
+<div class="nav-item" onclick="goSec(79)">災難にあったら「業」が消えたと喜びなさい</div>
+<div class="nav-item" onclick="goSec(80)">いままで魂についていた業が消えていくのです」</div>
+<div class="nav-item" onclick="goSec(81)">悟りを求めるより、理性と良心を使って心を磨け</div>
+<div class="nav-item" onclick="goSec(82)">どんなちっぽけなものにも役割が与えられている</div>
+<div class="nav-item" onclick="goSec(83)">人のあるべき「生き方」をめざせ、明るい未来はそこにある</div>
+  </div>
+</div>
+<div id="main">
+  <div id="header">
+    <button id="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <h1>生き方</h1>
+    <div class="subtitle">人間として一番大切なこと</div>
+    <div class="meta">稲盛和夫 著</div>
+  </div>
+  <div id="top-nav">
+    <button class="top-nav-btn active" id="btn-index" onclick="showTab('index')">目次モード</button>
+    <button class="top-nav-btn" id="btn-read" onclick="showTab('read')">通読モード</button>
+    <button class="top-nav-btn" onclick="expandAll()">全展開</button>
+    <button class="top-nav-btn" onclick="collapseAll()">全折畳</button>
+    <a href="top.html" class="top-nav-btn">← 本棚へ</a>
+    <span id="progress-area">84節</span>
+  </div>
+  <div id="index-panel-scroll">
+    <div id="splash">
+      <h2>生き方</h2>
+      <p class="sp-sub">人間として一番大切なこと</p>
+      <div class="stats"><div class="stat"><div class="num">84</div><div class="lbl">節</div></div></div>
+      <button class="start-btn" onclick="startReading()">読み始める</button>
+    </div>
+    <div id="content-area" class="hidden">
+<div class="section" id="sec-0">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§1</span>
+    <span class="sec-title">、せっかくの高い能力を正しい方向に活かしていくことができず、道</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>を誤ってしまいます。</p><p>人格というものは「性格＋哲学」</p><p>。人間が生まれながれにもっている性格と、その後の人</p><p>生を歩む過程で学び身につけていく哲学。どのような哲学に基づいて人生を歩んでいくか</p><p>によって、その人の人格が決まってくる。</p><p>どのような哲学が必要なのかといえば、それは「人間として正しいかどうか」。嘘をつい</p><p>てはいけない、人に迷惑をかけてはいけない、正直であれ、欲張ってはならない、自分の</p><p>ことばかりを考えてはならないなど。生きるうえでもっとも大切なこと。</p></div>
+</div>
+<div class="section" id="sec-1">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§2</span>
+    <span class="sec-title">人生の真理は懸命に働くことで体得できる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>人格を練り、魂を磨くには具体的にはどうすればいいか。俗なる世界で日々懸命に働く</p><p>ことが何よりも大事。お釈迦さまは、精進とは、一生懸命働くこと、目前の仕事に脇目も</p><p>ふらずに打ち込むこと。労働には、欲望に打ち勝ち、心を磨き、人間性をつくっていくと</p><p>いう効果がある。単に生きる糧を得るという目的だけではなく、そのような副次的な機能</p><p>がある。自分がなすべき仕事に没頭し、工夫をこらし、努力を重ねていく。</p></div>
+</div>
+<div class="section" id="sec-2">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§3</span>
+    <span class="sec-title">人生・仕事の結果＝考え方×熱意×能力</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>能力とは才能や知能、熱意とは、事をなそうとする情熱や努力する心、考え方は、いわ</p><p>ば心のあり方や生きる姿勢。この考え方が大事なのは、考え方にはマイナスポイントがあ</p><p>ること。能力と熱意に恵まれながらも考え方の方向が間違っていると、それだけでネガテ</p><p>ィブな成果を招いてしまう。</p><p>「プラス方向」の考え方とは、常識的に判断されうる「よい心」のこと。つねに前向き</p><p>で建設的であること。感謝の心をもち、みんなといっしょに歩もうという協調性を有して</p><p>いること。明るく肯定的であること。善意に満ち、思いやりがあり、やさしい心をもって</p><p>いること。努力を惜しまないこと。足るを知り、利己的でなく、強欲ではないこと。</p></div>
+</div>
+<div class="section" id="sec-3">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§4</span>
+    <span class="sec-title">心に描いたものが実現するという宇宙の法則</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>人生は、心に描いたとおりになる、強く思ったことが現象となって現れてくる。まずは</p><p>純粋できれいな心をもつこと。よい心－とくに「世のため、人のため」という思い－は、</p><p>宇宙が本来もっている「意志」であると考えられるから。</p></div>
+</div>
+<div class="section" id="sec-4">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§5</span>
+    <span class="sec-title">人類に叡智をもたらしつづける「知恵の蔵」がある</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>1/11</p><p>何かを得ようと、よい思いを描き一生懸命がんばっている人に、神は行く先を照らすた</p></div>
+</div>
+<div class="section" id="sec-5">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§6</span>
+    <span class="sec-title">いまつを与えるように、</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「知恵の蔵」から一筋の光明を授けてくれる。</p></div>
+</div>
+<div class="section" id="sec-6">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§7</span>
+    <span class="sec-title">自己を厳しく律しつづける「王道」の生き方をせよ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>いま、科学技術の進歩によって、人類は「神業」を手に入れ、自由に使いはじめた。人</p><p>類はあたかも自分の所有物のように思い、それを自由放縦に駆使しはじめた。悪果となっ</p><p>て現れたのが環境破壊。人類を正しい方向に導き、地球を破滅への道から救い出すために</p><p>も、一人ひとりが自分の「生き方」をいま一度見直してみる必要がある。一生懸命、誠実、</p><p>まじめ、正直････そうしたシンプルで平易な道徳律や倫理観をしっかりと守ること。</p></div>
+</div>
+<div class="chapter-header">第１章 思いを実現させる</div>
+<div class="section" id="sec-7">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§8</span>
+    <span class="sec-title">求めたものだけが手に入るという人生の法則</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「思うとおりにならないのが人生だ」と考えているから、そのとおりの結果を呼び寄せ</p><p>ているだけ。実現の射程内に呼び寄せられるのは自分の心が求めたものだけであり、まず</p><p>思わなければ、かなうはずのこともかなわない。事をなそうと思ったら、まずこうありた</p><p>い、こうあるべきだと思うこと。それをだれよりも強く、身が焦げるほどの熱意をもって、</p><p>そうありたいと願望することが何より大切。</p><p>松下さんの有名なダム式経営の話。ダムをつくって水をため、天候や環境に左右される</p><p>ことなく水量をつねに一定にコントロールする。同じように、経営も景気のよいときこそ</p><p>景気の悪いときに備えて蓄えをしておく、そういう余裕のある経営をすべき。「ダムをつく</p><p>ろうと思わんとあきまへんなぁ」とつぶやかれた。</p></div>
+</div>
+<div class="section" id="sec-8">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§9</span>
+    <span class="sec-title">寝ても覚めても強烈に思いつづけることが大切</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>漠然と「そうできればいいな」と思う生半可なレベルではなく、強烈な願望として、寝</p><p>ても覚めても四六時中そのことを思いつづけ、考え抜く。</p><p>一方は成功するが、一方は失敗に終わる。願望の大きさ、高さ、深さ、熱さの差からき</p><p>ている。</p></div>
+</div>
+<div class="section" id="sec-9">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§10</span>
+    <span class="sec-title">現実になる姿が「カラーで」見えているか</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>思い、考え、練っていくことをしつようにくり返していると、成功への道筋があたかも</p><p>一度通った道であるかのように「見えて」きます。白黒で見えるうちはまだ不十分で、よ</p><p>り現実に近くカラーで見えてくる。</p><p>新しく開発した製品でも、求められる仕様、性能などの必要条件がクリアしていればよ</p><p>いというわけではありません。最初に考え抜いて「見えた」理想とする水準にまで達して</p><p>いない製品は、いくら基準を満たしていても、いいものとはいえない。無難な水準の製品</p><p>では、市場に広く受け入れられることはありません。「もう、これ以上のものはない」と確</p><p>信できるものが完成するまで努力を惜しまない。</p></div>
+</div>
+<div class="section" id="sec-10">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§11</span>
+    <span class="sec-title">すみずみまでイメージできれば実現できる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>DDI（現・KDDI）が携帯電話事業を始めたとき。私には「見えていた」。携帯電話とい</p><p>う無限の可能性を秘めた製品がどれぐらいのスピードで、どう普及していくか。またどの</p><p>ぐらいの値段や大きさでマーケットに流通するのか。なぜなら当時、京セラで手がけてい</p><p>た半導体部品などの事業を通じて、私は半導体の技術革新の速度や、そのサイズやコスト</p><p>の変遷について十分な経験知をもっており、携帯電話という新しい商品の市場の広がりを、</p><p>かなりの精度で予想することができたから。</p><p>すみずみまで明瞭にイメージできたことは、間違いなく成就する。</p></div>
+</div>
+<div class="section" id="sec-11">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§12</span>
+    <span class="sec-title">細心の計画と準備なくして成功はありえない</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>構想そのものは大胆すぎるくらいの「楽観論」に基づいて、その発想の翼を広げるべき。</p><p>相談する相手、頭はいいが、その鋭い頭脳が悲観的な方向にばかり発揮されるタイプより</p><p>も、</p><p>「それはおもしろい、ぜひやりましょう」と無邪気に喜び、賛同してくれるタイプの人</p><p>間を集めて話をするようにした。</p><p>構想を具体的に計画に移すときには、打って変わって悲観論を基盤にして、あらゆるリ</p><p>2/11</p><p>スクを想定し、慎重かつ細心の注意を払って厳密にプランを練る。</p><p>計画をいざ実行する段階になったら、再び楽観論に従って、思い切って行動、「楽観的に</p><p>構想し、悲観的に計画し、楽観的に実行する」。</p><p>冒険家の大場満郎さん、世界で初めて、北極と南極を単独で徒歩横断した人。「臆病さ、</p><p>慎重さ、細心さに裏打ちされていない勇気は単なる蛮勇にすぎない。</p><p>」</p></div>
+</div>
+<div class="section" id="sec-12">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§13</span>
+    <span class="sec-title">運命は自分の心次第という真理に気づく</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>人間の運命はけっして敷かれたレールを行くかのように決定されているものではなく、</p><p>自分の意志でよくも悪くもできる。つまり自分に起こるすべてのことは、自分の心がつく</p><p>り出している。</p></div>
+</div>
+<div class="section" id="sec-13">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§14</span>
+    <span class="sec-title">あきらめずやり通せば成功しかありえない</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>自分の可能性を信じて、現在の能力水準よりも高いハードルを自分に課し、その目標を</p><p>未来の一点で達成すべく全力を傾ける。</p><p>「思い」の火を絶やさずに燃やしつづける。できな</p><p>いことがあったとして、それはいまの自分にできないだけであって、将来の自分になら可</p><p>能であると未来進行形で考えることが大切。</p><p>大手が断った高度な技術水準の仕事。勇気を奮って「できます」と断言して、そのむず</p><p>かしい仕事を引き受けてくる。</p></div>
+</div>
+<div class="section" id="sec-14">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§15</span>
+    <span class="sec-title">努力を積み重ねれば平凡は非凡に変わる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「こんなことを毎日くり返していて、世界一になるのはいったい、いつの日のことか」。</p><p>夢と現実の大きな落差に打ちのめされることもしばしば。けれども、結局のところ、人生</p><p>とは、その「今日一日」の積み重ね、「いま」の連続。いまという瞬間瞬間に全力を傾注し</p><p>て生きることによって、そのとき見えなかった未来の姿がやがて自然に見えるようになっ</p><p>てくる。いたずらに明日を煩ったり、将来の見通しを立てることに汲々とするよりも、ま</p><p>ずは今日一日を充実させることに力を注いだほうがいい。</p></div>
+</div>
+<div class="section" id="sec-15">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§16</span>
+    <span class="sec-title">毎日の創意工夫が大きな飛躍を生み出す</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>才子というのは往々にして、今日をおろそかにする傾向がある。つい、今日一日をじっ</p><p>くり生きる亀の歩みを厭い、脱兎のごとく最短距離を行こうとする。</p><p>あまり気の利かない、平凡で、天職才覚もない鈍な人材。１つのことを飽きずに黙々と</p><p>努める力。１日を積み重ねていく継続の力。継続が平凡を非凡に変えた。継続と反復は違</p><p>います。今日よりは明日、明日よりは明後日と、尐しずつでいいから、かならず改良や改</p><p>善をつけ加えていくこと。</p></div>
+</div>
+<div class="section" id="sec-16">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§17</span>
+    <span class="sec-title">「創意工夫する心」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>。</p></div>
+</div>
+<div class="section" id="sec-17">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§18</span>
+    <span class="sec-title">現場に宿る「神の声」が聞こえているか</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>もうダメだと思ったときが実は始まりで、そういうときはいった冷静な気持ちに戻って、</p><p>もう１度今いる場所から周囲を観察し直してみる。製品や現場に対して、あらためて目を</p><p>向け、身を寄せ、心を添わせ、耳を傾ける。すると神の声が聞こえてくる。</p></div>
+</div>
+<div class="section" id="sec-18">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§19</span>
+    <span class="sec-title">「こうしたらど</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>うだ」と解決のヒント。答えを得るには、心情的な仕事に対するだれにも負けない強い情</p><p>熱や、深い思い入れをもつことが必要。</p></div>
+</div>
+<div class="section" id="sec-19">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§20</span>
+    <span class="sec-title">つねに「有意注意」の人生を心がけよ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>意をもって意を注ぐこと。つまり、目的を持って真剣に意識や神経を対象に集中させる</p><p>こと。あらゆる状況の、どんな些細な事柄に対しても、自分の意識を「意図的に」凝集さ</p><p>せる。集中力とは、思いの力の強さ、深さ、大きさから生み出されてくるもの。</p></div>
+</div>
+<div class="section" id="sec-20">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§21</span>
+    <span class="sec-title">あふれるほどの夢を描け、人生は大飛躍する</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>思いの力をうまく働かせて、人生や仕事で大きな成果を得るには、まず、その土台とな</p><p>る「大きな夢」を描くことが肝心。同じものを見聞きしても、ある人はそこから重要なヒ</p><p>ントを得るが、ある人はぼんやり見過ごしてしまう。その違いは、日ごろの「問題意識」。</p><p>いくつになっても夢を語り、明るい未来の姿を描ける人間でありたいもの。</p></div>
+</div>
+<div class="chapter-header">第２章 原理原則から考える</div>
+<div class="section" id="sec-21">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§22</span>
+    <span class="sec-title">人生も経営も原理原則はシンプルがいい</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>3/11</p><p>物事の本質は実は単純なもの。一見複雑に見えるものでも、単純なものの組み合わせ。</p><p>複雑に見えるものほどシンプルにとらえ直そうという考え方の発想が大切。</p><p>「人間として何が正しいのか」というきわめてシンプルな判断基準。</p></div>
+</div>
+<div class="section" id="sec-22">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§23</span>
+    <span class="sec-title">迷ったときの道しるべとなる「生きた哲学」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>人生を歩んでいく途上では、至るところで決断や判断を下さなくてはいけない。その判</p><p>断や選択の基準となる原理原則をもっているかどうか。</p><p>現在の KDDI。利用者にすぐれた製品やサービスを提供することが企業経営の根幹であり、</p><p>原理原則であるべき。そうした見地から客観的に判断し、DDI がイニシアティブをとるの</p><p>が最善であると結論。自分たちの利益ではなく他者の利益を第１主義とする。</p></div>
+</div>
+<div class="section" id="sec-23">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§24</span>
+    <span class="sec-title">世の風潮に惑わされず、原理原則を死守できる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>２つの道があって、どちらを選ぼうか迷ったときに、おのれの利益を離れ、たとえそれ</p><p>が困難に満ちたイバラの道であろうとも、「本来あるべき」道のほうを選ぶ。</p><p>バブル。土地を右から左へ動かすだけで多大な利益が発生するなんて、そんなうまい話</p><p>があるはずがない。あるとすれば、それはあぶく銭。簡単に手に入るお金は簡単に逃げて</p><p>いくもの。</p><p>損をしてでも守るべき哲学、苦を承知で引き受けられる覚悟。それこそが本物の生き方。</p></div>
+</div>
+<div class="section" id="sec-24">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§25</span>
+    <span class="sec-title">知っているだけではダメ、貫いてこそ意味がある</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>人間はもともと弱い存在であり、よほど意識して自分を戒めていないと、つい欲望や誘</p><p>惑に負けてしまう。組織の中にあって、高い地位に上りつめると、当たり前のことがなか</p><p>かなか見えなくなってくる。自分の行いを自省自戒すべき。</p></div>
+</div>
+<div class="section" id="sec-25">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§26</span>
+    <span class="sec-title">「人生・仕事の結果＝考え方×熱意×能力」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>。</p><p>もっとも重要なのは、「考え方」。考え方という要素にだけはマイナス点も存在し、熱意</p><p>や能力の点数が高くても、この考え方がマイナスであったら、掛け算の答えもマイナス。</p></div>
+</div>
+<div class="section" id="sec-26">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§27</span>
+    <span class="sec-title">「１日１日をど真剣に生きる」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>。一生をかけて、どのような脚本を描き、主人公である自</p><p>分がそのドラマを演じて（生きて）いくか。真正面から困難に立ち向かい、自分を限界に</p><p>追い込む。そういう心意気が、不可能だと思えた状況を打破し、クリエイティブな成果を</p><p>生み出していく。</p></div>
+</div>
+<div class="section" id="sec-27">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§28</span>
+    <span class="sec-title">「知識より体得を重視する」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>。知識に経験が加わって初めて、物事は「できる」ようにな</p><p>る。それまでは単に「知っている」にすぎない。</p></div>
+</div>
+<div class="section" id="sec-28">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§29</span>
+    <span class="sec-title">「できる」と「知っている」の間には、深</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>くて大きな溝がある。それを埋めてくれるのが、現場での経験。</p></div>
+</div>
+<div class="section" id="sec-29">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§30</span>
+    <span class="sec-title">ただいま、このときを必死懸命に生きる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>私は、長期の経営計画というものを立てたことがありません。まずは、今日という１日</p><p>を一生懸命に過ごすこと、それが大切だと思う。充実した１日の連続が、５年たち、10 年</p><p>たつうちに大きな成果に結実する。</p><p>自然界では、すべての生物が与えられた時間、限られた一瞬一瞬を、精いっぱい、ど真</p><p>剣に生きている。人間も草花に負けず、１日１日をないがしろにすることなく、ど真剣に</p><p>生きていかなくてはいけない。</p></div>
+</div>
+<div class="section" id="sec-30">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§31</span>
+    <span class="sec-title">「好き」であればこそ「燃える」人間になれる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ものには３つのタイプがある。</p><p>①火を近づけると燃え上がる可燃性のもの。</p><p>②火を近づけても燃えない不燃性のもの。</p><p>③自分で勝手に燃え上がる自然性のもの。</p><p>不燃性の人間は、会社にいてもらわなくてけっこう。自ら燃える自然性の人間であって</p><p>ほしい。尐なくとも、燃えている人間に近づけば、いっしょに燃え上がってくれる可燃性</p><p>の人間であってもらいたい。自ら燃える体質を獲得するには、「仕事を好きになる」こと。</p><p>4/11</p><p>好きであれば、自然に意欲もわくし努力もするので、最短距離で上達していく。人から見</p><p>ればたいへんな苦労も、本人には苦労どころか、楽しみとなる。</p></div>
+</div>
+<div class="section" id="sec-31">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§32</span>
+    <span class="sec-title">自分に打ち勝ち前に進め、人生は大きく変わる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>自分の仕事がどうしても好きになれないという人。まずは一生懸命、一心不乱に打ち込</p><p>んでみる。どんな仕事でも、一生懸命打ち込めばいい成果が生まれ、そこからしだいに楽</p><p>しさ、おもしろさが生じてくる。</p><p>まじめによく勉強して 80 点をとる人間。頭の回転や要領がよく、勉強しなくても 60 点</p><p>をとる人間。後者は前者に対して、</p><p>「あいつはガリ勉だから、できて当然だ。オレが本気さ</p><p>え出せば、あいつ以上の点がとれる」。物事に取り組む姿勢、熱意に雲泥の差があり、それ</p><p>が「人生の方程式」に従って、彼我の人生を逆転させる。人の真の能力とは、物事に愚直</p><p>に取り組む克己まで含む。</p></div>
+</div>
+<div class="section" id="sec-32">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§33</span>
+    <span class="sec-title">複雑な問題も解きほぐせばクリアに見えてくる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>しがらみや利害を離れた視点で冷静に問題を解きほぐしていくと、トラブルの原因は実</p><p>はきわめてシンプル。そして顛末な枝葉にとらわれず、問題の「根っこ」にまっすぐ目を</p><p>向けて見ること。複雑そうに見える問題こそ、原点に立ち返って単純な原理原則に従って</p><p>判断することが大切。</p></div>
+</div>
+<div class="section" id="sec-33">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§34</span>
+    <span class="sec-title">「世界連邦政府構想」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>。国境を廃し、１つの共同体を形成して、平和と調和の中で発展し</p><p>ていく。</p></div>
+</div>
+<div class="section" id="sec-34">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§35</span>
+    <span class="sec-title">外国との交渉は常識より「リーズナブル」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>外国、とりわけアメリカでは、物事を判断する基準は「リーズナブル（正当である）」。</p><p>その正当性や合理性のものさしとなっているのは、社会的な習慣や常識ではなく、彼ら自</p><p>身がもっている原理原則や価値観。人間としての原理原則というものは、国の違いや時代</p><p>の新旧を超えた、人類すべてに共通するもの。</p></div>
+</div>
+<div class="chapter-header">第３章 心を磨き、高める</div>
+<div class="section" id="sec-35">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§36</span>
+    <span class="sec-title">日本人はなぜその「美しい心」を失ってしまったか</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>失ってしまった美徳の１つに「謙虚さ」がある。つねに控えめに頭を低くし、手柄は人</p><p>に譲って、得意のときこそおのれを抑制して淡然として振る舞う。才能や手柄を私有、独</p><p>占することなく、それを人様や社会のために使う。</p><p>なぜ不祥事や汚職が後を絶たないのか。それは、才を私物化してしまったから。</p></div>
+</div>
+<div class="section" id="sec-36">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§37</span>
+    <span class="sec-title">リーダーには才よりも徳が求められる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>現在の日本社会。リーダーの選び方それ自体に問題がある。人格よりも才覚や能力を基</p><p>準に選ぶことをくり返してきたから。戦後の日本を覆い尽くしてきた経済成長至上主義が</p><p>背景にある。</p></div>
+</div>
+<div class="section" id="sec-37">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§38</span>
+    <span class="sec-title">西郷隆盛も、</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「徳高き者には高き位を、功績多き者には報奨を」。</p><p>中国は明代の呂新吾。</p><p>「深沈厚重なるは、これ第一等の資質。磊落豪勇なるは、これ第二</p><p>等の資質。聡明才弁なるは、これ第三等の資質」。この３つの資質はそれぞれ順に、人格、</p><p>勇気、能力。</p></div>
+</div>
+<div class="section" id="sec-38">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§39</span>
+    <span class="sec-title">つねに内省せよ、人格を磨くことを忘れるな</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「偽」</p></div>
+</div>
+<div class="section" id="sec-39">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§40</span>
+    <span class="sec-title">「私」「放」「奢」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>。偽りがあってはいけないし、私心があってはいけないし、わが</p><p>ままであってはいけないし、奢りの心があってはいけない。</p><p>いま、子どもに向かって堂々とモラルを説ける大人がどれほどいるか。</p></div>
+</div>
+<div class="section" id="sec-40">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§41</span>
+    <span class="sec-title">心を磨くために必要な「６つの精進」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>生まれたときよりも尐しでも美しい心になって死んでいく。身勝手で感情的な自我が抑</p><p>えられ、心に安らぎを覚え、やさしい思いやりの心がしだいに芽生え、わずかなりとも利</p><p>他の心が生まれるというような状態。さまざまに苦を味わい、悲しみ、悩み、もがきなが</p><p>らも、生きる喜び、楽しみも知り、幸福を手に入れる。もろもろの様相をくり返しながら、</p><p>5/11</p><p>１度きりしかない現世の生を懸命に生きていく。</p></div>
+</div>
+<div class="section" id="sec-41">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§42</span>
+    <span class="sec-title">③反省ある日々を送る</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>自分のことだけを考えていないか、卑怯な振る舞いはないかなど、自省自戒して、改</p><p>めるよう努める。</p></div>
+</div>
+<div class="section" id="sec-42">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§43</span>
+    <span class="sec-title">⑥感性的な悩みをしない</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>いつまでも不平をいったり、くよくよと悩んでいてはいけない。</p></div>
+</div>
+<div class="section" id="sec-43">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§44</span>
+    <span class="sec-title">幼い心に感謝の思いを植えつけた「隠れ念仏」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「足るを知る」心、またそれを感謝する心をもう１度見直す。隠れ念仏とは、徳川時代</p><p>に薩摩藩によって一向宗が弾圧されたとき、信仰心の篤い人たちによってひそかに守りつ</p><p>づけられた宗教的慣習。毎日『なんまん、なんまん、ありがとう』といって仏さんに感謝</p><p>しなさい、という。</p></div>
+</div>
+<div class="section" id="sec-44">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§45</span>
+    <span class="sec-title">どんなときも「ありがとう」といえる準備をしておく</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>そもそもいま自分が生きている、生かされている。そのことに対して感謝の心を抱くこ</p><p>と。感謝の心をもてれば、その人は満足感を味わうことができる。</p></div>
+</div>
+<div class="section" id="sec-45">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§46</span>
+    <span class="sec-title">うれしいときは喜べ、素直な心が何よりも大切</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>感謝の心が幸福の呼び水なら、素直な心は進歩の親である。自分の耳に痛いこともまっ</p><p>すぐな気持ちで聞き、改めるべきは明日といわず、今日からすぐに改める。素直な心とは、</p><p>自らの至らなさを認め、そこから惜しまず努力する謙虚な姿勢のこと。人の意見をよく聞</p><p>く大きな耳、自分自身を見つめる真摯な目。</p><p>どんなささやかなことに対しても、うれしいという喜心、ありがとうという感謝の気持</p><p>ちをもつ。素直な心で自省自戒の言葉を口にする。</p></div>
+</div>
+<div class="section" id="sec-46">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§47</span>
+    <span class="sec-title">トルストイも感嘆した仏教説話が描く人間の欲深さ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>感謝する心、素直な反省心。過剰な「欲」を離れることも、人間性を高めるために必要。</p></div>
+</div>
+<div class="section" id="sec-47">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§48</span>
+    <span class="sec-title">人を惑わせる「三毒」をいかに断ち切るか</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>仏教で言う「欲望、愚痴、怒り」の３毒。大事なのは、できるだけ「欲を離れる」</p><p>。３毒</p><p>を完全に消すことはできなくても、それを自らコントロールして抑制するよう努めること。</p><p>日々さまざまな事柄について判断。最初の判断をいったん保留して、ちょっと待てよと</p><p>ひと呼吸おく。</p></div>
+</div>
+<div class="section" id="sec-48">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§49</span>
+    <span class="sec-title">「その思いには、おのれの欲が働いていないか、私心が交じっていないか」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>。</p><p>欲、すなわち私心を抑えることは、利他の心に近づくこと。利他の心が生まれたとき、人</p><p>間は欲に惑わされず生きることができる。</p></div>
+</div>
+<div class="section" id="sec-49">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§50</span>
+    <span class="sec-title">「邪剣」を抜いたら墓穴を掘る</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>世のため、人のためというきれいな心をベースにした思い、願望というのは、かならず</p><p>成就します。逆に私利私欲に基づいた「濁った願望」は、いったんは実現できても、一時</p><p>的な成功で終わってしまう。見ていないようで、人間のすること、思うことの理非曲直を</p><p>神さまというものは実によく見ている。</p></div>
+</div>
+<div class="section" id="sec-50">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§51</span>
+    <span class="sec-title">働く喜びは、この世に生きる最上の喜び</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>物事を成就させ、人生を充実させていくために必要不可欠なことは、「勤勉」。懸命に働</p><p>くこと。趣味や遊びの楽しさとは、仕事の充実があってこそ味わえるもの。</p></div>
+</div>
+<div class="section" id="sec-51">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§52</span>
+    <span class="sec-title">お釈迦さまが説く「六波羅蜜」を心に刻め</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>仏の道において尐しでも悟りの境地に近づくために行わなくてはならない菩薩道を記し</p><p>たもの。</p><p>①布施</p><p>一般には、施し（喜捨）をすることの意味に使われていますが、本来は自己犠牲を払っ</p><p>6/11</p><p>てでも広く人々に対して尽くすことをいい、またそれができなくても、そのようなやさし</p><p>い心をもつということ。</p><p>②持戒</p><p>悪しき行為を戒め、戒律を守ること。煩悩、欲望を抑制すること。</p><p>③精進</p><p>何事も一生懸命に取り組むこと。</p><p>④忍辱</p><p>苦難に負けず、耐え忍ぶこと。</p><p>⑤禅定</p><p>せめて１日１回は心を静め、静かに自分を見つめ、精神を集中して、揺れ迷う心を１点</p><p>に定める。</p><p>⑥智慧</p><p>５つの修養に努めることによって、宇宙の「智慧」、すなわち悟りの境地に達することが</p><p>できる。</p></div>
+</div>
+<div class="section" id="sec-52">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§53</span>
+    <span class="sec-title">日々の労働によって心は磨かれる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>実践しやすく、また心を高める方途として一番基本的かつ重要な要件は「精進」。日々の</p><p>労働の中にこそ、心を磨き、高め、尐しでも悟りに近づく道が存在している。</p><p>「木が語りかけてくる」と宮大工の棟梁。</p><p>大リーグのイチロー選手、小学生のころから大リーダーを夢見て、１日も休むことなく</p><p>素振りをくり返していたそうです。「ヒットを打てといわれれば、いつでも打てます」。高</p><p>校生のときに彼はそういったそうです。精進の結果が現在のイチロー選手。</p></div>
+</div>
+<div class="section" id="sec-53">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§54</span>
+    <span class="sec-title">労働の意義、勤勉の誇りを取り戻そう</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>近代以降、働く目的は物質的豊かさを得ることにあり、仕事とは、自分の時間を提供し</p><p>て報酬を得るための手段であるという考えに、私たちは慣れてしまっている。日本人は働</p><p>きすぎだ、もっと遊べと欧米あたりから批判されると、あわてて時短などと称して、労働</p><p>時間を減らして余暇をふやすことに官民こぞって熱心になりました。いまでは勤勉の価値</p><p>はかなり下位に追いやられています。</p><p>もともと日本には、この労働のもつ精神性－労働を人間形成のための精進の場としてと</p><p>らえる視点が、確固として存在していました。勤勉に努める姿勢が誇りや生きがいに通じ、</p><p>心の豊かさを生んでいく。遊んでいるよりも働いているときに喜びを感じる精神性。単純</p><p>労働であっても、そこに創意工夫を働かせて仕事を楽しくする術。自分が労働という行為</p><p>の主体となって「働く」知恵。</p></div>
+</div>
+<div class="chapter-header">第４章 利他の心で生きる</div>
+<div class="section" id="sec-54">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§55</span>
+    <span class="sec-title">托鉢の行をして出会った人の心のあたたかさ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>おのれのことは脇に置いて、まず他人を思いやる。「世のため、人のために尽くす」。企</p><p>業人であれば会社を経営していくうえで欠かすことのできないキーワード。</p><p>子どもにおいしいものを食べさせてあげたい、女房の喜ぶ顔が見たい、苦労をかけた親</p><p>に楽をさせてやりたい。周囲の人たちを思いやる小さな心がけが、すでに利他行。</p><p>人間はもともと、世のため人のために何かをしたいという善の気持ちを備えているもの。</p><p>また賢明な人は、そのように他人のために尽くすことが、他人の利だけにとどまらず、</p><p>めぐりめぐって自分も利することにも気づいているもの。</p></div>
+</div>
+<div class="section" id="sec-55">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§56</span>
+    <span class="sec-title">心の持ち方ひとつで地獄は極楽になる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>新入社員に対して、これからは社会人になるのだから、今度は社会に対してお返しをし</p><p>ていく番。</p><p>「してもらう」側から「してあげる」側へと、立場を 180 度変える必要がある。</p><p>他人から「してもらう」立場でいる人間は、足りないことばかりが目につき、不平不満ば</p><p>かりを口にする。</p><p>「してあげる」側に立って、周囲に貢献していかなくてはならない。</p></div>
+</div>
+<div class="section" id="sec-56">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§57</span>
+    <span class="sec-title">「他を利する」ところにビジネスの原点がある</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>7/11</p><p>初期の資本主義に担い手は、敬虔なプロテスタント。自らに向けては、おのれを律する</p><p>厳しい倫理を、外に向けては、利他という大義を自分たちの義務としていた。</p><p>江戸中期の思想家・石田梅岩、「商人の売利は、士の禄に同じ」「まことの商人は、先も</p><p>立ち、われも立つことを思うなり」相手にも自分にも利のあるようにするのが商いの極意。</p></div>
+</div>
+<div class="section" id="sec-57">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§58</span>
+    <span class="sec-title">利他に徹すれば物事を見る視野も広がる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>５人であれ 10 人であれ、社員を雇用しているというだけで、すでに「人のため」。</p><p>結婚をして家庭を築き、自分だけではなく奥さんのために働き、子どもも育って守って</p><p>いこうとする。やはり無意識のうちにも利他行が含まれている。</p></div>
+</div>
+<div class="section" id="sec-58">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§59</span>
+    <span class="sec-title">「自分の家族さえよければいい」と思ったとたんに、それはエゴへとす</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>り替わり、また、そのレベルにとどまってしまう。会社だけ儲かればいいと考えるのでは</p><p>なく、取引先にも利益を上げてもらいたい、さらには消費者や株主、地域の利益にも貢献</p><p>すべく経営を行う。</p><p>さらには国や世界、地球や宇宙へと、利他の心を可能なかぎり広げ、高めていこう。</p></div>
+</div>
+<div class="section" id="sec-59">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§60</span>
+    <span class="sec-title">毎夜自らの心に問いかけた新規事業参入の動機</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「健全な競争原理」を持ち込んで、諸外国に比べてひどく割高な通信料金を引き下げる</p><p>べく自由化。巨人に戦いをいどむわけですから、恐れをなしたのか、新規参入しようとい</p><p>う企業がいっこうに現れません。それならば、オレがやってやろうかという思い。</p><p>「動機善なりや、私心なかりしか」ようやく自分の心の中には尐しも邪なものはないこ</p><p>とを確信し、DDI の設立。</p></div>
+</div>
+<div class="section" id="sec-60">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§61</span>
+    <span class="sec-title">「国民のために長距離電話料金を安くしよう」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>。</p><p>携帯電話事業。</p><p>同じ地域では NTT 以外には１社しか営業できないという制約があった為、</p><p>新参の２社で事業区域を２つに分けなくてはならなくなった。首都圏と中部圏という、も</p><p>っとも大きな市場を相手に譲って、自分たちはその残りの地域を取ることにした。損して</p><p>得とれ、負けて勝つ。動機善であれば、かならずや事はなる。</p></div>
+</div>
+<div class="section" id="sec-61">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§62</span>
+    <span class="sec-title">発展に貢献する」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>。社会からちょうだいした、あるいは社会から預かった資産は、社会に役</p><p>立つかたちで還元するのが筋。お金は儲けるより使うほうが難しい。利他の精神で得たお</p><p>金は、やはり利他の精神で使うべき。</p><p>日本よ、</p></div>
+</div>
+<div class="section" id="sec-62">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§63</span>
+    <span class="sec-title">「富国有徳」を国是とせよ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>物事というのは、善意で考えるのと悪意で考えるのとでは、おのずからたどり着くとこ</p><p>ろが違ってくるもの。損得や議論に勝つことだけを目的とした話し合いは、かならず不毛</p><p>に終わり、より不信感を募らせる。まず相手の立場を尊重する姿勢、おのれの意見だけに</p><p>固執せず相手の考えも十分に思いやる気持ち、そうした利他の心をベースとして話し合い</p><p>を進めよう。</p></div>
+</div>
+<div class="section" id="sec-63">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§64</span>
+    <span class="sec-title">「富国有徳」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>。豊かな富の力を活かして、徳をもって他人や他国に報いるという国のあり</p><p>方。日本がめざすべきは、経済大国でも軍事大国でもなく、こうした徳に基づいた国造り。</p></div>
+</div>
+<div class="section" id="sec-64">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§65</span>
+    <span class="sec-title">このまっとうな「美徳」を忘れてしまっていないか</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>中国革命の父である孫文。「王道と覇道」。武力によって人を支配する文化は欧米に源流</p><p>をもち、それを中国の古い言葉では覇道という。王道は、東洋に連綿と流れるもので、徳</p><p>に基づいて人々を導こうとするもの。思いやりや利他の心が忘れさられてしまえば、残る</p><p>のはおのれの欲望だけ。</p></div>
+</div>
+<div class="section" id="sec-65">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§66</span>
+    <span class="sec-title">いまこそ道徳に基づいた人格教育へとシフトせよ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>人を思いやる心、利他の心を忘れてしまったのか。要するに、大人が子どもにそれを教</p><p>えてこなかったから。自由ばかり多く与えて、自由と対をなす人間として果たすべき義務</p><p>については、ほとんど教えてこなかった。</p><p>8/11</p><p>「正しい職業観」も指導すべき。いい成績を上げて官公庁や大企業に入ることをよしと</p><p>して、手先が器用であるとか、人と接するのが得意であるといった、学業以外の特性は置</p><p>き去りにされている。どんな職業であってもその仕事に打ち込むことが心を磨き、人格を</p><p>高めることに通じます。そのような働くことの意義を教えてあげるのも、教育の大きな役</p><p>目であるはず。</p></div>
+</div>
+<div class="section" id="sec-66">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§67</span>
+    <span class="sec-title">同じ歴史をくり返すな、新しい日本を築け</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>近代に入って以降、約 40 年の周期で大きな節目を迎えてきました。</p><p>①1868 年･･･明治維新によって近代国家を樹立。</p><p>②1905 年･･･日露戦争に勝利。</p><p>世界の列強に仲間入りし、国際的地位を飛躍的に向上させる。</p><p>「強兵」の方向に傾斜。</p><p>③1945 年･･･第２次世界大戦に敗戦。</p><p>「富国」の方向へと大きく舵を切り奇跡的な経済成長。</p><p>④1985 年･･･莫大な貿易黒字に歯止めをかけるべく、円高誘導、輸入促進を目的にプラザ合</p><p>意が結ばれる。経済大国としてのピークを迎え、バブル崩壊後は、現在まで</p><p>低迷期が続く。</p><p>私達の国はこれまで一貫して、つねに物質的な豊かさを追い求め、他国との競争をくり</p><p>返してきた。そのような価値観だけでは、もはやたちゆかなくなっている。いまこそ経済</p><p>成長至上主義に変わる新しい国の理念、個人の生き方の指針を打ち立てる必要がある。</p></div>
+</div>
+<div class="section" id="sec-67">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§68</span>
+    <span class="sec-title">自然の理に学ぶ「足るを知る」という生き方</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>これからの日本と日本人が生き方の根に据えるべき哲学。知足の心がもたらす、感謝と</p><p>謙虚さをベースにした、他人を思いやる利他の行いであろう。</p><p>この足るを知る生き方のモデルは、自然界にある。知足の生き方を身につけているから</p><p>こそ、自然界は調和と安定を長く保ってきた。</p></div>
+</div>
+<div class="section" id="sec-68">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§69</span>
+    <span class="sec-title">人類が目覚めたとき「利他」の文明が花開く</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>地球という船もろとも沈んでおぼれないためには、もう１度、必要以上に求めないとい</p><p>う自然の節度を取り戻すほかはありません。国や個人の目標を物質的な豊かさだけに求め</p><p>るのではなく、今後はどうすればみんなが心豊かに暮らしていけるかという方向を模索す</p><p>べき。私欲はほどほどにして、尐し不足くらいのところで満ち足りて、残りは他と共有す</p><p>るやさしい気持ち。あるいは他に与え、他を満たす思いやりの心。</p><p>新しい時代においては、もっと相手をよくしてあげたい。もっと他人を幸せにしてあげ</p><p>たいという、思いやりや「愛」をベースにした利他の文明が花開くかも。</p></div>
+</div>
+<div class="chapter-header">第５章 宇宙の流れと調和する</div>
+<div class="section" id="sec-69">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§70</span>
+    <span class="sec-title">人生をつかさどる見えざる大きな２つの力</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>１つは、運命。人はそれぞれ固有の運命をもってこの世に生まれ、運命に導かれ、ある</p><p>いは促されて人生を生きていく。</p><p>もう１つ、「因果応報の法則」。よいことをすればよい結果が生じ、悪いことをすれば悪</p><p>い結果が生まれる。大事なのは、因果応報の法則のほうが運命よりも若干強いということ。</p><p>もって生まれた運命でさえも－因果応報の法則を使うことで－変えていくことができる。</p></div>
+</div>
+<div class="section" id="sec-70">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§71</span>
+    <span class="sec-title">因果応報の法則を知れば運命も変えられる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>運命と因果応報の法則は、互いに綾をなすようにして、われわれの人生を支配している。</p></div>
+</div>
+<div class="section" id="sec-71">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§72</span>
+    <span class="sec-title">結果を焦るな、因果の帳尻はきちんと合う</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>因果応報の法則というものが見えづらく、それゆえに容易に信じることができないのは、</p><p>物事を短いスパンでしかとらえていないから。20 年、30 年といった長い単位で見れば、き</p><p>ちんと因果の帳尻は合っているもの。長い目で見れば、誠実で善行を惜しまない人物がい</p><p>つまでも不遇にとどまることはないし、怠け者でいい加減な生き方をしている人がずっと</p><p>栄えていることもありません。</p></div>
+</div>
+<div class="section" id="sec-72">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§73</span>
+    <span class="sec-title">「善を為すもその益を見ざるは、草裡の東瓜のごとし」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>、菜根譚。善行をしても、その報</p><p>いが現れないのは、草むらの中の瓜のようなもの。人の目には見えなくても、おのずと立</p><p>9/11</p><p>派に成長しているもの。</p></div>
+</div>
+<div class="section" id="sec-73">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§74</span>
+    <span class="sec-title">森羅万象を絶え間なく成長させる宇宙の流れ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>宇宙には、一瞬たりとも停滞することなく、すべてのものを生成発展させてやまない意</p><p>志の力、もしくは気やエネルギーの流れのようなものが存在する。人間をはじめとする生</p><p>物から無生物に至るまで、いっさいを「善き方向」へ向かわせようとしている。宇宙の意</p><p>志や流れに同調するかしないかで、人生や物事の成否が決する。</p></div>
+</div>
+<div class="section" id="sec-74">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§75</span>
+    <span class="sec-title">偉大な力がすべてに生命を吹き込んでいる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>筑波大学名誉教授の村上先生、遺伝子の研究をしていると、この宇宙には人知を超えた</p><p>不思議な意志が働いているとしか考えられなくなってくる。人間の細胞１個の中には、30</p><p>億もの遺伝子情報が書き込まれており、この情報量を本に換算すると、千ページの本が千</p><p>冊分という膨大なもの。人間を構成する 60 億の細胞１つひとつに書き込まれている。さら</p><p>に驚くべきは、その遺伝子情報が書き込まれている DNA の微細なこと。60 億人分の DNA</p><p>すべてを集めて合わせてみても、たった米粒１個の重さにしかならないという。</p><p>まったく奇跡というべきで、何らかの偶然で自然にでき上がったものとは考えにくい。</p><p>人間の創造をはるかに超えた、宇宙全体をつかさどっている「何か偉大なもの」の存在を</p><p>想定しないと説明がつかない。すべてを「生かそう」とする、静かで強靱な意識、思いが</p><p>目には見えないが確実に「ある」と、私には感じられる。科学のものさしでは測れない不</p><p>可知な力と知の存在を信じ、日々を生きていったほうがいい。</p></div>
+</div>
+<div class="section" id="sec-75">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§76</span>
+    <span class="sec-title">私はなぜ仏門に入ることを決意したか</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>いくら出世しようが、事業が成功しようが、一生かかっても使い切れないほどの富を築</p><p>こうが、心を高めることの大切さに比せば、いっさいは塵芥のごとき些細なもの。</p><p>その心を磨き、高めるには、日々の生活の中の精進が大切。</p></div>
+</div>
+<div class="section" id="sec-76">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§77</span>
+    <span class="sec-title">不完全でもいい、精進を重ねることこそが尊い</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>私がほんとうに立派だと思う人は、美しい心をもった人。名誉と資産を得、功成り名を</p><p>遂げた人よりも、そういう無名の人たちのほうがどれほど「上等」で、思いやりに富んだ</p><p>深い心をもっていることか。</p><p>逆説的ですが、いくら修行に努めようが、私たち凡夫はついに悟りに達することはでき</p><p>ないだろう。どれほど持戒に努めても破戒から逃れられない。私を含め、人間とはそれほ</p><p>ど愚かで不完全な存在なのです。しかしそうであろうと努めること、それ自体が尊いのだ</p><p>ということ。</p></div>
+</div>
+<div class="section" id="sec-77">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§78</span>
+    <span class="sec-title">心の中心に真理とつながる美しい「核」がある</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>人間の心は、多重構造をしていて、同心円状にいくつかの層をなしているもの。</p></div>
+</div>
+<div class="section" id="sec-78">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§79</span>
+    <span class="sec-title">④魂･････真我が現世での経験や業をまとったもの</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>⑤真我･･･心の中心にあって核をなすもの。真・善・美に満ちている</p><p>心の中心部に「真我」をもち、その周囲に「魂」をまとい、さらに魂の外側を本能が覆</p><p>った状態でこの世に生まれてきます。成長するにつれて、その本能の外側に感性を形成し、</p><p>さらに知性を備えるようになっていきます。真我とは、宇宙を宇宙たらしめている叡智そ</p><p>のもの。愛と誠と調和に満ち、真・善・美を兼ね備えている。</p></div>
+</div>
+<div class="section" id="sec-79">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§80</span>
+    <span class="sec-title">災難にあったら「業」が消えたと喜びなさい</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>魂とは、それが何度も生まれ変わる間に積み重ねてきた、善き思いも悪しき思いも、善</p><p>き行いも悪しき行いもみんなひっくるめた、まさにわれわれ人間の「業」が含まれたもの。</p><p>「災難にあったら、落ち込むのではなくて喜ばなくてはいかんのです。災難によって、</p></div>
+</div>
+<div class="section" id="sec-80">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§81</span>
+    <span class="sec-title">いままで魂についていた業が消えていくのです」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>。</p></div>
+</div>
+<div class="section" id="sec-81">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§82</span>
+    <span class="sec-title">悟りを求めるより、理性と良心を使って心を磨け</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>業をまとった魂が覆い、さらに欲に満ちた本能が覆いと、真我の発現を邪魔する壁が何</p><p>10/11</p><p>重にも立ちはだかっている。</p><p>座禅やヨガの修行なども、心の外側から内側へ向かって、レンズを磨くように外側の壁</p><p>を次々に磨き落としていく試みである。悟りとは、真我まで心を磨ききった状態のこと。</p><p>凡夫には、心を磨ききって真我まで到達することはほとんど不可能。では、どうすれば</p><p>いいのか。理性と良心を使って感性や本能を抑え、それらをコントロールしていこうと努</p><p>めることが大切。</p></div>
+</div>
+<div class="section" id="sec-82">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§83</span>
+    <span class="sec-title">どんなちっぽけなものにも役割が与えられている</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>生物を生物たらしめている属性－肉体や精神、意識や知覚など－を取り去ってしまうと、</p><p>そこには「存在としかいいようのないもの」が現れてくる。</p><p>稲盛という人間がもとから存在しているのではなく、ある存在が、たまたま私という人</p><p>間のかたちをとったにすぎないということ。京セラや KDDI という企業を創業したのも、</p><p>別に私である必要はなく、たまたま天から与えられたその役割を、私が演じているだけに</p><p>すぎない。すべての人が天から役割を与えられ、それぞれにその役割を演じているわけ。</p><p>宇宙には、</p><p>「エネルギー不変の法則」というものがあります。たとえ石ころ１つでも、こ</p><p>の宇宙を成立させるために必要不可欠な存在。</p></div>
+</div>
+<div class="section" id="sec-83">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§84</span>
+    <span class="sec-title">人のあるべき「生き方」をめざせ、明るい未来はそこにある</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>どれ１つとっても宇宙に必要だからこそ、存在している。その中で、人間はより大きな</p><p>使命をもってこの宇宙に生かされている。その役割を認識し、人生において努めて魂を磨</p><p>いていく義務がある。一生懸命働くこと、感謝の心を忘れないこと、正しい行いに努める</p><p>こと、そのような当たり前のことを一生懸命行っていくことに、まさに生きる意義がある。</p><p>11/11</p></div>
+</div>
+    </div>
+  </div>
+  <div id="reading-view"><div class="reading-inner" id="reading-inner"></div></div>
+</div>
+</div>
+<script>
+
+const sections = [{"id": 0, "chapter": "", "title": "まえがき", "body": ["まえがき", "昭和 20 年９月、広島で行った私の講演速記を基礎に「自由国民」主筆。", "この３ヵ月の変化のうち、特に身に染みて感じますことは、進駐軍の態度によって、我々日本人は、単に物質的方", "面ばかりでなく精神的方面においても大いに学ばなければならない点が多々あることを教えられた。そうして真の自", "由主義的生活をするためには、いたずらにその形を真似るばかりでなく、その心構えから鍛え直さなければならない", "のですが、ともすると自由主義と無責任・無秩序とを履き違えた行動の多いことを痛感する。これは、終戦前の独善", "の圧制と同じように、日本国民の文化的水準の低さを示す以外の何物でもない。", "真剣な反省と努力とによって、日本国民の文化水準の向上をはかり、軍備より解放せられたる文化大国を再建する", "ことによって、今日の敗戦の弔鐘を、明日の勝利の暁鐘と転化し得る。", "敗戦の真相を明らかにしたのは、日本が敗れたのは、ひとえに武力ばかりではなかったことを反省したいため。", "昭和 20 年 11 月 23 日", "戦争はどのようにして起こったのか", "はっきり敗けたとは理屈の上では考えながら、どうも本当に敗けたという気持になれない。いわゆる、勝負には負", "けたが、角力には勝っていたのではないか。こういう気持は、実は非常に危険。", "第１次世界大戦の後に、ドイツ人の胸中に普遍的にわだかまっていた思想と同一。本当に敗けたという気持が、ど"]}, {"id": 1, "chapter": "", "title": "うしてもピッタリこなかったので、その結果、何が故に敗けたかという理由を自分の中に求めないで、第三者に", "body": ["うしてもピッタリこなかったので、その結果、何が故に敗けたかという理由を自分の中に求めないで、第三者にその", "原因を求めていった。特に敗因の最も大きい部分をユダヤ人の責に帰して、有名なユダヤ人征伐というものを始めて、", "そうして、さあこれで本当にゲルマン一色でドイツ人を形成し得たから、もう一遍、角力を取ってみようという気持", "になったのが、第２次世界大戦勃発の大きな原因。", "日本が、ここでドイツの二の舞いをして、すなわち自分の内部にその敗因を求めないで、外部にこれを求めるとい", "う風な態度に出ると、せっかくいま、2600 年の歴史をとにもかくにも食い止め得ているのに、この次には、日本人", "が本当に地球上から抹殺されるというようなひどい目に、遭わないとも限らない。", "この戦争の最も根本的な原因は、日本の国策の基本的理念が間違っておったということ。換言すれば、日本が、口", "先では万邦共栄というようなことを言いながら、肚の中では日本だけ栄えるという日本本意の考え方を、あらゆる国", "策の指導理念にしておった。", "開国当時は、どうひいき目に見ても、４等国以下の国力。日清・日露の両戦役を終わると、１等国の仲間に入った", "と自負するに至り、さらに第１次欧州大戦に連合国側に参加して勝利を占めると、もう押しも押されもせぬ世界の５", "大強国の１つ。この昇る旭のような日本の国運を寿いでいる、その１番得意な時代に、今日の日本の禍因が、その種", "を蒔かれた。", "「事を敗るは、多く得意のときに因す」"]}, {"id": 2, "chapter": "", "title": "。", "body": ["。", "積極的に、日本の国が、他の国の御世話にならないで、日本の国だけで立ち行くことのできるような、いわゆる自", "給自足の体制を取ろうという考え方が、国民の間に一般的に盛り上がってきた。尐なくとも軍部の指導者は、東亜 10", "億の支配者たる位置は、日本国民に対し天から授けられたる任務であるとさえ自負するに至りました。", "日本の政治勢力を独占した軍部が、この目的を実現するためにとった手段は、非常に拙务。日清、日露の両戦争ま", "では、日本の軍部の指導者も、事を起こす前には、非常な細心の注意を払い、いわゆる薄氷を踏む思いで戦争に入っ", "た。その切り上げどきについても、戦争の始まる前から十二分に研究しておいて、尐しでも早く戦争を切り上げたい", "と念願しておりました。これを、支那事変の最中、せっかく到来した２度までの全面和平のチャンスを、いたずらに", "思い上がって取り逃がした東条英機軍閥定見と軍統制力の欠如と比較すると、まさに天地雲泤の相違。", "戦争の原因を深く突き詰めて考えますと、日本の勢力範囲内に、戦争のための必要とするあらゆる物質を皆収めて", "おかなければならないという日本本位の自給自足主義が、根本的なガンである。一度、この自給自足主義を肯定した", "以上は、他国の資源・領土を侵略していくという結果を招来することは、資源の不足している日本の行き方として当", "然の帰結。満州事変が突発し、それが支那事変へと発展し、さらに大東亜戦争へと進んでいった経緯は、ちょうど一", "定の鉄道のレールの上を急行列車が進んでいくようなもの。その鉄道の工事はすこぶる不十分なもので、無理にその", "上に急行列車を走らせたものだから、ついに転覆してしまったような結果。"]}, {"id": 3, "chapter": "", "title": "この日本の国策決定の根本方針が間違っておったことが、今度の戦争が生まれた基本的原因。", "body": ["この日本の国策決定の根本方針が間違っておったことが、今度の戦争が生まれた基本的原因。", "自給自足主義という戦争の胚子を、この大戦争にまで育て上げた諸事情を進んで指摘してみたい。", "諸事情の第１には、日本の指導者がドイツの物真似をしたということ。日本国民が、万世一系の天皇を戴いて、世", "界無比の国体であり、世界で最も優れた忠勇な国民であるというような自負心を持っておったと同じように、ドイツ", "民族は、世界で最も優れた文化を持って、神に選ばれたる民族、いわゆる選民であるという自惚れた思想の下に、欧", "州新秩序の建設という美名を掲げてドイツ民族生活圏確保の侵略戦争に驀進していた。軍部は、一も二もなくナチス", "ドイツの真似をする。ドイツの物真似をしただけでは物足らず、その弟分のイタリアと一緒になって、３人で兄弟分", "1/10", "の盃をしようじゃないかという、いわゆる三国同盟の提唱を始める。ドイツ軍はいわゆる電撃戦術により、疾風枯れ", "葉を捲く勢いで全欧州を席捲きし始めたので、ついに三国同盟が単に軍部の主張のみならず、おそらく、当時の国民", "の大多数の世論として締結されるに至り、日本における英米派の勢力は、完全に一掃されてしまった。", "第２の事情として、軍部が己を知らず、敵を知らなかったこと。元来、戦争というものは、洋の東西を問わず、ま", "た時の古今を論ぜず、すべて誤解の産物である。何人といえども、最初から到底勝つ見込みのない戦争を仕掛けるも", "のはないはずで、お互いにどうしても勝つと思い込んだところに戦争は始まる。今度の戦争についてみても、英米側", "は、最初からその物量の力に絶対の自信を持ち、日本と戦争して負けるなどとは、ただの一度だって考えたこはない。"]}, {"id": 4, "chapter": "", "title": "むしろ日本が、あんな貧弱な物的資源をもって本当に戦争をするはずはない、戦争をするというかけ声は、外交", "body": ["むしろ日本が、あんな貧弱な物的資源をもって本当に戦争をするはずはない、戦争をするというかけ声は、外交上の", "掛け引きにすぎないと、最後まで信じていた。これに対して日本の軍部は、総力戦とか近代戦とかけ声ばかりしてい", "ましたが、その実、依然として日本の軍隊の精神力なるものは、英米の物的勢力を征服して余りあり、と自惚れてい", "る。このように、日本の軍部が、近代戦の実体も英米の実情をも知らず、また知ろうともせずして、いたずらに我が", "民族の精神力なるものを過大評価して、米軍ごときは、皇軍の前には鎧袖一触にも値しないということを信じておっ", "たという宿命的なる独断。", "この種の宿命的な３つの見込み違い。", "第１は、日本の支那［中国］に対する見込み違い。はじめ支那事変が勃発するや、日本は、まさか、こんなえらい", "ことになろうと思わず、上海、南京ぐらい占領すれば、この前と同じように簡単に事変は収まるだろうと考えておっ", "た。", "第２は、ドイツのソ連に対する見込み違い。ヒトラーは、確かに２ヵ月以内にソ連を征服し得るものと考えていた", "らしい。", "第３は、アメリカの日本に対する見込み違い。アメリカは、日本が戦争を仕掛けようとは思わなかった。昭和 16", "年 11 月にアメリカは、コンフィデンシャル（秘密）", "・テンタテーフ（試案）を通牒してきたのですが、まさか日本政"]}, {"id": 5, "chapter": "", "title": "府が、これを最後通牒と解釈して、真珠湾に不意打ちを食らわせようとは思わなかった。第１の場合の見込み違", "body": ["府が、これを最後通牒と解釈して、真珠湾に不意打ちを食らわせようとは思わなかった。第１の場合の見込み違いは、", "日本が支那の民族的統一力に対する計算を誤ったこと。", "第２に場合は、ドイツがソ連の共産主義的力量に対する観察を誤ったことに起因する。", "第３の場合は、米英が日本はもっと近代戦争に対する理解と準備を有しているだろうという、いわば日本を実際以", "上に買いかぶった角度からの見込み違い。", "今日の事態を招いた日本軍部の独善主義は、そもそも何故か。幼年学校教育。精神的にも身体的にも全く白紙な尐", "年時代から、極端な天皇中心の神国選民主義、軍国主義、独善的画一主義を強制され注入されたから。", "第３の事情として、世論本位の政治を行わなかったこと。すでにドイツの戦勝に眩惑せられたうえに、我が兵力を", "過信した日本の軍部が広く天下の世論を聞く余裕を持たず、ひたすらに戦争遂行に驀進した。5･15 事件、2･26 事件", "以後には、従来日本の指導的立場にあった上層階級のいわゆる穏健層の人々は、全く口を封ぜられてしまい、議会人", "すら、政府の鼻息を窺う一途に退けられてしまい、また、社会の木鐸と自認する新聞、雑誌も戦争に対する一切の主", "張を封じられてしまった。さらに、東条内閣が成立するとともに、いわゆる憲兵政治が、非常に目立ってきた。この", "ような憲兵政治によって弾圧されたのは、ひとり代議士や民間人ばかりでなく、軍人の中でも反東条と目されている", "ものは、遠慮なくやられている。また重臣方面に対しても、各種の手段で軍は押さえつけていた。例えば現在の外務", "大臣、吉田茂氏は、反戦的な言葉を弄したという理由で、終戦直前まで憲兵隊の留置場につながれていた。日本を名"]}, {"id": 6, "chapter": "", "title": "実ともに軍部一色化し、いわゆる本土決戦で 7000 万国民を最後まで道連れにする計画だったのが、その", "body": ["実ともに軍部一色化し、いわゆる本土決戦で 7000 万国民を最後まで道連れにする計画だったのが、その危うい直前", "に「万世のために泰平を開く」の御聖断が下されたわけ。", "日本にとって最も不幸だったことは、諸種の事情が、日本有史以来の大人物の端境期に起こったということ。ただ", "器用に目先の雑務をごまかしていく式の官僚がたくさん集まって、わいわい騒ぎながら、あれよあれよという間に世", "界的大波瀾の中に捲き込まれたのである。日本の代表的政治家は、近衛文麿、東条英機、小磯国昭。これを米国のル", "ーズベルト、英国のチャーチル、支那の蒋介石、ソ連のスターリン、ドイツのヒトラー、イタリアのムッソリーニな", "ど、いずれも世界史的な傑物が、百花繚乱の姿で並んでいる。千両役者のオールスターキャストの一座の中に、我が", "国の指導者の顔ぶれの如何に大根役者然たるものであったか。どの方面も非常な人物飢饉であり、そのために本筋の", "大道を見損なって、とんでもない方面に日本国民を引っ張っていく１つの大きな原因になった。", "どのようにして戦いに敗れたのか", "発生原因それ自体が、すでに敗北の要素を内包しておるといっていい。種が腐っていたのですから、良い樹が育つ", "わけはない。", "各種の政治的成功に慢心した軍部指導者が、我が国勢の根本方針を各国共存共栄の自由通商主義に置かずに、我が", "国一国を中心にした自給自足主義に置いたところにある。我が勢力下に帰した土地の経営が、自ずから日本本位とな", "り、その土地の原住民の福祉を二の次にする。"]}, {"id": 7, "chapter": "", "title": "私の極めて懇意にしている、ある満州人は、満鉄に十数年も勤め、「万一日本が、ロシアと戦争でもするような", "body": ["私の極めて懇意にしている、ある満州人は、満鉄に十数年も勤め、「万一日本が、ロシアと戦争でもするようなこ", "とがあったら、私は、遺憾ながらロシア側に付きますよ」と。「実は、日本人にいろいろ御世話にもなっているから、", "2/10", "こうやって今日まで辛抱しておるのだけれども、本当に腹に据えかねることがある」", "。", "だから今度いよいよ終戦になってソ連軍が侵入してきた後で、邦人がいかに満州人から冷酷な取り扱いを受けてい", "るか、思い半ばにすぎるものがある。", "フィリピンにおける日本の敗因中、フィリピン人が日本人に協力せず、ことごとにアメリカ人と協力したことが、", "日本の作戦に齟齬をきたした大きな原因。", "すべてこういうことは、日本本位の自給自足主義の当然の結果ですが、それと同時に行政の最末端に行く日本の役", "人の人柄によるところも大きい。末端の日本官吏は、具体的に言えば巡査。これがろくでもない人物が多く、例えば", "満人経営の料理屋なんかに行って無銭遊興をする。日本人だけが特権を持った民族であるという神国独善思想が、こ", "ういう末端官吏の行動にまで現れていた。こういう事情ですから、日本人の勢力地域が拡大すればするほど、反対に", "日本の戦力は脆弱になるという奇妙な論理が成り立つようになる。", "要するに第１の敗因は、日本の戦争目的が、東亜の諸民族を納得させて、随いて来さしめるような公明正大な目標"]}, {"id": 8, "chapter": "", "title": "を欠いておったところにある。例えば、ソ連がドイツの侵略戦争から「祖国を護れ」という極めて直截簡明な言", "body": ["を欠いておったところにある。例えば、ソ連がドイツの侵略戦争から「祖国を護れ」という極めて直截簡明な言葉を", "戦争目的として掲げ、何が故に戦うかという意味を、１億 6,000 万人のロシア人の心魂に強くぴたっと焼き付けてい", "る。数千マイル離れているインドネシア民族のために、自分らの良人の命、子供の命を献げなければならないという", "ことを納得していた日本国民は、ほとんど一人もなかった。", "第２の敗因として日本の軍部が、自己の力を計らず、敵の力を研究せず、ただ自己の精神力を過大評価して、これ", "に慢心したこと。敵の力を研究するという点において世界的に有名なのは、イギリスの諜報網。第１次欧州戦の時に", "は、ノースクリフが長官となりまして、世界各国のすみずみまで、有名な諜報網を張りめぐらし、時々刻々の情報を", "手に取るがごとく集めて、これを作戦外交の資料となし、それに対する宣伝対策を適当に打っていった。ヒトラーを", "して「第１次対戦は、ノースクリフの紙の弾丸のために敗れた」と嘆ぜしめたぐらい。", "例えば日本で虎の子のように大事にしている石油のタンクを敵機が爆撃する場合に、チャンと本物の石油タンクば", "かりに爆弾を落として、せっかく偽装してずらりと並べてある水タンクのほうには、１つも落とさないような事実も", "ある。ところが反対に日本のほうはどうかというと、大衆雑誌、それも数ヶ月遅れたものを中立国を介して手に入れ", "て、アメリカではこんなことを考えているということを種にして戦争しているのですから、その勝負はもう初めから", "わかっていたというべき。", "日本の諜報機関が何故こんなに無力であるかと申しますと、そういうトレーニングが平素からできていないという"]}, {"id": 9, "chapter": "", "title": "こと、資金的な力が足りないということが、その原因。根本的には相手方の事情を研究しなければ戦争ができな", "body": ["こと、資金的な力が足りないということが、その原因。根本的には相手方の事情を研究しなければ戦争ができない、", "ということに対する認識が足りないということに帰着する。", "米国においては、平素は日本語の研究機関などはたいしてなかったのですが、大東亜戦争になってから、さあ大変", "だというので、教科書をたくさん第三国を通して輸入して、それによって日本の歴史、地理から倫理まで研究して、", "日本人はどういう人情であり風俗であるか、産物にはどういうものがあるかということを十分呑み込んでから、それ", "に対する手を打ってきた。", "ところが、日本のほうは、それとまるで正反対。本当に英語が必要になった時には、反対に敵性語だといって英語", "を教室から駆逐してしまった。すなわち相手方の力量とか実情というものを研究しないで戦争をしたのだから、めく", "らと目明きが［剣術］をするようなもの。", "第３の敗因は、軍の指導者が、国民の良識や感覚を無視して、一人よがりで自分のいいと信じたところに国民を連", "れていこうとした点。何が故に戦争をしなければならないのか、十分理解せしむることなくして、法律規則と権力で", "もって強引に押し切ろうとしたために、かえって国民の間に一種の反感的な気分が起こってきた。", "日本の各重要産業の出勤率は、戦争をやっていけないというほど重要な関係にある工場にして、なお２割か３割と", "いう情けない低率。8 月 15 日以後の戦争が済んでしまって、反対にこれらの工場が俄然 90％、95％という非常によ", "い出勤率を示すようになった。8 月 15 日以後になりますと、問題が端的に国民の頭に浮かんできて、怠けて馘にな"]}, {"id": 10, "chapter": "", "title": "っては生活が脅かされるというので、自発的に進んで出勤するようになった。", "body": ["っては生活が脅かされるというので、自発的に進んで出勤するようになった。", "先年、朝のラジオ放送で「歴史というものは、過去のことをただ空暗記する学問ではなく、過去のことを推して将", "来のことを判断する学問である」", "。いろいろ実例を挙げられた際に「軍人がやった戦争で勝った例はない。必ず政治", "家の率いている軍隊に敗けている。歴史が、はっきりそれを示している」。結局、戦争に勝つためには、どうしても", "国民の総意を結集する以外にはない。その点においては政治家のほうが軍人よりもはるかに優れているという教訓。", "「科学無き者の最後」", "最も現実的に日本をギュッと参らせたのは、英米の科学の進歩。１つは、化学兵器の進歩があまりに違っておった", "ことであり、他の１つは、マネージメントの科学性の問題。", "残念ながら何一つ日本の兵器が、英米側より優れておるというものはない。その中で一番、日本に手痛い打撃を与", "えたのは、ラジオロケーター。", "原子爆弾、ラジオロケーターというような新しい有力な兵器は、全部イギリスで発明され、アメリカはこれを工業", "化したにすぎません。第１次世界大戦は、イギリス人がタンク（戦車）を発明したことによって勝負がついたと言わ", "3/10", "れている。今度の戦争においてもまた、ラジオロケーターによって勝負が決したといって言い過ぎではない。"]}, {"id": 11, "chapter": "", "title": "今度の戦争も最初のうちは、ドイツの潜水艦が、花形武器であって、開戦２年後の 1940 年には毎月 1", "body": ["今度の戦争も最初のうちは、ドイツの潜水艦が、花形武器であって、開戦２年後の 1940 年には毎月 100 万トン以", "上、１年には千数百万トンの船舶を撃沈して明らかに英米両国の造船率を超過した撃沈率を示しておりました。", "この危機一髪の際に、イギリスにラジオロケーターという救いの神が現れました。ラジオロケーターだと、暗夜の", "海上でも潜水艦の所在点が発見され、ちょっとでも潜望鏡を出すと飛行機から爆弾を投げられる。今度は逆にドイツ", "の潜水艦は、イギリスの飛行機のために、えらい目に遭わされるようになり、爾来１年にして、ほとんど大西洋から", "姿を没した。", "このラジオロケーターは、アメリカに渡って、さらに急激に進歩し、日本に爆撃に来た際、真っ暗な闇夜に来ても", "白昼と同じような正確な写真を撮っております。日本の潜水艦が、あの広い太平洋のまん中にちょっとでも潜望鏡を", "出すと、すぐ米国のレーダーにつかまってしまい、即座に飛行機がやって来て、アメリカ自慢の照準機で投弾するか", "ら、ほとんど百発百中でやられてしまう。これが、日本の潜水艦および諸艦船がほとんど全滅的打撃を受けた大きな", "原因。特攻機が目的の軍艦の上に行かない前に、ほとんどみなラジオロケーターにつかまってしまい、大部分は中途", "で敵戦闘機の餌。また、日本の運送船の所在も、たちまち発見されてしまう。", "この戦争に最後の止めを刺したのは、何と言っても原子爆弾。1919 年にロシアの学者が、その原理を発見したと", "いう話しですが、完成したのはイギリスで、工業化したのはアメリカです。ドイツでもソ連でもイタリアでもフラン", "スでも、日本においても、理論だけはわかっていたのですが、ウラン 235 と 238 を分離することが実験できなかった。"]}, {"id": 12, "chapter": "", "title": "一言にしていえば、広島全市が、１発の爆弾で消失した。その爆弾の中に使用したウラン 235 は、わずか", "body": ["一言にしていえば、広島全市が、１発の爆弾で消失した。その爆弾の中に使用したウラン 235 は、わずか１グラム", "にすぎなかったそうです。しかし、これを火薬に換算すると 80 万トンという想像もできない大量の火薬の爆発力に", "相当。", "この爆弾の性能は、物理的な破壊力の素晴らしさよりも、人間に与える生理的な影響の深刻さのほうが、聞けば聞", "くだけひどい。そのむごたらしさは到底聞くに堪えぬほどでありまして、中には近所の川にピクニックに行っていた", "何百人の女学生の皮膚が、まるで舵の皮が抜けるようにツルリと剥げて肉がまる出しになったような生き地獄を現出。", "この他、科学兵器については、日本人として目を見張るような実例がたくさんある。", "土木機械の一例。厚木と横浜の 40 キロの間に 27 時間で５インチのガソリンパイプの敷設を完成した。8 月 29 日", "に初めてアメリカの飛行機が、厚木に着いた。到着するとすぐその飛行機に給油をしなければならない。アメリカの", "タンカーは横浜に着いているので、これを厚木まで送油しなければならない。アメリカでは、すぐこの間にパイプを", "敷くと言い出した。これを聞いた日本の軍人は、横浜から厚木まで４０キロ、その間には山あり谷あり、測量するだ", "けでも３日や４日ではできないから、すっかりできあがるまでには、尐なくとも３年はかかると言った。", "たった１日で 40 キロの給油管を敷設した、この事実が特に我々に感動を与えるのは、同じような工事をいま日本", "が他の地方でやっているから。千葉県の大多喜というところに天然ガスが出る。３年前に大多喜から千葉市へガス管", "を敷設することに決定。やはり５インチのパイプを使って３年間やっているのだが、未だに完成はしていない。"]}, {"id": 13, "chapter": "", "title": "それからもう１つ、進駐軍が、横浜の［ホテル］ニューグランドから東京帝国ホテルに来た。そして本部のニュ", "body": ["それからもう１つ、進駐軍が、横浜の［ホテル］ニューグランドから東京帝国ホテルに来た。そして本部のニュー", "グランドに至急電話をかけてくれというと、電話局で３時間かかると答えたので、ひどく驚いた。進駐軍は毎日、東", "京からワシントンまでわずか３分間の呼び出しで通話している。目と鼻の先の東京－横浜間の呼び出しが、３時間か", "かると言われたので、アメリカの兵隊は呆れた。早速電話線の架設にかかって、わずか１時間半後には、自分の専用", "線で「ハロー、ハロー」をやり出した。", "私の体験ですが、先日の風水害のときに、姫路のちょっと手前で汽車が不通になり、自動車もこの先の川のところ", "から通れないと聞かされた。ともかく行けるだけ行こうと思い、その川のところまで行ってみると、日本人のこしら", "えた木の仮橋と、アメリカ人のこしらえた立派な鉄橋、それはアメリカと日本の科学的な能力を見てくれとばかりに", "並んでいたので、非常に強い感銘を受けた。", "科学兵器の差というものは、目に見えるから皆納得するが、目に見えないで、もっと戦局に影響を及ぼしたものは、", "マネージメントの差です。残念ながら我が方は、［科学的］マネージメントというものが、ほとんどゼロに等しかっ", "た。", "アメリカの５％しかないのに、この５％の鉄量すら有効に使えなかった。隅田川に橋を架けるのに、10 本架けなけ", "れば交通量がさばけないという場合、日本のやり方は漫然と 10 本の橋を架けるが、みな資材が足りなくて途中で切", "れていて、結局、向こうにわたれる橋は、１本もできなかったという状態です。マネージメントがうまくいけば、10"]}, {"id": 14, "chapter": "", "title": "本架ける量がないとなれば、では、５本だけ架けよう。あるいは１本だけでもいい、早く架ければ人が通れて、", "body": ["本架ける量がないとなれば、では、５本だけ架けよう。あるいは１本だけでもいい、早く架ければ人が通れて、大変", "重宝する。", "この経営能力が、また科学兵器の差よりもひどい立ち遅れであって、この代表的なものが、日本の官僚のやり方。", "日本の官僚の著しい特性は、一見非常に忙しく働いているように見えて、実は何一つもしていない。チューインガム", "をかんだり、ポケットに手を入れたりして、いかにも遊んでいるように見えて、実際は非常に仕事の速いアメリカ式", "と好対照。", "工場の引渡しの例。日本の方は、引き継ぎ式をやろうというので、証書に目録を付けて、当日はフロックに身を正", "して、待っている。そうすると何時間経っても、進駐軍は来やしない。一同、待ちくたびれた頃に倉庫からアメリカ", "4/10", "の兵隊が出てきて、もう調べたから日本人は出ていってくれという。打ち合わせて物品を受け取るというような形式", "的なことはしない。", "例えば軍の動員計画なんかも実に非科学的なもの。工場から熟練工を招集したために、その工場の能率が落ちると", "忚援の兵隊さんを今度は軍から寄越してくる。工場から忚召した熟練工は、新兵になって壕掘りをしているのに、壕", "掘りのうまい古参兵が、ズブの素人になって工場に忚援に来る。", "これが、日本が敗けた、見えざる大きな原因。"]}, {"id": 15, "chapter": "", "title": "アメリカのニュース劇場で東京空襲の映画を上映するとき、日本なら「日本空襲何々隊」とつけるべきところを", "body": ["アメリカのニュース劇場で東京空襲の映画を上映するとき、日本なら「日本空襲何々隊」とつけるべきところを、", "そんな題はつけないで「科学無き者の最後」という標題を付しているという。アメリカは、最初から日本のことをそ", "う見ており、まさにその通りの結果になった。", "アメリカの新聞は、アッツの戦いは野蛮に対する文明の戦争の１つの好例であると書いていた。「アッツを日本軍", "は何ヶ月間も占領していたが、その間、ウサギの通うような小道しか造らず、電灯線も引かずにローソクで岩窟の生", "活をしていた。ところが米軍が、上陸すると３日ならずして、羊腸たるウサギの小路はトラックの通るアスファルト", "の道路に変わった」", "。これを当時の日本の軍部が、糧食、兵器の後援の続かなかった自分の責任を一向に反省せず、", "ただ「アッツの玉砕に続け」と叫び、続けば必ず「ワシントン城下の盟い」を実現し得るがごとく放送したことに比", "べると、", "「科学無き者の最後」と笑われても一言もない。", "実に軍をあれほどまでに横暴にさせた日本の政治の根本的な仕組みにもあてはまることで、せめて軍内部だけでも、", "すなわち陸軍と海軍の間だけでも協力一致して全兵力を科学的に綜合的に運営すれば、まだこれほどの事態にならな", "かったと思われる。", "日本における陸軍国と海軍国"]}, {"id": 16, "chapter": "", "title": "陸海軍の不一致ということは、科学能力の务弱性に匹敵すべき戦争の致命的敗因。国民は、いまさらに、そうま", "body": ["陸海軍の不一致ということは、科学能力の务弱性に匹敵すべき戦争の致命的敗因。国民は、いまさらに、そうまで", "陸海軍の間に相剋があったかということを教えられている。", "例えばサイパンの戦闘。太平洋戦争におけるサイパンの戦略的価値というものは、非常に大きくて、日本の海軍大", "学で日米戦争を想定するときに、サイパンを奪られた以後の日米戦争というものは、考えた者はなかったというぐら", "い。サイパンというものが日本の手中にあって、それを前提に日米いかに戦うべきや、と考えるのが常則で、サイパ", "ンを奪られて後、如何に日米戦争をするかということは到底考えられないほど、サイパンの価値は大きい。それを、", "ああ容易に奪られた裏面には、陸海軍の作戦の不一致があった。", "海軍が、もう沖縄が本当に最後の防衛線である、沖縄決戦のためには根こそぎの兵力を出すというのに、陸軍がそ", "れに相当する力を沖縄に注いだかということは、すこぶる疑問。決戦は、沖縄がまさに最後であったのですが、それ", "を「本土決戦」というような言葉を使って、まだアメリカが勝つか、日本が勝つか、わからないというような報道の", "取り扱いをした。もっと沖縄に陸軍の精鋭を置いて陸海軍協力一致して、ただの一度でもいいからアメリカを水際に", "叩き込むという大戦果を挙げたならば、今度の戦争の顛末に、あるいは多尐の変化が起きておったのではないか。", "また、支那その他の占領地区の防備にしましても、ここは陸軍地区、あそこは海軍地区というような、まるで各国", "の連合軍が領土を取ったような観念。どう見たって、一国の陸海軍の一致した兵力運用の仕方ではない。陸軍が、次", "第次第に海軍の領域に侵入してきて、陸軍は自分だけで船舶兵というような水兵をつくり、駆逐艦もつくり、潜航艇"]}, {"id": 17, "chapter": "", "title": "もつくった。", "body": ["もつくった。", "以上の作戦方面における陸海の相剋は、戦争の最中はいわゆる、厳秘に付せられて、国民にあまりよくわからない", "けれども、軍需資材の方面になってくると、これは非常にはっきりしたもので、例えば大日本兵器という会社の青砥", "の工場に行ってみると、同じ工場に門が２つ並んでいる。１つは陸軍の軍人さんのお通りになる門、１つは海軍の軍", "人さんがお通りになる門だということ。門を別にするぐらいですから、工場は無論別にする。別にするばかりでなく、", "その間に高い塀をつくって、陸軍の工場から海軍の工場のほうには一人の工員も融通しない。戦争資材に関する最も", "目立った縄張り争いは、鉄の争いだったが、結局、日鉄は海軍が古くからの関係で押さえた形になっているから、陸", "軍は日本鋼管に主力を注いで、いつの間にか鋼管は陸軍の製鉄工場、日鉄は海軍の製鉄工場というような形になって", "いた。単に鉄材に限らず、どんな材料でも陸海先陣争いで押さえてしまう。", "小さい例は、同じ用途のネジをつくるにしても、陸軍が右ネジにすれば、海軍は左ネジにするというようなことを", "する。すなわち、どんな部品でも陸軍の物は、海軍では使えない。海軍の物は、陸軍では使えないようになっていた。", "陸海軍当局者はこの競争相剋の弊害を知らなかったかというと、もちろん大知りです。知っていて直せなかったの", "が、すなわち敗戦の兆し。", "満州事変直後に、トロツキーが「噴火山上の日本」という一文を草して「日清戦争は、日本が支那に勝ったのでは", "ない。腐敗せる清朝に勝ったに過ぎない。日露戦争は、日本がロシアに勝ったのではない。腐敗せるロマノフ朝に勝"]}, {"id": 18, "chapter": "", "title": "ったに過ぎない。要するに、これは１つの後進国が、さらに一層遅れたる後進国に対する勝利に過ぎない」。「", "body": ["ったに過ぎない。要するに、これは１つの後進国が、さらに一層遅れたる後進国に対する勝利に過ぎない」。「今度の", "戦争に敗けたのは、腐敗せる日本軍部に過ぎない」と主張してくれるかどうか。", "何故、こうまで軍部の独裁を許したかということになると、一面は、明治維新以来の日本の政治性格の封建性によ", "る。他面、重臣、議会、財界、文化各方面の人たちの無気力によるところが、多い。「過ちを見て、その仁を知る」", "5/10", "という意味で、この無気力は、これらの人たちのあるいは日本国民の善良なる一面を現しているとも見られる。すな", "わち、日本人は、たとえ一部の意図に引きずられたにせよ、日本という国家の動きとして内からも外からも見なけれ", "ばならないような動向をとるに至った暁には、たとえその動向が己の信念と相反するような場合でも、国家への奉仕", "のために大なり小なり、おのれ自身を捧げなければならないという 3000 年来の伝統を持っている。不幸にして、今", "度の戦争では、この民族的な統一心理のために、かえって失敗を致命的ならしめた。", "しかし、私は、日本再建のエネルギーをやはり、この民族的な統一心理に見出そうとするものです。その代わり、", "今後の国家の進路というものは、あくまで合理的に計画的に道徳的に設計され、全国民の意志で決定されるような仕", "組みにしなければならない。政治の仕組みということが、今後の日本の運命を決するので、帝国主義的な古い夢を追", "って、ドイツの二の舞を演ずるような独裁的権力を、２度と再びこの日本に君臨せしむるようなことがあってはなら", "ない。"]}, {"id": 19, "chapter": "", "title": "ポツダム宣言の政治性を読む", "body": ["ポツダム宣言の政治性を読む", "日本には資本というものが、ほとんど全部喪失または半身不随麻痺状態になっている。", "元来、日本に近代的な意味における資本が出来始めたのは、明治以後です。とにかく第１次欧州大戦以後、多尐の", "蓄積を持ち得たが、昭和 17、18 年の両年に使った莫大な戦争消費は、その年の生産の数倍にのぼったために、その", "不足は当然、過去の蓄積を崩して補わなければならなくなり、さらに、昭和 19 年に至ると、ほとんど過去の蓄積を", "全部食い潰してしまった。いよいよ 8 月 15 日の終戦となったときは、日本は、全くロビンソン・クルーソーのごと", "く、丸裸で離れ小島に打ち上げられた難破船の水夫のような姿になっていた。", "7 千数百万の日本国民が、如何にして生きていけるかということが、我々に課せられた問題。外国の援助無しで日", "本農業の自立ということは、考えられない状態。", "忚急対策として最も原始的に考えられる方法は、日本の余剰労力を生のままで輸出する。そうして、海外で働いて", "送ってくる収益で、日本の国に残っている人間を食わしていくという手。現在の国際事情下で、このことを考えるこ", "とは、天に登るほど難しい。", "そこで結局、生糸その他各種の雑貨などの製品を輸出して、この代償として食料を輸入するという方法以外に、生", "きる道はないということに帰着する。すなわち、この余る労力をどういう形で商品化して、外国に輸出するかという", "具体的な方策が、今後の政治経済問題のすべての鍵。"]}, {"id": 20, "chapter": "", "title": "そうなると問題の成否は、１つにかかって連合国の好意の有無。この外国の態度を測定する上で最大かつ唯一の", "body": ["そうなると問題の成否は、１つにかかって連合国の好意の有無。この外国の態度を測定する上で最大かつ唯一の手", "がかりとなるべきものは、本年［昭和 20 年］7 月 26 日にできましたポツダム宣言。このポツダム宣言は、連合国の", "最高首脳部が集まって、日本に対し戦争終戦の機会を与えるために連合国側の真意を表明したもので全文は、13 条か", "ら成り立つ。そのうち、国民生活に最も影響のある条文は、戦後処理方針を定めた第 9 条と政治原則を規定した第 10", "条、経済原則を示した第 11 条の 3 ヵ条。", "まず第 9 条から「日本国軍隊は、完全に武装を解除せられたる後、各自の家庭に復帰し、平和的かつ生産的な生活", "を営むの機会を得しめらるべし」", "。ドイツに対する取り扱い方と根本的に違っているところであって、ドイツでは鉄", "砲を取り上げられ、サーベルを取り上げられ、いわゆる、丸腰になった後も、集団労務を課せられ、戦争が済んでも、", "兵士は懐かしい故郷、暖かい家庭に帰ることを許されない。ある者は、シベリアの寒地に連れて行かれて農耕を強制", "され、ある者は、ソ連の工場に送られて、終日営々として旋盤にくっついていなければならない。ところが、日本で", "は終戦とともに、兵士は、全く自由の身となり、愛する妻や、可愛い子供の待っている家庭に、大きな御土産包を背", "中にくっつけて帰っていき、自分の好きな「平和的かつ生産的な仕事」をすることが許されている。ドイツから見る", "と、雲泤の差です。", "第 10 条は、"]}, {"id": 21, "chapter": "", "title": "「我らは、日本人を民族として奴隷化せんとし、または国民として滅亡せしめんとするの意図を有する", "body": ["「我らは、日本人を民族として奴隷化せんとし、または国民として滅亡せしめんとするの意図を有する", "ものにあらざるも、我等の捕虜を虐待せる者を含む一切の戦争犯罪人に対しては、厳重なる処罰を加えられるべし。", "日本国政府は、日本国・国民の間における民主主義的傾向の復活強化に対する一切の障碍を除去すべし、言論、宗教", "および思想の自由ならびに基本的人権の尊重は確立せらるべし」", "。", "日本国民本来の面目は、伊勢大神宮の神鏡をもって表象せらるる、いわゆる和魂であり、熱田神宮の宝剣をもって", "表象せらるる荒魂は、第 2 次的なものであることを認めている。この荒魂のなかで最も悪質な部分は、いわゆる戦争", "犯罪人として徹底的に芟除し、将来、日本をして再びこの過誤を繰り返さないように外科的手術をしなければならな", "いと主張しているわけ。", "米英側は、戦時国際法規、とくに俘虜の取り扱い方の規定違反者と開戦手続き違反者に対して法律上の責任を最も", "厳重に追及するものと思われます。その中でアメリカが、最も重点を置いているのがいわゆる、不法開戦。真珠湾攻", "撃が米国人に与えた影響は、日本人の想像以上に深刻であって逆説的にいえば、ルーズベルトがいかに努力してもま", "とめ得なかった米国の世論を、日本人がまとめてやったような結果になったぐらい。", "「真珠湾を忘れるな」の一言。アメリカ側から申せば、日本人は、外交交渉の継続中に全く騙し討ちをしたものだ", "と確信していますから、これに対する責任は、徹底的に糾弾しなければ承知しない。第 11 条は、"]}, {"id": 22, "chapter": "", "title": "「日本国は、その経", "body": ["「日本国は、その経", "済を支持し、かつ公正なる実物賠償の取り立てを可能ならしむるがごとき産業を維持することを許さるべし。ただし", "6/10", "日本国をして戦争のため再軍備をなすことを得しむるがごとき産業は、この限りにあらず。右目的のため原料の入手", "を許さるべし。日本国は、将来貿易関係への参加を許さるべし」", "。", "この 1１条が、終戦後の日本経済運営の基本法です。日本国民にとって現実的に最も大切な条文である。連合国は、", "日本の産業に対して積極的と消極的と 2 つの目標を示している。", "積極的目標は、さらに２つに分かれて、１つは、日本の経済を維持するための産業とし、他は賠償を支払うための", "産業。一方、消極的な目標として再軍備に役立つ産業は、一切禁止。", "連合国側も、日本がその産業を維持するためには、どうしても外国の力を借りなければならない状態にあることを", "肯定していることを意味するもので、非常に行き届いた条文である。この宣言が、初めて世界に放送されたときに日", "本の新聞がいっせいに罵倒したような悪意に満ちた降伏条件でない。第１、連合国側は、この宣言において日本を「降", "伏」せしむるという用語を使っていない。ドイツの場合は、クリミヤ宣言において「ドイツに対し課すべき無条件降", "伏条項は、ドイツ国の最後的敗北が達成せらるるまでは発表せらるざるべし」と言って、あらかじめ条件が提示され"]}, {"id": 23, "chapter": "", "title": "なかった。", "body": ["なかった。", "ポツダム宣言中、無条件降伏という言葉を使ったのは、第 13 条の「我等は日本国政府がただちに全日本国軍隊の", "無条件降伏を宣言」すべきことを要求しているところだけ。この点は、連合国側が日本政府および国民と日本軍部と", "を対立的に区別して取り扱っている日本観を示すもので、ポツダム宣言の全文を通ずる特徴というべきもの。", "ポツダム宣言というものは、だいたい日本のためにむしろ暖かい雰囲気を含んでいるようにも感じられるわけ。", "米英中ソ、４ヶ国の行方を見る", "しかしポツダム宣言は、各条とも抽象的に原則を示しているにとどまり、具体的問題の処理については何も決めて", "いない。具体的運用ということは、米国、英国、支那［中国］の３国の他に、後からこの宣言に参加したソ連の出方", "いかんによって決まるわけ。", "以上の４国の中で日本に対して最も重大なる発言権を持っているアメリカの対日感情はどうか。", "日露戦争前の世界情勢、アメリカの急速な産業の発達は、その製品の販路としての東亜市場の確保を必要とします", "から、このアメリカの門戸開放主義と帝政ロシアの東亜進出主義とは、相容れない必然的形勢。しかし、当時の帝政", "ロシアは、世界最強の陸軍を謳われた大帝国であり、これを向こうに廻して小日本が戦を挑むということは、暴虎馮", "河以上の無謀なことと自他ともに判断していた。結局、大勇猛心を振って戦火を開くに至った裏面には、アメリカの", "門戸開放主義が、日本の東洋平和の国策のための有力な後楯になってくれるという心強さがあったから。また実際、"]}, {"id": 24, "chapter": "", "title": "日露戦争継続中は、アメリカは、英国とともに陰に陽に日本のために最大限の好意を示し、最後にポーツマス条", "body": ["日露戦争継続中は、アメリカは、英国とともに陰に陽に日本のために最大限の好意を示し、最後にポーツマス条約の", "締結まで斡旋して、日本をして有終の美をなさしめたことは世界周知の事実。", "ところが日露戦役後、日本の勢力は、急速に強大となり、帝政ロシアに代わって東亜各市場を独占する傾向を示し、", "アメリカの門戸開放政策に暗い影を投ずるに及んで、米国の親日感情は、急速に冷却。ついに満州事変が勃発するに", "至って、覆水盆に返らず、大東亜戦争という最悪の結果まで発展していった。", "しかし終戦後の今日、すべての軍国的思考から解放せられて、日本国民が自由に冷静に世界の大勢を達観するとき", "に、再びこのアメリカを向こうに廻して戦争を繰り返すがごとき愚を考えるものは、おそらく日本国中誰一人もない。", "今日の東亜の実状はどうかというと、奇しくも伊藤公案の朝鮮２分統治が、アメリカとソ連によって実行されてい", "る現状。ソ連の発展力は帝政ロシアに数倍し、例えば、今日のロシアは、欧州方面においても宿願のダーダネル、ボ", "スポラスはおろか、欧州の中原のドイツがちょうど朝鮮のようなところに置かれ、ソ連の呼吸がドーバー海峡を越え", "て、イギリスの頭の上に感ずるような勢力分野を示しています。ロシアと米英とは、45 年前に較べて欧亜両方面にお", "いて、はるかに切実な接触関係に進んでいる。", "帝国主義的な考え方に、終わりを与えしめよ。これが、今度の大戦争の教訓。", "私は、いろいろな意味においてアメリカは、", "「日本が宣言に忠実なる限り、何とかして立ちゆくようにしてやろう」"]}, {"id": 25, "chapter": "", "title": "とポツダム宣言の趣意を履行してくれるものと確信する。", "body": ["とポツダム宣言の趣意を履行してくれるものと確信する。", "次は英国。日英同盟万歳、当時の日本人は、英国に対して本当に親類のような親しみを持っていた。第１次世界大", "戦後、永年の日英同盟の解消を余儀なくされたときには、日本人は、いっせいに一種の物淋しい感に打たれましたし、", "英国側にも思い切れない未練が多分に残っていたと想像。いわば飽きも飽かれもしない夫婦が、義理にからまれて夫", "婦別れをしたようなものですから、その後も、ともすると焼けぼっくいに火がつこうとした。", "その焼けぼっくいの一番著しい例は、ビルマルートの封鎖。支那事変勃発以来、英国は、幾度か日中両者の間に立", "って調停の労をとろうとし、そのためには、ビルマルート閉鎖というような強圧手段すらとってくれた。イギリスは、", "敢然としてビルマルートを押さえ、日支の和解を慫慂したのですが、思い上がった日本の軍部は、ドイツの策動に乗", "せられて、このイギリス妥協案を退けた。もしも、あのときにイギリスの差しのべた手を握っていたならば、日本は、", "今日どのぐらい栄えた国になったかわからない。", "イギリスは、日本に対し支那からの撤兵を求めた。我が国の戦争指導者たちが、国辱を口にして、イギリスの妥協", "案を蹴ったのは主としてこのためですが、しかし何故に支那から撤兵することによって泤沼に足を踏み入れたごとき", "支那事変に終結を与えなかったのか。米英ソ独の世界の大国が、国を挙げて生きるか死ぬかの大戦争に押し込まれて", "7/10", "いるときに、日本が支那と和平し、一切の産業能力を上げて外国貿易に従事していたならば、今日の日本は、それこ"]}, {"id": 26, "chapter": "", "title": "そ昇る朝日のような国運になって、本当に「御民我れ生けるしるしあり」というような生活ができるようになっ", "body": ["そ昇る朝日のような国運になって、本当に「御民我れ生けるしるしあり」というような生活ができるようになったと、", "いまさらのごとく死児の齢を数えたくなる。", "英国のもう１つありがたいことは、日本の皇室に対して非常に好意を持っているということで、ポツダム宣言にお", "いても日本の皇室の廃止ということに一言も触れない大きな原因は、イギリスが影に陽に尽力をしてくれたからだと", "思われる。これは、英国自体の国情が、皇室制度の存続と大きな関係がある。あの多数の自治領が、イギリスの皇室", "という１つの網で繋がっていることは、周知の通り。今日、国らしい国で皇室制度のあるのは、日本とイギリスだけ。", "第３は支那。８年間にわたって支那大陸を鉄蹄下に踏みにじっていたのですから、一度日本に勝ったとなると、思", "う存分日本人をうちのめして痛快感を味わおうという気持になるのは、支那人としてこれは当然の感情。", "8 月 15 日、終戦に際してなした蒋介石の演説は、まさに我々のこの誤れる支那感に冷水三斗を注ぎかけたように", "感じられるほど、堂々たるもの。私は、この蒋介石の大演説を読んだとき思わず「参った」と口走ったほど大きな感", "銘を受け、本当の大政治家の姿を発見したような気持ち。「同胞諸君、今や我々の頭上に勝利の栄光が輝くに至った。", "永い間、到底、筆舌に尽くし難い陵辱をうけながらこれに屈せず、よく戦い抜いた諸君の労苦によって、我が敵はつ", "いに我が軍門に降ったのである。しかしながら、我々が終始一貫戦った相手は日本の好戦的軍閥であって、日本国民", "ではないのであるから、日本国民に対し恨みに報いるに恨をもってする暴を加えてはならない。民族相互が真に相手", "を信じ合い、尊重し合わなければならないということを腹の底から悟ることが、この戦争の最大の報償でなくてはな"]}, {"id": 27, "chapter": "", "title": "らない。これによって今後、土地に東西の別なく人間に皮膚の色の別なく、あらゆる人類は一様に兄弟のように", "body": ["らない。これによって今後、土地に東西の別なく人間に皮膚の色の別なく、あらゆる人類は一様に兄弟のように平和", "に暮らすことができるものと信ずる」", "。", "私は、万一敗戦の場合、中国永住の数百万の我が同胞が、いかに惨虐な目にあわされるであろうかということを考", "えると、戦争中もときどき身震いがするのを禁じ得なかった。この蒋介石の演説を読んで、まことに救われたような", "気持になり、思わず合掌した。", "最後に残ったのがソ連。これが実に予測の難しい一票です。ソ連の外交が徹底した現実外交であり、ソ連の親友た", "らんとするためにはまず自分の力を養い、ソ連をして一目置かしめるだけの実力を備えなければならないといわれて", "いる。今日の小日本が、その実力の故をもってはソ連の親友たり得る資格のないことは自明。", "日本の将来はどうなるか", "まず政治の問題。ポツダム宣言が繰り返し繰り返し日本に民主主義的政治が行われるべきことを要求している。第", "12 条において「日本国国民の自由に表明せる意思に従い、平和的傾向を有し、かつ責任ある政府が樹立せらるるにお", "いては、連合国の占領軍はただちに日本国より撤収せらるべし」", "。", "民主主義的な政治運用が確立されない限り、連合軍は撤収せず、従って日本の主権は回復されないのですから、我々"]}, {"id": 28, "chapter": "", "title": "は、一日も速やかに、この目標に向かって突進するの一途あるのみ。これまでの日本の民主主義的勢力を圧迫し", "body": ["は、一日も速やかに、この目標に向かって突進するの一途あるのみ。これまでの日本の民主主義的勢力を圧迫してき", "た軍閥・官僚のうち、軍閥はすでに解体してしまったから当分問題を起こさないでしょうが、軍閥以上に深く根を下", "している官僚閥は、今後も潜行的にその勢力の維持をはかるに相違ありませんから、この際国民は、責任糾弾の手を", "ゆるめず、徹底的に、官吏の特権的色彩を払拭する必要がある。", "あたかも昔の侍が、百姓町人を遇するような態度で国民に接し、いわゆる、よらしむべし、知らしむべからずの原", "則を堅持し、あたかも官吏のために国民が生きているような極めて不親切、不合理のことが当たり前のような形でか", "なり長い間行われていた。これは、どうしても、国民の公僕という概念に置き代えねばならない。", "今度、アメリカの進駐軍が入って来て、日本の官庁と交渉して最も驚いたことは、日本の官吏が上になるほど物を", "知らない、アメリカでは、上役ということは、それだけ下役よりも担任の仕事に通暁していた証拠で、一番物を知っ", "ている人といえば、局長だということが、当然の常識。地位が上になるほど勉強してない。大臣に至っては、むしろ", "仕事を知らざるをもって得意とするがごとき現象すらある。しかし何人にも、才能はあるものでした、日本の官吏に", "も非常に優れた才能が、１つある。それは何かというと責任回避術である。", "極めて通俗的なことでは、例の木造船計画というもの。第１ああいう乱暴な船体の構造では危なくて乗り手がない。", "仮に船体ができてもエンジンの手当をすこしも考えておらない。その上、物には順序というものがあって、港湾、乗", "組員、油、エンジン、船体の５つの条件のうちで、港湾工事に一番時日がかかる。お役人は、一番後廻しにしていい"]}, {"id": 29, "chapter": "", "title": "船体を真先に計画して、しかも、他の条件は、すこしも考慮しない。できあがった船体は、ぼんやり港や浜に繋", "body": ["船体を真先に計画して、しかも、他の条件は、すこしも考慮しない。できあがった船体は、ぼんやり港や浜に繋いで", "あって、いたずらに子供の水泳の飛び込み台になっているのが精々で、どのぐらい、この乏しい日本のもったいない", "資材と労力とを浪費したか、わからない。けれども、この木造船の失敗によって、何人が責任をとったか、寡聞にし", "て私は聞いたことがない。", "官吏はまさに敗戦責任者の最も大きなグループだというべき。今後の政府当局は、官吏の特権的機構に大鉈を加え", "なければならない。", "それには、第１に文官任用令と文官試験制度というものを根本的に改正して、官民の人事交流を自由にすること。", "第２に、その仕事に対して徹底的に責任をとらしむるような構想をめぐらすべきこと。", "第３に、官吏の異動が国民の利益を無視して、ただ本人の出世の方便として行われ、いたずらに事務を渋滞せしめ、", "8/10", "属僚行政に随さざるを得なかった弊風を一掃すること。", "第４に、ある種の官吏の公選、例えば知事公選のごときは一日も速やかに実行すべきことなど。", "かくして軍閥・官僚から解放された後の日本の政治は結局、議会中心です。議会中心の政治を行うためには、必ず", "確固たる基礎と明白なる主張を有する政党の出現が、必要。今後の政党の生命は、日本を如何に再建するかという具", "体的な主義・政綱にかかっているわけ。"]}, {"id": 30, "chapter": "", "title": "この具体的な主義・政綱というものを詮じ詰めますと、１つは資本主義を肯定するか、否定するかという私有財", "body": ["この具体的な主義・政綱というものを詮じ詰めますと、１つは資本主義を肯定するか、否定するかという私有財産", "精度の問題、もう１つは天皇制を肯定するか、否認するかという立憲君主政体の問題、この２つの基本的命題をめぐ", "って、本質的に政党の分野が生じ、この両問題に命を賭けて争うというような現象が起こってくる。", "しかし、最後的にすべてを決するのは、国民の政治常識ですから、国民自体に今までのような「泣く児と地頭には、", "勝てない」「長いものに捲かれろ」式の封建的思想が染み込んでいたのでは、議会政治は軌道には乗らない。これを", "急に解放すると、自由と無責任とを混同するような現象が起こりがち。ここに民主主義的再教育の必要が痛感されま", "す。", "この日本精神の近代化は、明治維新において行わるべくして行われなかった。それが敗戦の結果として、敵側から", "突きつけられたポツダム宣言によってもたらされることになったということは、ある意味においては軍事的敗北より", "も、大きな文化的敗北であり、この文化的敗北が、むしろ軍事的敗北の根本をなしている。", "我々は、一生懸命勉強して、この敗戦の弔鐘を、日本再建の暁鐘と転化する以外に、今後の活路はないことを深く", "知るべき。", "次に経済面。日本の目先の問題は、いうまでもなく食糧問題。このままでいけば、1,000 万人の日本人が、来年 昭", "和 21 年４、５月頃、餓死してしまうという計算が出ている以上は、食料をつくることに官民の全精力を集中しなけ", "れば、どんな立派な日本再建政策を考えても駄目なこと。この問題は結論的に、いえば、どうしてもアメリカの援助"]}, {"id": 31, "chapter": "", "title": "を得て、外米を入れる以外にないということに落ちつく。それまでにまず日本国民自体がなすべきすべてを尽く", "body": ["を得て、外米を入れる以外にないということに落ちつく。それまでにまず日本国民自体がなすべきすべてを尽くして、", "全世界を納得せしめなければならない。我々が全力を尽くして、なおかつ、どうしてもこれだけ足りないのだという", "ことがわかれば、ポツダム宣言の精神からいっても、アメリカは傍観しているわはないと確信しています。", "根本的に日本の土地では、日本の人口 7,800 万人を養うことができない。余剰人口約 2,800 万人の労力を商品の形", "にして輸出して、その代償として食料を輸入する以外にない。", "例えば、鉄１トンを原料に持ったとする。これをパイプに作ったりすると、１トンにかける工賃はいくらでもない。", "ところが、これを時計のごとき精巧細密な小機械にすれば、何千倍の労銀がとれる。尐なくとも「向かい水」の役を", "する。第１回の原料と最初の設備だけは、クレジット［信用供与］によらなければ、その運転を開始することは不可", "能。", "以上述べた政治、経済の当面の推移とにらみ合わせて、ポツダム宣言に結びつく我が国民の関心事は、恐らく賠償", "問題。すでに公正なる賠償といい、かつ、国民の生活を維持した残りをもって、この賠償を支払うだけの産業の維持", "を約束しているのですから、第１次世界大戦後、ドイツに課せられた天文学的数字を連想することによって、あたか", "も賽の河原の石積みのごとく、いかに働いても働いても追いつかないのではないかというような心配をする必要はな", "い。", "その上、賠償を実物賠償と限定しているところに、アメリカの千万無量の含みがあります。実物賠償というと、日"]}, {"id": 32, "chapter": "", "title": "本から持ち出すものは極めて尐量にとどまり、わずかに台湾、満州、朝鮮のごとき喪失領土における各種資産を", "body": ["本から持ち出すものは極めて尐量にとどまり、わずかに台湾、満州、朝鮮のごとき喪失領土における各種資産をもっ", "て、これに充当する程度のもの。仮に、実物賠償を取りたてるために連合国側が、進んで日本に対し設備・原料を供", "給し、その製品を持ち帰ることを要求するのであれば、千万人に近い失業者の出ることが予想されている日本の現状", "においては、むしろ救いの神というべき。", "賠償問題が前途に控えるために、全く立ち上がる気力を失い、いたずらに懊悩煩悶している日本の産業指導者は、", "よく、私の申す点を深思され、国家再建の先頭に立って奮励せられんことを切望する。", "今後の青尐年の教育問題は、日本再建の根本問題。明治維新前における日本の教育目標は、武士としての人間の完", "成にあった。明治以後の政府は、いたずらに欧米の物質文明を模倣することに急なるあまり、人間としての鍛錬を忘", "れて技術の修得をもって唯一の目標とし、その人生観は立身出世主義に墜するに至った。", "昭和年代に入り、維新前の教育を受けた人たちがすべて死に絶えたあとは、大黒柱のない建具ばかりつぎ合わせた", "ような建物となる。", "終戦後の今日、冷静に自己批判してみますと、日本の立ち後れは、単に科学物質の方面だけでなく、人間的に見て", "も非常に遺憾な点が多かった。この意味で、今後の教育問題の成否は、日本再建の運命を根本的に決するものであり、", "その方向は、智能よりも、真理の人であり、従来の小手先の器用なる人間をつくる技術万能主義を改めて、人間とし", "て信用し得る人格本意の教育制度を確立すべきである。"]}, {"id": 33, "chapter": "", "title": "明治政府の中堅人物が、維新の風雲のなかから輩出したごとく、大東亜戦線の硝煙弾雤の中から、日本再建の大", "body": ["明治政府の中堅人物が、維新の風雲のなかから輩出したごとく、大東亜戦線の硝煙弾雤の中から、日本再建の大偉", "人が現れることを期待するのは、恐らく私一人ではありますまい。さて私は、ポツダム宣言下における今後の日本の", "動向を、断じて一部国民が考えているような暗い運命のみが、我らを待っているのではないという結論を得た。目前", "の食糧問題、失業問題は深刻ですが、これは、決して解決し得ない問題ではない。この大東亜戦争が、予期せざる一", "9/10", "種の無血社会革命を起こし、戦前の富裕階級が実質的に貧乏になり、農民、労務者のごとき戦前の窮乏階級が一般的", "に余裕を持つに至ったことでしょう。日本全体を通じてみると、貧富の差が、著しく減尐している、この事実は、目", "前の危機を切り抜け、政治経済の民主化を図る上に非常に役立つ。", "我々の将来は、相当 楽しい設計図を描くことができるのであって、仮に今後、日本人が１日 10 時間勤労すると", "して、恐らく日本人だけが単に衣食するという程度なら、１日３時間で足りる。あとの２時間は、戦災復興のために", "働き、残りの４，５時間を賠償支払いのために働く。仮に日本国民全体が、そういう意味の勤労生活を今後営んでい", "ったとしたら、復興が終わり、賠償を払い切った後には、日本人は、午前中だけ働いたならば、衣食住の資源は充分", "に賄えて、あとはまったく人間としての内容を豊かにするための時間として使い得るわけ。午前中だけ会社に出る、", "工場に働く、農園を耕す、午後は魚を釣りに行きたい人は魚釣りに、ダンスをやりたい人はダンスをやるということ", "になる。これは膨大な軍備費から解放された平和国家の特権ともいうべきであります。"]}, {"id": 34, "chapter": "", "title": "この点では、四面、海を環らした我が地形は、海運に、貿易にすぐれた条件を与えており、スウェーデンやノル", "body": ["この点では、四面、海を環らした我が地形は、海運に、貿易にすぐれた条件を与えており、スウェーデンやノルウ", "ェーの漁業国とも拮抗できるし、豊富な水力電気エネルギーと手先の器用な我が国民性と相俟って、スイスを凌ぐよ", "うな精密機械工業の勃興も期待できる。", "我が方がポツダム宣言に忠実なる限り、連合国側も、必ずそういう新生の日が来ることに力を貸してくれることと", "信じられます。だから、目先は非常に苦しいが、これを何とかして突破したならば、その先は非常に楽しい。我々は、", "武力を失った。武力を持たぬ限り、従来の意味の「大国」として立ち上がることは、不可能。しかし私は、この第２", "次世界大戦が終わった後もなお、死に物狂いで原子爆弾の研究か何かを続けなければならない、いわゆる大国という", "ものが、それほど幸福であるかどうか、疑うもの。国民としては、人間の威厳を取り戻した民主主義的な生活を創造", "することができるし、国家としては日本本来の平和に邁進する道が開かれたといえる。この点では、ペリー提督と明", "治維新とが結びつくように、マッカーサー元帥と昭和維新とが結びつくような運命の示唆を感ぜざるを得ない。", "皇紀 2600 年、この長い過去の 2600 年と、さらに、それより長い将来の日本の国の生命を思うときに、明治維新", "に始まった、ここ 80 年の変化は、大相場のアヤに過ぎない。私は、この悠久なる国史の発展の跡をふり返るときに、", "日本国民が如何なる苦難をも突破し得る適忚性を有することを、認めざるを得ない。", "『敗戦真相記』を読む", "田勢康弘"]}, {"id": 35, "chapter": "", "title": "「無気力」", "body": ["「無気力」", "。経済大国の輝ける地位から、自ら滑り落ちつつある日本をもっとも端的に象徴する言葉。戦後最悪の経", "済情勢などといわれながらも、どこにも危機感が感じられない、いまの日本。政治もまた自律能力を完全に喪失し、", "問題解決のための政治であるはずが、いまや政治そのものが「問題」であるという現実。にもかかわらず、指導者達", "も一般大衆も、どこか「なるようにしかならない」という気分にとりつかれている。", "敗戦から何も、日本は教訓として学んでいない。ただ外向的に優柔不断な態度を取ることや、世界に向かって決し", "てメッセージを発したりしないというマイナスの行動しか出てこない。しかしながら、敗戦直後に、これほど冷静か", "つ的確に戦争という国家的大プロジェクトを分析してみせた人物が、日本に存在していたことにいまさらながら驚く", "とともに、誇りを覚える。", "10/10"]}];
+function startReading(){document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');}
+function showTab(tab){
+  document.getElementById('btn-index').classList.toggle('active',tab==='index');
+  document.getElementById('btn-read').classList.toggle('active',tab==='read');
+  const ip=document.getElementById('index-panel-scroll');const rv=document.getElementById('reading-view');
+  if(tab==='index'){ip.classList.remove('hidden');rv.classList.remove('active');}
+  else{ip.classList.add('hidden');buildReadingView();rv.classList.add('active');}
+}
+function buildReadingView(){
+  const inner=document.getElementById('reading-inner');let h='';let lc='';
+  sections.forEach(s=>{
+    const ch=s.chapter||'';
+    if(ch!==lc){lc=ch;if(ch)h+='<div class="reading-chapter">'+esc(ch)+'</div>';}
+    const bh=s.body.map(p=>'<p>'+esc(p)+'</p>').join('');
+    h+='<div class="reading-section"><h3><span class="rnum">\u00a7'+(s.id+1)+'</span>'+esc(s.title)+'</h3>'+bh+'</div>';
+  });
+  inner.innerHTML=h;
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toggleSection(header){header.parentElement.classList.toggle('open');}
+function goSec(id){
+  document.getElementById('btn-index').classList.add('active');document.getElementById('btn-read').classList.remove('active');
+  document.getElementById('index-panel-scroll').classList.remove('hidden');document.getElementById('reading-view').classList.remove('active');
+  document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');
+  const el=document.getElementById('sec-'+id);if(!el)return;
+  setTimeout(()=>{el.scrollIntoView({behavior:'smooth',block:'start'});},50);
+  if(!el.classList.contains('open'))el.classList.add('open');
+  document.querySelectorAll('.nav-item').forEach(item=>item.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(item=>{if(item.getAttribute('onclick')==='goSec('+id+')')item.classList.add('active');});
+  document.getElementById('sidebar').classList.remove('open');
+}
+function expandAll(){document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');document.querySelectorAll('.section').forEach(s=>s.classList.add('open'));}
+function collapseAll(){document.querySelectorAll('.section').forEach(s=>s.classList.remove('open'));}
+function filterNav(q){const l=q.toLowerCase();document.querySelectorAll('.nav-item').forEach(item=>{item.style.display=(!q||item.textContent.toLowerCase().includes(l))?'':'none';});}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
+document.getElementById('index-panel-scroll').addEventListener('click',()=>{if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('open');});
+document.getElementById('reading-view').addEventListener('click',()=>{if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('open');});
+
+</script>
+</body>
+</html>

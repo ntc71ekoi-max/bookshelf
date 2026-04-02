@@ -3,502 +3,338 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI構造化本棚｜製造業向けビジネス書200編</title>
+<title>Claude本棚 | 奈良高専OB会</title>
 <style>
 :root {
-  --ink:#1a1a2e;
-  --red:#C0392B;
-  --red2:#E74C3C;
-  --gold:#B8860B;
-  --gold2:#DAA520;
-  --bg:#F5F3EE;
-  --card:#FFFFFF;
-  --border:#DDD8CC;
-  --sub:#666;
-  --tag-bg:#F0EDE6;
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #21262d;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --accent: #f0883e;
+  --accent2: #d29922;
+  --green: #3fb950;
+  --blue: #79c0ff;
+  --purple: #bc8cff;
 }
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Hiragino Sans','Yu Gothic','Meiryo',sans-serif;
-  background:var(--bg);color:var(--ink);font-size:15px;line-height:1.7;}
-
-/* ヘッダー */
-.header{background:var(--ink);color:white;padding:32px 40px 28px;
-  border-bottom:4px solid var(--red);}
-.header-top{display:flex;align-items:flex-start;justify-content:space-between;
-  flex-wrap:wrap;gap:16px;}
-.header-label{font-size:11px;letter-spacing:3px;opacity:.5;margin-bottom:8px;}
-.header h1{font-size:26px;font-weight:bold;line-height:1.3;margin-bottom:6px;}
-.header-sub{font-size:13px;opacity:.65;line-height:1.6;}
-.header-stats{display:flex;gap:24px;margin-top:20px;flex-wrap:wrap;}
-.stat{text-align:center;}
-.stat-num{font-size:28px;font-weight:bold;color:var(--gold2);line-height:1;}
-.stat-label{font-size:11px;opacity:.6;margin-top:3px;letter-spacing:1px;}
-.header-badge{background:var(--red);color:white;font-size:11px;font-weight:bold;
-  padding:4px 12px;border-radius:2px;letter-spacing:1px;align-self:flex-start;
-  margin-top:4px;}
-
-/* ナビ */
-.nav{background:white;border-bottom:1px solid var(--border);
-  padding:10px 20px;display:flex;gap:8px;flex-wrap:wrap;
-  position:sticky;top:0;z-index:100;align-items:center;}
-.nav-label{font-size:11px;font-weight:bold;letter-spacing:1px;color:var(--sub);
-  margin-right:4px;}
-.nav-btn{font-size:12px;padding:5px 14px;border-radius:20px;
-  border:1px solid var(--border);background:white;color:var(--sub);
-  cursor:pointer;-webkit-tap-highlight-color:transparent;
-  touch-action:manipulation;transition:all .2s;}
-.nav-btn:hover,.nav-btn.active{background:var(--ink);color:white;
-  border-color:var(--ink);}
-.nav-search{margin-left:auto;display:flex;align-items:center;gap:8px;}
-.search-input{font-size:13px;padding:5px 12px;border:1px solid var(--border);
-  border-radius:20px;outline:none;width:160px;background:white;}
-.search-input:focus{border-color:var(--ink);}
-
-/* メイン */
-.main{max-width:1080px;margin:0 auto;padding:28px 16px 80px;}
-
-/* ジャンルセクション */
-.genre-section{margin-bottom:48px;}
-.genre-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;
-  padding-bottom:10px;border-bottom:2px solid var(--border);}
-.genre-icon{font-size:20px;}
-.genre-title{font-size:18px;font-weight:bold;}
-.genre-count{font-size:12px;color:var(--sub);margin-left:4px;}
-.genre-bar{height:3px;border-radius:2px;margin-bottom:20px;}
-
-/* カードグリッド */
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;}
-
-/* 作品カード */
-.book-card{background:var(--card);border-radius:6px;border:1px solid var(--border);
-  overflow:hidden;transition:box-shadow .2s;position:relative;}
-.book-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.1);}
-.card-color-bar{height:3px;}
-.card-body{padding:14px 16px 12px;}
-.card-genre-tag{font-size:10px;font-weight:bold;letter-spacing:1px;
-  color:var(--sub);margin-bottom:6px;}
-.card-title{font-size:14px;font-weight:bold;line-height:1.5;margin-bottom:4px;}
-.card-author{font-size:12px;color:var(--sub);margin-bottom:8px;}
-.card-summary{font-size:12px;color:var(--sub);line-height:1.65;margin-bottom:10px;}
-.card-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;}
-.card-tag{font-size:10px;background:var(--tag-bg);border:1px solid var(--border);
-  border-radius:10px;padding:2px 8px;color:var(--sub);}
-.card-footer{display:flex;align-items:center;justify-content:space-between;
-  border-top:1px solid var(--border);padding-top:10px;}
-.card-time{font-size:11px;color:var(--sub);}
-.card-btn{font-size:12px;font-weight:bold;padding:6px 14px;border-radius:4px;
-  border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;
-  touch-action:manipulation;transition:opacity .2s;}
-.card-btn-active{background:var(--red);color:white;}
-.card-btn-active:hover{opacity:.85;}
-.card-btn-soon{background:var(--tag-bg);color:var(--sub);cursor:default;}
-.card-sections{font-size:11px;color:var(--sub);}
-
-/* 近日公開バッジ */
-.coming-soon-overlay{position:absolute;top:10px;right:10px;
-  background:var(--gold);color:white;font-size:10px;font-weight:bold;
-  padding:2px 8px;border-radius:2px;letter-spacing:1px;}
-
-/* フッター */
-.footer{text-align:center;padding:28px;font-size:12px;color:var(--sub);
-  border-top:1px solid var(--border);line-height:2;}
-.footer-note{font-size:11px;opacity:.6;margin-top:8px;}
-
-/* 統計バー */
-.progress-bar{background:var(--border);border-radius:4px;height:6px;
-  margin:16px 0;overflow:hidden;}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--red),var(--gold2));
-  border-radius:4px;transition:width .5s ease;}
-.progress-label{font-size:12px;color:var(--sub);text-align:right;margin-top:4px;}
-
-@media(max-width:600px){
-  .header{padding:20px 16px;}
-  .header h1{font-size:20px;}
-  .nav{padding:8px 12px;}
-  .cards{grid-template-columns:1fr;}
-  .search-input{width:120px;}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Helvetica Neue', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+/* ── HEADER ── */
+#site-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 24px 32px;
+  text-align: center;
+}
+#site-header h1 {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+}
+#site-header .tagline {
+  font-size: 13px;
+  color: var(--text2);
+  margin-top: 6px;
+}
+/* ── SERIES SECTION ── */
+.series-section {
+  max-width: 960px;
+  margin: 40px auto 0;
+  padding: 0 24px;
+}
+.series-section:last-child {
+  padding-bottom: 60px;
+}
+.series-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.series-title .badge {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2px 10px;
+  font-size: 11px;
+  color: var(--text2);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
+/* ── BOOK GRID ── */
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+.book-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 20px;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.18s ease;
+  cursor: pointer;
+}
+.book-card:hover {
+  border-color: var(--accent);
+  background: var(--surface2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(240,136,62,0.12);
+}
+.book-card .card-num {
+  font-size: 10px;
+  color: var(--text2);
+  font-variant-numeric: tabular-nums;
+}
+.book-card .card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.45;
+}
+.book-card .card-subtitle {
+  font-size: 11px;
+  color: var(--text2);
+  line-height: 1.4;
+}
+.book-card .card-author {
+  font-size: 11px;
+  color: var(--accent2);
+  margin-top: 2px;
+}
+.book-card .card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+.book-card .tag {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  color: var(--text2);
+}
+.book-card .tag.tps { border-color: #f0883e44; color: var(--accent); }
+.book-card .tag.canon { border-color: #3fb95044; color: var(--green); }
+.book-card .tag.management { border-color: #79c0ff44; color: var(--blue); }
+.book-card .tag.interview { border-color: #bc8cff44; color: var(--purple); }
+.book-card .sec-count {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--text2);
+}
+/* ── FOOTER ── */
+#site-footer {
+  text-align: center;
+  padding: 32px;
+  font-size: 12px;
+  color: var(--text2);
+  border-top: 1px solid var(--border);
+  margin-top: 20px;
+}
+@media (max-width: 600px) {
+  #site-header { padding: 20px 16px; }
+  #site-header h1 { font-size: 20px; }
+  .series-section { padding: 0 14px; margin-top: 28px; }
+  .book-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="header-label">AI構造化本棚</div>
-  <div class="header-top">
-    <div>
-      <h1>製造業のための<br>ビジネス書200編</h1>
-      <div class="header-sub">
-        通勤中に聴ける・カードで読める・AIが深掘りする<br>
-        奈良高専野球部OB会 編集｜Powered by Claude（Anthropic）
-      </div>
-    </div>
-    <div class="header-badge">⚡ AI構造化</div>
-  </div>
-  <div class="header-stats">
-    <div class="stat">
-      <div class="stat-num">200</div>
-      <div class="stat-label">目標編数</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num" id="published-count">3</div>
-      <div class="stat-label">公開中</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">98</div>
-      <div class="stat-label">TPS節数</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">🎧</div>
-      <div class="stat-label">音声対応</div>
-    </div>
-  </div>
-  <div class="progress-bar" style="margin-top:16px;">
-    <div class="progress-fill" style="width:1.5%;"></div>
-  </div>
-  <div class="progress-label">公開進捗：3／200編</div>
+<div id="site-header">
+  <h1>📚 Claude本棚</h1>
+  <div class="tagline">奈良高専OB会 ― 技術者魂を次世代へ</div>
 </div>
 
-<nav class="nav">
-  <span class="nav-label">ジャンル：</span>
-  <button class="nav-btn active" onclick="filterGenre('all')">すべて</button>
-  <button class="nav-btn" onclick="filterGenre('production')">生産・製造</button>
-  <button class="nav-btn" onclick="filterGenre('management')">経営・戦略</button>
-  <button class="nav-btn" onclick="filterGenre('leadership')">リーダーシップ</button>
-  <button class="nav-btn" onclick="filterGenre('innovation')">技術・革新</button>
-  <button class="nav-btn" onclick="filterGenre('thinking')">問題解決</button>
-  <button class="nav-btn" onclick="filterGenre('human')">人材育成</button>
-  <div class="nav-search">
-    <input class="search-input" type="text" placeholder="🔍 タイトル検索" oninput="searchBooks(this.value)">
+<!-- TPS・トヨタ生産方式シリーズ -->
+<div class="series-section">
+  <div class="series-title">
+    トヨタ生産方式（TPS）シリーズ
+    <span class="badge">14編</span>
   </div>
-</nav>
+  <div class="book-grid">
 
-<div class="main">
-
-<!-- 生産・製造哲学 -->
-<div class="genre-section" id="genre-production">
-  <div class="genre-header">
-    <span class="genre-icon">⚙️</span>
-    <span class="genre-title">生産・製造哲学</span>
-    <span class="genre-count">40編予定｜2編公開中</span>
-  </div>
-  <div class="progress-bar">
-    <div class="progress-fill" style="width:2.5%;"></div>
-  </div>
-  <div class="cards">
-
-    <!-- TPS（公開済み） -->
-    <div class="book-card" data-genre="production" data-title="トヨタ生産方式">
-      <div class="card-color-bar" style="background:#C0392B;"></div>
-      <div class="card-body">
-        <div class="card-genre-tag">⚙️ 生産・製造哲学</div>
-        <div class="card-title">トヨタ生産方式</div>
-        <div class="card-author">大野耐一 著｜ダイヤモンド社</div>
-        <div class="card-summary">「売価－利益＝原価」——利益は先に決め、コストは絞り出す。ジャスト・イン・タイムと自働化、2本柱の哲学を全98節で解説。</div>
-        <div class="card-tags">
-          <span class="card-tag">TPS</span>
-          <span class="card-tag">ジャスト・イン・タイム</span>
-          <span class="card-tag">カイゼン</span>
-          <span class="card-tag">かんばん</span>
-        </div>
-        <div class="card-footer">
-          <div>
-            <div class="card-time">🎧 約120分（全編）</div>
-            <div class="card-sections">全98節・5章構成</div>
-          </div>
-          <a href="index.html">
-            <button class="card-btn card-btn-active">▶ 今すぐ聴く</button>
-          </a>
-        </div>
+    <a class="book-card" href="index.html">
+      <div class="card-num">TPS-01</div>
+      <div class="card-title">トヨタ生産方式</div>
+      <div class="card-subtitle">脱規模の経営をめざして</div>
+      <div class="card-author">大野耐一 著</div>
+      <div class="card-meta">
+        <span class="tag tps">TPS原典</span>
+        <span class="sec-count">98節</span>
       </div>
-    </div>
+    </a>
 
-    <!-- 以下、近日公開予定（例示） -->
-    <div class="book-card" data-genre="production" data-title="トヨタ流自分を伸ばす仕事術">
-      <div class="card-color-bar" style="background:#C0392B;"></div>
-      <div class="card-body">
-        <div class="card-genre-tag">⚙️ 生産・製造哲学</div>
-        <div class="card-title">「トヨタ流」自分を伸ばす仕事術</div>
-        <div class="card-author">若松義人 著（元トヨタ自動車購買課長）｜成美文庫</div>
-        <div class="card-summary">大野耐一直伝の発想法・改善哲学を現場目線で解説。「最短が最楽」「なぜを5回」「ムダはヒマから生まれる」——今日から使える知恵が詰まった一冊。</div>
-        <div class="card-tags">
-          <span class="card-tag">カイゼン</span>
-          <span class="card-tag">発想法</span>
-          <span class="card-tag">現場力</span>
-          <span class="card-tag">多能工</span>
-        </div>
-        <div class="card-footer">
-          <div>
-            <div class="card-time">🎧 約90分（全編）</div>
-            <div class="card-sections">全42節・7章構成</div>
-          </div>
-          <a href="toyota_shigoto.html">
-            <button class="card-btn card-btn-active">▶ 今すぐ聴く</button>
-          </a>
-        </div>
+    <a class="book-card" href="toyota_02.html">
+      <div class="card-num">TPS-02</div>
+      <div class="card-title">「モノづくり」究極の知恵<br>トヨタ式生産力</div>
+      <div class="card-subtitle">中小企業・異業種でも勝てる普遍の経営論</div>
+      <div class="card-author">若松義人・近藤哲夫 著</div>
+      <div class="card-meta">
+        <span class="tag tps">TPS応用</span>
+        <span class="sec-count">127節</span>
       </div>
-    </div>
+    </a>
 
-    <div class="book-card" data-genre="production" data-title="ザ・ゴール">
-      <div class="card-color-bar" style="background:#C0392B;"></div>
-      <div class="coming-soon-overlay">近日公開</div>
-      <div class="card-body">
-        <div class="card-genre-tag">⚙️ 生産・製造哲学</div>
-        <div class="card-title">ザ・ゴール</div>
-        <div class="card-author">エリヤフ・ゴールドラット 著</div>
-        <div class="card-summary">制約理論（TOC）で工場の生産性を劇的に改善する。ボトルネックを見つけ、集中して改善する——TPSと双璧をなす製造業必読の書。</div>
-        <div class="card-tags">
-          <span class="card-tag">TOC</span>
-          <span class="card-tag">制約理論</span>
-          <span class="card-tag">スループット</span>
-        </div>
-        <div class="card-footer">
-          <div class="card-time">🎧 準備中</div>
-          <button class="card-btn card-btn-soon">準備中</button>
-        </div>
+    <a class="book-card" href="toyota_03.html">
+      <div class="card-num">TPS-03</div>
+      <div class="card-title">一目でわかるトヨタの大常識</div>
+      <div class="card-subtitle">危機感とベンチャー精神が支える巨大企業</div>
+      <div class="card-author">星川博樹 著</div>
+      <div class="card-meta">
+        <span class="tag tps">TPS入門</span>
+        <span class="sec-count">13節</span>
       </div>
-    </div>
+    </a>
 
-  </div>
-</div>
-
-<!-- 経営・戦略 -->
-<div class="genre-section" id="genre-management">
-  <div class="genre-header">
-    <span class="genre-icon">📊</span>
-    <span class="genre-title">経営・戦略</span>
-    <span class="genre-count">35編予定</span>
-  </div>
-  <div class="progress-bar">
-    <div class="progress-fill" style="width:0%;"></div>
-  </div>
-  <div class="cards">
-
-    <div class="book-card" data-genre="management" data-title="キャノン高収益復活の秘密">
-      <div class="card-color-bar" style="background:#1A5276;"></div>
-      <div class="card-body">
-        <div class="card-genre-tag">📊 経営・戦略</div>
-        <div class="card-title">キャノン高収益復活の秘密</div>
-        <div class="card-author">週刊東洋経済 編｜東洋経済新報社</div>
-        <div class="card-summary">事業撤退・セル生産方式・原価革新——御手洗改革でキャノンはなぜ蘇ったのか。製造業経営者が学ぶ企業変革の実践論。</div>
-        <div class="card-tags">
-          <span class="card-tag">経営改革</span>
-          <span class="card-tag">セル生産</span>
-          <span class="card-tag">原価革新</span>
-          <span class="card-tag">事業撤退</span>
-        </div>
-        <div class="card-footer">
-          <div>
-            <div class="card-time">🎧 約60分（全編）</div>
-            <div class="card-sections">全22節・5章構成</div>
-          </div>
-          <a href="canon.html">
-            <button class="card-btn card-btn-active">▶ 今すぐ聴く</button>
-          </a>
-        </div>
+    <a class="book-card" href="toyota_04.html">
+      <div class="card-num">TPS-04</div>
+      <div class="card-title">トヨタ式ムダ見える化</div>
+      <div class="card-subtitle">全公開！トヨタ式カイゼンプログラム</div>
+      <div class="card-author">出典：PRESIDENT</div>
+      <div class="card-meta">
+        <span class="tag tps">見える化</span>
+        <span class="sec-count">6節</span>
       </div>
-    </div>
+    </a>
 
-    <div class="book-card" data-genre="management" data-title="マネジメント">
-      <div class="card-color-bar" style="background:#1A5276;"></div>
-      <div class="coming-soon-overlay">近日公開</div>
-      <div class="card-body">
-        <div class="card-genre-tag">📊 経営・戦略</div>
-        <div class="card-title">マネジメント</div>
-        <div class="card-author">P・F・ドラッカー 著</div>
-        <div class="card-summary">「マネジメントの父」が説く組織と人の本質。成果を上げるとはどういうことか。製造業の管理職が読むべき経営の原典。</div>
-        <div class="card-tags">
-          <span class="card-tag">マネジメント</span>
-          <span class="card-tag">組織論</span>
-          <span class="card-tag">目標管理</span>
-        </div>
-        <div class="card-footer">
-          <div class="card-time">🎧 準備中</div>
-          <button class="card-btn card-btn-soon">準備中</button>
-        </div>
+    <a class="book-card" href="toyota_05.html">
+      <div class="card-num">TPS-05</div>
+      <div class="card-title">トヨタ VS ホンダ</div>
+      <div class="card-subtitle">21世紀を勝ち抜く「ストロング」な企業経営</div>
+      <div class="card-author">池原照雄 著</div>
+      <div class="card-meta">
+        <span class="tag management">比較経営</span>
+        <span class="sec-count">11節</span>
       </div>
-    </div>
+    </a>
 
-    <div class="book-card" data-genre="management" data-title="アメーバ経営">
-      <div class="card-color-bar" style="background:#1A5276;"></div>
-      <div class="coming-soon-overlay">近日公開</div>
-      <div class="card-body">
-        <div class="card-genre-tag">📊 経営・戦略</div>
-        <div class="card-title">アメーバ経営</div>
-        <div class="card-author">稲盛和夫 著</div>
-        <div class="card-summary">小集団で採算を管理し、全員が経営者意識を持つ。京セラ・KDDIを育てた稲盛哲学の核心。製造現場に直結する経営手法。</div>
-        <div class="card-tags">
-          <span class="card-tag">アメーバ</span>
-          <span class="card-tag">採算管理</span>
-          <span class="card-tag">稲盛哲学</span>
-        </div>
-        <div class="card-footer">
-          <div class="card-time">🎧 準備中</div>
-          <button class="card-btn card-btn-soon">準備中</button>
-        </div>
+    <a class="book-card" href="toyota_06.html">
+      <div class="card-num">TPS-06</div>
+      <div class="card-title">トヨタ流最強社員はこう育つ</div>
+      <div class="card-subtitle">「知恵」を出し続ける人材育成論</div>
+      <div class="card-author">若松義人 著</div>
+      <div class="card-meta">
+        <span class="tag tps">人材育成</span>
+        <span class="sec-count">15節</span>
       </div>
-    </div>
+    </a>
+
+    <a class="book-card" href="toyota_07.html">
+      <div class="card-num">TPS-07</div>
+      <div class="card-title">トヨタ式改善力</div>
+      <div class="card-subtitle">「原価2分の1」戦略への疾走</div>
+      <div class="card-author">若松義人・近藤哲夫 著</div>
+      <div class="card-meta">
+        <span class="tag tps">改善</span>
+        <span class="sec-count">22節</span>
+      </div>
+    </a>
+
+    <a class="book-card" href="toyota_08.html">
+      <div class="card-num">TPS-08</div>
+      <div class="card-title">トヨタ流企業改革</div>
+      <div class="card-subtitle">すべての業種に通用する改善の実践</div>
+      <div class="card-author">出典：日経情報ストラテジー</div>
+      <div class="card-meta">
+        <span class="tag tps">異業種応用</span>
+        <span class="sec-count">5節</span>
+      </div>
+    </a>
+
+    <a class="book-card" href="toyota_09.html">
+      <div class="card-num">TPS-09</div>
+      <div class="card-title">トヨタ流自己改善力</div>
+      <div class="card-subtitle">「知恵」に限界はない！</div>
+      <div class="card-author">若松義人 著</div>
+      <div class="card-meta">
+        <span class="tag tps">自己啓発</span>
+        <span class="sec-count">24節</span>
+      </div>
+    </a>
+
+    <a class="book-card" href="toyota_shigoto.html">
+      <div class="card-num">TPS-10</div>
+      <div class="card-title">「トヨタ流」自分を伸ばす仕事術</div>
+      <div class="card-subtitle">トヨタイズムを個人の仕事に活かす</div>
+      <div class="card-author">若松義人 著</div>
+      <div class="card-meta">
+        <span class="tag tps">仕事術</span>
+        <span class="sec-count">42節</span>
+      </div>
+    </a>
+
+    <a class="book-card" href="toyota_11.html">
+      <div class="card-num">TPS-11</div>
+      <div class="card-title">トヨタ 白井常務役員インタビュー</div>
+      <div class="card-subtitle">トヨタが進める世界への挑戦</div>
+      <div class="card-author">出典：素形材 2002.7</div>
+      <div class="card-meta">
+        <span class="tag interview">インタビュー</span>
+        <span class="sec-count">4節</span>
+      </div>
+    </a>
+
+    <a class="book-card" href="toyota_12.html">
+      <div class="card-num">TPS-12</div>
+      <div class="card-title">奥田トヨタ式発想法</div>
+      <div class="card-subtitle">トヨタを変えた男の日本大改革</div>
+      <div class="card-author">安田有三 著</div>
+      <div class="card-meta">
+        <span class="tag management">経営哲学</span>
+        <span class="sec-count">9節</span>
+      </div>
+    </a>
+
+    <a class="book-card" href="toyota_13.html">
+      <div class="card-num">TPS-13</div>
+      <div class="card-title">トヨタの危機感</div>
+      <div class="card-subtitle">利益２兆円企業の真実</div>
+      <div class="card-author">出典：週刊東洋経済 2003.11.1</div>
+      <div class="card-meta">
+        <span class="tag management">経営戦略</span>
+        <span class="sec-count">2節</span>
+      </div>
+    </a>
+
+    <a class="book-card" href="toyota_14.html">
+      <div class="card-num">TPS-14</div>
+      <div class="card-title">キヤノン高収益復活の秘密</div>
+      <div class="card-subtitle">「技術者は泣いた」から始まった利益第一主義への大改革</div>
+      <div class="card-author">出典：日本経済新聞社編</div>
+      <div class="card-meta">
+        <span class="tag canon">キヤノン</span>
+        <span class="sec-count">6節</span>
+      </div>
+    </a>
 
   </div>
 </div>
 
-<!-- リーダーシップ -->
-<div class="genre-section" id="genre-leadership">
-  <div class="genre-header">
-    <span class="genre-icon">🎯</span>
-    <span class="genre-title">リーダーシップ</span>
-    <span class="genre-count">30編予定</span>
-  </div>
-  <div class="progress-bar">
-    <div class="progress-fill" style="width:0%;"></div>
-  </div>
-  <div class="cards">
-    <div class="book-card" data-genre="leadership" data-title="道をひらく">
-      <div class="card-color-bar" style="background:#1A6B3C;"></div>
-      <div class="coming-soon-overlay">近日公開</div>
-      <div class="card-body">
-        <div class="card-genre-tag">🎯 リーダーシップ</div>
-        <div class="card-title">道をひらく</div>
-        <div class="card-author">松下幸之助 著</div>
-        <div class="card-summary">「素直な心」で道は開ける。日本が誇る経営の神様・松下幸之助の言葉が、現場リーダーの背中を押す。</div>
-        <div class="card-tags">
-          <span class="card-tag">松下哲学</span>
-          <span class="card-tag">素直な心</span>
-          <span class="card-tag">現場力</span>
-        </div>
-        <div class="card-footer">
-          <div class="card-time">🎧 準備中</div>
-          <button class="card-btn card-btn-soon">準備中</button>
-        </div>
-      </div>
-    </div>
-  </div>
+<div id="site-footer">
+  奈良高専OB会 Claude本棚 ― 技術者魂の継承プロジェクト
 </div>
 
-<!-- 技術・イノベーション -->
-<div class="genre-section" id="genre-innovation">
-  <div class="genre-header">
-    <span class="genre-icon">🔬</span>
-    <span class="genre-title">技術・イノベーション</span>
-    <span class="genre-count">30編予定</span>
-  </div>
-  <div class="progress-bar">
-    <div class="progress-fill" style="width:0%;"></div>
-  </div>
-  <div class="cards">
-    <div class="book-card" data-genre="innovation" data-title="イノベーションのジレンマ">
-      <div class="card-color-bar" style="background:#7B3200;"></div>
-      <div class="coming-soon-overlay">近日公開</div>
-      <div class="card-body">
-        <div class="card-genre-tag">🔬 技術・イノベーション</div>
-        <div class="card-title">イノベーションのジレンマ</div>
-        <div class="card-author">クレイトン・クリステンセン 著</div>
-        <div class="card-summary">優良企業がなぜ破壊的技術に負けるのか。製造業が直面するDX時代の本質的問いに答える古典的名著。</div>
-        <div class="card-tags">
-          <span class="card-tag">破壊的革新</span>
-          <span class="card-tag">DX</span>
-          <span class="card-tag">技術戦略</span>
-        </div>
-        <div class="card-footer">
-          <div class="card-time">🎧 準備中</div>
-          <button class="card-btn card-btn-soon">準備中</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- 問題解決 -->
-<div class="genre-section" id="genre-thinking">
-  <div class="genre-header">
-    <span class="genre-icon">🧠</span>
-    <span class="genre-title">問題解決・思考法</span>
-    <span class="genre-count">30編予定</span>
-  </div>
-  <div class="progress-bar">
-    <div class="progress-fill" style="width:0%;"></div>
-  </div>
-  <div class="cards">
-    <div class="book-card" data-genre="thinking" data-title="なぜなぜ分析">
-      <div class="card-color-bar" style="background:#5C2D91;"></div>
-      <div class="coming-soon-overlay">近日公開</div>
-      <div class="card-body">
-        <div class="card-genre-tag">🧠 問題解決・思考法</div>
-        <div class="card-title">なぜなぜ分析</div>
-        <div class="card-author">小倉仁志 著</div>
-        <div class="card-summary">「なぜ」を5回繰り返して真因を掴む。トヨタが生んだ問題解決の最強ツールを実践的に解説。現場で即使える。</div>
-        <div class="card-tags">
-          <span class="card-tag">なぜなぜ</span>
-          <span class="card-tag">根本原因</span>
-          <span class="card-tag">品質管理</span>
-        </div>
-        <div class="card-footer">
-          <div class="card-time">🎧 準備中</div>
-          <button class="card-btn card-btn-soon">準備中</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- 人材育成 -->
-<div class="genre-section" id="genre-human">
-  <div class="genre-header">
-    <span class="genre-icon">👥</span>
-    <span class="genre-title">人材育成</span>
-    <span class="genre-count">25編予定</span>
-  </div>
-  <div class="progress-bar">
-    <div class="progress-fill" style="width:0%;"></div>
-  </div>
-  <div class="cards">
-    <div class="book-card" data-genre="human" data-title="部下を持ったら必ず読む本">
-      <div class="card-color-bar" style="background:#0B5563;"></div>
-      <div class="coming-soon-overlay">近日公開</div>
-      <div class="card-body">
-        <div class="card-genre-tag">👥 人材育成</div>
-        <div class="card-title">部下を持ったら必ず読む本</div>
-        <div class="card-author">岩田松雄 著</div>
-        <div class="card-summary">リーダーの仕事は「人を動かす」こと。製造現場のリーダーが部下とどう向き合うか、具体的な言葉と行動で示す。</div>
-        <div class="card-tags">
-          <span class="card-tag">OJT</span>
-          <span class="card-tag">コーチング</span>
-          <span class="card-tag">現場リーダー</span>
-        </div>
-        <div class="card-footer">
-          <div class="card-time">🎧 準備中</div>
-          <button class="card-btn card-btn-soon">準備中</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-</div><!-- /.main -->
-
-<div class="footer">
-  AI構造化本棚｜奈良高専野球部OB会 編集<br>
-  Powered by Claude（Anthropic）｜Android Chrome・Firefox対応<br>
-  <div class="footer-note">
-    ※本サービスの収益は奈良工業高等専門学校野球部の支援に充てられます
-  </div>
-</div>
-
-<script>
-function filterGenre(genre) {
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
-  document.querySelectorAll('.genre-section').forEach(s => {
-    if (genre === 'all') { s.style.display = ''; return; }
-    s.style.display = s.id === 'genre-' + genre ? '' : 'none';
-  });
-}
-function searchBooks(val) {
-  var q = val.trim().toLowerCase();
-  document.querySelectorAll('.book-card').forEach(card => {
-    var title = (card.getAttribute('data-title') || '').toLowerCase();
-    card.style.display = (!q || title.includes(q)) ? '' : 'none';
-  });
-}
-</script>
 </body>
 </html>

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>なぜ社員の意識は変わらないのか | Claude本棚</title>
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;--text:#e6edf3;--text2:#8b949e;--accent:#f0883e;--accent2:#d29922;--chapter-color:#79c0ff;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Helvetica Neue','Hiragino Sans','Yu Gothic',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.7;}
+#app{display:flex;height:100vh;overflow:hidden;}
+#sidebar{width:300px;min-width:300px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+#header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;flex-shrink:0;}
+#header h1{font-size:15px;font-weight:700;color:var(--accent);line-height:1.4;}
+#header .subtitle{font-size:12px;color:var(--text2);margin-top:2px;}
+#header .meta{font-size:11px;color:var(--text2);margin-top:3px;}
+#top-nav{display:flex;align-items:center;gap:8px;padding:8px 24px;background:var(--surface2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;}
+.top-nav-btn{padding:5px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:inherit;transition:all 0.15s;white-space:nowrap;text-decoration:none;display:inline-block;}
+.top-nav-btn:hover{background:var(--surface);color:var(--text);border-color:var(--accent);}
+.top-nav-btn.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600;}
+#progress-area{margin-left:auto;font-size:11px;color:var(--text2);white-space:nowrap;}
+#search-bar{padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+#search-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:13px;font-family:inherit;outline:none;}
+#search-input:focus{border-color:var(--accent);}
+#nav-scroll{flex:1;overflow-y:auto;padding:8px 0;}
+#nav-scroll::-webkit-scrollbar{width:4px;}
+#nav-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.nav-chapter{padding:8px 16px 4px;font-size:10px;font-weight:700;color:var(--chapter-color);border-top:1px solid var(--border);margin-top:4px;}
+.nav-chapter:first-child{border-top:none;margin-top:0;}
+.nav-item{padding:5px 16px;font-size:12px;color:var(--text2);cursor:pointer;transition:all 0.1s;border-left:2px solid transparent;}
+.nav-item:hover{background:var(--surface2);color:var(--text);border-left-color:var(--accent2);}
+.nav-item.active{background:var(--surface2);color:var(--accent);border-left-color:var(--accent);}
+#index-panel-scroll{flex:1;overflow-y:auto;padding:24px;}
+#index-panel-scroll::-webkit-scrollbar{width:6px;}
+#index-panel-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.chapter-header{margin:18px 0 6px;padding:9px 16px;background:rgba(121,192,255,0.08);border-left:3px solid var(--chapter-color);border-radius:0 6px 6px 0;font-size:13px;font-weight:600;color:var(--chapter-color);}
+.chapter-header:first-child{margin-top:0;}
+.section{margin-bottom:5px;border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color 0.2s;}
+.section:hover{border-color:var(--accent2);}
+.section.open{border-color:var(--accent);}
+.section-header{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;background:var(--surface);user-select:none;transition:background 0.15s;}
+.section-header:hover{background:var(--surface2);}
+.sec-num{font-size:10px;color:var(--text2);min-width:28px;flex-shrink:0;}
+.sec-title{flex:1;font-size:13px;font-weight:500;color:var(--text);line-height:1.4;}
+.toggle-icon{font-size:10px;color:var(--text2);transition:transform 0.2s;flex-shrink:0;}
+.section.open .toggle-icon{transform:rotate(180deg);}
+.detail-body{display:none;padding:14px 20px;background:var(--bg);border-top:1px solid var(--border);}
+.section.open .detail-body{display:block;}
+.detail-body p{margin-bottom:10px;font-size:14px;color:#cdd9e5;line-height:1.85;text-align:justify;}
+.detail-body p:last-child{margin-bottom:0;}
+#reading-view{display:none;flex:1;overflow-y:auto;padding:40px;}
+#reading-view.active{display:block;}
+#reading-view::-webkit-scrollbar{width:6px;}
+#reading-view::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.reading-inner{max-width:780px;margin:0 auto;}
+.reading-chapter{margin:24px 0 8px;padding:9px 18px;border-left:3px solid var(--chapter-color);font-size:14px;font-weight:600;color:var(--chapter-color);}
+.reading-chapter:first-child{margin-top:0;}
+.reading-section{margin-bottom:18px;padding:16px 20px;background:var(--surface);border-radius:8px;border:1px solid var(--border);}
+.reading-section h3{font-size:14px;font-weight:700;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.reading-section h3 .rnum{font-size:11px;color:var(--text2);font-weight:400;}
+.reading-section p{font-size:14px;color:#cdd9e5;line-height:1.85;margin-bottom:8px;text-align:justify;}
+.reading-section p:last-child{margin-bottom:0;}
+#splash{text-align:center;padding:60px 24px;}
+#splash h2{font-size:22px;color:var(--accent);margin-bottom:8px;}
+#splash .sp-sub{color:var(--text2);font-size:14px;margin-bottom:32px;}
+#splash .stats{display:flex;justify-content:center;gap:40px;margin-bottom:32px;}
+#splash .stat .num{font-size:36px;font-weight:800;color:var(--accent2);}
+#splash .stat .lbl{font-size:12px;color:var(--text2);margin-top:2px;}
+#splash .start-btn{background:var(--accent);color:#000;border:none;padding:14px 44px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity 0.2s;}
+#splash .start-btn:hover{opacity:0.85;}
+#menu-toggle{display:none;background:transparent;border:none;color:var(--text);font-size:20px;cursor:pointer;padding:4px 8px;vertical-align:middle;margin-right:8px;}
+.hidden{display:none !important;}
+@media(max-width:768px){
+  #sidebar{position:fixed;top:0;left:0;bottom:0;z-index:100;transform:translateX(-100%);transition:transform 0.25s ease;width:280px;}
+  #sidebar.open{transform:translateX(0);}
+  #menu-toggle{display:inline-block;}
+  #index-panel-scroll{padding:14px;}
+  #top-nav{padding:8px 14px;}
+  #header{padding:11px 14px;}
+  #reading-view{padding:16px;}
+}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="sidebar">
+  <div id="search-bar"><input id="search-input" type="text" placeholder="🔍 節タイトルを検索..." oninput="filterNav(this.value)"></div>
+  <div id="nav-scroll">
+<div class="nav-chapter">法則その１</div>
+<div class="nav-item" onclick="goSec(0)">前年対比実績を時間で表せば、社員は危機意識を持つ</div>
+<div class="nav-item" onclick="goSec(1)">１－２ 経営方針を繰り返し語り、社員を勇気づける</div>
+<div class="nav-item" onclick="goSec(2)">数年後のビジョンを考えるコツ。数年先の社会環境を予測したうえで、そのときの自社を代表する「</div>
+<div class="nav-item" onclick="goSec(3)">１－３ 改革を推進するための周到な経営計画を作る</div>
+<div class="nav-item" onclick="goSec(4)">利益を出すためには、経営計画書が、不可欠な時代。</div>
+<div class="nav-item" onclick="goSec(5)">事例２：エースを巧みに使う３勝２敗の原則</div>
+<div class="nav-item" onclick="goSec(6)">１－４ 歴史分析で人を育てる</div>
+<div class="nav-item" onclick="goSec(7)">過去 10 年の部門方針書から自部門の歩みを振り返る</div>
+<div class="nav-chapter">法則その２</div>
+<div class="nav-item" onclick="goSec(8)">２－１ 部下も上司もワクワクする学習機会を設ける</div>
+<div class="nav-item" onclick="goSec(9)">事例３：新人教育には自分で調べて発表させる機会を作る</div>
+<div class="nav-item" onclick="goSec(10)">自由裁量は、上司は「１」と「10」を担い、「２」～「９」を部下に任せること</div>
+<div class="nav-item" onclick="goSec(11)">事例３：「やらせてあげるのだから」の言葉で、仕事の重要度をわからせる</div>
+<div class="nav-item" onclick="goSec(12)">２－３ 視察で先が読める人材を育てる</div>
+<div class="nav-item" onclick="goSec(13)">５年後に行けば、５年間の変化がわかる。そして変化がなぜ起こったかを考えれば、流れが見える。</div>
+<div class="nav-item" onclick="goSec(14)">人脈は、ビジネスには不可欠な資源である。人脈は、一緒に仕事をしたり遊んだり勉強したりして初</div>
+<div class="nav-item" onclick="goSec(15)">知識だけでなく、実践で事業の醍醐味を体験させる</div>
+<div class="nav-chapter">法則その３</div>
+<div class="nav-item" onclick="goSec(16)">３－１ 顧客との約束を守り続けることでブランドを作る</div>
+<div class="nav-item" onclick="goSec(17)">ブランドを築くには、お客様に対し今までとは違う何か新しい約束をすること。差別化とは、他社と</div>
+<div class="nav-item" onclick="goSec(18)">事例１：毎月、全顧客に満足度調査を実施し続ける</div>
+<div class="nav-item" onclick="goSec(19)">３－２ 朝礼での発表・黙想でよいスタートを切る</div>
+<div class="nav-item" onclick="goSec(20)">３－３ インセンティブを工夫してモチベーションを高める</div>
+<div class="nav-item" onclick="goSec(21)">３－４ 社外活動で、社員の意外な一面を引き出す</div>
+<div class="nav-chapter">法則その４</div>
+<div class="nav-item" onclick="goSec(22)">自分が稼がねばならない額を自覚する</div>
+<div class="nav-item" onclick="goSec(23)">４－２ コストがよく見えるようにする</div>
+<div class="nav-item" onclick="goSec(24)">事例３：社内に潜む無駄を探させてプレゼンさせる</div>
+<div class="nav-item" onclick="goSec(25)">経営の舵は、リアリストとロマンチストのコンビで取れ</div>
+<div class="nav-chapter">法則その５</div>
+<div class="nav-item" onclick="goSec(26)">会社を熱狂集団に変える３つのポイント</div>
+<div class="nav-item" onclick="goSec(27)">事例２：業務改革に合わせて、名称や呼び名を変える</div>
+<div class="nav-item" onclick="goSec(28)">５－２ クレーム対応を通して人材を育てる</div>
+<div class="nav-item" onclick="goSec(29)">事例２：ミスがはっきりと目に見えるように工夫する</div>
+<div class="nav-item" onclick="goSec(30)">最近の「報告がなくて困った」事例を題材に、報告のルールを作る</div>
+<div class="nav-item" onclick="goSec(31)">事例２：報告を受けたら「で、次は何をする？」と問い返す</div>
+<div class="nav-chapter">法則その６</div>
+<div class="nav-item" onclick="goSec(32)">６－１ 「使える・使えない」ではなく「育てる」意思を持たせよ</div>
+<div class="nav-item" onclick="goSec(33)">「使える・使えない」で考えるのは、簡単。それができない企業には、「育てる」ことに力点を置い</div>
+<div class="nav-item" onclick="goSec(34)">先達から見れば、どんな部下も物足りない存在。しかし、やらせてみたら予想以上に働く。部下とは</div>
+<div class="nav-item" onclick="goSec(35)">６－２ 言葉を定義すれば、社員は自分の役割を認識する</div>
+<div class="nav-item" onclick="goSec(36)">事例１：社員に言葉を定義させると、社員は自分の役割に気づく</div>
+<div class="nav-item" onclick="goSec(37)">６－３ 求める人材像を定めれば、人材の育成方法が見える</div>
+<div class="nav-item" onclick="goSec(38)">人材を育てるには、</div>
+<div class="nav-item" onclick="goSec(39)">事例１：求める人材像を社員の台詞から考える</div>
+<div class="nav-item" onclick="goSec(40)">事例２：理想のビジネスマン像を「言われてみたい言葉」で見つける</div>
+<div class="nav-item" onclick="goSec(41)">未来を語り合うことで、人事考課は楽しくなる</div>
+<div class="nav-item" onclick="goSec(42)">成果報酬は個人ではなくチームに</div>
+<div class="nav-item" onclick="goSec(43)">事例１：作業日報を用いて毎日人事考課を行う</div>
+  </div>
+</div>
+<div id="main">
+  <div id="header">
+    <button id="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <h1>なぜ社員の意識は変わらないのか</h1>
+    <div class="subtitle">「勝ち組」企業の現場に学ぶ６つの人材育成法則</div>
+    <div class="meta">酒井英之 著</div>
+  </div>
+  <div id="top-nav">
+    <button class="top-nav-btn active" id="btn-index" onclick="showTab('index')">目次モード</button>
+    <button class="top-nav-btn" id="btn-read" onclick="showTab('read')">通読モード</button>
+    <button class="top-nav-btn" onclick="expandAll()">全展開</button>
+    <button class="top-nav-btn" onclick="collapseAll()">全折畳</button>
+    <a href="top.html" class="top-nav-btn">← 本棚へ</a>
+    <span id="progress-area">44節</span>
+  </div>
+  <div id="index-panel-scroll">
+    <div id="splash">
+      <h2>なぜ社員の意識は変わらないのか</h2>
+      <p class="sp-sub">「勝ち組」企業の現場に学ぶ６つの人材育成法則</p>
+      <div class="stats"><div class="stat"><div class="num">44</div><div class="lbl">節</div></div></div>
+      <button class="start-btn" onclick="startReading()">読み始める</button>
+    </div>
+    <div id="content-area" class="hidden">
+<div class="chapter-header">法則その１</div>
+<div class="section" id="sec-0">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§1</span>
+    <span class="sec-title">前年対比実績を時間で表せば、社員は危機意識を持つ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>危機意識を持たせようとするならば、社員にわかるよう言い方を工夫する。方法のひとつが、前年比マイナスを時</p><p>間で表現する。</p><p>「今期の売上高前年対比は 8.2％減。これは、前期に比べ１ヵ月分の売上が消えてなくなったのと同じ</p><p>である」</p><p>。誰もが、</p><p>「今のままではやばい」と危機意識を持つ。多くの社員は賞与の大きさを月数で把握しているから。</p><p>危機意識に限らず、相手に気が付いてもらうコツは、言いたいことを相手が日頃使っている単位に置き換えて訴える。</p><p>事例１：会議の開催時間で危機意識を演出する</p><p>「ゴールデンウイークのど真ん中。昼飯抜きの会議」。たったこれだけで、誰もが非常事態だと認識する。</p><p>事例２：改革を指示するときは「いつまでにやれ」と指示する</p><p>時間が決められている場合。「今日結論をださないと間に合わないから決めてしまおう」との思いから、どちらか</p><p>が譲歩する。だから前に進む。</p><p>「レスポンスを早くしよう、納期を短くしよう」という目標には生返事な社員も、</p><p>「いつまでにやれ」</p><p>「ここまで短</p><p>縮せよ」という指示には敏感に反応する。</p><p>事例３：未来のシナリオを見せて危機意識を作る</p><p>２ヶ月間かけて、社内外の情報を集め、</p><p>「最善の未来」と「最悪の未来」と「妥当な未来」の３つを比較したシナ</p><p>リオ分析。</p><p>「順風にあって悲観せよ。逆境にあって楽観せよ」</p><p>。前者の重要性に気が付いた新社長は、コンサルタント</p><p>を利用して部長たちの心に危機意識を作った。</p></div>
+</div>
+<div class="section" id="sec-1">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§2</span>
+    <span class="sec-title">１－２ 経営方針を繰り返し語り、社員を勇気づける</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>トップは自分が描いた未来を、繰り返し社員に語れ</p><p>人が元気になるときは、</p><p>「これから先にもっと楽しいことがある」と思うとき。社員の活力を引き出すには経営者</p><p>が明確な方針を示し、未来を熱く語ること。</p></div>
+</div>
+<div class="section" id="sec-2">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§3</span>
+    <span class="sec-title">数年後のビジョンを考えるコツ。数年先の社会環境を予測したうえで、そのときの自社を代表する「代表商品」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「代表技術」</p><p>「代表サービス」</p><p>「代表店舗」</p><p>「代表人材」</p><p>「代表メッセージ」などを考えること。それを、社員に機会の</p><p>あるたびに繰り返し訴える。</p><p>水谷の経済講演会。</p><p>「毎日同じ話をしていて飽きませんか？」「飽きるはずがない。信念を語っているのだ」。信念</p><p>ならば、それが実現するまで、同じ話を繰り返して語るのは当然。</p><p>事例１：方針を語った直後に、トップとしての覚悟を示す</p><p>「･････以上の実現に向けて、私は全身全霊を投げ打つ」</p><p>方針演説で社員と約束した社長は、最前線に立ち、自らも奮闘しつつ指揮を執る。</p><p>事例２：繰り返し訴えて、社員のプロ意識を高める</p><p>M 部長の印象。</p><p>「こんなに夢を語る人を見たことありません」</p><p>。しかし M 部長は、</p><p>「私は、夢だと思っていない。そ</p><p>うなるものだと思っている」</p><p>。とうとうと語り出した。市場に潜む構造的な問題。これが表面化したとき、市場のニ</p><p>ーズはどう変わるか。そのときの当社を代表する商品とサービス。それを可能にする技術。そして、それを築くため</p><p>には、今後どんな投資が必要になるか。</p><p>仕事の社会的意義を繰り返し訴えるのは、社員のプロ意識を持たせるため。仕事が思うように進まないとき、多く</p><p>の人はできない言い訳に終始する。しかし本当のプロは、言い訳なんかしない。プロのスポーツ選手は、できない言</p><p>い訳を並べても、できなければクビである。</p><p>お客様から来た「ありがとう」の手紙を、壁に掲げている会社がある。社員がお客様からいかに期待され、感謝される存在</p><p>かを示すため。「期待されている」と自覚した人には、プロ根性が目覚める。</p><p>事例３：ピンチのときはスローガンを掲げて戦う</p><p>1/11</p><p>わずかな数文字のスローガンでも、聞く者に与える迫力が違う。リーダーは、自分でスローガンを作らなければな</p><p>らない。明確なビジョンがあれば、スローガンは自ずとできる。その思いの強さが、そのまま言葉の迫力になる。ス</p><p>ローガンを掲げれば、</p><p>『危機意識はあるが迷いはない』状態になる。</p><p>部下が作ったスローガンは、言葉の響きがよくても、わかりにくい場合は突き返す。</p></div>
+</div>
+<div class="section" id="sec-3">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§4</span>
+    <span class="sec-title">１－３ 改革を推進するための周到な経営計画を作る</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>詳細な行動計画がなければ、利益は出ない</p><p>①売上げ＝原価＋利益</p><p>②利益＝売上げ－原価</p><p>③原価＝売上げ－利益</p><p>①は、原価に自分が欲しい利益を乗せて売ればいいという考え方。</p><p>②は、頑張って売上げを拡大すれば、利益は後からついてくるという考え方。</p><p>③は、売上げが伸びなくても、必要な利益を出せるように原価を抑えようとする考え方。昨今注目されるマネジメ</p><p>ント上の施策は、原価を抑えるためのものばかり。欲しい利益</p><p>は、原価をコントロールしてようやく確保できる。</p></div>
+</div>
+<div class="section" id="sec-4">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§5</span>
+    <span class="sec-title">利益を出すためには、経営計画書が、不可欠な時代。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「計画段階で利益を出すこと」</p><p>。</p><p>原価を抑える詳細な計画は、どこにもない。新規開拓に向けた具体的な行動計画も記されていない。これでは利益</p><p>が出るはずがない。</p><p>でき上がった計画に満足できないときは、赤ペンを入れて突き返す。社長が納得できるまで、これを繰り返す。さ</p><p>らに、その計画書を使い続ける仕組みを造る。</p><p>経営計画書を常時携帯している社長。彼らが使っている経営計画書は、分厚い。本人の書き込みや「これは！」と</p><p>思った新聞記事などが、貼り付けられていて、使い続けるうちに紙がゆがみ、ダルマのように膨れ上がっているから。</p><p>事例１：計画には、「見直し」、「検討」という言葉は禁止</p><p>例えば、</p><p>「経理部長方針」</p><p>課題：会計帳簿の早期作成。</p><p>対策：帳簿の入力を項目別に２分し、2 台のパソコンで入力。後に合算させることで、従来比５日の短縮を目指す。</p><p>「××の見直し、××の検討という言葉は、禁止。見直した結果、今年は仕事の何をどうのように変えるのか。そ</p><p>れを書け」</p><p>。営業部ならば、</p><p>「新規開拓を××件する」だけでは、不合格。攻略先の具体名と担当者名、そして具体的</p><p>な攻略法を記す。ここまでしないと OK が出ない。</p></div>
+</div>
+<div class="section" id="sec-5">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§6</span>
+    <span class="sec-title">事例２：エースを巧みに使う３勝２敗の原則</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>どんな組織でも、２－６－２の原則。２割がエースで、６割が普通で、残りの２割が落第という意味。特に、たっ</p><p>た２割しかいないエースをいかに使うかが肝心。</p><p>「５戦全勝を狙うな。３勝２敗を狙え」。攻略したいお客様が５件ある場合、５件すべてを攻略しようと思うな。</p><p>３件を確実に攻略し、２件は最悪の場合失敗しても構わないというのである。比較的簡単に攻略できそうなところを</p><p>３件と、難易度が高そうなところの２件に分ける。次に簡単そうな３件を、全体の６割を占める普通の社員に担当さ</p><p>せる。そして難易度の高い２件をエースに担当させる。</p><p>黒星を白星に変えるために、エースを巧みに使うことこそ、計画立案者の仕事。</p><p>事例３：改革を辺境から起こし、Ｖ字回復を演出する</p><p>企業が改革を推し進めるときも、改革推進派が２割で、６割がどっちつかずの模様眺め。そして古いスタイルに固</p><p>執する守旧派が２割。改革を進めるためには、模様眺めの６割をいかに改革推進派に取り込むかが勝負。</p><p>そのために多くの企業は、わざと V 字回復を演出する。まず出せるだけの赤字を出す。そこで、トップダウンでさ</p><p>まざまな改革を行う。事業の集中と選択、古い習慣の撤廃、新しい仕組みの構築。改革推進派が、「これをやるしか</p><p>ない」と不安がる社員を励ましつつ、必死になって改革を推し進める。すると翌年、大赤字から一気に黒字に転換す</p><p>る。これを見て、模様眺めだった６割が、一気に改革推進派に賛同する。逆に漸進的に改革しようとすると失敗する。</p><p>改革支持者が、なかなか増えないから。</p><p>２割を起爆剤に６割を巻き込む手として有効な方法。本社から最も遠い出先（支店、営業所、工場）などを１ヶ所</p><p>選び、そこで改革を行う。この出先が、突如高い業績を出す。すると本社の面々が驚いて「いったい何があったんだ！」</p><p>と注目する。問題は、最初に選ばれた遠方の出先をいかにその気にさせるか。「幕末のように、改革は常に辺境から</p><p>起こる。今度は君たちが主役だ。龍馬や高杉になるのだ。そしてここに来たこともない本社の連中に一泡吹かせてみ</p><p>ようじゃないか」</p><p>実績を見せる仕組み作りが、社長の手腕。</p><p>事例４：誰かを犠牲にして、危機意識を植えつける</p><p>部長１人、部下８人が集まった某社の営業会議で、Ｂ部長が社長から面罵。</p><p>「この数字は、何だ！お前は部長だろう！ それなのにお前は、昔から同じ売り方しかしない！ この成績でどう</p><p>2/11</p><p>やって社員とその家族を幸せにするのだ！ このままじゃ惨敗だ！」。</p><p>「これからどう挽回するのか、自分でよく考え</p><p>ろ！」と言い残し席を立っていった。</p><p>Ｂ部長は、</p><p>「これまでのやり方を変える。簡単ではないが、皆、力を貸してくれないか」。</p><p>実は、この面罵は社長とＢ部長が、２人で仕組んだ芝居。「自分の代わりに上司が叱られている」と感じた部下達</p><p>は、守ってくれた人を助けたいという闘争心を持つ。もっとも重要なのは、社長が立ち去ったあとのＢ部長の一言。</p><p>「現場を知らない社長は、気楽なものだ。こっちは、たまったもんじゃないよ」などとは決して言ってはいけない。</p></div>
+</div>
+<div class="section" id="sec-6">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§7</span>
+    <span class="sec-title">１－４ 歴史分析で人を育てる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>過去から未来へと受け継ぐべきことを学び取る</p><p>社員教育の最大の教科書は、経営計画書。その点、社史は、経営計画書に継ぐ偉大な教科書。「今なぜそれをする</p><p>のか」を学び取ることができるから。そこで社史を振り返り、それらのエッセンスが、ひと目でわかるような形で整</p><p>理したい。当社が進む方向性が、自ずと見えてくる。年表には、経営者の言葉も書き込む。また経営に大きな影響を</p><p>及ぼしたリスクも合わせて年表に記載したい。どんなことがあると会社は危なくなるのか、それを知るには、過去を</p><p>振り返ることが一番。</p></div>
+</div>
+<div class="section" id="sec-7">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§8</span>
+    <span class="sec-title">過去 10 年の部門方針書から自部門の歩みを振り返る</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ここ 10 年間の歴史を振り返るだけでも学ぶことが多数ある。10 年間の部門方針と業績を一覧表に、加えて各年の</p><p>顧客別売上高ランキング、商品別売上高ランキング。これらの資料を社員に配布したうえで、下記の問について社員</p><p>間で討議する。</p><p>①顧客別売上高ランキングは、この 10 年間でどのくらい変わったか？</p><p>②商品別売上高ランキングは、この 10 年間でどのくらい変わったか？</p><p>③過去 10 年を３つに分け、それぞれ「××時代」と名付けるとどのようになるか。</p><p>④過去 10 年間に当社伸びた（落ちた）要因は何か？ そのキッカケはなんだったのか？</p><p>⑤過去 10 年間に見られるわが社特有の強みと弱みは何か？</p><p>⑥過去 10 年間に起きたことで、私たちが今後どうしても継続していかねばならないことは何か？ 後世に伝えて</p><p>いかねばならない教訓は何か？</p><p>⑦以上を踏まえて、これから 3 年を「○○時代」と名付けると、どんな時代になるか？</p><p>それぞれを考えることで、社員は自分の使命に気づく。</p><p>事例１：歴史的経緯に自分たちの仕事の意義を見出す</p><p>歴史を振り返る機会を作ると、社員は、そこに「事業運営に役立つヒント」や「教訓」を見出す。</p><p>それらは過去から未来へと受け継いでいくものであり、その役目を担うのが自分達だと気がつく。</p><p>事例２：これからの３年間を「××時代」とネーミングをする</p><p>もはや、できる・できないで迷っているときではない。</p><p>「どうしたらできるか。それしか考えない」</p><p>。若い部下の純</p><p>粋な叫びが、上司を揺り動かす。これが歴史分析の効果。</p><p>事例３：次の設備の更新が、自分の仕事だと気づく</p><p>事業は、陸上のリレー競技のように誰かに受け継いでいくもの。受け継いでいくバトンが何か</p><p>に、まだ気づいてない社員は多い。歴史分析は、そのことに気づく道具である。</p></div>
+</div>
+<div class="chapter-header">法則その２</div>
+<div class="section" id="sec-8">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§9</span>
+    <span class="sec-title">２－１ 部下も上司もワクワクする学習機会を設ける</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>増える体感型オーダーメイド研修</p><p>誰からの指示がなくても、自分から進んで仕事を見つける人。</p><p>「風雲児」と呼ぶ。ここ数年で急激に進化したのが、</p><p>企業内研修。最近は、オーダーメイドが主体。</p><p>「すぐに成果につながる現場指導型の研修を考えてほしい」</p><p>「実務のた</p><p>めのスキル教育は、いらない。意識を変えるプランが欲しい」。事業を差別化するために、他社とは違うモノの見方・</p><p>考え方のできる人材を養成する。</p><p>事例１：輪講で理論を修得し、その後に応用力を磨く</p><p>「手抜きの部分を埋める手だてを考えれば、それが特許のもとになる」。応用力は、理論をしっかりマスターした</p><p>人が、現場経験を積み重ねるうちに身につけるもの。</p><p>「社長方針は、現場の社員まで速やかに伝わるはずだ」が理論。しかし「なかなか素早く正確に</p><p>は、伝わらない」のが現実。これを解決する手段を考えれば、それはその会社独自のノウハウ。</p><p>事例２：ISO の認証取得も、社員教育の一環と位置づける</p><p>最善策の創出に、ディベートは有効。ISO の認証取得を社員教育と考える会社は、業務の改善そのものを重視する。</p><p>研修の朝、ワクワクするような期待を持った社員が、どのくらいいるだろうか。</p></div>
+</div>
+<div class="section" id="sec-9">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§10</span>
+    <span class="sec-title">事例３：新人教育には自分で調べて発表させる機会を作る</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>能動型の人材を育てるには、発信させる機会も設けるとよい。新人研修でアウトプットするものは、会社案内、社</p><p>内報、ホームページなど。新入社員研修は、知識付与ばかりではなく、「自分で調べ、自分で発表する」要素を盛り</p><p>3/11</p><p>込んでいく。完成したら役員の前で発表。発表という舞台と時間で追い込むことが、成功の鍵。</p></div>
+</div>
+<div class="section" id="sec-10">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§11</span>
+    <span class="sec-title">自由裁量は、上司は「１」と「10」を担い、「２」～「９」を部下に任せること</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>パワーを引き出すには、仕事を自由にやらせてみること。</p><p>トップが行う「１」の仕事は、</p><p>『７つの習慣』によれば、次の５つである。</p><p>①部下にゴールを示す、</p><p>②使える資源を与える、</p><p>③これだけはしてはいけないことを約束させる、</p><p>④報告のルールを決める、</p><p>⑤目標達成時の報酬を示す。</p><p>この中で忘れられがちなのが③④。</p><p>トップが行う「10」の仕事は、結果的にどうなろうと自分が最終責任を取ること。部下に「好きなようにやってみ</p><p>ろ」と言うのなら、</p><p>「手柄はお前、責任は自分」と腹をくくる。</p><p>事例１：期待する社員に、自分の力で設備を選ばせる</p><p>思い切って若い３人に任せて大成功。まず第１に、メチャクチャ機械を大切にするようになった。第２は、言い訳</p><p>を一切しなくなった。</p><p>思い切って任せるときは、相手が驚くようなまかせ方をすることである。</p><p>事例２：発注権限を部下に与え、お客様からの信頼を勝ちとる</p><p>「当社では、発注者は社長よりも偉い」。社長がここまで割り切って考えるのは、メーカーが、発注権限のない社</p><p>員を軽んじるから。また下請け業者も、発注権限がない社員を信用しないから。ただし、万が一貸し倒れが発生した</p><p>ら、賞与がゼロになるのも同社のルール。自由裁量と自己責任は表裏一体。</p><p>権限委譲は、投資回収期間が長く、方針がぶれにくい製造業や建設業などに向いた施策。逆に回収期間が短い小売業や、</p><p>環境の変化が激しい IT 産業などでは、「攻め」「守り」を即決できるようにトップに権限を集中したほうがよい。</p></div>
+</div>
+<div class="section" id="sec-11">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§12</span>
+    <span class="sec-title">事例３：「やらせてあげるのだから」の言葉で、仕事の重要度をわからせる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「この仕事は君にやらせてあげるのだから、そのつもりで」。聞き慣れた「やれ！」でも「やってほしい」でも「頼</p><p>むからやってくれ」でもなく、</p><p>「やらせてあげる」</p><p>。 相手を信頼していないと言えない言葉。言うほうは、「とにかく信じて</p><p>みよう」と腹をくくる。</p></div>
+</div>
+<div class="section" id="sec-12">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§13</span>
+    <span class="sec-title">２－３ 視察で先が読める人材を育てる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>街の変化を見たり人脈を拡げることで、先を読む力を養う</p></div>
+</div>
+<div class="section" id="sec-13">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§14</span>
+    <span class="sec-title">５年後に行けば、５年間の変化がわかる。そして変化がなぜ起こったかを考えれば、流れが見える。流れが見え</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>れば。先が読める。次を読む力は、変化をウォッチングすることから生まれる。気づきを重ね、なぜこうなったんだ</p><p>ろうと考える。</p><p>増えたのは、トップが出張に行くときに「お前も一度今の中国を見ておけ」と社員の誰かを連れて行く、同伴出張。</p><p>自社に新しい風を起こす人材には、先を読む力が不可欠である。何度も見ているうちに、時代の潮流は自然と読めて</p><p>くる。</p><p>事例１：出張に行かせたら、自主的に動ける自由時間を与える</p><p>企画者や開発者には、マーケティング・センスが必要。センスのよさは、ビックリした回数に比例する。</p><p>事例２：出先と本社を経験させて T 字型人間を育てる</p><p>大手百貨店に就職した H 君。地方支店勤務を望んだのは、地方店ならばいろんな仕事を覚えられると先輩に聞いた</p><p>から。T 字型人材とは、幅広い見識を持ちながら、特定分野には、高度な専門性を発揮できる人材。</p><p>事例３：トップ同士で飲むときは、お互いに若い社員も連れて行く</p><p>若いうちは、年寄りに可愛がられるようになろう。そしていろんなことを教えてもらおう。逆に自分が年を取った</p><p>ら、若いやつとつき合おう。そして若いエネルギーをもらおう。</p><p>人脈は引き継ぐことのできない資産である。よって自分の力で築くより他にない。若手社員を自分の飲み会に同伴</p><p>すれば、若手社員の人脈づくりのキッカケとなる。</p></div>
+</div>
+<div class="section" id="sec-14">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§15</span>
+    <span class="sec-title">人脈は、ビジネスには不可欠な資源である。人脈は、一緒に仕事をしたり遊んだり勉強したりして初めてできる。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>そうした機会は、意図的につくるもの。</p></div>
+</div>
+<div class="section" id="sec-15">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§16</span>
+    <span class="sec-title">知識だけでなく、実践で事業の醍醐味を体験させる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>成功企業でも、本当に最初から戦略があったとは限らない。最初の思いつきは、営業や開発の現場から生まれるケ</p><p>ースも多い。お客様の不満、お客様の要望、お客様に選ばれない理由、お客様の笑顔、ライバルに対する競争心、技</p><p>術者の探求心、社員からの改善提案、社員の意地。現場で直面した課題への方策を、「ああなって････次にこうなっ</p><p>て･･･」と組み立てていったら、いつしかそれが競争に勝ち続ける物語。</p><p>4/11</p><p>新規事業を立案するときは、教科書は役に立たない。そもそも「差別化」を考える仕事とは、型破りに挑戦するこ</p><p>と。売りや買いや使用の現場に出す。そこで、買う人や売る人、使う人の気持ちを人一倍考えさせる。そこで見つけ</p><p>た問題を解決する新規事業のプランを練る。</p><p>そして成功体験ならば、本人が自信を深めるだけでなく、会社にとって新たな収益源が生まれる。たとえ失敗して</p><p>も、失敗から多くを学び、その人のビジネス感覚を鋭く磨いてくれる。</p><p>事例１：新規事業を立ち上げるときの楽しさを社員に示す</p><p>みんな、本当に好きな仕事をやっているときは、人間は眠らなくても平気なんだよ。それから飯も食わなくても平</p><p>気なんだよ。夢に向かって邁進する社長の生き方こそ、事業創造を望む彼らの最大のお手本。</p><p>事例２：新規事業を立ち上げやすい環境を整備する</p><p>アイデアは、それぞれの企業の内部に多数眠っている。問題は、アイデア不足ではなく、それを引き出す組織体制</p><p>にある。新規事業を立ち上げるための大原則は、担当者を社長直轄にすることと、その担当者を新規事業の専任にす</p><p>ること。担当の人選は、</p><p>「何よりもまず新規事業を立ち上げてみたい！」と考えている人材を選ぶこと。</p><p>研究開発型のある製造業では、「やりたいことがある者は、遠慮無く経営会議で発表しろ」がルール。プレゼンを</p><p>聞いて、イエスかノーかをその場で社長が決裁する。利益では縛らず、時間で縛る。「これだけの時間と費用を君に</p><p>やるから、期限までに必ず答えを出せ」</p><p>。</p><p>事例３：作る人は売る人と、売る人は作る人と顔見知りになる</p><p>社内人脈を築く機会として、同じプロジェクトに関わる社員同士が、交流する場は欠かせない。できれば川上と川下。フロン</p><p>トとバックヤードという様にお互いに支え合っている仲間同士がよい。</p></div>
+</div>
+<div class="chapter-header">法則その３</div>
+<div class="section" id="sec-16">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§17</span>
+    <span class="sec-title">３－１ 顧客との約束を守り続けることでブランドを作る</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ブランドを作ることは、新しい約束を考えることである</p><p>今日は、ブランドも重要な経営資源。お客様は、買うときに「この商品ならば間違いはない。必ずこういう効用が</p><p>ある」と期待する。その期待に応え続ける。ブランドとは、売り手のお客様に対する約束。</p><p>どんな事業にも、よいときもあれば悪いときもある。その間、ある姿勢をまったく崩さないことは、その企業によ</p><p>ほどの「こだわり」がないとできない。こだわり続けると、必要以上に手間がかかり非効率なことも出てくる。それ</p><p>が、価格に跳ね返り、値段は他社に比べて高くなる。高価でも、その商品を購入する。これがブランドの力。</p></div>
+</div>
+<div class="section" id="sec-17">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§18</span>
+    <span class="sec-title">ブランドを築くには、お客様に対し今までとは違う何か新しい約束をすること。差別化とは、他社とは違う約束</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>を作り、実行すること。約束は、何も商品の機能面だけとは限らない。「早さ」を約束することも、約束のひとつ。</p></div>
+</div>
+<div class="section" id="sec-18">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§19</span>
+    <span class="sec-title">事例１：毎月、全顧客に満足度調査を実施し続ける</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>顧客満足度調査は、「何を聞くか」だけでなく、「何回聞くか」も非常に大切な要素。継続的にお客様の声を聞き続けて、よう</p><p>やく自分の真の姿を知ることができる。</p><p>事例２：商品サンプルにメッセージを入れて配布し続ける</p><p>商品の紙のサンプル。ただサンプルを配るのも味気がないから、そこに情報を載せた。『はなしのたね』は、同社</p><p>の定期刊行マガジン。当社は、問屋ではなくてサービス業。問屋なら、商品を在庫し、注文通りにお届けするのが当</p><p>たり前。対してサービス業は、対人業務。何よりも挨拶や返事ができるのは当たり前。商品を望むサイズに加工し、</p><p>より早く届けるのも当たり前。そして情報を提供するのが当たり前。</p><p>社員一人にひとつ、お客様と何かを約束し守り続ける。</p><p>事例３：お客様に感謝する姿勢を態度に表す</p><p>ある冷凍食品会社は、「自分が食べるつもりで作る」が行動指針。</p><p>また食品製造業の E 社の給料明細袋には、発行者である会社名の上にとても大きな字で「取引先一同」と記してあ</p><p>る。</p><p>また G 社の社内には、お客様を祀った神社がある。</p><p>「お客様は、神様だから何でもお見通し」</p><p>。外からは見えない企業の手抜きも努力も、お客様に確実に伝わる。</p></div>
+</div>
+<div class="section" id="sec-19">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§20</span>
+    <span class="sec-title">３－２ 朝礼での発表・黙想でよいスタートを切る</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>朝礼は職人に力を発揮してもらうためのお膳立てである</p><p>職人たちにお膳立てを施すのは、管理者の仕事。朝礼は、職人に今日１日を力一杯働いてもらうための、お膳立て</p><p>の場。</p><p>①スローガンなどの唱和</p><p>②上司からの仕事の指示</p><p>③３分間スピーチ</p><p>④行動予定発表・業務報告</p><p>⑤ロールプレイング</p><p>店舗でお客様を迎えたときの店員の挨拶や、お客様と接したときの営業マンのセールストークなど。</p><p>5/11</p><p>一方、こうしたお膳立てを嫌う人もいる。自由裁量で仕事を任されている人たち。慣習だからと言って、全部門で</p><p>同じように朝礼を行う必要はない。</p><p>事例１：朝礼で創業者が編纂した小冊子を読み、創業者の思いを伝える</p><p>「人間として何をするべきか」を繰り返して言い続けていくことは、会社の強みとなる。</p><p>事例２：自分の役割を認識させるために発表の仕方を変える</p><p>営業担当者の多くは、</p><p>「今日、私は××と××をします。私も頑張りますから、どうぞ皆さんも頑張ってください」</p><p>。</p><p>現場をサポートする社員は、</p><p>「今日、私は××と××をします。私は頑張ります。皆さんのために頑張ります」</p><p>。ほん</p><p>の尐しの違いだが、自分に与えられた使命の違いが、ハッキリ認識できる。</p><p>朝礼のときに１分間、黙想をしている。この１分間に、社員が自分で自分に今日行うことを約束することができた</p><p>ら、その効果はとても大きい。</p><p>部下が報告に来たとき「ご苦労さん」と言うのは、使用者と使用人の関係。対して「ご苦労さん。ありがとう」と</p><p>言えばチームメイトの関係になる。</p></div>
+</div>
+<div class="section" id="sec-20">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§21</span>
+    <span class="sec-title">３－３ インセンティブを工夫してモチベーションを高める</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ご褒美が多額な場合は本人、少額のときは家族に</p><p>支給する額が大きい場合は、個人に直接支払うのが効果的である。逆に支給する額が小さい場合は、本人ではなく</p><p>家族が喜ぶようにするのが効果的である。お金よりはトロフィーや表彰盾を渡すほうが、効果がある。</p><p>「パパが、会社からトロフィーをもらって帰って来た！ パパは凄い！」と子供。同じ効果は、頑張った社員を社</p><p>内報に掲載しても得られる。トロフィーや表彰盾は、必ず見える位置に飾る。トロフィーをいくつ溜めるかが、その</p><p>人の励みになる。</p><p>事例１：奥さんに宛て、社長からダイレクトにギフトカタログを贈る</p><p>トロフィーばかりでなく、金目のモノを支給したい。そう考える場合も、本人ではなく家族に届けるとよい。W 社</p><p>では、社内コンテストで優秀だった人の家族に対し、社長がギフトカタログを送っている。</p><p>「あなた、これ何？ 中に社長からの手紙が入っているのだけど」</p><p>「そうなの。全然知らなかったわ。それで私がこの中の好きなものを選んでいいの？」</p><p>「ああいいよ。好きなの選べよ」</p><p>「すっごく嬉しい！ あなたの会社って、本当にいい会社ね」</p><p>男は、総じて照れ屋である。よって会社で優れた成果を残しても、家族に語りたがらない人が多い。</p><p>事例２：トイレに気を配り、パート社員の定着率を高める</p><p>女性にとってのトイレは、</p><p>「化粧室」</p><p>。化粧直しを終えた自分を見て「さあ午後も、もうひと頑張り！」と気合いを</p><p>入れる。</p><p>「工場のトイレを見れば、その企業の本当の姿がわかる」という格言。</p><p>事例３：社長のねぎらいの一言が社員の士気を高める</p><p>「ご苦労さん、よう頑張ってくれたな、感動したよ。ありがとう。」</p><p>「君のやることに感動した」と、部下を素直に</p><p>誉める上司は、本当に尐ない。格下のものを素直に誉められるのは、自信がある人だけ。</p></div>
+</div>
+<div class="section" id="sec-21">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§22</span>
+    <span class="sec-title">３－４ 社外活動で、社員の意外な一面を引き出す</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>宴会や慰安旅行で社員人脈を築く</p><p>会社は、我慢することが多い。不安も多い。人は、我慢していたり不安を抱いたりすると、その思いを誰かと分か</p><p>ち合いたいと思うもの。職場の空気が凛と張りつめている企業ほど宴会は盛り上がる。宴会は、日頃の管理の厳しさ</p><p>の度合いを測るバロメータのひとつ。</p><p>宴会や慰安旅行は、</p><p>「意味がない」</p><p>「やめたほうがよい」との意見が多い会社。</p><p>「会社に活力がない」</p><p>「職場の雰囲気</p><p>が、悪い」</p><p>「上司の管理が、適切でない」などの SOS である可能性もある。</p><p>事例１：プロジェクトが解散しても、メンバー同士の交流は続ける</p><p>自信のないトップは、自分が部下からどう思われているか気にかける。そして自分のほうを偉く見せるために、部</p><p>下のことを悪く言う。</p><p>「俺の悪口を言っても構わないぞ」と笑顔で言う。自分に自身がなければ、言えない。</p><p>事例２：常識はずれなことに挑むとき、隠れた才能が目覚める</p><p>「人に喜んでもらえた！」という喜びを重ねて、人は自信をつけていく。</p></div>
+</div>
+<div class="chapter-header">法則その４</div>
+<div class="section" id="sec-22">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§23</span>
+    <span class="sec-title">自分が稼がねばならない額を自覚する</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>コスト意識は、</p><p>「いったいいくら稼ぐ必要があるか」と「いったい経費をいくらに抑えねばならないか」のふたつ。</p><p>まず自分の年収を 1.20 倍にし、自分の人件費を算出する。会社が負担している社会保険、福利厚生費、教育研修</p><p>費なども人件費とする。</p><p>6/11</p><p>次に、全人件費が、営業部門の人件費の何倍になるかを計算し、乗じる。スタッフ（間接）部門の人の給与も稼が</p><p>ねばならない。</p><p>次に損益計算書から、粗利益に占める人件費の割合が何％かを調べる。</p><p>これを 12 で割れば毎月の必要粗利益となり、月収の何倍かがわかる。さらに粗利益率で割れば、１ヵ月に必要な</p><p>売上高を算出できる。</p><p>粗利益とは、お客様から「ありがとう」の代償としていただくもの。粗利益が多い人は、より多くのお客様の役に</p><p>立った人である。</p><p>事例１：人時生産性を明らかにし、社員にコストを自覚させる</p><p>人時生産性とは、１人１時間当たりどれだけの付加価値を稼いだかを見る指標。</p><p>「お客様を１回訪問すると○○円」「メーカーに１回発注すると××円」のように、すべての仕事に１回当りの値</p><p>段（付加価値基準）をつけている。</p><p>自分がいくら稼いだかは、一定時間内にどんな仕事を何回やったかを振り返り、合計すればわかる。自分で計算し</p><p>た人時生産性と人事考課は、連動していない。理由の第１は、個々の仕事の付加価値基準はあくまで理論値であり、</p><p>実際の仕事の値段とはズレがあること。第２は、さらに付加価値基準が低くても、どうしてもやめられない仕事があ</p><p>ること。</p><p>事例２：決算賞与の支給基準を明確にする</p><p>「どんなことがあっても、明日までに間に合わせろ！」「できないならやめてしまえ！」などと、会社は、どの部</p><p>門も利益を創り出すためのプレッシャーに溢れている。その反面、「儲けが出れば、それなりにいいことがある･･･」</p><p>と気づかせてくれる機会は尐ない。</p><p>利益が出ていれば、会社が安定的に発展する。ポストも増える。新人が、次から次へと入ってくる。毎年給料が上</p><p>がる。</p><p>「いいこと」ずくめである。ところが社員は、これらを「いいこと」だとは思っていない。「当たり前のこと」</p><p>だと思っている。そんな社員のモチベーションを高めるには、「頑張ればこんなよいことがあるのだ」と実感できる</p><p>仕掛けが欲しい。</p><p>その仕掛けとして最も効果的なのが、決算賞与。例えば売上高対経常利益率が３％を超えた場合、超えた額の半分</p><p>は会社にプールするが、半分は決算賞与として社員に分配する。</p><p>決算賞与支給のルールは、「手柄は社員のもの、失敗は自分」を示す究極の姿。</p><p>事例３：稟議書の決済時に、社員の投資感覚を磨く</p><p>「生きた企画とは、見たり聞いたりしているうちに、実現するシーンが頭に映像で浮かんでワクワクしてくるもの。</p><p>が、俺のところに来るのは、数字や言葉は立派でも中身がカラッポ。どんな行動を取るのかサッパリみえてこない」。</p><p>申請者を見て、</p><p>「熱いな、いい目をしているな」とＫ社長が感じたら、OK である。</p><p>「社長を騙して投資させ、自分がやりたい事業をやることこそ、サラリーマンの醍醐味」</p></div>
+</div>
+<div class="section" id="sec-23">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§24</span>
+    <span class="sec-title">４－２ コストがよく見えるようにする</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>コストを下げるには、グループ間の調達を見直せ</p><p>調達コストを下げるには、買うものの妥当なコスト（市場価格）はいくらなのか理解する。買う商品の原価構造を</p><p>読み、</p><p>「この商品は、これくらいまで下げられるはず」を意識すれば、交渉は有利に運ぶ。</p><p>大企業のグループ会社の特色は、人件費を含む１人当りの販売管理費が、同じ規模の同業他社より高いこと。社員</p><p>の多くが、大企業からの出向、転籍者だから。</p><p>・</p><p>「同じグループのあそこから買え」と言われているから</p><p>・出向した先輩から「俺の顔を立ててくれ、この値段で買ってくれ」と言われているから</p><p>メーカーの支配力が衰退しつつある業界では、特約店・代理店のメリットは、どんどん薄らいでいる。さらに同業</p><p>者組合などでは、仲間の新規事業展開を制限しているケースがある。お互いの縄張りを守るためであるが、こうした</p><p>ルールに執着している間に、異業種に市場を奪われてしまう。</p><p>深い関係というものは、コストがかかる宿命にある。しかしビジネスは、感情の関係よりも利害関係を優先する。</p><p>現状に照らして、意味がないと思われる古い慣習は打破するべき。生きるためには、「金が切れないうちに、腐れ縁</p><p>を切る」</p><p>。</p><p>事例１：コストを実測し、改善目標を定める</p><p>年収が上がり続けている人は、およそ家計簿はつけない。しかし、年収が下がった人や会社を辞めた人は、途端に</p><p>家計簿をつけ始める。</p><p>現状のコスト要因を明らかにし、どこまで改善するかの目標を立てる。それが競争力回復の第１歩。</p><p>事例２：費用対効果を追求すること、これまでの常識が非常識になる</p><p>お客様は接待しない。しかし、仕入先は接待する。</p><p>「社内では誰も叱ってくれないから、お客様に叱られに行く」をモットーとする社長。</p></div>
+</div>
+<div class="section" id="sec-24">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§25</span>
+    <span class="sec-title">事例３：社内に潜む無駄を探させてプレゼンさせる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「やめてしまえプロジェクト」</p><p>。</p><p>「君たちが日頃感じている『こんな無駄なことはやめてしまえ！』を俺に提案して</p><p>7/11</p><p>ほしい。ただし、なぜやめるべきかを明らかにすること。代替案もあれば出してほしい」。</p><p>「××会議は無駄です。報告ばかり」</p><p>。</p><p>「上司による多段階チェックは無駄です。稟議を回して待つより、経営会議でプレゼンさせてほしい」。</p><p>「倉庫の中の不動在庫が、18％もあります」</p><p>。</p><p>「機能分散している工場は無駄です。設備稼働率を考えれば集約したほうがよい」。</p><p>サラリーマンは、誰かが「やれ」といったものを自分の一存で「やめましょう」と言えない宿命。このプロジェク</p><p>トは、そうしたしがらみを断ち切ってのタブーへの挑戦。</p></div>
+</div>
+<div class="section" id="sec-25">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§26</span>
+    <span class="sec-title">経営の舵は、リアリストとロマンチストのコンビで取れ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>経理・総務・人事などの管理部門。対して営業・技術・開発などマーケティング部門。強い会社では、決まって管</p><p>理部門とマーケティング部門の責任者が、名コンビと呼ぶにふさわしい関係を築いている。本田技研工業の藤沢武夫</p><p>と本田宗一郎。歴史上の人物では、石田三成と豊臣秀吉。現実を見つめるリアリストと夢を追うロマンチストの関係。</p><p>ビジネスマンは、その人の「性格」ではなく「仕事」に惚れるもの。</p><p>「お前は嫌いだ。が、お前の仕事は好きだ」</p><p>事例１：嫌われるのを覚悟して厳しい態度で部下を叱る</p><p>リアリストは、嫌われる。リアリストの仕事は、</p><p>「社員から愛されよう」と思う人には決して務まらない。会社をよ</p><p>くするために、「いつかわかってくれるだろう」を胸に、シビアな判断ができる人。それが管理部門長。</p><p>事例２：資本主義の原理原則に戻り、古い習慣を打破する</p><p>「資本主義は、経営者が『俺はこうしたい』という事業の夢を語る。それに賛同した株主などから資金を集める直</p><p>接金融が、基本。</p><p>昔、坂本龍馬率いる海援隊の船が、紀州藩の船と衝突し沈没。このとき龍馬は、将軍家を相手に裁判を起こし勝訴した。</p><p>筋を通せば、浪人でも将軍家に勝てる。</p></div>
+</div>
+<div class="chapter-header">法則その５</div>
+<div class="section" id="sec-26">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§27</span>
+    <span class="sec-title">会社を熱狂集団に変える３つのポイント</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>熱狂集団造りの第１は、わが社の戦略をわかりやすい形で示すこと。シンプルな戦略を掲げる企業ほど好業績。</p><p>第２は、目標（達成基準）を設け、達成できたかどうかを判定すること。</p><p>第３は、現場の活動状況が、全社員に逐次正確に報告されること。管理部などのスタッフ部門が現場を応援するの</p><p>は、選手の奮闘ぶりをリアルタイムで、正確に伝える為。</p><p>３要素のうち、１番目は、トップの仕事である。そして２番目と３番目の実現をサポートしていくのが、</p><p>「補佐役」</p><p>の役割。</p><p>事例１：年に１度、総務が社内中の意見を集める「巡回総務部」</p><p>「これから２ヶ月間は、</p><p>『巡回総務部』</p><p>。総務部員数名が手分けして全支店と工場を回る。そして全社員の意見をヒ</p><p>ヤリングし、その結果をまとめて社長に伝える。</p><p>」人は、誰しも共感を求めるもの。現場の社員の思いに応えよう。</p><p>現場のヒアリングを現場のトップが行うのは、望ましくない。現場のトップ自身に問題がある場合は、真実が隠れてしまう。逆</p><p>に総務と社長は、近い。</p></div>
+</div>
+<div class="section" id="sec-27">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§28</span>
+    <span class="sec-title">事例２：業務改革に合わせて、名称や呼び名を変える</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「お客様は KING、問屋を QUEEN と呼べ！」</p><p>。</p><p>ディーラーのことを「営業所」から「営業店」。</p><p>「患者」ではなく「お客様」。「債務者」と呼ぶことを禁じた銀行。</p><p>「下請け工場」と呼んでいたものを「協力工場」</p><p>。</p><p>「支店長会議」ではなく「ベクトルミーティング」</p><p>。「管理者研修」</p><p>ではなく「右腕研修」</p><p>。契約社員、派遣社員、パートタイマー、嘱託など正社員以外の人に配慮するために、「社員」</p><p>と呼ぶのをやめ「従業員」</p><p>。</p><p>トップ自らが、先頭に立って呼称を工夫することにより社員の意識は変わっていく。</p></div>
+</div>
+<div class="section" id="sec-28">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§29</span>
+    <span class="sec-title">５－２ クレーム対応を通して人材を育てる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>クレームの発生は個人ではなく企業の問題として捉える</p><p>クレーム対応ほど、胃が痛くなる仕事はない。しかし、クレームへの誠実な対応と再発防止策を通じ、企業は、よ</p><p>り正しい姿に近づくことができる。その対応次第で、お客様からこれまで以上の信頼を得ることができるチャンス。</p><p>強烈な反省と戒めが加われば、社内改革は一気に加速する。</p><p>事例１：過去の事故を後世に語り継いでいくように工夫する</p><p>胸に縫いつけられたバッジ。</p><p>「忘れません××事故 12 周年」。</p><p>「その事故は、この月に起きました。そこで毎年この</p><p>月になると全社を挙げて××事故キャンペーンを実施します。聞かれれば説明する。だから忘れないし、そのたびに</p><p>２度とやってはいけないと思う」</p><p>。</p><p>「人は忘れても、自分だけは忘れない」を貫く会社。お客様は、企業のそんな努力を直接見ていなくても、そんな</p><p>企業を確実に見抜く心眼を持っている。</p><p>8/11</p></div>
+</div>
+<div class="section" id="sec-29">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§30</span>
+    <span class="sec-title">事例２：ミスがはっきりと目に見えるように工夫する</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>工場内の大きな建物に入ってすぐ右側の床だけが、赤いテープで四角く囲われている。「あれは返品置き場です」。</p><p>前を通る社員に語りかける。</p><p>「本来あってはならないはずの返品が、こんなにもあるぞ･･･。皆、恥を知れ」。</p><p>クレームの再発防止には、現物、写真、VTR、グラフなどを使って、視覚に訴えて考えさせる工夫が必要。</p><p>事例３：クレーム発生時の怖さを社長の言葉で伝える</p><p>「恐くて売りに行けやしない」。中国から輸入した野菜を加工し、総菜にしてスーパーに納めている。しかし何ら</p><p>かの不手際があり営業停止の処分を受ければ、一大事。売上げが、ゼロ。それどころかスーパーから多額の賠償を請</p><p>求されてしまう可能性もある。①商品回収費、②商品償却費、③謝罪広告費、④機会損失の補填費など。</p></div>
+</div>
+<div class="section" id="sec-30">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§31</span>
+    <span class="sec-title">最近の「報告がなくて困った」事例を題材に、報告のルールを作る</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>H 社の「報告がなくて困った情報」</p><p>。①お客様からのクレーム、②クレームの対応状況、③大きな案件の折衝経緯、</p><p>④競合他社の動き、⑤業務提携先の動き、⑥最新の技術動向、⑦契約内容の変更、⑧お客様に注意されたこと、⑨社</p><p>員の目覚しい活躍、⑩社員の勤務状況、⑪資材の手配状況、⑫現場で気がついたことなど、⑬社員の家庭問題、⑭社</p><p>員が取得した資格。</p><p>①～⑭の中で、社長として絶対欲しい報告はどれか。常務は？部長は？ 報告を社員の忠誠心に期待するよりは、</p><p>報告のためのルールを決める。それが習慣になるまで徹底する。</p><p>事例１：報告に用いるフォーマットを統一する</p><p>当事者間で問題意識を共有化するためには、</p><p>「ひと目でわかること」が絶対条件。管理者には、情報をわかりやすい</p><p>図、写真、グラフ、フローチャート、地図などにまとめる情報編集力が必要。</p></div>
+</div>
+<div class="section" id="sec-31">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§32</span>
+    <span class="sec-title">事例２：報告を受けたら「で、次は何をする？」と問い返す</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「で、次は何をする？」という言葉は、凄い言葉。聞かれて「こうします」と答えた人は、聞いた人と約束したこ</p><p>とになる。「で、次は何をする？」と聞いた上司は、部下の答えが面白いと思ったら、できるかぎり当人の力になっ</p><p>てほしい。</p><p>人間の元気の源は、「未来には今よりももっと楽しくなる」という思い。暗く沈んだ社員に「元気出せ！」と言うより、「で、次は</p><p>何をする？」と問いかける。</p></div>
+</div>
+<div class="chapter-header">法則その６</div>
+<div class="section" id="sec-32">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§33</span>
+    <span class="sec-title">６－１ 「使える・使えない」ではなく「育てる」意思を持たせよ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ビジネスで成し遂げたと言い切れるのは部下育成だけ</p><p>「あなたは、人生の中で『これだけは成し遂げた！』と言えるものがありますか？」と尋ねたところ、ほとんどの</p><p>女性は、YES と答えた。ところが男性は、１人も YES と答えなかった。YES と答えた女性の答えは、全員同じ。</p><p>「あ</p><p>の子は、私が育て上げた」</p><p>。</p><p>何十年も仕事して、</p><p>「成し遂げた」と言えるものが何もないのは、１人の人間として悔しすぎる。</p><p>リーダータイプの管理者は、部下をいかに育てるべきかと思い悩む。仮にできの悪い部下がいても、それを受け入</p><p>れて活かす道を考える。自分のことよりも組織のことを第１に考える組織指向だから。</p><p>一方、風雲児タイプの管理者は、部下育成よりもプロジェクトの完遂にこそ関心がある。したがって部下を「使え</p><p>る・使えない」という目で見る。そして使えないと判断した部下は、自分の統括範囲から排除する。</p></div>
+</div>
+<div class="section" id="sec-33">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§34</span>
+    <span class="sec-title">「使える・使えない」で考えるのは、簡単。それができない企業には、「育てる」ことに力点を置いたマネジメ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ントが必要。</p><p>事例１：創業者のつもりで「育てる」を考えよ</p><p>特殊な商品を専門に売っている特殊部隊。特殊な商品知識や人脈をベースとした仕事である。ビジネスチャンスに</p><p>出会うたび、どうしても俺が出なければと、チームリーダーは考える。</p><p>会社ってのは、人に仕事をさせるところ。自分が仕事をするところじゃない。上に行けば行くほどそう。いかに人</p><p>に楽しんで仕事をしてもらうかばかり考えている。お前は創業者みたいなものだから、思い切って任せてみろ。</p></div>
+</div>
+<div class="section" id="sec-34">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§35</span>
+    <span class="sec-title">先達から見れば、どんな部下も物足りない存在。しかし、やらせてみたら予想以上に働く。部下とは、そういう</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>もの。</p><p>事例２：ビジネスマンならば、部下を 10 人は育てよ</p><p>「自分が偉くなりたい」よりも「部下を偉くしてやりたい」という気持が強い上司。その思いに部下が惚れてつい</p><p>てくる。</p><p>事例３：部下と何かひとつ約束をして守り通せば立派な管理者になれる</p><p>新任の管理者は、思い悩む。しかし抜擢された人が、短期間に部下を上回る実力を身につけることは不可能。高校</p><p>野球などを観ていると、レギュラーではないがキャプテンをやっている人がいる。『私』をなくすのは、難しいこと</p><p>ではない。</p><p>何かひとつでいいから、部下と約束する。</p><p>『部下の日報には、その日のうちに返事を書く』</p><p>『クレームの責任は、自</p><p>9/11</p><p>分が取る』など。そして組織全体の利益を最優先して、部下と公平に接する。</p></div>
+</div>
+<div class="section" id="sec-35">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§36</span>
+    <span class="sec-title">６－２ 言葉を定義すれば、社員は自分の役割を認識する</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>言葉の定義が浸透すれば、社長の考え方が浸透する</p><p>「管理者とは･･･である」と定義し、管理者たちに教えてなくてはならない。そして管理者全員に浸透させねばな</p><p>らない。この定義に、定説はない。100 社あれば 100 通りの答えがある。しかし同じ社内の管理者 10 人に「管理者</p><p>とは？」と質問したら、全員の答えが同じでなければならない。これらの定義を社員に考えさせて定義してみるのも</p><p>面白い。</p></div>
+</div>
+<div class="section" id="sec-36">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§37</span>
+    <span class="sec-title">事例１：社員に言葉を定義させると、社員は自分の役割に気づく</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>人は、聞いたことは忘れるが、自分で気がついたことは忘れない。「気がついてほしい」と思う事項は、問いかけてその答え</p><p>が出るまで待つのが効果的。自分で気がついた人は、言われたからやる人と比べて後の行動が大きく変わる。</p><p>事例２：部下がわかっていないのは考えさせていないだけである</p><p>リーダーは、部下にやらせて、結果を公平に評価し、責任は自分が取る。</p><p>考える時間さえ与えれば、社長が「わかってほしい」と常日ごろ思っていたことに、社員は、自分の力で気がつく。</p><p>事例３：「言葉の定義」こそ、次世代へ相続するべきもの</p><p>相続とは、相を続けること。同じような考え方、見方を続けながら末永く繁栄していく。</p></div>
+</div>
+<div class="section" id="sec-37">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§38</span>
+    <span class="sec-title">６－３ 求める人材像を定めれば、人材の育成方法が見える</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>世界に通じる選手が何人も一度に生まれた仕組み</p><p>日本は、Ｗ杯を誘致しようと考えたとき、開催国として１次リーグを突破することを目標とした。フランスの目標</p><p>は、１次予選突破どころではない。優勝である。日本とフランスでは、目標が違う。目標が違うから、求める人材像</p><p>とそれを育てる訓練機関が違う。育った人材が違うから成果が違う。よってそこで活躍した選手たちのその後の評</p><p>価・処遇が違う。</p></div>
+</div>
+<div class="section" id="sec-38">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§39</span>
+    <span class="sec-title">人材を育てるには、</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「目標」から「処遇」に至る仕組みを整合させて整備する事が肝要。</p></div>
+</div>
+<div class="section" id="sec-39">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§40</span>
+    <span class="sec-title">事例１：求める人材像を社員の台詞から考える</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>最も簡単に「求める人材像」の見つけ方。それは「台詞」で考える。</p><p>・俺にこんなことを言ってくる管理者</p><p>・会議の席でこんな発言をする管理者</p><p>・部下にこう語りかける管理者</p><p>例えば、部下に対し「やれば、必ずできるはずだ。どうしたらできるか、それを考えよう」。会議の席で、</p><p>「長期的</p><p>に考えた場合、今のやり方はおかしい。むしろこっちのほうがよくなります」。イメージが固まれば、今の管理職に</p><p>どんな訓練を施すべきか自ずと明らかになる。</p><p>「長期的に･･･」を語れるようになるためには。長期的なトレンドを読</p><p>み、自社の業績を予測しシミュレーションする研修を施せばよい。ある製造業の幹部と、「どんなことを言う若手社</p><p>員と一緒に仕事がしたいか」について議論。約１時間の討議を経て、以下の６つの人材像にまとまった。</p><p>①自分の「理想のビジネスマン像」が語れる人</p><p>②自分の意見・考えを言う人</p><p>③「私にやらせてください。最後までやってみます」と言う人</p><p>④報告する人、ミスを認め皆に謝れる人</p><p>⑤「このことなら誰にも負けない」と言えるものがある人</p><p>⑥YES、NO で答えられる人</p><p>「日頃から指示ばかりしていては、決して②③のようなことを自分から言う人には育たない」。②③のような人材</p><p>を育てるには、</p><p>「君はどう思うか？」</p><p>「君はどうしたいのだ？」と、常日ごろ管理職から問いかけることが肝心。</p><p>このように、求める人材像を自分で考えれば育成法も自分で気がつく。</p></div>
+</div>
+<div class="section" id="sec-40">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§41</span>
+    <span class="sec-title">事例２：理想のビジネスマン像を「言われてみたい言葉」で見つける</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「お前は、どんな営業マンになりたいのだ？」と問いかけてもなかなか答えられないだろう。「君が営業マンとし</p><p>て一番言われてみたい台詞は、何だ？」すると誰もが簡単に答えをみつけやすい。上司は、部下がこうした理想像に</p><p>近づくよう指導するのが仕事。</p><p>「では、今のスタイルでずっと仕事を続けていくと、いつかお客様からそう言ってもらえると思うか？」</p><p>「たぶん無理だと思います」</p><p>「なぜ無理だと思うのだ？何かが足りないからだろうなあ。何が足りないと思う？」</p><p>「企画提案というか･･･、お客様が本当に求めていることを提案できていないので･･･」</p><p>「だったら今からそれをやれよ。なかなかうまくいかないようなら、いつでも手を貸すよ」</p><p>事例３：業績を問う前に「どんな部門長になりたいのか？」を聞く</p><p>全国に 30 以上の営業所。このうち３営業所だけは、赤字。社長は、３人の営業所長に質問。</p><p>「お前は、どんな営業</p><p>所長になりたいの？ どんな営業所にしたいの？」</p><p>。</p><p>10/11</p><p>１人は、</p><p>「絶対にライバル会社に負けない営業所にしたい」、</p><p>１人は「自分には今、部下が３人います。彼らを将来は全員所長にしたい」</p><p>。</p><p>営業所という組織を使って利益を生むためには、何よりもリーダーの志がしっかりしていなければ。「よし、その</p><p>姿を目指して励め！」</p><p>赤字を黒字にする対策を出せとは、要求しなかった。志がシッカリしている人材は、いつか必ずそこにたどりつこ</p><p>うと努力する。</p><p>このことは、会社全体でも同じ。会社が倒産をしない最大の方法は、社会性を追求し続けること。社会の役に立ち</p><p>続ける以上、会社は倒産しない。志は、全社員が聞かれて即回答できるほど浸透していることが肝心。</p></div>
+</div>
+<div class="section" id="sec-41">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§42</span>
+    <span class="sec-title">未来を語り合うことで、人事考課は楽しくなる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>仕事を楽しくする秘訣は、先のこと＝未来について考えるようにすること。人事考課は、過去を振り返る仕事であ</p><p>る。それを尐しでも楽しくするには、人事考課に未来について語る要素を採り入れる。上司が部下に考課結果を伝え</p><p>るときに、</p><p>「君はここが×だから、次は頑張って○にしよう。そのために、来期はこんなことに取り組もう」と語れ</p><p>ばよい。</p></div>
+</div>
+<div class="section" id="sec-42">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§43</span>
+    <span class="sec-title">成果報酬は個人ではなくチームに</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>給料が増えている間は、成果主義はうまく機能しているように見える。しかし業績が下降線に転じた場合は、給料</p><p>がさがる。１度 1,200 万円の年俸を手にした人は、今度は自分を 1,200 万円で買ってくれる他の会社を探す。そうな</p><p>らないように仕組むには、個人よりも組織を対象にした成果主義を導入することが望ましい。</p><p>仕事をチーム単位に分割し、高い成果を出したチームに報奨金を支払う。達成報奨金をどう振り分けるかは、チー</p><p>ムリーダーに一任する。誰がどの程度頑張ったかを一番知っているのは、チームリーダーだから。</p><p>こうしたルールがあれば、自分のことよりもチームのことを優先して考える人材が自然と育つ。報奨金を配分する</p><p>とき、リーダーは、公平に評価するという大切な仕事に直面する。そんなリーダーの姿を見て、部下はリーダーの条</p><p>件を覚えていく。</p></div>
+</div>
+<div class="section" id="sec-43">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§44</span>
+    <span class="sec-title">事例１：作業日報を用いて毎日人事考課を行う</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「今日の自分はよく頑張った」と思った日は、社員が自分で 100 点をつける。上司は、「お前、今日は資材が見つ</p><p>からなくて段取り替えに手間取っただろう。だから今日のお前は、70 点。あれを 15 分でできるようになれば、お前</p><p>は 100 点だ」というように理由を説明しながら加点・減点を行い記入する。このように作業日報を使って「毎日考課・</p><p>毎日フィードバック・毎日査定」を行っている。</p><p>またプロジェクト単位で仕事を進める企業では、ひとつのプロジェクトが終わるたびに、採点している例もある。</p><p>半年に１度の評価だと、どうしてもイメージ考課になる。</p><p>事例２：社長は、通常考課以外に自由に配分できる賞与原資を持て</p><p>社長が自分で好きに配分する「自由裁量枠」。社長考課は、地味ながら頑張っている社員の意識を高めるのにも役</p><p>立つ。例えば一所懸命工場前の花壇を手入れしてる守衛さんに「『花壇が素晴らしい』と誉めてくださるお客様が多</p><p>いのです。今ではあの花壇は、当社の自慢です。あなたの陰ながらの努力に頭が下がります」。</p><p>日頃は社員に感謝の意をなかなか伝えられない社長でも、賞与を渡すときは言える。社長が全社員を見渡せる中小</p><p>企業ならではの制度。</p><p>事例３：一番欲しいのは「できる社員」よりも「できるようになる社員」</p><p>俺は、最初からできる社員はいらない。できない社員もいらない。できるようになる社員が欲しい。去年できなか</p><p>ったことが、今年はできる。そういう人材を高く評価したい。</p><p>「できるようになる人材」が欲しい。そのためには、求める人材像を明確にし、社員にその姿を目標として意識さ</p><p>せること。</p><p>11/11</p></div>
+</div>
+    </div>
+  </div>
+  <div id="reading-view"><div class="reading-inner" id="reading-inner"></div></div>
+</div>
+</div>
+<script>
+
+const sections = [{"id": 0, "chapter": "法則その１", "title": "前年対比実績を時間で表せば、社員は危機意識を持つ", "body": ["危機意識を持たせようとするならば、社員にわかるよう言い方を工夫する。方法のひとつが、前年比マイナスを時", "間で表現する。", "「今期の売上高前年対比は 8.2％減。これは、前期に比べ１ヵ月分の売上が消えてなくなったのと同じ", "である」", "。誰もが、", "「今のままではやばい」と危機意識を持つ。多くの社員は賞与の大きさを月数で把握しているから。", "危機意識に限らず、相手に気が付いてもらうコツは、言いたいことを相手が日頃使っている単位に置き換えて訴える。", "事例１：会議の開催時間で危機意識を演出する", "「ゴールデンウイークのど真ん中。昼飯抜きの会議」。たったこれだけで、誰もが非常事態だと認識する。", "事例２：改革を指示するときは「いつまでにやれ」と指示する", "時間が決められている場合。「今日結論をださないと間に合わないから決めてしまおう」との思いから、どちらか", "が譲歩する。だから前に進む。", "「レスポンスを早くしよう、納期を短くしよう」という目標には生返事な社員も、", "「いつまでにやれ」", "「ここまで短", "縮せよ」という指示には敏感に反応する。", "事例３：未来のシナリオを見せて危機意識を作る", "２ヶ月間かけて、社内外の情報を集め、", "「最善の未来」と「最悪の未来」と「妥当な未来」の３つを比較したシナ", "リオ分析。", "「順風にあって悲観せよ。逆境にあって楽観せよ」", "。前者の重要性に気が付いた新社長は、コンサルタント", "を利用して部長たちの心に危機意識を作った。"]}, {"id": 1, "chapter": "法則その１", "title": "１－２ 経営方針を繰り返し語り、社員を勇気づける", "body": ["トップは自分が描いた未来を、繰り返し社員に語れ", "人が元気になるときは、", "「これから先にもっと楽しいことがある」と思うとき。社員の活力を引き出すには経営者", "が明確な方針を示し、未来を熱く語ること。"]}, {"id": 2, "chapter": "法則その１", "title": "数年後のビジョンを考えるコツ。数年先の社会環境を予測したうえで、そのときの自社を代表する「代表商品」", "body": ["「代表技術」", "「代表サービス」", "「代表店舗」", "「代表人材」", "「代表メッセージ」などを考えること。それを、社員に機会の", "あるたびに繰り返し訴える。", "水谷の経済講演会。", "「毎日同じ話をしていて飽きませんか？」「飽きるはずがない。信念を語っているのだ」。信念", "ならば、それが実現するまで、同じ話を繰り返して語るのは当然。", "事例１：方針を語った直後に、トップとしての覚悟を示す", "「･････以上の実現に向けて、私は全身全霊を投げ打つ」", "方針演説で社員と約束した社長は、最前線に立ち、自らも奮闘しつつ指揮を執る。", "事例２：繰り返し訴えて、社員のプロ意識を高める", "M 部長の印象。", "「こんなに夢を語る人を見たことありません」", "。しかし M 部長は、", "「私は、夢だと思っていない。そ", "うなるものだと思っている」", "。とうとうと語り出した。市場に潜む構造的な問題。これが表面化したとき、市場のニ", "ーズはどう変わるか。そのときの当社を代表する商品とサービス。それを可能にする技術。そして、それを築くため", "には、今後どんな投資が必要になるか。", "仕事の社会的意義を繰り返し訴えるのは、社員のプロ意識を持たせるため。仕事が思うように進まないとき、多く", "の人はできない言い訳に終始する。しかし本当のプロは、言い訳なんかしない。プロのスポーツ選手は、できない言", "い訳を並べても、できなければクビである。", "お客様から来た「ありがとう」の手紙を、壁に掲げている会社がある。社員がお客様からいかに期待され、感謝される存在", "かを示すため。「期待されている」と自覚した人には、プロ根性が目覚める。", "事例３：ピンチのときはスローガンを掲げて戦う", "1/11", "わずかな数文字のスローガンでも、聞く者に与える迫力が違う。リーダーは、自分でスローガンを作らなければな", "らない。明確なビジョンがあれば、スローガンは自ずとできる。その思いの強さが、そのまま言葉の迫力になる。ス", "ローガンを掲げれば、", "『危機意識はあるが迷いはない』状態になる。", "部下が作ったスローガンは、言葉の響きがよくても、わかりにくい場合は突き返す。"]}, {"id": 3, "chapter": "法則その１", "title": "１－３ 改革を推進するための周到な経営計画を作る", "body": ["詳細な行動計画がなければ、利益は出ない", "①売上げ＝原価＋利益", "②利益＝売上げ－原価", "③原価＝売上げ－利益", "①は、原価に自分が欲しい利益を乗せて売ればいいという考え方。", "②は、頑張って売上げを拡大すれば、利益は後からついてくるという考え方。", "③は、売上げが伸びなくても、必要な利益を出せるように原価を抑えようとする考え方。昨今注目されるマネジメ", "ント上の施策は、原価を抑えるためのものばかり。欲しい利益", "は、原価をコントロールしてようやく確保できる。"]}, {"id": 4, "chapter": "法則その１", "title": "利益を出すためには、経営計画書が、不可欠な時代。", "body": ["「計画段階で利益を出すこと」", "。", "原価を抑える詳細な計画は、どこにもない。新規開拓に向けた具体的な行動計画も記されていない。これでは利益", "が出るはずがない。", "でき上がった計画に満足できないときは、赤ペンを入れて突き返す。社長が納得できるまで、これを繰り返す。さ", "らに、その計画書を使い続ける仕組みを造る。", "経営計画書を常時携帯している社長。彼らが使っている経営計画書は、分厚い。本人の書き込みや「これは！」と", "思った新聞記事などが、貼り付けられていて、使い続けるうちに紙がゆがみ、ダルマのように膨れ上がっているから。", "事例１：計画には、「見直し」、「検討」という言葉は禁止", "例えば、", "「経理部長方針」", "課題：会計帳簿の早期作成。", "対策：帳簿の入力を項目別に２分し、2 台のパソコンで入力。後に合算させることで、従来比５日の短縮を目指す。", "「××の見直し、××の検討という言葉は、禁止。見直した結果、今年は仕事の何をどうのように変えるのか。そ", "れを書け」", "。営業部ならば、", "「新規開拓を××件する」だけでは、不合格。攻略先の具体名と担当者名、そして具体的", "な攻略法を記す。ここまでしないと OK が出ない。"]}, {"id": 5, "chapter": "法則その１", "title": "事例２：エースを巧みに使う３勝２敗の原則", "body": ["どんな組織でも、２－６－２の原則。２割がエースで、６割が普通で、残りの２割が落第という意味。特に、たっ", "た２割しかいないエースをいかに使うかが肝心。", "「５戦全勝を狙うな。３勝２敗を狙え」。攻略したいお客様が５件ある場合、５件すべてを攻略しようと思うな。", "３件を確実に攻略し、２件は最悪の場合失敗しても構わないというのである。比較的簡単に攻略できそうなところを", "３件と、難易度が高そうなところの２件に分ける。次に簡単そうな３件を、全体の６割を占める普通の社員に担当さ", "せる。そして難易度の高い２件をエースに担当させる。", "黒星を白星に変えるために、エースを巧みに使うことこそ、計画立案者の仕事。", "事例３：改革を辺境から起こし、Ｖ字回復を演出する", "企業が改革を推し進めるときも、改革推進派が２割で、６割がどっちつかずの模様眺め。そして古いスタイルに固", "執する守旧派が２割。改革を進めるためには、模様眺めの６割をいかに改革推進派に取り込むかが勝負。", "そのために多くの企業は、わざと V 字回復を演出する。まず出せるだけの赤字を出す。そこで、トップダウンでさ", "まざまな改革を行う。事業の集中と選択、古い習慣の撤廃、新しい仕組みの構築。改革推進派が、「これをやるしか", "ない」と不安がる社員を励ましつつ、必死になって改革を推し進める。すると翌年、大赤字から一気に黒字に転換す", "る。これを見て、模様眺めだった６割が、一気に改革推進派に賛同する。逆に漸進的に改革しようとすると失敗する。", "改革支持者が、なかなか増えないから。", "２割を起爆剤に６割を巻き込む手として有効な方法。本社から最も遠い出先（支店、営業所、工場）などを１ヶ所", "選び、そこで改革を行う。この出先が、突如高い業績を出す。すると本社の面々が驚いて「いったい何があったんだ！」", "と注目する。問題は、最初に選ばれた遠方の出先をいかにその気にさせるか。「幕末のように、改革は常に辺境から", "起こる。今度は君たちが主役だ。龍馬や高杉になるのだ。そしてここに来たこともない本社の連中に一泡吹かせてみ", "ようじゃないか」", "実績を見せる仕組み作りが、社長の手腕。", "事例４：誰かを犠牲にして、危機意識を植えつける", "部長１人、部下８人が集まった某社の営業会議で、Ｂ部長が社長から面罵。", "「この数字は、何だ！お前は部長だろう！ それなのにお前は、昔から同じ売り方しかしない！ この成績でどう", "2/11", "やって社員とその家族を幸せにするのだ！ このままじゃ惨敗だ！」。", "「これからどう挽回するのか、自分でよく考え", "ろ！」と言い残し席を立っていった。", "Ｂ部長は、", "「これまでのやり方を変える。簡単ではないが、皆、力を貸してくれないか」。", "実は、この面罵は社長とＢ部長が、２人で仕組んだ芝居。「自分の代わりに上司が叱られている」と感じた部下達", "は、守ってくれた人を助けたいという闘争心を持つ。もっとも重要なのは、社長が立ち去ったあとのＢ部長の一言。", "「現場を知らない社長は、気楽なものだ。こっちは、たまったもんじゃないよ」などとは決して言ってはいけない。"]}, {"id": 6, "chapter": "法則その１", "title": "１－４ 歴史分析で人を育てる", "body": ["過去から未来へと受け継ぐべきことを学び取る", "社員教育の最大の教科書は、経営計画書。その点、社史は、経営計画書に継ぐ偉大な教科書。「今なぜそれをする", "のか」を学び取ることができるから。そこで社史を振り返り、それらのエッセンスが、ひと目でわかるような形で整", "理したい。当社が進む方向性が、自ずと見えてくる。年表には、経営者の言葉も書き込む。また経営に大きな影響を", "及ぼしたリスクも合わせて年表に記載したい。どんなことがあると会社は危なくなるのか、それを知るには、過去を", "振り返ることが一番。"]}, {"id": 7, "chapter": "法則その１", "title": "過去 10 年の部門方針書から自部門の歩みを振り返る", "body": ["ここ 10 年間の歴史を振り返るだけでも学ぶことが多数ある。10 年間の部門方針と業績を一覧表に、加えて各年の", "顧客別売上高ランキング、商品別売上高ランキング。これらの資料を社員に配布したうえで、下記の問について社員", "間で討議する。", "①顧客別売上高ランキングは、この 10 年間でどのくらい変わったか？", "②商品別売上高ランキングは、この 10 年間でどのくらい変わったか？", "③過去 10 年を３つに分け、それぞれ「××時代」と名付けるとどのようになるか。", "④過去 10 年間に当社伸びた（落ちた）要因は何か？ そのキッカケはなんだったのか？", "⑤過去 10 年間に見られるわが社特有の強みと弱みは何か？", "⑥過去 10 年間に起きたことで、私たちが今後どうしても継続していかねばならないことは何か？ 後世に伝えて", "いかねばならない教訓は何か？", "⑦以上を踏まえて、これから 3 年を「○○時代」と名付けると、どんな時代になるか？", "それぞれを考えることで、社員は自分の使命に気づく。", "事例１：歴史的経緯に自分たちの仕事の意義を見出す", "歴史を振り返る機会を作ると、社員は、そこに「事業運営に役立つヒント」や「教訓」を見出す。", "それらは過去から未来へと受け継いでいくものであり、その役目を担うのが自分達だと気がつく。", "事例２：これからの３年間を「××時代」とネーミングをする", "もはや、できる・できないで迷っているときではない。", "「どうしたらできるか。それしか考えない」", "。若い部下の純", "粋な叫びが、上司を揺り動かす。これが歴史分析の効果。", "事例３：次の設備の更新が、自分の仕事だと気づく", "事業は、陸上のリレー競技のように誰かに受け継いでいくもの。受け継いでいくバトンが何か", "に、まだ気づいてない社員は多い。歴史分析は、そのことに気づく道具である。"]}, {"id": 8, "chapter": "法則その２", "title": "２－１ 部下も上司もワクワクする学習機会を設ける", "body": ["増える体感型オーダーメイド研修", "誰からの指示がなくても、自分から進んで仕事を見つける人。", "「風雲児」と呼ぶ。ここ数年で急激に進化したのが、", "企業内研修。最近は、オーダーメイドが主体。", "「すぐに成果につながる現場指導型の研修を考えてほしい」", "「実務のた", "めのスキル教育は、いらない。意識を変えるプランが欲しい」。事業を差別化するために、他社とは違うモノの見方・", "考え方のできる人材を養成する。", "事例１：輪講で理論を修得し、その後に応用力を磨く", "「手抜きの部分を埋める手だてを考えれば、それが特許のもとになる」。応用力は、理論をしっかりマスターした", "人が、現場経験を積み重ねるうちに身につけるもの。", "「社長方針は、現場の社員まで速やかに伝わるはずだ」が理論。しかし「なかなか素早く正確に", "は、伝わらない」のが現実。これを解決する手段を考えれば、それはその会社独自のノウハウ。", "事例２：ISO の認証取得も、社員教育の一環と位置づける", "最善策の創出に、ディベートは有効。ISO の認証取得を社員教育と考える会社は、業務の改善そのものを重視する。", "研修の朝、ワクワクするような期待を持った社員が、どのくらいいるだろうか。"]}, {"id": 9, "chapter": "法則その２", "title": "事例３：新人教育には自分で調べて発表させる機会を作る", "body": ["能動型の人材を育てるには、発信させる機会も設けるとよい。新人研修でアウトプットするものは、会社案内、社", "内報、ホームページなど。新入社員研修は、知識付与ばかりではなく、「自分で調べ、自分で発表する」要素を盛り", "3/11", "込んでいく。完成したら役員の前で発表。発表という舞台と時間で追い込むことが、成功の鍵。"]}, {"id": 10, "chapter": "法則その２", "title": "自由裁量は、上司は「１」と「10」を担い、「２」～「９」を部下に任せること", "body": ["パワーを引き出すには、仕事を自由にやらせてみること。", "トップが行う「１」の仕事は、", "『７つの習慣』によれば、次の５つである。", "①部下にゴールを示す、", "②使える資源を与える、", "③これだけはしてはいけないことを約束させる、", "④報告のルールを決める、", "⑤目標達成時の報酬を示す。", "この中で忘れられがちなのが③④。", "トップが行う「10」の仕事は、結果的にどうなろうと自分が最終責任を取ること。部下に「好きなようにやってみ", "ろ」と言うのなら、", "「手柄はお前、責任は自分」と腹をくくる。", "事例１：期待する社員に、自分の力で設備を選ばせる", "思い切って若い３人に任せて大成功。まず第１に、メチャクチャ機械を大切にするようになった。第２は、言い訳", "を一切しなくなった。", "思い切って任せるときは、相手が驚くようなまかせ方をすることである。", "事例２：発注権限を部下に与え、お客様からの信頼を勝ちとる", "「当社では、発注者は社長よりも偉い」。社長がここまで割り切って考えるのは、メーカーが、発注権限のない社", "員を軽んじるから。また下請け業者も、発注権限がない社員を信用しないから。ただし、万が一貸し倒れが発生した", "ら、賞与がゼロになるのも同社のルール。自由裁量と自己責任は表裏一体。", "権限委譲は、投資回収期間が長く、方針がぶれにくい製造業や建設業などに向いた施策。逆に回収期間が短い小売業や、", "環境の変化が激しい IT 産業などでは、「攻め」「守り」を即決できるようにトップに権限を集中したほうがよい。"]}, {"id": 11, "chapter": "法則その２", "title": "事例３：「やらせてあげるのだから」の言葉で、仕事の重要度をわからせる", "body": ["「この仕事は君にやらせてあげるのだから、そのつもりで」。聞き慣れた「やれ！」でも「やってほしい」でも「頼", "むからやってくれ」でもなく、", "「やらせてあげる」", "。 相手を信頼していないと言えない言葉。言うほうは、「とにかく信じて", "みよう」と腹をくくる。"]}, {"id": 12, "chapter": "法則その２", "title": "２－３ 視察で先が読める人材を育てる", "body": ["街の変化を見たり人脈を拡げることで、先を読む力を養う"]}, {"id": 13, "chapter": "法則その２", "title": "５年後に行けば、５年間の変化がわかる。そして変化がなぜ起こったかを考えれば、流れが見える。流れが見え", "body": ["れば。先が読める。次を読む力は、変化をウォッチングすることから生まれる。気づきを重ね、なぜこうなったんだ", "ろうと考える。", "増えたのは、トップが出張に行くときに「お前も一度今の中国を見ておけ」と社員の誰かを連れて行く、同伴出張。", "自社に新しい風を起こす人材には、先を読む力が不可欠である。何度も見ているうちに、時代の潮流は自然と読めて", "くる。", "事例１：出張に行かせたら、自主的に動ける自由時間を与える", "企画者や開発者には、マーケティング・センスが必要。センスのよさは、ビックリした回数に比例する。", "事例２：出先と本社を経験させて T 字型人間を育てる", "大手百貨店に就職した H 君。地方支店勤務を望んだのは、地方店ならばいろんな仕事を覚えられると先輩に聞いた", "から。T 字型人材とは、幅広い見識を持ちながら、特定分野には、高度な専門性を発揮できる人材。", "事例３：トップ同士で飲むときは、お互いに若い社員も連れて行く", "若いうちは、年寄りに可愛がられるようになろう。そしていろんなことを教えてもらおう。逆に自分が年を取った", "ら、若いやつとつき合おう。そして若いエネルギーをもらおう。", "人脈は引き継ぐことのできない資産である。よって自分の力で築くより他にない。若手社員を自分の飲み会に同伴", "すれば、若手社員の人脈づくりのキッカケとなる。"]}, {"id": 14, "chapter": "法則その２", "title": "人脈は、ビジネスには不可欠な資源である。人脈は、一緒に仕事をしたり遊んだり勉強したりして初めてできる。", "body": ["そうした機会は、意図的につくるもの。"]}, {"id": 15, "chapter": "法則その２", "title": "知識だけでなく、実践で事業の醍醐味を体験させる", "body": ["成功企業でも、本当に最初から戦略があったとは限らない。最初の思いつきは、営業や開発の現場から生まれるケ", "ースも多い。お客様の不満、お客様の要望、お客様に選ばれない理由、お客様の笑顔、ライバルに対する競争心、技", "術者の探求心、社員からの改善提案、社員の意地。現場で直面した課題への方策を、「ああなって････次にこうなっ", "て･･･」と組み立てていったら、いつしかそれが競争に勝ち続ける物語。", "4/11", "新規事業を立案するときは、教科書は役に立たない。そもそも「差別化」を考える仕事とは、型破りに挑戦するこ", "と。売りや買いや使用の現場に出す。そこで、買う人や売る人、使う人の気持ちを人一倍考えさせる。そこで見つけ", "た問題を解決する新規事業のプランを練る。", "そして成功体験ならば、本人が自信を深めるだけでなく、会社にとって新たな収益源が生まれる。たとえ失敗して", "も、失敗から多くを学び、その人のビジネス感覚を鋭く磨いてくれる。", "事例１：新規事業を立ち上げるときの楽しさを社員に示す", "みんな、本当に好きな仕事をやっているときは、人間は眠らなくても平気なんだよ。それから飯も食わなくても平", "気なんだよ。夢に向かって邁進する社長の生き方こそ、事業創造を望む彼らの最大のお手本。", "事例２：新規事業を立ち上げやすい環境を整備する", "アイデアは、それぞれの企業の内部に多数眠っている。問題は、アイデア不足ではなく、それを引き出す組織体制", "にある。新規事業を立ち上げるための大原則は、担当者を社長直轄にすることと、その担当者を新規事業の専任にす", "ること。担当の人選は、", "「何よりもまず新規事業を立ち上げてみたい！」と考えている人材を選ぶこと。", "研究開発型のある製造業では、「やりたいことがある者は、遠慮無く経営会議で発表しろ」がルール。プレゼンを", "聞いて、イエスかノーかをその場で社長が決裁する。利益では縛らず、時間で縛る。「これだけの時間と費用を君に", "やるから、期限までに必ず答えを出せ」", "。", "事例３：作る人は売る人と、売る人は作る人と顔見知りになる", "社内人脈を築く機会として、同じプロジェクトに関わる社員同士が、交流する場は欠かせない。できれば川上と川下。フロン", "トとバックヤードという様にお互いに支え合っている仲間同士がよい。"]}, {"id": 16, "chapter": "法則その３", "title": "３－１ 顧客との約束を守り続けることでブランドを作る", "body": ["ブランドを作ることは、新しい約束を考えることである", "今日は、ブランドも重要な経営資源。お客様は、買うときに「この商品ならば間違いはない。必ずこういう効用が", "ある」と期待する。その期待に応え続ける。ブランドとは、売り手のお客様に対する約束。", "どんな事業にも、よいときもあれば悪いときもある。その間、ある姿勢をまったく崩さないことは、その企業によ", "ほどの「こだわり」がないとできない。こだわり続けると、必要以上に手間がかかり非効率なことも出てくる。それ", "が、価格に跳ね返り、値段は他社に比べて高くなる。高価でも、その商品を購入する。これがブランドの力。"]}, {"id": 17, "chapter": "法則その３", "title": "ブランドを築くには、お客様に対し今までとは違う何か新しい約束をすること。差別化とは、他社とは違う約束", "body": ["を作り、実行すること。約束は、何も商品の機能面だけとは限らない。「早さ」を約束することも、約束のひとつ。"]}, {"id": 18, "chapter": "法則その３", "title": "事例１：毎月、全顧客に満足度調査を実施し続ける", "body": ["顧客満足度調査は、「何を聞くか」だけでなく、「何回聞くか」も非常に大切な要素。継続的にお客様の声を聞き続けて、よう", "やく自分の真の姿を知ることができる。", "事例２：商品サンプルにメッセージを入れて配布し続ける", "商品の紙のサンプル。ただサンプルを配るのも味気がないから、そこに情報を載せた。『はなしのたね』は、同社", "の定期刊行マガジン。当社は、問屋ではなくてサービス業。問屋なら、商品を在庫し、注文通りにお届けするのが当", "たり前。対してサービス業は、対人業務。何よりも挨拶や返事ができるのは当たり前。商品を望むサイズに加工し、", "より早く届けるのも当たり前。そして情報を提供するのが当たり前。", "社員一人にひとつ、お客様と何かを約束し守り続ける。", "事例３：お客様に感謝する姿勢を態度に表す", "ある冷凍食品会社は、「自分が食べるつもりで作る」が行動指針。", "また食品製造業の E 社の給料明細袋には、発行者である会社名の上にとても大きな字で「取引先一同」と記してあ", "る。", "また G 社の社内には、お客様を祀った神社がある。", "「お客様は、神様だから何でもお見通し」", "。外からは見えない企業の手抜きも努力も、お客様に確実に伝わる。"]}, {"id": 19, "chapter": "法則その３", "title": "３－２ 朝礼での発表・黙想でよいスタートを切る", "body": ["朝礼は職人に力を発揮してもらうためのお膳立てである", "職人たちにお膳立てを施すのは、管理者の仕事。朝礼は、職人に今日１日を力一杯働いてもらうための、お膳立て", "の場。", "①スローガンなどの唱和", "②上司からの仕事の指示", "③３分間スピーチ", "④行動予定発表・業務報告", "⑤ロールプレイング", "店舗でお客様を迎えたときの店員の挨拶や、お客様と接したときの営業マンのセールストークなど。", "5/11", "一方、こうしたお膳立てを嫌う人もいる。自由裁量で仕事を任されている人たち。慣習だからと言って、全部門で", "同じように朝礼を行う必要はない。", "事例１：朝礼で創業者が編纂した小冊子を読み、創業者の思いを伝える", "「人間として何をするべきか」を繰り返して言い続けていくことは、会社の強みとなる。", "事例２：自分の役割を認識させるために発表の仕方を変える", "営業担当者の多くは、", "「今日、私は××と××をします。私も頑張りますから、どうぞ皆さんも頑張ってください」", "。", "現場をサポートする社員は、", "「今日、私は××と××をします。私は頑張ります。皆さんのために頑張ります」", "。ほん", "の尐しの違いだが、自分に与えられた使命の違いが、ハッキリ認識できる。", "朝礼のときに１分間、黙想をしている。この１分間に、社員が自分で自分に今日行うことを約束することができた", "ら、その効果はとても大きい。", "部下が報告に来たとき「ご苦労さん」と言うのは、使用者と使用人の関係。対して「ご苦労さん。ありがとう」と", "言えばチームメイトの関係になる。"]}, {"id": 20, "chapter": "法則その３", "title": "３－３ インセンティブを工夫してモチベーションを高める", "body": ["ご褒美が多額な場合は本人、少額のときは家族に", "支給する額が大きい場合は、個人に直接支払うのが効果的である。逆に支給する額が小さい場合は、本人ではなく", "家族が喜ぶようにするのが効果的である。お金よりはトロフィーや表彰盾を渡すほうが、効果がある。", "「パパが、会社からトロフィーをもらって帰って来た！ パパは凄い！」と子供。同じ効果は、頑張った社員を社", "内報に掲載しても得られる。トロフィーや表彰盾は、必ず見える位置に飾る。トロフィーをいくつ溜めるかが、その", "人の励みになる。", "事例１：奥さんに宛て、社長からダイレクトにギフトカタログを贈る", "トロフィーばかりでなく、金目のモノを支給したい。そう考える場合も、本人ではなく家族に届けるとよい。W 社", "では、社内コンテストで優秀だった人の家族に対し、社長がギフトカタログを送っている。", "「あなた、これ何？ 中に社長からの手紙が入っているのだけど」", "「そうなの。全然知らなかったわ。それで私がこの中の好きなものを選んでいいの？」", "「ああいいよ。好きなの選べよ」", "「すっごく嬉しい！ あなたの会社って、本当にいい会社ね」", "男は、総じて照れ屋である。よって会社で優れた成果を残しても、家族に語りたがらない人が多い。", "事例２：トイレに気を配り、パート社員の定着率を高める", "女性にとってのトイレは、", "「化粧室」", "。化粧直しを終えた自分を見て「さあ午後も、もうひと頑張り！」と気合いを", "入れる。", "「工場のトイレを見れば、その企業の本当の姿がわかる」という格言。", "事例３：社長のねぎらいの一言が社員の士気を高める", "「ご苦労さん、よう頑張ってくれたな、感動したよ。ありがとう。」", "「君のやることに感動した」と、部下を素直に", "誉める上司は、本当に尐ない。格下のものを素直に誉められるのは、自信がある人だけ。"]}, {"id": 21, "chapter": "法則その３", "title": "３－４ 社外活動で、社員の意外な一面を引き出す", "body": ["宴会や慰安旅行で社員人脈を築く", "会社は、我慢することが多い。不安も多い。人は、我慢していたり不安を抱いたりすると、その思いを誰かと分か", "ち合いたいと思うもの。職場の空気が凛と張りつめている企業ほど宴会は盛り上がる。宴会は、日頃の管理の厳しさ", "の度合いを測るバロメータのひとつ。", "宴会や慰安旅行は、", "「意味がない」", "「やめたほうがよい」との意見が多い会社。", "「会社に活力がない」", "「職場の雰囲気", "が、悪い」", "「上司の管理が、適切でない」などの SOS である可能性もある。", "事例１：プロジェクトが解散しても、メンバー同士の交流は続ける", "自信のないトップは、自分が部下からどう思われているか気にかける。そして自分のほうを偉く見せるために、部", "下のことを悪く言う。", "「俺の悪口を言っても構わないぞ」と笑顔で言う。自分に自身がなければ、言えない。", "事例２：常識はずれなことに挑むとき、隠れた才能が目覚める", "「人に喜んでもらえた！」という喜びを重ねて、人は自信をつけていく。"]}, {"id": 22, "chapter": "法則その４", "title": "自分が稼がねばならない額を自覚する", "body": ["コスト意識は、", "「いったいいくら稼ぐ必要があるか」と「いったい経費をいくらに抑えねばならないか」のふたつ。", "まず自分の年収を 1.20 倍にし、自分の人件費を算出する。会社が負担している社会保険、福利厚生費、教育研修", "費なども人件費とする。", "6/11", "次に、全人件費が、営業部門の人件費の何倍になるかを計算し、乗じる。スタッフ（間接）部門の人の給与も稼が", "ねばならない。", "次に損益計算書から、粗利益に占める人件費の割合が何％かを調べる。", "これを 12 で割れば毎月の必要粗利益となり、月収の何倍かがわかる。さらに粗利益率で割れば、１ヵ月に必要な", "売上高を算出できる。", "粗利益とは、お客様から「ありがとう」の代償としていただくもの。粗利益が多い人は、より多くのお客様の役に", "立った人である。", "事例１：人時生産性を明らかにし、社員にコストを自覚させる", "人時生産性とは、１人１時間当たりどれだけの付加価値を稼いだかを見る指標。", "「お客様を１回訪問すると○○円」「メーカーに１回発注すると××円」のように、すべての仕事に１回当りの値", "段（付加価値基準）をつけている。", "自分がいくら稼いだかは、一定時間内にどんな仕事を何回やったかを振り返り、合計すればわかる。自分で計算し", "た人時生産性と人事考課は、連動していない。理由の第１は、個々の仕事の付加価値基準はあくまで理論値であり、", "実際の仕事の値段とはズレがあること。第２は、さらに付加価値基準が低くても、どうしてもやめられない仕事があ", "ること。", "事例２：決算賞与の支給基準を明確にする", "「どんなことがあっても、明日までに間に合わせろ！」「できないならやめてしまえ！」などと、会社は、どの部", "門も利益を創り出すためのプレッシャーに溢れている。その反面、「儲けが出れば、それなりにいいことがある･･･」", "と気づかせてくれる機会は尐ない。", "利益が出ていれば、会社が安定的に発展する。ポストも増える。新人が、次から次へと入ってくる。毎年給料が上", "がる。", "「いいこと」ずくめである。ところが社員は、これらを「いいこと」だとは思っていない。「当たり前のこと」", "だと思っている。そんな社員のモチベーションを高めるには、「頑張ればこんなよいことがあるのだ」と実感できる", "仕掛けが欲しい。", "その仕掛けとして最も効果的なのが、決算賞与。例えば売上高対経常利益率が３％を超えた場合、超えた額の半分", "は会社にプールするが、半分は決算賞与として社員に分配する。", "決算賞与支給のルールは、「手柄は社員のもの、失敗は自分」を示す究極の姿。", "事例３：稟議書の決済時に、社員の投資感覚を磨く", "「生きた企画とは、見たり聞いたりしているうちに、実現するシーンが頭に映像で浮かんでワクワクしてくるもの。", "が、俺のところに来るのは、数字や言葉は立派でも中身がカラッポ。どんな行動を取るのかサッパリみえてこない」。", "申請者を見て、", "「熱いな、いい目をしているな」とＫ社長が感じたら、OK である。", "「社長を騙して投資させ、自分がやりたい事業をやることこそ、サラリーマンの醍醐味」"]}, {"id": 23, "chapter": "法則その４", "title": "４－２ コストがよく見えるようにする", "body": ["コストを下げるには、グループ間の調達を見直せ", "調達コストを下げるには、買うものの妥当なコスト（市場価格）はいくらなのか理解する。買う商品の原価構造を", "読み、", "「この商品は、これくらいまで下げられるはず」を意識すれば、交渉は有利に運ぶ。", "大企業のグループ会社の特色は、人件費を含む１人当りの販売管理費が、同じ規模の同業他社より高いこと。社員", "の多くが、大企業からの出向、転籍者だから。", "・", "「同じグループのあそこから買え」と言われているから", "・出向した先輩から「俺の顔を立ててくれ、この値段で買ってくれ」と言われているから", "メーカーの支配力が衰退しつつある業界では、特約店・代理店のメリットは、どんどん薄らいでいる。さらに同業", "者組合などでは、仲間の新規事業展開を制限しているケースがある。お互いの縄張りを守るためであるが、こうした", "ルールに執着している間に、異業種に市場を奪われてしまう。", "深い関係というものは、コストがかかる宿命にある。しかしビジネスは、感情の関係よりも利害関係を優先する。", "現状に照らして、意味がないと思われる古い慣習は打破するべき。生きるためには、「金が切れないうちに、腐れ縁", "を切る」", "。", "事例１：コストを実測し、改善目標を定める", "年収が上がり続けている人は、およそ家計簿はつけない。しかし、年収が下がった人や会社を辞めた人は、途端に", "家計簿をつけ始める。", "現状のコスト要因を明らかにし、どこまで改善するかの目標を立てる。それが競争力回復の第１歩。", "事例２：費用対効果を追求すること、これまでの常識が非常識になる", "お客様は接待しない。しかし、仕入先は接待する。", "「社内では誰も叱ってくれないから、お客様に叱られに行く」をモットーとする社長。"]}, {"id": 24, "chapter": "法則その４", "title": "事例３：社内に潜む無駄を探させてプレゼンさせる", "body": ["「やめてしまえプロジェクト」", "。", "「君たちが日頃感じている『こんな無駄なことはやめてしまえ！』を俺に提案して", "7/11", "ほしい。ただし、なぜやめるべきかを明らかにすること。代替案もあれば出してほしい」。", "「××会議は無駄です。報告ばかり」", "。", "「上司による多段階チェックは無駄です。稟議を回して待つより、経営会議でプレゼンさせてほしい」。", "「倉庫の中の不動在庫が、18％もあります」", "。", "「機能分散している工場は無駄です。設備稼働率を考えれば集約したほうがよい」。", "サラリーマンは、誰かが「やれ」といったものを自分の一存で「やめましょう」と言えない宿命。このプロジェク", "トは、そうしたしがらみを断ち切ってのタブーへの挑戦。"]}, {"id": 25, "chapter": "法則その４", "title": "経営の舵は、リアリストとロマンチストのコンビで取れ", "body": ["経理・総務・人事などの管理部門。対して営業・技術・開発などマーケティング部門。強い会社では、決まって管", "理部門とマーケティング部門の責任者が、名コンビと呼ぶにふさわしい関係を築いている。本田技研工業の藤沢武夫", "と本田宗一郎。歴史上の人物では、石田三成と豊臣秀吉。現実を見つめるリアリストと夢を追うロマンチストの関係。", "ビジネスマンは、その人の「性格」ではなく「仕事」に惚れるもの。", "「お前は嫌いだ。が、お前の仕事は好きだ」", "事例１：嫌われるのを覚悟して厳しい態度で部下を叱る", "リアリストは、嫌われる。リアリストの仕事は、", "「社員から愛されよう」と思う人には決して務まらない。会社をよ", "くするために、「いつかわかってくれるだろう」を胸に、シビアな判断ができる人。それが管理部門長。", "事例２：資本主義の原理原則に戻り、古い習慣を打破する", "「資本主義は、経営者が『俺はこうしたい』という事業の夢を語る。それに賛同した株主などから資金を集める直", "接金融が、基本。", "昔、坂本龍馬率いる海援隊の船が、紀州藩の船と衝突し沈没。このとき龍馬は、将軍家を相手に裁判を起こし勝訴した。", "筋を通せば、浪人でも将軍家に勝てる。"]}, {"id": 26, "chapter": "法則その５", "title": "会社を熱狂集団に変える３つのポイント", "body": ["熱狂集団造りの第１は、わが社の戦略をわかりやすい形で示すこと。シンプルな戦略を掲げる企業ほど好業績。", "第２は、目標（達成基準）を設け、達成できたかどうかを判定すること。", "第３は、現場の活動状況が、全社員に逐次正確に報告されること。管理部などのスタッフ部門が現場を応援するの", "は、選手の奮闘ぶりをリアルタイムで、正確に伝える為。", "３要素のうち、１番目は、トップの仕事である。そして２番目と３番目の実現をサポートしていくのが、", "「補佐役」", "の役割。", "事例１：年に１度、総務が社内中の意見を集める「巡回総務部」", "「これから２ヶ月間は、", "『巡回総務部』", "。総務部員数名が手分けして全支店と工場を回る。そして全社員の意見をヒ", "ヤリングし、その結果をまとめて社長に伝える。", "」人は、誰しも共感を求めるもの。現場の社員の思いに応えよう。", "現場のヒアリングを現場のトップが行うのは、望ましくない。現場のトップ自身に問題がある場合は、真実が隠れてしまう。逆", "に総務と社長は、近い。"]}, {"id": 27, "chapter": "法則その５", "title": "事例２：業務改革に合わせて、名称や呼び名を変える", "body": ["「お客様は KING、問屋を QUEEN と呼べ！」", "。", "ディーラーのことを「営業所」から「営業店」。", "「患者」ではなく「お客様」。「債務者」と呼ぶことを禁じた銀行。", "「下請け工場」と呼んでいたものを「協力工場」", "。", "「支店長会議」ではなく「ベクトルミーティング」", "。「管理者研修」", "ではなく「右腕研修」", "。契約社員、派遣社員、パートタイマー、嘱託など正社員以外の人に配慮するために、「社員」", "と呼ぶのをやめ「従業員」", "。", "トップ自らが、先頭に立って呼称を工夫することにより社員の意識は変わっていく。"]}, {"id": 28, "chapter": "法則その５", "title": "５－２ クレーム対応を通して人材を育てる", "body": ["クレームの発生は個人ではなく企業の問題として捉える", "クレーム対応ほど、胃が痛くなる仕事はない。しかし、クレームへの誠実な対応と再発防止策を通じ、企業は、よ", "り正しい姿に近づくことができる。その対応次第で、お客様からこれまで以上の信頼を得ることができるチャンス。", "強烈な反省と戒めが加われば、社内改革は一気に加速する。", "事例１：過去の事故を後世に語り継いでいくように工夫する", "胸に縫いつけられたバッジ。", "「忘れません××事故 12 周年」。", "「その事故は、この月に起きました。そこで毎年この", "月になると全社を挙げて××事故キャンペーンを実施します。聞かれれば説明する。だから忘れないし、そのたびに", "２度とやってはいけないと思う」", "。", "「人は忘れても、自分だけは忘れない」を貫く会社。お客様は、企業のそんな努力を直接見ていなくても、そんな", "企業を確実に見抜く心眼を持っている。", "8/11"]}, {"id": 29, "chapter": "法則その５", "title": "事例２：ミスがはっきりと目に見えるように工夫する", "body": ["工場内の大きな建物に入ってすぐ右側の床だけが、赤いテープで四角く囲われている。「あれは返品置き場です」。", "前を通る社員に語りかける。", "「本来あってはならないはずの返品が、こんなにもあるぞ･･･。皆、恥を知れ」。", "クレームの再発防止には、現物、写真、VTR、グラフなどを使って、視覚に訴えて考えさせる工夫が必要。", "事例３：クレーム発生時の怖さを社長の言葉で伝える", "「恐くて売りに行けやしない」。中国から輸入した野菜を加工し、総菜にしてスーパーに納めている。しかし何ら", "かの不手際があり営業停止の処分を受ければ、一大事。売上げが、ゼロ。それどころかスーパーから多額の賠償を請", "求されてしまう可能性もある。①商品回収費、②商品償却費、③謝罪広告費、④機会損失の補填費など。"]}, {"id": 30, "chapter": "法則その５", "title": "最近の「報告がなくて困った」事例を題材に、報告のルールを作る", "body": ["H 社の「報告がなくて困った情報」", "。①お客様からのクレーム、②クレームの対応状況、③大きな案件の折衝経緯、", "④競合他社の動き、⑤業務提携先の動き、⑥最新の技術動向、⑦契約内容の変更、⑧お客様に注意されたこと、⑨社", "員の目覚しい活躍、⑩社員の勤務状況、⑪資材の手配状況、⑫現場で気がついたことなど、⑬社員の家庭問題、⑭社", "員が取得した資格。", "①～⑭の中で、社長として絶対欲しい報告はどれか。常務は？部長は？ 報告を社員の忠誠心に期待するよりは、", "報告のためのルールを決める。それが習慣になるまで徹底する。", "事例１：報告に用いるフォーマットを統一する", "当事者間で問題意識を共有化するためには、", "「ひと目でわかること」が絶対条件。管理者には、情報をわかりやすい", "図、写真、グラフ、フローチャート、地図などにまとめる情報編集力が必要。"]}, {"id": 31, "chapter": "法則その５", "title": "事例２：報告を受けたら「で、次は何をする？」と問い返す", "body": ["「で、次は何をする？」という言葉は、凄い言葉。聞かれて「こうします」と答えた人は、聞いた人と約束したこ", "とになる。「で、次は何をする？」と聞いた上司は、部下の答えが面白いと思ったら、できるかぎり当人の力になっ", "てほしい。", "人間の元気の源は、「未来には今よりももっと楽しくなる」という思い。暗く沈んだ社員に「元気出せ！」と言うより、「で、次は", "何をする？」と問いかける。"]}, {"id": 32, "chapter": "法則その６", "title": "６－１ 「使える・使えない」ではなく「育てる」意思を持たせよ", "body": ["ビジネスで成し遂げたと言い切れるのは部下育成だけ", "「あなたは、人生の中で『これだけは成し遂げた！』と言えるものがありますか？」と尋ねたところ、ほとんどの", "女性は、YES と答えた。ところが男性は、１人も YES と答えなかった。YES と答えた女性の答えは、全員同じ。", "「あ", "の子は、私が育て上げた」", "。", "何十年も仕事して、", "「成し遂げた」と言えるものが何もないのは、１人の人間として悔しすぎる。", "リーダータイプの管理者は、部下をいかに育てるべきかと思い悩む。仮にできの悪い部下がいても、それを受け入", "れて活かす道を考える。自分のことよりも組織のことを第１に考える組織指向だから。", "一方、風雲児タイプの管理者は、部下育成よりもプロジェクトの完遂にこそ関心がある。したがって部下を「使え", "る・使えない」という目で見る。そして使えないと判断した部下は、自分の統括範囲から排除する。"]}, {"id": 33, "chapter": "法則その６", "title": "「使える・使えない」で考えるのは、簡単。それができない企業には、「育てる」ことに力点を置いたマネジメ", "body": ["ントが必要。", "事例１：創業者のつもりで「育てる」を考えよ", "特殊な商品を専門に売っている特殊部隊。特殊な商品知識や人脈をベースとした仕事である。ビジネスチャンスに", "出会うたび、どうしても俺が出なければと、チームリーダーは考える。", "会社ってのは、人に仕事をさせるところ。自分が仕事をするところじゃない。上に行けば行くほどそう。いかに人", "に楽しんで仕事をしてもらうかばかり考えている。お前は創業者みたいなものだから、思い切って任せてみろ。"]}, {"id": 34, "chapter": "法則その６", "title": "先達から見れば、どんな部下も物足りない存在。しかし、やらせてみたら予想以上に働く。部下とは、そういう", "body": ["もの。", "事例２：ビジネスマンならば、部下を 10 人は育てよ", "「自分が偉くなりたい」よりも「部下を偉くしてやりたい」という気持が強い上司。その思いに部下が惚れてつい", "てくる。", "事例３：部下と何かひとつ約束をして守り通せば立派な管理者になれる", "新任の管理者は、思い悩む。しかし抜擢された人が、短期間に部下を上回る実力を身につけることは不可能。高校", "野球などを観ていると、レギュラーではないがキャプテンをやっている人がいる。『私』をなくすのは、難しいこと", "ではない。", "何かひとつでいいから、部下と約束する。", "『部下の日報には、その日のうちに返事を書く』", "『クレームの責任は、自", "9/11", "分が取る』など。そして組織全体の利益を最優先して、部下と公平に接する。"]}, {"id": 35, "chapter": "法則その６", "title": "６－２ 言葉を定義すれば、社員は自分の役割を認識する", "body": ["言葉の定義が浸透すれば、社長の考え方が浸透する", "「管理者とは･･･である」と定義し、管理者たちに教えてなくてはならない。そして管理者全員に浸透させねばな", "らない。この定義に、定説はない。100 社あれば 100 通りの答えがある。しかし同じ社内の管理者 10 人に「管理者", "とは？」と質問したら、全員の答えが同じでなければならない。これらの定義を社員に考えさせて定義してみるのも", "面白い。"]}, {"id": 36, "chapter": "法則その６", "title": "事例１：社員に言葉を定義させると、社員は自分の役割に気づく", "body": ["人は、聞いたことは忘れるが、自分で気がついたことは忘れない。「気がついてほしい」と思う事項は、問いかけてその答え", "が出るまで待つのが効果的。自分で気がついた人は、言われたからやる人と比べて後の行動が大きく変わる。", "事例２：部下がわかっていないのは考えさせていないだけである", "リーダーは、部下にやらせて、結果を公平に評価し、責任は自分が取る。", "考える時間さえ与えれば、社長が「わかってほしい」と常日ごろ思っていたことに、社員は、自分の力で気がつく。", "事例３：「言葉の定義」こそ、次世代へ相続するべきもの", "相続とは、相を続けること。同じような考え方、見方を続けながら末永く繁栄していく。"]}, {"id": 37, "chapter": "法則その６", "title": "６－３ 求める人材像を定めれば、人材の育成方法が見える", "body": ["世界に通じる選手が何人も一度に生まれた仕組み", "日本は、Ｗ杯を誘致しようと考えたとき、開催国として１次リーグを突破することを目標とした。フランスの目標", "は、１次予選突破どころではない。優勝である。日本とフランスでは、目標が違う。目標が違うから、求める人材像", "とそれを育てる訓練機関が違う。育った人材が違うから成果が違う。よってそこで活躍した選手たちのその後の評", "価・処遇が違う。"]}, {"id": 38, "chapter": "法則その６", "title": "人材を育てるには、", "body": ["「目標」から「処遇」に至る仕組みを整合させて整備する事が肝要。"]}, {"id": 39, "chapter": "法則その６", "title": "事例１：求める人材像を社員の台詞から考える", "body": ["最も簡単に「求める人材像」の見つけ方。それは「台詞」で考える。", "・俺にこんなことを言ってくる管理者", "・会議の席でこんな発言をする管理者", "・部下にこう語りかける管理者", "例えば、部下に対し「やれば、必ずできるはずだ。どうしたらできるか、それを考えよう」。会議の席で、", "「長期的", "に考えた場合、今のやり方はおかしい。むしろこっちのほうがよくなります」。イメージが固まれば、今の管理職に", "どんな訓練を施すべきか自ずと明らかになる。", "「長期的に･･･」を語れるようになるためには。長期的なトレンドを読", "み、自社の業績を予測しシミュレーションする研修を施せばよい。ある製造業の幹部と、「どんなことを言う若手社", "員と一緒に仕事がしたいか」について議論。約１時間の討議を経て、以下の６つの人材像にまとまった。", "①自分の「理想のビジネスマン像」が語れる人", "②自分の意見・考えを言う人", "③「私にやらせてください。最後までやってみます」と言う人", "④報告する人、ミスを認め皆に謝れる人", "⑤「このことなら誰にも負けない」と言えるものがある人", "⑥YES、NO で答えられる人", "「日頃から指示ばかりしていては、決して②③のようなことを自分から言う人には育たない」。②③のような人材", "を育てるには、", "「君はどう思うか？」", "「君はどうしたいのだ？」と、常日ごろ管理職から問いかけることが肝心。", "このように、求める人材像を自分で考えれば育成法も自分で気がつく。"]}, {"id": 40, "chapter": "法則その６", "title": "事例２：理想のビジネスマン像を「言われてみたい言葉」で見つける", "body": ["「お前は、どんな営業マンになりたいのだ？」と問いかけてもなかなか答えられないだろう。「君が営業マンとし", "て一番言われてみたい台詞は、何だ？」すると誰もが簡単に答えをみつけやすい。上司は、部下がこうした理想像に", "近づくよう指導するのが仕事。", "「では、今のスタイルでずっと仕事を続けていくと、いつかお客様からそう言ってもらえると思うか？」", "「たぶん無理だと思います」", "「なぜ無理だと思うのだ？何かが足りないからだろうなあ。何が足りないと思う？」", "「企画提案というか･･･、お客様が本当に求めていることを提案できていないので･･･」", "「だったら今からそれをやれよ。なかなかうまくいかないようなら、いつでも手を貸すよ」", "事例３：業績を問う前に「どんな部門長になりたいのか？」を聞く", "全国に 30 以上の営業所。このうち３営業所だけは、赤字。社長は、３人の営業所長に質問。", "「お前は、どんな営業", "所長になりたいの？ どんな営業所にしたいの？」", "。", "10/11", "１人は、", "「絶対にライバル会社に負けない営業所にしたい」、", "１人は「自分には今、部下が３人います。彼らを将来は全員所長にしたい」", "。", "営業所という組織を使って利益を生むためには、何よりもリーダーの志がしっかりしていなければ。「よし、その", "姿を目指して励め！」", "赤字を黒字にする対策を出せとは、要求しなかった。志がシッカリしている人材は、いつか必ずそこにたどりつこ", "うと努力する。", "このことは、会社全体でも同じ。会社が倒産をしない最大の方法は、社会性を追求し続けること。社会の役に立ち", "続ける以上、会社は倒産しない。志は、全社員が聞かれて即回答できるほど浸透していることが肝心。"]}, {"id": 41, "chapter": "法則その６", "title": "未来を語り合うことで、人事考課は楽しくなる", "body": ["仕事を楽しくする秘訣は、先のこと＝未来について考えるようにすること。人事考課は、過去を振り返る仕事であ", "る。それを尐しでも楽しくするには、人事考課に未来について語る要素を採り入れる。上司が部下に考課結果を伝え", "るときに、", "「君はここが×だから、次は頑張って○にしよう。そのために、来期はこんなことに取り組もう」と語れ", "ばよい。"]}, {"id": 42, "chapter": "法則その６", "title": "成果報酬は個人ではなくチームに", "body": ["給料が増えている間は、成果主義はうまく機能しているように見える。しかし業績が下降線に転じた場合は、給料", "がさがる。１度 1,200 万円の年俸を手にした人は、今度は自分を 1,200 万円で買ってくれる他の会社を探す。そうな", "らないように仕組むには、個人よりも組織を対象にした成果主義を導入することが望ましい。", "仕事をチーム単位に分割し、高い成果を出したチームに報奨金を支払う。達成報奨金をどう振り分けるかは、チー", "ムリーダーに一任する。誰がどの程度頑張ったかを一番知っているのは、チームリーダーだから。", "こうしたルールがあれば、自分のことよりもチームのことを優先して考える人材が自然と育つ。報奨金を配分する", "とき、リーダーは、公平に評価するという大切な仕事に直面する。そんなリーダーの姿を見て、部下はリーダーの条", "件を覚えていく。"]}, {"id": 43, "chapter": "法則その６", "title": "事例１：作業日報を用いて毎日人事考課を行う", "body": ["「今日の自分はよく頑張った」と思った日は、社員が自分で 100 点をつける。上司は、「お前、今日は資材が見つ", "からなくて段取り替えに手間取っただろう。だから今日のお前は、70 点。あれを 15 分でできるようになれば、お前", "は 100 点だ」というように理由を説明しながら加点・減点を行い記入する。このように作業日報を使って「毎日考課・", "毎日フィードバック・毎日査定」を行っている。", "またプロジェクト単位で仕事を進める企業では、ひとつのプロジェクトが終わるたびに、採点している例もある。", "半年に１度の評価だと、どうしてもイメージ考課になる。", "事例２：社長は、通常考課以外に自由に配分できる賞与原資を持て", "社長が自分で好きに配分する「自由裁量枠」。社長考課は、地味ながら頑張っている社員の意識を高めるのにも役", "立つ。例えば一所懸命工場前の花壇を手入れしてる守衛さんに「『花壇が素晴らしい』と誉めてくださるお客様が多", "いのです。今ではあの花壇は、当社の自慢です。あなたの陰ながらの努力に頭が下がります」。", "日頃は社員に感謝の意をなかなか伝えられない社長でも、賞与を渡すときは言える。社長が全社員を見渡せる中小", "企業ならではの制度。", "事例３：一番欲しいのは「できる社員」よりも「できるようになる社員」", "俺は、最初からできる社員はいらない。できない社員もいらない。できるようになる社員が欲しい。去年できなか", "ったことが、今年はできる。そういう人材を高く評価したい。", "「できるようになる人材」が欲しい。そのためには、求める人材像を明確にし、社員にその姿を目標として意識さ", "せること。", "11/11"]}];
+function startReading(){document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');}
+function showTab(tab){
+  document.getElementById('btn-index').classList.toggle('active',tab==='index');
+  document.getElementById('btn-read').classList.toggle('active',tab==='read');
+  const ip=document.getElementById('index-panel-scroll');const rv=document.getElementById('reading-view');
+  if(tab==='index'){ip.classList.remove('hidden');rv.classList.remove('active');}
+  else{ip.classList.add('hidden');buildReadingView();rv.classList.add('active');}
+}
+function buildReadingView(){
+  const inner=document.getElementById('reading-inner');let h='';let lc='';
+  sections.forEach(s=>{
+    const ch=s.chapter||'';
+    if(ch!==lc){lc=ch;if(ch)h+='<div class="reading-chapter">'+esc(ch)+'</div>';}
+    const bh=s.body.map(p=>'<p>'+esc(p)+'</p>').join('');
+    h+='<div class="reading-section"><h3><span class="rnum">\u00a7'+(s.id+1)+'</span>'+esc(s.title)+'</h3>'+bh+'</div>';
+  });
+  inner.innerHTML=h;
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toggleSection(header){header.parentElement.classList.toggle('open');}
+function goSec(id){
+  document.getElementById('btn-index').classList.add('active');document.getElementById('btn-read').classList.remove('active');
+  document.getElementById('index-panel-scroll').classList.remove('hidden');document.getElementById('reading-view').classList.remove('active');
+  document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');
+  const el=document.getElementById('sec-'+id);if(!el)return;
+  setTimeout(()=>{el.scrollIntoView({behavior:'smooth',block:'start'});},50);
+  if(!el.classList.contains('open'))el.classList.add('open');
+  document.querySelectorAll('.nav-item').forEach(item=>item.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(item=>{if(item.getAttribute('onclick')==='goSec('+id+')')item.classList.add('active');});
+  document.getElementById('sidebar').classList.remove('open');
+}
+function expandAll(){document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');document.querySelectorAll('.section').forEach(s=>s.classList.add('open'));}
+function collapseAll(){document.querySelectorAll('.section').forEach(s=>s.classList.remove('open'));}
+function filterNav(q){const l=q.toLowerCase();document.querySelectorAll('.nav-item').forEach(item=>{item.style.display=(!q||item.textContent.toLowerCase().includes(l))?'':'none';});}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
+document.getElementById('index-panel-scroll').addEventListener('click',()=>{if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('open');});
+document.getElementById('reading-view').addEventListener('click',()=>{if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('open');});
+
+</script>
+</body>
+</html>

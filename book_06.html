@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>インクス流 | Claude本棚</title>
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;--text:#e6edf3;--text2:#8b949e;--accent:#f0883e;--accent2:#d29922;--chapter-color:#79c0ff;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Helvetica Neue','Hiragino Sans','Yu Gothic',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.7;}
+#app{display:flex;height:100vh;overflow:hidden;}
+#sidebar{width:300px;min-width:300px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+#header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;flex-shrink:0;}
+#header h1{font-size:15px;font-weight:700;color:var(--accent);line-height:1.4;}
+#header .subtitle{font-size:12px;color:var(--text2);margin-top:2px;}
+#header .meta{font-size:11px;color:var(--text2);margin-top:3px;}
+#top-nav{display:flex;align-items:center;gap:8px;padding:8px 24px;background:var(--surface2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;}
+.top-nav-btn{padding:5px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:inherit;transition:all 0.15s;white-space:nowrap;text-decoration:none;display:inline-block;}
+.top-nav-btn:hover{background:var(--surface);color:var(--text);border-color:var(--accent);}
+.top-nav-btn.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600;}
+#progress-area{margin-left:auto;font-size:11px;color:var(--text2);white-space:nowrap;}
+#search-bar{padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+#search-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:13px;font-family:inherit;outline:none;}
+#search-input:focus{border-color:var(--accent);}
+#nav-scroll{flex:1;overflow-y:auto;padding:8px 0;}
+#nav-scroll::-webkit-scrollbar{width:4px;}
+#nav-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.nav-chapter{padding:8px 16px 4px;font-size:10px;font-weight:700;color:var(--chapter-color);border-top:1px solid var(--border);margin-top:4px;}
+.nav-chapter:first-child{border-top:none;margin-top:0;}
+.nav-item{padding:5px 16px;font-size:12px;color:var(--text2);cursor:pointer;transition:all 0.1s;border-left:2px solid transparent;}
+.nav-item:hover{background:var(--surface2);color:var(--text);border-left-color:var(--accent2);}
+.nav-item.active{background:var(--surface2);color:var(--accent);border-left-color:var(--accent);}
+#index-panel-scroll{flex:1;overflow-y:auto;padding:24px;}
+#index-panel-scroll::-webkit-scrollbar{width:6px;}
+#index-panel-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.chapter-header{margin:18px 0 6px;padding:9px 16px;background:rgba(121,192,255,0.08);border-left:3px solid var(--chapter-color);border-radius:0 6px 6px 0;font-size:13px;font-weight:600;color:var(--chapter-color);}
+.chapter-header:first-child{margin-top:0;}
+.section{margin-bottom:5px;border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color 0.2s;}
+.section:hover{border-color:var(--accent2);}
+.section.open{border-color:var(--accent);}
+.section-header{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;background:var(--surface);user-select:none;transition:background 0.15s;}
+.section-header:hover{background:var(--surface2);}
+.sec-num{font-size:10px;color:var(--text2);min-width:28px;flex-shrink:0;}
+.sec-title{flex:1;font-size:13px;font-weight:500;color:var(--text);line-height:1.4;}
+.toggle-icon{font-size:10px;color:var(--text2);transition:transform 0.2s;flex-shrink:0;}
+.section.open .toggle-icon{transform:rotate(180deg);}
+.detail-body{display:none;padding:14px 20px;background:var(--bg);border-top:1px solid var(--border);}
+.section.open .detail-body{display:block;}
+.detail-body p{margin-bottom:10px;font-size:14px;color:#cdd9e5;line-height:1.85;text-align:justify;}
+.detail-body p:last-child{margin-bottom:0;}
+#reading-view{display:none;flex:1;overflow-y:auto;padding:40px;}
+#reading-view.active{display:block;}
+#reading-view::-webkit-scrollbar{width:6px;}
+#reading-view::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.reading-inner{max-width:780px;margin:0 auto;}
+.reading-chapter{margin:24px 0 8px;padding:9px 18px;border-left:3px solid var(--chapter-color);font-size:14px;font-weight:600;color:var(--chapter-color);}
+.reading-chapter:first-child{margin-top:0;}
+.reading-section{margin-bottom:18px;padding:16px 20px;background:var(--surface);border-radius:8px;border:1px solid var(--border);}
+.reading-section h3{font-size:14px;font-weight:700;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.reading-section h3 .rnum{font-size:11px;color:var(--text2);font-weight:400;}
+.reading-section p{font-size:14px;color:#cdd9e5;line-height:1.85;margin-bottom:8px;text-align:justify;}
+.reading-section p:last-child{margin-bottom:0;}
+#splash{text-align:center;padding:60px 24px;}
+#splash h2{font-size:22px;color:var(--accent);margin-bottom:8px;}
+#splash .sp-sub{color:var(--text2);font-size:14px;margin-bottom:32px;}
+#splash .stats{display:flex;justify-content:center;gap:40px;margin-bottom:32px;}
+#splash .stat .num{font-size:36px;font-weight:800;color:var(--accent2);}
+#splash .stat .lbl{font-size:12px;color:var(--text2);margin-top:2px;}
+#splash .start-btn{background:var(--accent);color:#000;border:none;padding:14px 44px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity 0.2s;}
+#splash .start-btn:hover{opacity:0.85;}
+#menu-toggle{display:none;background:transparent;border:none;color:var(--text);font-size:20px;cursor:pointer;padding:4px 8px;vertical-align:middle;margin-right:8px;}
+.hidden{display:none !important;}
+@media(max-width:768px){
+  #sidebar{position:fixed;top:0;left:0;bottom:0;z-index:100;transform:translateX(-100%);transition:transform 0.25s ease;width:280px;}
+  #sidebar.open{transform:translateX(0);}
+  #menu-toggle{display:inline-block;}
+  #index-panel-scroll{padding:14px;}
+  #top-nav{padding:8px 14px;}
+  #header{padding:11px 14px;}
+  #reading-view{padding:16px;}
+}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="sidebar">
+  <div id="search-bar"><input id="search-input" type="text" placeholder="🔍 節タイトルを検索..." oninput="filterNav(this.value)"></div>
+  <div id="nav-scroll">
+<div class="nav-chapter">（本文）</div>
+<div class="nav-item" onclick="goSec(0)">まえがき</div>
+<div class="nav-item" onclick="goSec(1)">知らせなければならない。</div>
+<div class="nav-item" onclick="goSec(2)">となった協働体制ができているからこそ、日本の製造業は強い。</div>
+<div class="nav-item" onclick="goSec(3)">で２次元図面と３次元立体イメージが自由に操れるようになるには３年かかる。</div>
+<div class="nav-item" onclick="goSec(4)">４兆 9,009 億ドルから７兆 3,477 億ドル（94 年）へ 150 パーセントの成</div>
+<div class="nav-item" onclick="goSec(5)">本気で３次元化に踏み出せない日本の製造業</div>
+<div class="nav-item" onclick="goSec(6)">アメリカのドラフトマンのように、職を失う危機感があれば、誰でも３次元 CAD を使えるよう</div>
+<div class="nav-item" onclick="goSec(7)">日本の GDP は、約 500 兆円。そのうち約 125 兆円が製造業。日本の製造業は量産</div>
+<div class="nav-item" onclick="goSec(8)">とその整備。IT バブルが、はじけたのではない。IT インフラの整備が終わり、その供給だけ</div>
+<div class="nav-item" onclick="goSec(9)">「我々がコンセプトを考え出し、難しい開発だけを担当した製品が、市場</div>
+<div class="nav-item" onclick="goSec(10)">IT を駆使して、爆発的な生産性向上を実現すること。</div>
+<div class="nav-item" onclick="goSec(11)">手描き図面と CAD データの違い</div>
+<div class="nav-item" onclick="goSec(12)">と利用されるようになった。</div>
+<div class="nav-item" onclick="goSec(13)">ラーの大きな特徴は、形状の作成や変更を簡単に行うことができる点。直感的にわかりやすい製品像</div>
+<div class="nav-item" onclick="goSec(14)">日本の製造業が迷い込んだ３次元化の迷路</div>
+<div class="nav-item" onclick="goSec(15)">能は再現性のある技術に置き換えられた。</div>
+<div class="nav-item" onclick="goSec(16)">みを受け取り、６日間で金型を設計・製作した。それまで通常 45 日かかっていた。今では、設</div>
+<div class="nav-item" onclick="goSec(17)">「人間の判断力を利用</div>
+<div class="nav-item" onclick="goSec(18)">(7)全工程を再構築する</div>
+<div class="nav-item" onclick="goSec(19)">因果関係を「IO マトリックス」</div>
+<div class="nav-item" onclick="goSec(20)">工程の概念を変えるプロセス・テクノロジーの考え方</div>
+<div class="nav-item" onclick="goSec(21)">・与えられた情報をもとに、手順に従って行えば誰にでもできる工程</div>
+<div class="nav-item" onclick="goSec(22)">②判断を選択肢化する（判断のレベルを下げる）</div>
+<div class="nav-item" onclick="goSec(23)">→無駄の排除（方法検討、実施）</div>
+<div class="nav-item" onclick="goSec(24)">ピュータと情報のやり取りをし、さらにはエンジニアやスタッフの作業の進行状況をチェックする。</div>
+<div class="nav-item" onclick="goSec(25)">組みが完備したとき、消費者が製品開発に関与できる生産の仕組みが可能になる。自分が参加できる</div>
+<div class="nav-item" onclick="goSec(26)">ている新しい「意思伝達装置」こそ、</div>
+<div class="nav-item" onclick="goSec(27)">ているのかも知る必要がある。</div>
+<div class="nav-item" onclick="goSec(28)">架宇宙と実宇宙は、どのようにシンクロするのか</div>
+<div class="nav-item" onclick="goSec(29)">生産性の向上で、モノの価値（価格）は急激に落ちる。価格が下がろうがモノの生産量はいまと同じ</div>
+<div class="nav-item" onclick="goSec(30)">CAE－試作－実験－金型製造」の工程には、爆発的な生産性の向上が起きることは間違いない。結</div>
+<div class="nav-item" onclick="goSec(31)">「平均勤続年数 3.5 ヵ月。ここでは、暗黙知は要らないのですか？」</div>
+<div class="nav-item" onclick="goSec(32)">「知」である。</div>
+  </div>
+</div>
+<div id="main">
+  <div id="header">
+    <button id="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <h1>インクス流</h1>
+    <div class="subtitle">驚異のプロセス・テクノロジーのすべて</div>
+    <div class="meta">山田眞次郎 著</div>
+  </div>
+  <div id="top-nav">
+    <button class="top-nav-btn active" id="btn-index" onclick="showTab('index')">目次モード</button>
+    <button class="top-nav-btn" id="btn-read" onclick="showTab('read')">通読モード</button>
+    <button class="top-nav-btn" onclick="expandAll()">全展開</button>
+    <button class="top-nav-btn" onclick="collapseAll()">全折畳</button>
+    <a href="top.html" class="top-nav-btn">← 本棚へ</a>
+    <span id="progress-area">33節</span>
+  </div>
+  <div id="index-panel-scroll">
+    <div id="splash">
+      <h2>インクス流</h2>
+      <p class="sp-sub">驚異のプロセス・テクノロジーのすべて</p>
+      <div class="stats"><div class="stat"><div class="num">33</div><div class="lbl">節</div></div></div>
+      <button class="start-btn" onclick="startReading()">読み始める</button>
+    </div>
+    <div id="content-area" class="hidden">
+<div class="section" id="sec-0">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§1</span>
+    <span class="sec-title">まえがき</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>まえがき</p><p>人間の手作業に変わる自働織機や自動紡績機などの道具の発明が、200 年前のイギリスの織物産業に、爆発的な生</p><p>産性向上を引き起こした。自働織機や自動紡績機が発明されなかったら、蒸気エンジンの圧倒的なパワーを利用して</p><p>生産性を向上するという革命は、起こりえなかった。</p><p>今回の産業革命において、IT の果たす役割は、まさにこの蒸気エンジンの役割である。IT エンジンの動力性能＝</p><p>能力とは、端的に言えば２つ。①素晴らしいデータ生産能力、②瞬時の意思伝達能力。IT エンジンの圧倒的なパワー</p><p>を受けとめて、モノを超高速・高品位で出力する IT 出力システムが、まだはっきりとした形では登場していない。</p><p>第１章</p><p>光造形システムとの衝撃的出合い</p><p>独立を決意した日</p><p>1989 年「オート・ファクト・ショー」</p><p>。ガラス張りの四角い装置の中で、ビンの形がみるみる浮かび上がってきた。</p><p>生まれて初めて光造形装置を見た。ものすごい衝撃が走った。光造形とは、３次元 CAD データから、直接３次元の</p><p>形状を出力する仕組み。３次元 CAD と光造形システムの連動。職人の手を介することなく、直接試作ができる。</p><p>熟練の「設計職人－試作職人－金型職人」の３者が連動した、日本の見事な開発工程はどうなるのか？早く日本に</p></div>
+</div>
+<div class="section" id="sec-1">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§2</span>
+    <span class="sec-title">知らせなければならない。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>知らせなければならない。</p><p>「佐藤君、会社を辞めるぞ。明日、君もコボ・ホールに行って、光造形システムを見てこ</p><p>い」</p><p>。</p><p>アメリカで感じた日本製造業の強さ</p><p>「俺は、今日からドアロックで世界チャンピオンを目指す！」</p><p>。仕事に打ち込んだ。80 年代初めには、すべてのホ</p><p>ンダ車に私が設計したドアロックが使われるようになっていた。1990 年からその後の 10 年間クライスラーの全車両</p><p>に使うドアロックの受注を獲得。額にして 1,000 億円。クライスラーの受注とともに、三井金属はデトロイトにエン</p><p>ジニアリング・オフィスを開設、私が初代所長。</p><p>デトロイトと日本は、時差が 14 時間。日米の２つのオフィスが、ほぼ半日ズレで稼動する。この半日のズレを利</p><p>用して、</p><p>12 時間交替の日米 24 時間開発体制をしいた。抜群のスピードを生み出すミラクルな日米オンライン体制は、</p><p>私にとってプロセス・テクノロジーの第１歩。</p><p>私は、設計者。設計の描いたいいかげんな紙の図面をもとに、試作や金型を作ってくれる世界一の職人さんが一体</p></div>
+</div>
+<div class="section" id="sec-2">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§3</span>
+    <span class="sec-title">となった協働体制ができているからこそ、日本の製造業は強い。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>となった協働体制ができているからこそ、日本の製造業は強い。</p><p>しかし光造形システムとの運命の出合いが、有頂天になっていた私に冷水を浴びせた。IT は、</p><p>「日本の強み」を一</p><p>瞬にして「日本の弱み」に変えてしまう。</p><p>クライスラーの３次元化レポート</p><p>クライスラーが３次元 CAD「CATIA」を設計に使い始めたのは、89 年。３次元化にあたりキャスタング氏が行っ</p><p>たこと。</p><p>①ベンダーを集めて、</p><p>「クライスラーは、７月１日から CATIA データしか受け付けない」と宣言。</p><p>②UAW（全米自動車労組）のドラフトマン（トレーサー）を集めて、</p><p>「クライスラーは、７月１日から CATIA で設</p><p>計をする」と宣言。</p><p>IBM の CATIA 講習。夜学である。年齢は 40 歳代後半から 50 歳代の人が、ほとんどだった。当然、全員が自費。</p><p>職を失うか、CATIA を習うかの選択である。</p><p>開発工程の３次元化における最初の問題は、設計者の３次元化教育。私の設計者としての経験からすると、頭の中</p></div>
+</div>
+<div class="section" id="sec-3">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§4</span>
+    <span class="sec-title">で２次元図面と３次元立体イメージが自由に操れるようになるには３年かかる。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>で２次元図面と３次元立体イメージが自由に操れるようになるには３年かかる。</p><p>結局、クライスラー側は、CATIA の導入に際しての設計者の教育は一切行わなかった。アメリカでは、エンジニ</p><p>アは図面を描かない。通常、エンジニアには４，５名のドラフトマンがつく。ドラフトマンは、UAW の組合員であ</p><p>る。７月１日には、本当に CATIA が導入されて、クライスラーの設計室からすべての製図台が姿を消した。驚いた</p><p>ことに、７月当初はポツポツとしか動き始めていなかった CATIA の画面が、９月にはその体育館のような設計室に</p><p>ずらりと並んだすべてのスコープに３次元画面が映し出されていた。図面を描いていた 50 歳代のドラフトマンが、</p><p>薄暗い設計室で CATIA を操作している姿は、いまでも忘れられない。</p><p>クライスラーの薄暗い設計室で見た３次元開発への移行過程と、オート・ファクト・ショーでの光造形。その光景</p><p>を見て、未来のモノ作りは、現在のモノ作りの延長戦上には無いことを改めて確認した。</p><p>第２章</p><p>モノ作りの定義が変わった</p><p>80 年代アメリカで何が起こったか</p><p>アメリカは、80 年代の 10 年間で農業と自動車、石油化学を残し、家電、その他の耐久消費財の生産を放棄した。</p><p>1/9</p><p>94 年にはナスダック市場は、出来高でニューヨーク市場を追い抜いた。80 年からの 14 年間で、アメリカの GDP は、</p></div>
+</div>
+<div class="section" id="sec-4">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§5</span>
+    <span class="sec-title">４兆 9,009 億ドルから７兆 3,477 億ドル（94 年）へ 150 パーセントの成長。94 </span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>４兆 9,009 億ドルから７兆 3,477 億ドル（94 年）へ 150 パーセントの成長。94 年の GDP を担った企業の 75％分の</p><p>産業が、その 14 年間に創出された。一方、80 年当時の既存産業の 25％が、減尐あるいは消滅した計算になる。80</p><p>年代は、日本がアメリカに追いつき、追い越した 10 年であった。</p><p>淘汰される古い産業に未練を持ってはならない</p><p>ドン底の中で、クライスラーは設計の３次元化をやってのけ、光造形システムが製造業の現場に普及の兆しを見せ</p><p>ていた。アメリカの 89 年。古いものと新しいものとが、非連続で同居していた。</p><p>95 年頃までに、古い産業は淘汰されるか、姿を変えていった。ほとんどの電気製品（消耗品）を作らない国となっ</p><p>ていった。最もモノ作りが進化したアメリカで、いま残っているモノ作り産業は、自動車（と石油化学品）だけ。産</p><p>業革命後に最も遅く進化した日本の製造業は、英、米が投げ出した古い産業を一人で背負い世界のモノ作りセンター</p><p>となった。</p><p>現代の成熟した産業は、日本よりさらに遅れて進化を始めたアジアに、必然のように移っていく。石炭、繊維、時</p><p>計、鉄、家電、コンピュータと、モノ作り産業は、どんどん日本から消えていっている。</p><p>しかし日本は、モノを輸出しなければ食糧やエネルギーを輸入できないのだから、アメリカのようにモノ作り産業</p><p>を捨てるわけにはいかない。古いモノ作り産業を淘汰しながら同時に、新しいモノ作り産業を起し、ナスダックの様</p><p>な新産業群を育てなければならない。</p></div>
+</div>
+<div class="section" id="sec-5">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§6</span>
+    <span class="sec-title">本気で３次元化に踏み出せない日本の製造業</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>本気で３次元化に踏み出せない日本の製造業</p><p>95 年４月 18 日、日本経済新聞一面に、トヨタ、日産、ホンダ――３次元ソリッド設計化。その背景には、クライ</p><p>スラーの IT 化後の快進撃があった。</p><p>アイアコッカ氏が３次元 CAD 導入に踏みきったのは、87 年から大ヒットしたフォードのセーブルとトーラスの成</p><p>功に大きく影響を受けた。あの当時の米車では、初めて３次元曲面を多用した丸っこい形をしていた。93 年の LH を</p><p>皮切りに、クライスラーは、美しい３次元化曲面デザインのクルマを次々と発売し、大ヒットさせた。</p><p>94 年。自動車工業会は、クライスラーの「ネオン」を調査した。ネオンは、同格の日本車より安い値段で日本で発</p><p>売され、</p><p>“ジャパン・キラー”と呼ばれていた。結果、３次元設計による設計の簡素化で大幅にコストを下げている</p><p>ことがわかった。そして、95 年度の開発の３次元化を予算化した結果が、前出の 95 年の日本経済新聞の記事。</p><p>日本の多くの企業から、</p><p>「なかなか３次元化が進まない」とよく聞く。日本の製造業の３次元化が進まない最大の</p><p>原因は、日本では、設計者が図面を描く点にある。日本の設計者は、構想も練り、技術計算もし、外部との打ち合わ</p><p>せも行い、かつ図面も描く。いまの日本の設計者にとって３次元化で職を失う危機はない。この甘えが、日本の企業</p><p>において、いつまで経っても３次元化が進まない最大の理由。</p></div>
+</div>
+<div class="section" id="sec-6">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§7</span>
+    <span class="sec-title">アメリカのドラフトマンのように、職を失う危機感があれば、誰でも３次元 CAD を使えるようになる。日</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>アメリカのドラフトマンのように、職を失う危機感があれば、誰でも３次元 CAD を使えるようになる。日本の優</p><p>秀な設計者は、きちっと教育さえすれば、誰でも２ヶ月間で３次元設計のトップガンに育つ。</p><p>日本の強みが一転して弱みとなる</p><p>日本を追いかけるアジアには、使い込まれた製造設備も、経験も、技能も、ノウハウもない。彼らは、モノを造ろ</p><p>うと思ったら最新の設備を買い入れるしかない。</p><p>中国にパソコン工場を持つ台湾資本のある会社。2,000 人が働く金型工場。1,000 台の最新の工作機械。３次元 CAD</p><p>も 100 台ある。長年の経験も技能もノウハウもない未経験者が、３次元 CAD をはじめとする IT と最新工作機械を</p><p>駆使して、すでに世界のデスクトップの金型の 20％を生産している。３次元 CAD による設計と光造形をはじめとす</p><p>るラピッド・プロトタイピング技術が、世界一の職人技をのみ込んでいくのは時間の問題。</p><p>日本はいま、今後も残すべき技能と、IT を駆使した新しい生産システムに落とし込める技能とを、冷静に分類すべ</p><p>き時。新生産システムに落とし込める技能は、職人がまだ健在で働いているうちに、その技能の分析を行い、マニュ</p><p>アル化やシステム化を図り、</p><p>「技能」を IT と連動する「技術」に落とし込むことが急務。日本が保有する世界一の技</p><p>能を IT 化することができれば、当然世界一の IT 生産技術開発でき、IT 生産工程を構築できる。</p><p>モノ作り立国・日本を支えるのは中小企業群</p></div>
+</div>
+<div class="section" id="sec-7">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§8</span>
+    <span class="sec-title">日本の GDP は、約 500 兆円。そのうち約 125 兆円が製造業。日本の製造業は量産産業である</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>日本の GDP は、約 500 兆円。そのうち約 125 兆円が製造業。日本の製造業は量産産業である。大量生産の要とな</p><p>るのは、金型。</p><p>金型産業の規模は、91 年のピーク時で年間１兆 5,000 億円。現在でも世界の金型の約 42％は、日本で生産されて</p><p>いる。金型企業は、現在約 7,000 社。１社平均年間売上げは、２億円の計算。従業員数の規模で見ると、94％が 34</p><p>人以下の中小企業群。働く人の平均年齢は、50 歳を上回る。この人たちが、日本の製造業を支えているのである。</p><p>モノ作りの定義が変わる</p><p>インクスは、IT エンジンがきっかけになって生まれる爆発的な生産性の向上を、世の中に知らせなければならない</p><p>との思いから生まれた。まず最初に取り組んだのは、量産産業を支える金型製作工程の IT 化による短縮である。</p><p>製品設計・試作・金型設計製作の工程を、３次元 CAD、光造形システム、そして自社開発した金型専用 CAD・CAM</p><p>ソフトを使って、３次元データで一気通貫させたシステムを構築した。従来の図面中心の工程に比べて尐なくとも３</p><p>分の１以下、最速で２４分の１まで開発期間短縮が可能になることを実証。従来 45 日かかっていた金型製作工程を、</p><p>2/9</p><p>金型設計から製作まで一気通貫で 45 時間にまで縮めた。こうした爆発的な生産性向上なくしては、製造業は生き残</p><p>ることはできない。</p><p>もうすでにアメリカでは、この知的産業革命の第１フェーズを終えている。第１フェーズとは、IT エンジンの発明</p></div>
+</div>
+<div class="section" id="sec-8">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§9</span>
+    <span class="sec-title">とその整備。IT バブルが、はじけたのではない。IT インフラの整備が終わり、その供給だけを担当した</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>とその整備。IT バブルが、はじけたのではない。IT インフラの整備が終わり、その供給だけを担当した企業が、最</p><p>初の役割を終え退場した。IT インフラを整備した、ニューヨーク市場に上場しているアメリカ製造業や、流通産業、</p><p>サービス産業は、この IT インフラが引き起こす爆発的な生産性向上の片鱗を垣間見ているはず。</p><p>アメリカは、この「生産性の向上」を、これまではそれほど強調したことがない。2001 年にかけて経済成長率が</p><p>急激に下降することをいち早く知っていたブッシュ政権や FRB 議長のスパン氏は、国民を安心させるために、やむ</p><p>を得ず、秘密にしておきたかった IT インフラによる生産性の向上を声高に言い始めた。次に来る２次フェーズこそ、</p><p>製造業に爆発的な生産性向上をもたらす産業革命の始まりである。</p><p>いまアメリカに残っている製造業とは何か。製造業を捨ててしまったアメリカと、知識も技術も発展途上のアジア</p><p>の間にあって、開発工程や生産工程に爆発的な生産性向上を引き起こす IT 出力システムの発明ができるのは、日本</p><p>だけ。尐なくとも、IT 出力システムを発明・開発するのに世界一有利な土壌を持っているのは、この日本。10 年以</p><p>内に製造業に 30 倍程度の生産性の向上が起こることは、</p><p>もはや夢でも何でもない。</p><p>原価 30 分の１の世界が出現する。</p><p>日本はこれから何を作ればいいのだろうか</p><p>最近お会いする日本の製造業のトップ。</p></div>
+</div>
+<div class="section" id="sec-9">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§10</span>
+    <span class="sec-title">「我々がコンセプトを考え出し、難しい開発だけを担当した製品が、市場</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「我々がコンセプトを考え出し、難しい開発だけを担当した製品が、市場</p><p>に投入後、半年もすると、開発費を負担しないアジアのコピー会社の製品に市場を奪われるという構造になってしま</p><p>う。開発費を回収するだけの売上げを達成する前に、コピー製品に市場を奪われてしまう。」</p><p>製造業を活性化させる施策を検討する会議に出席した時に私はこう主張。</p><p>「90 年代は、失われた 10 年ではありま</p><p>せんよ。過去の 10 年間も、日本は必死で技術を伸ばしてきました。70 年から 90 年までの 20 年間は、新製品が発売</p><p>されるたびに、性能、品質はどんどん改善されました。しかし、現有の工業技術は、90 年を頂点にサチレートしまし</p><p>た。例えば、70 年から 90 年までは、50 点から 90 点に進化しましたが、90 年からの 10 年間は、90 点から 95 点に</p><p>なったようなもの。サチレートした技術に追いつくのは早い。過去の 10 年間で、70 点だったアジアが 92 点くらい</p><p>まで追いついてきただけ」</p><p>。</p><p>まだわずかでも優位に立っている製造業を建て直し、雇用と輸出を維持しなければいけないことは、明確。</p><p>第３章</p><p>開発工程「２分の１」から「30 分の１」へ</p><p>キーワードは「旬の時に、旬のモノを」</p></div>
+</div>
+<div class="section" id="sec-10">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§11</span>
+    <span class="sec-title">IT を駆使して、爆発的な生産性向上を実現すること。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>IT を駆使して、爆発的な生産性向上を実現すること。</p><p>98 年 9 月以降、あらゆる企業が申し合わせたように「開発期間２分の１」を唱え始めた。開発期間２分の１を実</p><p>現するには、開発工程の IT 化しかない。経営トップが「どんなことをやってもいいから開発期間を２分の１にしろ」</p><p>と至上命令を下す理由は、性能では差別化ができなくなった製品を、コロコロ変わる市場の嗜好に合わせて、旬の時</p><p>に発売しなければならないから。携帯電話は、６ヵ月おきにモデルチェンジ。売れ筋のケータイは、その間に 300 万</p><p>個ほど売れる。プレステ２など、２日で 100 万台。</p><p>「旬の瞬間、人がまだ持っていないモノ」</p><p>。爆発的に売れて一瞬で売れなくなる。商品ライフサイクルの短期化は、</p><p>小さなモノだけでなく、自動車にも当てはまる。発売と同時に販売台数は、コンスタントに下がって、１年後にはピ</p><p>ーク時の４分の１にまで。６ヵ月で販売台数が急激に落ちてくるようになると、落ちた分を埋め合わせるためには、</p><p>ユーザーの嗜好に合った新車を、次々に市場に投入しなければならない。いまでも、日本の開発スピードは、世界一</p><p>速い。</p><p>経営判断は、</p><p>「一気に半分にしろ！」という。IT は、電気・ガス・水道などと同じ、産業を支えるインフラである。</p><p>それを使って何をするか、が問われている。</p></div>
+</div>
+<div class="section" id="sec-11">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§12</span>
+    <span class="sec-title">手描き図面と CAD データの違い</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>手描き図面と CAD データの違い</p><p>日本という国は、何かを作り輸出し続けなければ、食糧とエネルギーを輸入できない宿命にある。従って、輸出の</p><p>70％を占める製造業の存続は、当面、不可欠である。</p><p>IT 開発化とは、</p><p>「何を作るか（製品の定義）</p><p>」</p><p>「どう作るか（工程の定義）</p><p>」という情報を、これまでのように２次元</p><p>の図面によって意思伝達するのではなく、３次元データなどさまざまな情報技術を駆使して一気通貫で意思伝達する</p><p>仕組みを構築すること。</p><p>製品や工程に関する定義を伝達する方法は、長い間、紙の上に描かれた線と数値と文字以外になかった。紙の上に</p><p>３方向から見た製品の形状と寸法を細かく描く図面。図面を描いた本人以外が、正確に理解し、把握するには時間も</p><p>かかりミスも発生する。</p><p>モノの形状を３次元で定義できないかと試行錯誤が繰り返され、開発されたのが、３次元 CAD。1970 年代から開</p><p>発が始まり、宇宙防衛産業で実用化され、1970 年代末から 80 年代にかけて、航空機、自動車、造船などの分野で次々</p></div>
+</div>
+<div class="section" id="sec-12">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§13</span>
+    <span class="sec-title">と利用されるようになった。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>と利用されるようになった。</p><p>3/9</p><p>70 年代には、製造現場で使われる工作機械の NC（数値制御）化が急速に進んだ。それまで人間が制御していた工</p><p>作機械が、コンピュータによる制御に替わった。</p><p>何とか最初から３次元で設計し、そのデータをそのまま加工に使うようにはできないものだろうか。</p><p>工程を速くする３次元 CAD「ソリッド・モデラー」</p><p>市販の３次元 CAD が登場したのは、1970 年代末から 80 年代初頭にかけて。CATIA は、フランスのダッソーシス</p><p>テムズ社という航空機メーカーが開発しもの。ユニグラフィクスの方は、アメリカのマクドネル・ダグラス社が開発</p><p>したシステム。</p><p>３次元データと光造形装置を直結すれば、ワープロからプリンターに出力するように、直接物理的なモノがプリン</p><p>トアウトできる。但し、光硬化性という性質を持つ樹脂を固めて成形するので、試作品の材質は本物とは違う。偽物</p><p>の材料でも、実物の試作があっという間にできるということは、何よりも魅力的だった。</p><p>８０年代後半、立体の内部構造をデータとして持つ「ソリッド・モデラー」と呼ばれる新世代の３次元 CAD が、</p><p>商品化。ソリッド３次元 CAD では、立体の内側と外側の区別がつくとともに、中身の実態部分が定義されているの</p><p>で、コンピュータ上のモデルを使って、質量や重心位置、体積などを計算することもできる。また、ソリッド・モデ</p></div>
+</div>
+<div class="section" id="sec-13">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§14</span>
+    <span class="sec-title">ラーの大きな特徴は、形状の作成や変更を簡単に行うことができる点。直感的にわかりやすい製品像を画面で見</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ラーの大きな特徴は、形状の作成や変更を簡単に行うことができる点。直感的にわかりやすい製品像を画面で見なが</p><p>ら形作っていくという、３次元での本格的な設計が、いよいよ現実のものとなり始めた。</p><p>３次元化の原体験「３次元設計場」の仕組み</p><p>85 年夏。ホンダの常務、</p><p>「山田さん。ドアロックの試作、１日でできない？」当時、ドアロックの試作作りには２</p><p>週間。私の遣り方は、できそうにない難問にぶつかると、どうしてできないのか（WHY）を考えないで、どうやれ</p><p>ばできるか（HOW）を考える。</p><p>実際に私が行ったこと、３次元 CAD でドアロックのプラスティック・ボディの立体形状データを作ること。３次</p><p>元データから直接 NC データを作る。工作機械と NC は、見事に連動した。すると、プラスティックの部分は、結果</p><p>的には一晩でできてしまった。</p><p>ここで重要な考え方は、いちばん長い工程の中に、全部の工程を入れてしまうこと。次に、最も長い工程のスター</p><p>トをいかに早めるか、それをいかに短くするか、である。</p><p>私は、このときの３次元化体験を通じて初めて、モノ作りにおける圧倒的な期間短縮と爆発的生産性向上の実現を、</p><p>その渦中で身をもって体験した。目の前で、</p><p>「１日」という概念が、「１日」という現実に変わった。</p></div>
+</div>
+<div class="section" id="sec-14">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§15</span>
+    <span class="sec-title">日本の製造業が迷い込んだ３次元化の迷路</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>日本の製造業が迷い込んだ３次元化の迷路</p><p>製品と金型の関係は、たい焼きとたい焼きの型の関係と同じ。ソリッド３次元 CAD で作成した製品設計データが、</p><p>量産のための金型設計データに直接つながらない。第１次 IT 開発化は、そうした理由から 95 年に１度挫折。</p><p>それは、３次元 CAD の生い立ちに起因する問題で根が深い。世界の主要な３次元 CAD は、もともとは航空機の</p><p>設計・解析用に開発されたもの。航空機の主要部品は、工作機械で直接切削加工されており、金型は使っていない。</p><p>３次元 CAD で設計された製品の３次元データが、一気通貫で金型設計・製作のための３次元データとして利用で</p><p>きない限り、工程はそこで途切れてしまう。市販の３次元 CAD を導入しさえすれば、IT 開発工程が立ち上がると考</p><p>えるのは、経営者の錯覚である。</p><p>インクス「高速金型システム」開発の経緯</p><p>インクス独自開発による金型設計・製作専用の CAD・CAM ソフト「KATACAD」構想が、現実に動きだした。</p><p>神業とは？その本質に迫る</p><p>96 年春、私は１人の熟練金型職人にインクスに来て力を貸してくれるようにお願いした。当時 66 歳ですでに引退</p><p>していた１級仕上士・石井二郎さん。</p><p>我々は、45 年間この道一筋でやってこられた１級仕上士のすべての技を、見て、聞いて、触って、計り、書き取り、</p><p>徹底的な分析を行った。熟練の暗黙知は、尐しずつ形式知へと知の形を変えていった。神業はマニュアルとなり、技</p></div>
+</div>
+<div class="section" id="sec-15">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§16</span>
+    <span class="sec-title">能は再現性のある技術に置き換えられた。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>能は再現性のある技術に置き換えられた。</p><p>金型研究を開始して２年半がたったある日、何の経験もない 19 歳の社員が、そのマニュアルに従って実際に金型</p><p>を作った。すると、この道一筋の熟練工と同じ金型を、19 歳の若者が作れてしまった。</p><p>最も優秀な技能者や技術者が、自分の経験を暗黙知という名のもとに抱え込み、技術という形式知に落とし込んで</p><p>いかない。技能者は、自らの暗黙知を形式知に変えてゆくボキャブラリーを持ち合わせない。技術者は、後輩から追</p><p>いつかれないために自分だけのものとしてそれを隠す。そのことが、進化を止めている。</p><p>石井さんへの尊敬の念と感謝の気持ち。守られるべきは、「彼がいないとできない」という幻想ではなく、目に見</p><p>える仕組みの中に宿る「彼がいたからできた」という技術の連鎖である。</p><p>「意思伝達装置」の威力</p><p>ソリッドデータから自分たちの KATACAD を使って金型設計・製作する仕組み（ソフト、標準化、プロセス、管</p><p>理システムを合わせたもの）</p><p>「高速金型システム」</p><p>。</p><p>98 年３月、最初に受注したのは、デンソーの携帯電話の金型。製品の立体形状を定義した３次元ソリッドデータの</p><p>4/9</p></div>
+</div>
+<div class="section" id="sec-16">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§17</span>
+    <span class="sec-title">みを受け取り、６日間で金型を設計・製作した。それまで通常 45 日かかっていた。今では、設計－試作－</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>みを受け取り、６日間で金型を設計・製作した。それまで通常 45 日かかっていた。今では、設計－試作－金型とい</p><p>う一気通貫の開発工程が 365 日 24 時間対応できる体制ができあがった。</p><p>世界一の金型産業を失ってはいけない</p><p>３次元 CAD や、データベースを駆使して図面レス、書類レスを実現し、インターネット、イントラネットなどの</p><p>IT で各工程を一気通貫でつなげば、開発工程は劇的に短縮される。</p><p>IT 開発化は、一気に進めないと成功しない</p><p>理想的には、製品データからポンと金型ができ、いきなり量産できるのがいちばんいい。３次元設計に移行すると</p><p>図面はなくなる。このとき一気に図面をなくさずに、２次元の図面と３次元データを併用すると、IT 開発化は必ず失</p><p>敗する。</p><p>第４章</p><p>驚異のプロセス・テクノロジー</p><p>一気通貫を可能にする３つの条件</p><p>従来 45 日かかっていた金型設計・製作工程を６日に短縮し、さらに 45 時間まで短縮する、３つのポイント。</p><p>第１に従来の金型工程を詳細に分析し、その全工程を「IT でできる工程」</p><p>「機械で行う工程」</p></div>
+</div>
+<div class="section" id="sec-17">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§18</span>
+    <span class="sec-title">「人間の判断力を利用</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「人間の判断力を利用</p><p>する工程」の３つに分け、それらを更に意思決定（＝判断）単位で細分化し、標準化してマニュアルに落とし込んだ。</p><p>第２に、その標準化された工程をコンピュータ・ネットワークの中に入れ、設計から物理的な出力まで一気通貫で</p><p>つなげた。これにより意思の伝達スピードは飛躍的に速くなる。</p><p>第３は、金型工程における職人の技能を技術に置き換えデジタル化する。かつてのような金型職人＝巧みの技を不</p><p>要とした。</p><p>①工程表＜徹底的な工程分析＞、②意思伝達の仕組み＜IT を駆使した一気通貫＞、③単純頭脳労働＜熟練させない、</p><p>判断させない、やる気を起こさせない＞の３つ。</p><p>インクス流工程分析の手法</p><p>(1)現状を調査する</p><p>(2)工程間の因果関係を明確にする</p><p>(3)滞留している工程を削減する</p><p>(4)工程を細分化し、細分化した工程を並列に並べ替える</p><p>(5)細分化された各小工程について、人間の判断を必要とする工程と、判断を必要としない工程作業に分類する</p><p>(6)判断工程における判断数を削減する</p></div>
+</div>
+<div class="section" id="sec-18">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§19</span>
+    <span class="sec-title">(7)全工程を再構築する</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>(7)全工程を再構築する</p><p>(1)から(4)までは、いわば現状工程のムダを省く作業である。やろうと思えば、いますぐどの現場でもできる工程</p><p>分析・工程短縮である。しかし(5)以降の分析は、誰でもできるわけではない。例えば従来 40 日かかっていた金型製</p><p>作工程は、(4)までの工程分析と滞留工程の削減を行うだけで 26 日くらいまで簡単に短縮される。さらに(5)から(7)</p><p>までのインクス流工程分析・短縮手法によって、確実に 10 日まで短縮される。実に４分の１である。</p><p>要する期間は、現状調査から(4)並列化までで約３ヵ月。その後、約１年ほどかけて(5)から(7)の徹底的な見直しを</p><p>行い、従来の４分の１の工程を構築する。</p><p>一連のタイムチャートを誰が描けるか</p><p>(1)現状調査</p><p>設計から実際のモノができあがるまでの工程を、縦軸に工程、横軸に時間をとった「タイムチャート」と呼ばれる</p><p>工程表に落とし込む。設計から成形までの工程は通常、製品設計・金型設計・CAM・加工・型組・成形といった具合</p><p>に、各々違う部署が担当している。</p><p>タイムチャートを描いてみて初めて、部署間に滞留があることに気づく。ムダな時間である。したがって、部署間</p><p>の連動を図るだけで、まずは全体で８日間の短縮が理論上可能。</p><p>(2)工程間因果関係の明確化</p></div>
+</div>
+<div class="section" id="sec-19">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§20</span>
+    <span class="sec-title">因果関係を「IO マトリックス」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>因果関係を「IO マトリックス」</p><p>（インプットとアウトプットをマトリックスで表したもの）で明確にする。どこか</p><p>ら出されたデータが、次にどこで使われるかが明確になる。最も長い時間を要するパス（クリティカルパス）を把握</p><p>する。</p><p>(3)滞留工程の削減</p><p>クリティカルパスが明確になれば、そのパス上で何も作業をしていない工程（滞留工程）を削減することで、工期</p><p>は短くなる。</p><p>因果関係と並列化</p><p>(4)工程の並列化</p><p>１つの工程としてくくられていた塊を、いくつかの細かい工程にバラしていく。細かい工程について、先ほどの IO</p><p>マトリックスをさらに詳細に作り込んでいく。</p><p>5/9</p><p>例えば、金型設計において穴形状が決まれば、金型設計の終了を待たずに、CAM の穴加工がスタートできる。こ</p><p>のようにスタートできるものから、どんどん前倒しでやっていく。工程の並列化。</p><p>ここまでの作業でどこの会社も、従来の 40％くらいは工程を短縮することができる。</p></div>
+</div>
+<div class="section" id="sec-20">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§21</span>
+    <span class="sec-title">工程の概念を変えるプロセス・テクノロジーの考え方</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>工程の概念を変えるプロセス・テクノロジーの考え方</p><p>目指す工程は、自動・無人工程である。その実現のためには、熟練者の技に踏みこまざるを得ない。</p><p>(5)判断／作業の分類＝判断を伴う作業の抽出</p><p>作業単位というのは、例えば金型製作工程で言えば「型割り」</p><p>「検査」</p><p>「発送」といった分類。物の単位とは、</p><p>「CAM</p><p>データ」</p><p>「加工指示書」</p><p>「検査成績表」といったアウトプットによる分類。ポイントは、工程を細分化する際の単位が</p><p>「人の判断」を基準とするところ。</p><p>●判断を伴う工程とは</p><p>・未定の事項（設計値など）を決定する工程</p><p>・工程上の「Go」と「No-Go」の判断を行う工程</p><p>●判断を伴わない工程とは</p></div>
+</div>
+<div class="section" id="sec-21">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§22</span>
+    <span class="sec-title">・与えられた情報をもとに、手順に従って行えば誰にでもできる工程</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>・与えられた情報をもとに、手順に従って行えば誰にでもできる工程</p><p>工程を細分化し「判断」と「作業」にまで分解すると、通常、全工程の８割以上が、作業工程という位置づけとな</p><p>る。作業というのは、必要なインプット情報があれば、コンピュータで行うようにすることで、作業は一瞬で終わる。</p><p>しかし熟練者の判断を伴う工程は、最後まで残る。</p><p>その判断は、本当に必要か？</p><p>(6)判断数の削減＝判断事項の最小化</p><p>自動化・無人化実現のためには、人による判断を限りなくゼロに近づけていかなければならない。熟練者が暗黙知</p><p>に基づいて多くの判断を行いながら実施している工程を、非熟練者でも実施できる工程に置き換えていかなければな</p><p>らない。</p><p>よく話を聞いてみると、多くの暗黙知による判断は、何らかのルールによって行われる判断であって、順番に整理</p><p>すると自動化できてしまう。インプット情報をもとにアウトプット事項を決定するプロセスの中に、熟練者の暗黙知</p><p>が詰まっている。熟練者の暗黙知は、誰か、引き出してくれる相手がいて、「ここはこうですね」と対話を繰り返し</p><p>ながら、尐しずつ数値化されていく。</p><p>判断数を削減する手法を整理してまとめると、大きく３つある。</p><p>①判断を不要にする（判断工程を作業にする）</p></div>
+</div>
+<div class="section" id="sec-22">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§23</span>
+    <span class="sec-title">②判断を選択肢化する（判断のレベルを下げる）</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>②判断を選択肢化する（判断のレベルを下げる）</p><p>③干渉工程をなくす</p><p>(7)工程の再構築＝並列化と非同期化による作業指示</p><p>工程要素を、インプットとアウトプットの関連だけでつなげていくことで、並列化を行い、最短の工程を作る。</p><p>プロセスの本質と本質的短縮</p><p>短縮に寄与するのは、３次元 CAD と高速切削の２つの要素だけではなく、人間の判断をコンピュータに委譲する</p><p>こともまた同程度に効果があるということ。</p><p>１．プロローグ・・・かつての作業分析では</p><p>工場である作業を分析するときに、その作業が理論的にどれだけの時間を要するのかを、細かい作業に分解して積み上げ</p><p>ることにより算出する。</p><p>２．プロセス・テクノロジーにおける作業分析のあり方</p><p>人間の脳の情報処理やマシン、ネットワークなどすべて含めても、同じような考え方は可能。</p><p>３．作業の本質をつかめば、携帯金型も１日で！</p><p>目標は意志なので、決めてから達成方法を意志の力で考え、意志の力で実行する。</p><p>実態→本当に意味のある部分の抽出</p></div>
+</div>
+<div class="section" id="sec-23">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§24</span>
+    <span class="sec-title">→無駄の排除（方法検討、実施）</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>→無駄の排除（方法検討、実施）</p><p>→本質部分の本質的短縮</p><p>もしソフトが進化して、製品設計のバックグラウンドで金型設計が自動で進むようになれば、その日のうちにトライできると思</p><p>います。</p><p>４．エピローグ――テクノナルド化が人間に与える影響</p><p>余談ですが、本当に本質のことだけをやるようになると、人間はかなり辛くなると思います。</p><p>高速から光速へ</p><p>6/9</p><p>IT（Information Technology：情報技術）と、MT（Manufacturing Technology：製造技術）と、PT（Process</p><p>Technology：工程技術）が、融合する。モノ作り工程において人間の判断を限りなくゼロに近づける。</p><p>意思の伝達でいちばん大きな問題は、ネットワークから、意思を、人の脳に伝達するときに生じる。スピードは、</p><p>圧倒的にダウンする。そのスピードダウンを最小限にするためには、表示を人間の脳がすぐにわかるような文字、図</p><p>形、立体で構成しなければならない。判断すべき項目を脳に入力していからレスポンスするまでのスピードを如何に</p><p>速くするか。</p><p>ネットワークを通じて、デザイン、設計、モデリング、試作、金型設計、金型製作など各工程で稼動する端末コン</p></div>
+</div>
+<div class="section" id="sec-24">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§25</span>
+    <span class="sec-title">ピュータと情報のやり取りをし、さらにはエンジニアやスタッフの作業の進行状況をチェックする。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ピュータと情報のやり取りをし、さらにはエンジニアやスタッフの作業の進行状況をチェックする。</p><p>目標は意志である</p><p>2002 年春、目標は「金型製作 45 時間」</p><p>。当時、インクス内での携帯電話の金型製作期間は、６日。もし「まずは</p><p>４日に短縮しよう」などという甘い目標を設定したら、日本人の器用さで、現在の技術をシコシコ改良して４日にし</p><p>てしまう。しかし「一気に 45 時間」という到底できそうにない目標を立てると、目標達成のために技術の根本的な</p><p>ブレークスルーが絶対に必要となる。</p><p>新しい世代が築く新しい製造業のかたち</p><p>IT 技術が製造業の生産性とつながったとき、そこには新しい産業が生まれる。実現するには、元来の熟練した手作</p><p>業を定量的な技術に置き換えて、誰でもできる作業にする必要がある。そのためには、生産設備のすみずみまで、瞬</p><p>時に情報が行き渡る伝達の仕組みが不可欠。</p><p>商品／製品／システムを提案する人とそれを実際に作る人が、もっと明確に分かれてくる。頭脳労働者は、作業し</p><p>なくてすむ分、開発に専念できる。誰でも作業労働はできるので、決して人や設備が余るのではない、むしろ雇用を</p><p>生み出す。</p><p>いったん爆発的に価値が見出されると、それはすごい早さで共有される。誰もが瞬時に情報を共有できる伝達の仕</p></div>
+</div>
+<div class="section" id="sec-25">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§26</span>
+    <span class="sec-title">組みが完備したとき、消費者が製品開発に関与できる生産の仕組みが可能になる。自分が参加できる。自分がつ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>組みが完備したとき、消費者が製品開発に関与できる生産の仕組みが可能になる。自分が参加できる。自分がつなが</p><p>っているモノ作り。</p><p>第５章</p><p>かくして「知的産業革命」は、日本から始まる</p><p>モノ作りの勝ち組は、みな日本に戻ってくる</p><p>「キヤノン、低価格品を中国から国内生産に転換。製造を完全自動化」。2003 年２月９日付け日経新聞の第１面。</p><p>コスト２分の１にすることができれば、国内生産は、中国での生産より優位に立つ。経営トップが口を揃えて「コス</p><p>ト２分の１」と言い出した理由。</p><p>200 年前の産業革命。当時のイギリスにとって織物業は、主要産業であったが、インド産のキャラコ（綿織物）が</p><p>世界中に出回るようになると、急速に競争力を失っていった。この危機感が、蒸気機関を取り込んだ紡績機の発明な</p><p>ど新しい技術を開発し、爆発的な生産性の向上を引き起こした。結果、イギリス産の綿織物は、インド産との競争に</p><p>おいて圧倒的優位に立つ。</p><p>キヤノンのように、新生産システムを構築し、すでに日本に生産を戻す会社が出てきていることは、注目すべき。</p><p>日本でしかできないこと</p><p>「日本でしかできないモノ」をいち早く見つけた企業なり人が、一気に世界市場を握るだろう。いま我々が開発し</p></div>
+</div>
+<div class="section" id="sec-26">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§27</span>
+    <span class="sec-title">ている新しい「意思伝達装置」こそ、</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ている新しい「意思伝達装置」こそ、</p><p>「日本でしかできないモノ」ではないか。</p><p>「意思伝達装置」と呼んでいる、ハー</p><p>ド、ソフト、プロセス・テクノロジーすべてが渾然一体となって動くネットワーク装置を作り出す知が、新しい革命</p><p>を牽引する工作機械。30 倍の早さでモノを作る仕組みを生み出せる。</p><p>なぜ、ナビゲーションが必要か</p><p>通常、携帯電話の金型は、一型で約 300 個の金型部品から成り立っている。300 部品のうちのネジ１本が間に合わ</p><p>なくても、金型は完成しない。</p><p>携帯電話に使われているプラスティック部品は、大きいものだけでも 10 部品くらい。金型にすると 10 型である。</p><p>金型部品点数にして約 3,000 部品になる。ちなみに 10 商品＝100 型流すことを想定する。100 型分の 30,000 部品の</p><p>それぞれが、いつ、どの工程にあれば、金型を組み立てる日に、揃うのか。人間がどうやって把握できるか？</p><p>工場全体を流れているすべての金型部品が、いま、どの工程を流れているかをカーナビのように、リアルタイムに</p><p>ナビゲートできる仕組みを作ればいい。</p><p>KATA-NAVI と新工程管理の思想</p><p>いつ、誰が、どこで、何をしているか。その人がどのコンピュータや機械を使って、どのオーダーを、何時間行っ</p></div>
+</div>
+<div class="section" id="sec-27">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§28</span>
+    <span class="sec-title">ているのかも知る必要がある。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ているのかも知る必要がある。</p><p>このデータをもとに、誰が（人件費）</p><p>、どの機械で（減価償却）、何時間、どのオーダー（売上げ）をしたかを総計</p><p>すると、リアルタイムに原価計算ができる。</p><p>携帯電話の金型工程は、約 1,000 工程もある。1,000 工程を管理して、一型 300 部品が同時に揃うようにコントロ</p><p>7/9</p><p>ールしなければいけない。新管理システム：ファラオは、人と、モノと、情報と、時間と、お金を管理している。</p><p>ファラオによって架空の宇宙が出現した</p><p>ネットワークが作り出したバーチャルな宇宙。</p><p>「架宇宙」。受注から、金型設計、金型部品を加工する NC データ作</p><p>成まで、すべてネットワークの中で行われている。架宇宙で最も重要なことは、人間の判断を極限までなくすことで</p><p>ある。熟練しなくても、判断しなくても、やる気がなくても、十分な品質のものを生産できる仕組みをめざしている</p><p>こと。我々の工程管理の思想は、この人間の判断をいかになくしていくかの追求。</p><p>インクス流工程分析手法で携帯の金型工程を構築すると、約 750 工程（プロセス）になる。つまり、750 回人の判</p><p>断が入っている。１デシジョン（判断）を平均５分としても、延べ 62 時間かかる。</p></div>
+</div>
+<div class="section" id="sec-28">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§29</span>
+    <span class="sec-title">架宇宙と実宇宙は、どのようにシンクロするのか</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>架宇宙と実宇宙は、どのようにシンクロするのか</p><p>モノ作りにおいても、サービス業同様に、架宇宙のほうがより重要になっていることを認識すべき。</p><p>「１分１型」への思い</p><p>同時に 20 型を流すと、まだまだ混乱を起こし、一型作るのに平均的に６日間かかる。それぞれの工程は予定時間</p><p>以内で加工しており合計すると 45 時間。なぜ６日間もかかるのか？ ①人の判断時間のバラツキ ②加工の優先順</p><p>位 ③モノの移動時間、の３つの要素が重なり合って起きる。</p><p>金型を加工するのに、①穴あけ、②ワイヤーカット、③荒削り、④仕上げ削りの４つの加工工程がある。工程間の</p><p>移動時間に滞留を起こしているのと、どの優先順位で流せばいいかを、もはや人間の能力ではさばききれなくなって</p><p>いることに起因。</p><p>ネットワークの速度に合わせて、バラツキなく、モノを移動させることができるのは、ロボットしかない。結局、</p><p>行き着くところは無人工場である。夢は、まず、１ヵ月 30 日、720 型を生産する金型工場を完成させること。</p><p>30 倍の生産性の向上が起きると</p><p>今回の知的産業革命において、IT はかつての蒸気機関であり、MT は自働織機。蒸気エンジンがそうであったよう</p><p>に、IT だけではモノの生産はできない。アメリカは、IT というエンジンを開発したが、そのパワーはモノの生産に</p><p>はつながっていない。日本は、いままさに、既存産業の情報工業化を起こすには最もいい位置にいる。</p></div>
+</div>
+<div class="section" id="sec-29">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§30</span>
+    <span class="sec-title">生産性の向上で、モノの価値（価格）は急激に落ちる。価格が下がろうがモノの生産量はいまと同じで十分。し</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>生産性の向上で、モノの価値（価格）は急激に落ちる。価格が下がろうがモノの生産量はいまと同じで十分。した</p><p>がって、現在 97％の労働市場を閉める既存産業は、いまの３％の労働者しか要らなくなる。</p><p>新しい時代の工作機械とは？</p><p>モノ作りのマザーである、金型の 42％、工作機械の 25％、工作機械に NC データを送る NC コントローラの 50％</p><p>を、いまだに日本が生産している。</p><p>佐吉翁は、世界中を回って織物工業の“次なる産業”である自動車工業に出合えたが、我々は、いま世界中を見渡</p><p>しても、自動車工業の“次なる産業”を見出すことができない。</p><p>「原始的情報工業」は、もう出現している</p><p>９０年代は、仕入れてお客さんの要望する商品を届ける流通の仕組みを、IT を駆使して作った会社が成功。流通と</p><p>いう「製品仕入れ－在庫管理－受注－選別梱包－発送－料金回収」。20 工程くらい。</p><p>流通産業に比べて、製造産業はケタ違いの工程数を有する。金型製作工程を見ても、「受注－部品・材料仕入れ－</p><p>在庫管理－金型設計・製作・成形－品質管理－複雑な原価管理－梱包－発送－売掛金管理－売掛金回収」までで 1,000</p><p>工程以上ある。自動車の組み立てラインのほうが、金型製作工程より簡単。</p><p>モノ作りの工程というのは、大きく分けると、</p><p>「アイデア－開発－部品製造－組み立て」。難しい開発工程「設計－</p></div>
+</div>
+<div class="section" id="sec-30">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§31</span>
+    <span class="sec-title">CAE－試作－実験－金型製造」の工程には、爆発的な生産性の向上が起きることは間違いない。結局、最終的</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>CAE－試作－実験－金型製造」の工程には、爆発的な生産性の向上が起きることは間違いない。結局、最終的に大切</p><p>な工程は、アイデアとデザインだけになる。いわゆるブランドの部分。日本が握るべきは、「アイデア－デザイン－</p><p>開発工程」の仕組みとしてのデファクトスタンダード。そうすれば、NIKE のように、アメリカでは一足も靴を生産</p><p>することなしに、アメリカにお金を集められるようになる。</p><p>２つの暗黙知</p><p>インクスでは、2001 年 第２金型工場「K2」を開設。投資総額５億円。ミッションは、</p><p>「45 時間金型」</p><p>。開発メン</p><p>バーは、総勢 35 人。35 人の平均勤続年数は 3.5 ヵ月、平均年齢 26 歳。工場長は、2000 年に入社した 32 歳の男性</p><p>（元外資系コンサルタント）</p><p>。工場といっても、総面積わずか 70 坪。わずか５ヵ月で、平均年齢 26 歳の若者たちが</p><p>最速工場を完成させた。この一気に立ち上げる加速度が、これからの競争力である。</p><p>「Speed is Money」。単位時間当</p><p>たりの仕事量、すなわちスピードをいかに上げるかで勝負が決まる。</p><p>野中郁次郎教授、</p></div>
+</div>
+<div class="section" id="sec-31">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§32</span>
+    <span class="sec-title">「平均勤続年数 3.5 ヵ月。ここでは、暗黙知は要らないのですか？」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「平均勤続年数 3.5 ヵ月。ここでは、暗黙知は要らないのですか？」</p><p>「たしかに、工程や、仕組み、ソフトウェアの開発には、若い人の方がいいです。むしろ、金型のことをまったく</p><p>知らないほうがいいくらいです。暗黙知がある人は、その体験に縛られていて、なぜできないかという理由から探し</p><p>ます」</p><p>。</p><p>新たな技術、新たな産業、新たな社会が生まれるとき、新たな暗黙知もまた同時に芽生える。戦後 50 年の機械産</p><p>業暗黙知と、90 年からの IT 暗黙知。</p><p>国力は「GNI」で測ろう</p><p>8/9</p><p>昔の日本の国力を測るのは、米の生産高、</p><p>「石高」</p><p>。</p><p>明治維新の産業革命からわずか 140 年。国力は、GDP いわゆるいくらモノを生産したかで測られる。</p><p>今回の知的産業革命で、人類が 200 年持ち続けた「モノ」に対する価値観はなくなるであろう。「モノ」に代わっ</p><p>て、価値を持つものは、</p></div>
+</div>
+<div class="section" id="sec-32">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§33</span>
+    <span class="sec-title">「知」である。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「知」である。</p><p>「知」とは、人類に「楽」を与えるもの。洗濯機の「らく」に金を払う。ルイ・</p><p>ヴィトンのバックの「楽しい」に金を払う。ベンツは、「らく」と「楽しい」を併せ持っている。「知」こそが、21</p><p>世紀の産業。21 世紀の国力を測る単位は、GNI（Gross National Intelligence）</p><p>。</p><p>9/9</p></div>
+</div>
+    </div>
+  </div>
+  <div id="reading-view"><div class="reading-inner" id="reading-inner"></div></div>
+</div>
+</div>
+<script>
+
+const sections = [{"id": 0, "chapter": "", "title": "まえがき", "body": ["まえがき", "人間の手作業に変わる自働織機や自動紡績機などの道具の発明が、200 年前のイギリスの織物産業に、爆発的な生", "産性向上を引き起こした。自働織機や自動紡績機が発明されなかったら、蒸気エンジンの圧倒的なパワーを利用して", "生産性を向上するという革命は、起こりえなかった。", "今回の産業革命において、IT の果たす役割は、まさにこの蒸気エンジンの役割である。IT エンジンの動力性能＝", "能力とは、端的に言えば２つ。①素晴らしいデータ生産能力、②瞬時の意思伝達能力。IT エンジンの圧倒的なパワー", "を受けとめて、モノを超高速・高品位で出力する IT 出力システムが、まだはっきりとした形では登場していない。", "第１章", "光造形システムとの衝撃的出合い", "独立を決意した日", "1989 年「オート・ファクト・ショー」", "。ガラス張りの四角い装置の中で、ビンの形がみるみる浮かび上がってきた。", "生まれて初めて光造形装置を見た。ものすごい衝撃が走った。光造形とは、３次元 CAD データから、直接３次元の", "形状を出力する仕組み。３次元 CAD と光造形システムの連動。職人の手を介することなく、直接試作ができる。", "熟練の「設計職人－試作職人－金型職人」の３者が連動した、日本の見事な開発工程はどうなるのか？早く日本に"]}, {"id": 1, "chapter": "", "title": "知らせなければならない。", "body": ["知らせなければならない。", "「佐藤君、会社を辞めるぞ。明日、君もコボ・ホールに行って、光造形システムを見てこ", "い」", "。", "アメリカで感じた日本製造業の強さ", "「俺は、今日からドアロックで世界チャンピオンを目指す！」", "。仕事に打ち込んだ。80 年代初めには、すべてのホ", "ンダ車に私が設計したドアロックが使われるようになっていた。1990 年からその後の 10 年間クライスラーの全車両", "に使うドアロックの受注を獲得。額にして 1,000 億円。クライスラーの受注とともに、三井金属はデトロイトにエン", "ジニアリング・オフィスを開設、私が初代所長。", "デトロイトと日本は、時差が 14 時間。日米の２つのオフィスが、ほぼ半日ズレで稼動する。この半日のズレを利", "用して、", "12 時間交替の日米 24 時間開発体制をしいた。抜群のスピードを生み出すミラクルな日米オンライン体制は、", "私にとってプロセス・テクノロジーの第１歩。", "私は、設計者。設計の描いたいいかげんな紙の図面をもとに、試作や金型を作ってくれる世界一の職人さんが一体"]}, {"id": 2, "chapter": "", "title": "となった協働体制ができているからこそ、日本の製造業は強い。", "body": ["となった協働体制ができているからこそ、日本の製造業は強い。", "しかし光造形システムとの運命の出合いが、有頂天になっていた私に冷水を浴びせた。IT は、", "「日本の強み」を一", "瞬にして「日本の弱み」に変えてしまう。", "クライスラーの３次元化レポート", "クライスラーが３次元 CAD「CATIA」を設計に使い始めたのは、89 年。３次元化にあたりキャスタング氏が行っ", "たこと。", "①ベンダーを集めて、", "「クライスラーは、７月１日から CATIA データしか受け付けない」と宣言。", "②UAW（全米自動車労組）のドラフトマン（トレーサー）を集めて、", "「クライスラーは、７月１日から CATIA で設", "計をする」と宣言。", "IBM の CATIA 講習。夜学である。年齢は 40 歳代後半から 50 歳代の人が、ほとんどだった。当然、全員が自費。", "職を失うか、CATIA を習うかの選択である。", "開発工程の３次元化における最初の問題は、設計者の３次元化教育。私の設計者としての経験からすると、頭の中"]}, {"id": 3, "chapter": "", "title": "で２次元図面と３次元立体イメージが自由に操れるようになるには３年かかる。", "body": ["で２次元図面と３次元立体イメージが自由に操れるようになるには３年かかる。", "結局、クライスラー側は、CATIA の導入に際しての設計者の教育は一切行わなかった。アメリカでは、エンジニ", "アは図面を描かない。通常、エンジニアには４，５名のドラフトマンがつく。ドラフトマンは、UAW の組合員であ", "る。７月１日には、本当に CATIA が導入されて、クライスラーの設計室からすべての製図台が姿を消した。驚いた", "ことに、７月当初はポツポツとしか動き始めていなかった CATIA の画面が、９月にはその体育館のような設計室に", "ずらりと並んだすべてのスコープに３次元画面が映し出されていた。図面を描いていた 50 歳代のドラフトマンが、", "薄暗い設計室で CATIA を操作している姿は、いまでも忘れられない。", "クライスラーの薄暗い設計室で見た３次元開発への移行過程と、オート・ファクト・ショーでの光造形。その光景", "を見て、未来のモノ作りは、現在のモノ作りの延長戦上には無いことを改めて確認した。", "第２章", "モノ作りの定義が変わった", "80 年代アメリカで何が起こったか", "アメリカは、80 年代の 10 年間で農業と自動車、石油化学を残し、家電、その他の耐久消費財の生産を放棄した。", "1/9", "94 年にはナスダック市場は、出来高でニューヨーク市場を追い抜いた。80 年からの 14 年間で、アメリカの GDP は、"]}, {"id": 4, "chapter": "", "title": "４兆 9,009 億ドルから７兆 3,477 億ドル（94 年）へ 150 パーセントの成長。94 ", "body": ["４兆 9,009 億ドルから７兆 3,477 億ドル（94 年）へ 150 パーセントの成長。94 年の GDP を担った企業の 75％分の", "産業が、その 14 年間に創出された。一方、80 年当時の既存産業の 25％が、減尐あるいは消滅した計算になる。80", "年代は、日本がアメリカに追いつき、追い越した 10 年であった。", "淘汰される古い産業に未練を持ってはならない", "ドン底の中で、クライスラーは設計の３次元化をやってのけ、光造形システムが製造業の現場に普及の兆しを見せ", "ていた。アメリカの 89 年。古いものと新しいものとが、非連続で同居していた。", "95 年頃までに、古い産業は淘汰されるか、姿を変えていった。ほとんどの電気製品（消耗品）を作らない国となっ", "ていった。最もモノ作りが進化したアメリカで、いま残っているモノ作り産業は、自動車（と石油化学品）だけ。産", "業革命後に最も遅く進化した日本の製造業は、英、米が投げ出した古い産業を一人で背負い世界のモノ作りセンター", "となった。", "現代の成熟した産業は、日本よりさらに遅れて進化を始めたアジアに、必然のように移っていく。石炭、繊維、時", "計、鉄、家電、コンピュータと、モノ作り産業は、どんどん日本から消えていっている。", "しかし日本は、モノを輸出しなければ食糧やエネルギーを輸入できないのだから、アメリカのようにモノ作り産業", "を捨てるわけにはいかない。古いモノ作り産業を淘汰しながら同時に、新しいモノ作り産業を起し、ナスダックの様", "な新産業群を育てなければならない。"]}, {"id": 5, "chapter": "", "title": "本気で３次元化に踏み出せない日本の製造業", "body": ["本気で３次元化に踏み出せない日本の製造業", "95 年４月 18 日、日本経済新聞一面に、トヨタ、日産、ホンダ――３次元ソリッド設計化。その背景には、クライ", "スラーの IT 化後の快進撃があった。", "アイアコッカ氏が３次元 CAD 導入に踏みきったのは、87 年から大ヒットしたフォードのセーブルとトーラスの成", "功に大きく影響を受けた。あの当時の米車では、初めて３次元曲面を多用した丸っこい形をしていた。93 年の LH を", "皮切りに、クライスラーは、美しい３次元化曲面デザインのクルマを次々と発売し、大ヒットさせた。", "94 年。自動車工業会は、クライスラーの「ネオン」を調査した。ネオンは、同格の日本車より安い値段で日本で発", "売され、", "“ジャパン・キラー”と呼ばれていた。結果、３次元設計による設計の簡素化で大幅にコストを下げている", "ことがわかった。そして、95 年度の開発の３次元化を予算化した結果が、前出の 95 年の日本経済新聞の記事。", "日本の多くの企業から、", "「なかなか３次元化が進まない」とよく聞く。日本の製造業の３次元化が進まない最大の", "原因は、日本では、設計者が図面を描く点にある。日本の設計者は、構想も練り、技術計算もし、外部との打ち合わ", "せも行い、かつ図面も描く。いまの日本の設計者にとって３次元化で職を失う危機はない。この甘えが、日本の企業", "において、いつまで経っても３次元化が進まない最大の理由。"]}, {"id": 6, "chapter": "", "title": "アメリカのドラフトマンのように、職を失う危機感があれば、誰でも３次元 CAD を使えるようになる。日", "body": ["アメリカのドラフトマンのように、職を失う危機感があれば、誰でも３次元 CAD を使えるようになる。日本の優", "秀な設計者は、きちっと教育さえすれば、誰でも２ヶ月間で３次元設計のトップガンに育つ。", "日本の強みが一転して弱みとなる", "日本を追いかけるアジアには、使い込まれた製造設備も、経験も、技能も、ノウハウもない。彼らは、モノを造ろ", "うと思ったら最新の設備を買い入れるしかない。", "中国にパソコン工場を持つ台湾資本のある会社。2,000 人が働く金型工場。1,000 台の最新の工作機械。３次元 CAD", "も 100 台ある。長年の経験も技能もノウハウもない未経験者が、３次元 CAD をはじめとする IT と最新工作機械を", "駆使して、すでに世界のデスクトップの金型の 20％を生産している。３次元 CAD による設計と光造形をはじめとす", "るラピッド・プロトタイピング技術が、世界一の職人技をのみ込んでいくのは時間の問題。", "日本はいま、今後も残すべき技能と、IT を駆使した新しい生産システムに落とし込める技能とを、冷静に分類すべ", "き時。新生産システムに落とし込める技能は、職人がまだ健在で働いているうちに、その技能の分析を行い、マニュ", "アル化やシステム化を図り、", "「技能」を IT と連動する「技術」に落とし込むことが急務。日本が保有する世界一の技", "能を IT 化することができれば、当然世界一の IT 生産技術開発でき、IT 生産工程を構築できる。", "モノ作り立国・日本を支えるのは中小企業群"]}, {"id": 7, "chapter": "", "title": "日本の GDP は、約 500 兆円。そのうち約 125 兆円が製造業。日本の製造業は量産産業である", "body": ["日本の GDP は、約 500 兆円。そのうち約 125 兆円が製造業。日本の製造業は量産産業である。大量生産の要とな", "るのは、金型。", "金型産業の規模は、91 年のピーク時で年間１兆 5,000 億円。現在でも世界の金型の約 42％は、日本で生産されて", "いる。金型企業は、現在約 7,000 社。１社平均年間売上げは、２億円の計算。従業員数の規模で見ると、94％が 34", "人以下の中小企業群。働く人の平均年齢は、50 歳を上回る。この人たちが、日本の製造業を支えているのである。", "モノ作りの定義が変わる", "インクスは、IT エンジンがきっかけになって生まれる爆発的な生産性の向上を、世の中に知らせなければならない", "との思いから生まれた。まず最初に取り組んだのは、量産産業を支える金型製作工程の IT 化による短縮である。", "製品設計・試作・金型設計製作の工程を、３次元 CAD、光造形システム、そして自社開発した金型専用 CAD・CAM", "ソフトを使って、３次元データで一気通貫させたシステムを構築した。従来の図面中心の工程に比べて尐なくとも３", "分の１以下、最速で２４分の１まで開発期間短縮が可能になることを実証。従来 45 日かかっていた金型製作工程を、", "2/9", "金型設計から製作まで一気通貫で 45 時間にまで縮めた。こうした爆発的な生産性向上なくしては、製造業は生き残", "ることはできない。", "もうすでにアメリカでは、この知的産業革命の第１フェーズを終えている。第１フェーズとは、IT エンジンの発明"]}, {"id": 8, "chapter": "", "title": "とその整備。IT バブルが、はじけたのではない。IT インフラの整備が終わり、その供給だけを担当した", "body": ["とその整備。IT バブルが、はじけたのではない。IT インフラの整備が終わり、その供給だけを担当した企業が、最", "初の役割を終え退場した。IT インフラを整備した、ニューヨーク市場に上場しているアメリカ製造業や、流通産業、", "サービス産業は、この IT インフラが引き起こす爆発的な生産性向上の片鱗を垣間見ているはず。", "アメリカは、この「生産性の向上」を、これまではそれほど強調したことがない。2001 年にかけて経済成長率が", "急激に下降することをいち早く知っていたブッシュ政権や FRB 議長のスパン氏は、国民を安心させるために、やむ", "を得ず、秘密にしておきたかった IT インフラによる生産性の向上を声高に言い始めた。次に来る２次フェーズこそ、", "製造業に爆発的な生産性向上をもたらす産業革命の始まりである。", "いまアメリカに残っている製造業とは何か。製造業を捨ててしまったアメリカと、知識も技術も発展途上のアジア", "の間にあって、開発工程や生産工程に爆発的な生産性向上を引き起こす IT 出力システムの発明ができるのは、日本", "だけ。尐なくとも、IT 出力システムを発明・開発するのに世界一有利な土壌を持っているのは、この日本。10 年以", "内に製造業に 30 倍程度の生産性の向上が起こることは、", "もはや夢でも何でもない。", "原価 30 分の１の世界が出現する。", "日本はこれから何を作ればいいのだろうか", "最近お会いする日本の製造業のトップ。"]}, {"id": 9, "chapter": "", "title": "「我々がコンセプトを考え出し、難しい開発だけを担当した製品が、市場", "body": ["「我々がコンセプトを考え出し、難しい開発だけを担当した製品が、市場", "に投入後、半年もすると、開発費を負担しないアジアのコピー会社の製品に市場を奪われるという構造になってしま", "う。開発費を回収するだけの売上げを達成する前に、コピー製品に市場を奪われてしまう。」", "製造業を活性化させる施策を検討する会議に出席した時に私はこう主張。", "「90 年代は、失われた 10 年ではありま", "せんよ。過去の 10 年間も、日本は必死で技術を伸ばしてきました。70 年から 90 年までの 20 年間は、新製品が発売", "されるたびに、性能、品質はどんどん改善されました。しかし、現有の工業技術は、90 年を頂点にサチレートしまし", "た。例えば、70 年から 90 年までは、50 点から 90 点に進化しましたが、90 年からの 10 年間は、90 点から 95 点に", "なったようなもの。サチレートした技術に追いつくのは早い。過去の 10 年間で、70 点だったアジアが 92 点くらい", "まで追いついてきただけ」", "。", "まだわずかでも優位に立っている製造業を建て直し、雇用と輸出を維持しなければいけないことは、明確。", "第３章", "開発工程「２分の１」から「30 分の１」へ", "キーワードは「旬の時に、旬のモノを」"]}, {"id": 10, "chapter": "", "title": "IT を駆使して、爆発的な生産性向上を実現すること。", "body": ["IT を駆使して、爆発的な生産性向上を実現すること。", "98 年 9 月以降、あらゆる企業が申し合わせたように「開発期間２分の１」を唱え始めた。開発期間２分の１を実", "現するには、開発工程の IT 化しかない。経営トップが「どんなことをやってもいいから開発期間を２分の１にしろ」", "と至上命令を下す理由は、性能では差別化ができなくなった製品を、コロコロ変わる市場の嗜好に合わせて、旬の時", "に発売しなければならないから。携帯電話は、６ヵ月おきにモデルチェンジ。売れ筋のケータイは、その間に 300 万", "個ほど売れる。プレステ２など、２日で 100 万台。", "「旬の瞬間、人がまだ持っていないモノ」", "。爆発的に売れて一瞬で売れなくなる。商品ライフサイクルの短期化は、", "小さなモノだけでなく、自動車にも当てはまる。発売と同時に販売台数は、コンスタントに下がって、１年後にはピ", "ーク時の４分の１にまで。６ヵ月で販売台数が急激に落ちてくるようになると、落ちた分を埋め合わせるためには、", "ユーザーの嗜好に合った新車を、次々に市場に投入しなければならない。いまでも、日本の開発スピードは、世界一", "速い。", "経営判断は、", "「一気に半分にしろ！」という。IT は、電気・ガス・水道などと同じ、産業を支えるインフラである。", "それを使って何をするか、が問われている。"]}, {"id": 11, "chapter": "", "title": "手描き図面と CAD データの違い", "body": ["手描き図面と CAD データの違い", "日本という国は、何かを作り輸出し続けなければ、食糧とエネルギーを輸入できない宿命にある。従って、輸出の", "70％を占める製造業の存続は、当面、不可欠である。", "IT 開発化とは、", "「何を作るか（製品の定義）", "」", "「どう作るか（工程の定義）", "」という情報を、これまでのように２次元", "の図面によって意思伝達するのではなく、３次元データなどさまざまな情報技術を駆使して一気通貫で意思伝達する", "仕組みを構築すること。", "製品や工程に関する定義を伝達する方法は、長い間、紙の上に描かれた線と数値と文字以外になかった。紙の上に", "３方向から見た製品の形状と寸法を細かく描く図面。図面を描いた本人以外が、正確に理解し、把握するには時間も", "かかりミスも発生する。", "モノの形状を３次元で定義できないかと試行錯誤が繰り返され、開発されたのが、３次元 CAD。1970 年代から開", "発が始まり、宇宙防衛産業で実用化され、1970 年代末から 80 年代にかけて、航空機、自動車、造船などの分野で次々"]}, {"id": 12, "chapter": "", "title": "と利用されるようになった。", "body": ["と利用されるようになった。", "3/9", "70 年代には、製造現場で使われる工作機械の NC（数値制御）化が急速に進んだ。それまで人間が制御していた工", "作機械が、コンピュータによる制御に替わった。", "何とか最初から３次元で設計し、そのデータをそのまま加工に使うようにはできないものだろうか。", "工程を速くする３次元 CAD「ソリッド・モデラー」", "市販の３次元 CAD が登場したのは、1970 年代末から 80 年代初頭にかけて。CATIA は、フランスのダッソーシス", "テムズ社という航空機メーカーが開発しもの。ユニグラフィクスの方は、アメリカのマクドネル・ダグラス社が開発", "したシステム。", "３次元データと光造形装置を直結すれば、ワープロからプリンターに出力するように、直接物理的なモノがプリン", "トアウトできる。但し、光硬化性という性質を持つ樹脂を固めて成形するので、試作品の材質は本物とは違う。偽物", "の材料でも、実物の試作があっという間にできるということは、何よりも魅力的だった。", "８０年代後半、立体の内部構造をデータとして持つ「ソリッド・モデラー」と呼ばれる新世代の３次元 CAD が、", "商品化。ソリッド３次元 CAD では、立体の内側と外側の区別がつくとともに、中身の実態部分が定義されているの", "で、コンピュータ上のモデルを使って、質量や重心位置、体積などを計算することもできる。また、ソリッド・モデ"]}, {"id": 13, "chapter": "", "title": "ラーの大きな特徴は、形状の作成や変更を簡単に行うことができる点。直感的にわかりやすい製品像を画面で見", "body": ["ラーの大きな特徴は、形状の作成や変更を簡単に行うことができる点。直感的にわかりやすい製品像を画面で見なが", "ら形作っていくという、３次元での本格的な設計が、いよいよ現実のものとなり始めた。", "３次元化の原体験「３次元設計場」の仕組み", "85 年夏。ホンダの常務、", "「山田さん。ドアロックの試作、１日でできない？」当時、ドアロックの試作作りには２", "週間。私の遣り方は、できそうにない難問にぶつかると、どうしてできないのか（WHY）を考えないで、どうやれ", "ばできるか（HOW）を考える。", "実際に私が行ったこと、３次元 CAD でドアロックのプラスティック・ボディの立体形状データを作ること。３次", "元データから直接 NC データを作る。工作機械と NC は、見事に連動した。すると、プラスティックの部分は、結果", "的には一晩でできてしまった。", "ここで重要な考え方は、いちばん長い工程の中に、全部の工程を入れてしまうこと。次に、最も長い工程のスター", "トをいかに早めるか、それをいかに短くするか、である。", "私は、このときの３次元化体験を通じて初めて、モノ作りにおける圧倒的な期間短縮と爆発的生産性向上の実現を、", "その渦中で身をもって体験した。目の前で、", "「１日」という概念が、「１日」という現実に変わった。"]}, {"id": 14, "chapter": "", "title": "日本の製造業が迷い込んだ３次元化の迷路", "body": ["日本の製造業が迷い込んだ３次元化の迷路", "製品と金型の関係は、たい焼きとたい焼きの型の関係と同じ。ソリッド３次元 CAD で作成した製品設計データが、", "量産のための金型設計データに直接つながらない。第１次 IT 開発化は、そうした理由から 95 年に１度挫折。", "それは、３次元 CAD の生い立ちに起因する問題で根が深い。世界の主要な３次元 CAD は、もともとは航空機の", "設計・解析用に開発されたもの。航空機の主要部品は、工作機械で直接切削加工されており、金型は使っていない。", "３次元 CAD で設計された製品の３次元データが、一気通貫で金型設計・製作のための３次元データとして利用で", "きない限り、工程はそこで途切れてしまう。市販の３次元 CAD を導入しさえすれば、IT 開発工程が立ち上がると考", "えるのは、経営者の錯覚である。", "インクス「高速金型システム」開発の経緯", "インクス独自開発による金型設計・製作専用の CAD・CAM ソフト「KATACAD」構想が、現実に動きだした。", "神業とは？その本質に迫る", "96 年春、私は１人の熟練金型職人にインクスに来て力を貸してくれるようにお願いした。当時 66 歳ですでに引退", "していた１級仕上士・石井二郎さん。", "我々は、45 年間この道一筋でやってこられた１級仕上士のすべての技を、見て、聞いて、触って、計り、書き取り、", "徹底的な分析を行った。熟練の暗黙知は、尐しずつ形式知へと知の形を変えていった。神業はマニュアルとなり、技"]}, {"id": 15, "chapter": "", "title": "能は再現性のある技術に置き換えられた。", "body": ["能は再現性のある技術に置き換えられた。", "金型研究を開始して２年半がたったある日、何の経験もない 19 歳の社員が、そのマニュアルに従って実際に金型", "を作った。すると、この道一筋の熟練工と同じ金型を、19 歳の若者が作れてしまった。", "最も優秀な技能者や技術者が、自分の経験を暗黙知という名のもとに抱え込み、技術という形式知に落とし込んで", "いかない。技能者は、自らの暗黙知を形式知に変えてゆくボキャブラリーを持ち合わせない。技術者は、後輩から追", "いつかれないために自分だけのものとしてそれを隠す。そのことが、進化を止めている。", "石井さんへの尊敬の念と感謝の気持ち。守られるべきは、「彼がいないとできない」という幻想ではなく、目に見", "える仕組みの中に宿る「彼がいたからできた」という技術の連鎖である。", "「意思伝達装置」の威力", "ソリッドデータから自分たちの KATACAD を使って金型設計・製作する仕組み（ソフト、標準化、プロセス、管", "理システムを合わせたもの）", "「高速金型システム」", "。", "98 年３月、最初に受注したのは、デンソーの携帯電話の金型。製品の立体形状を定義した３次元ソリッドデータの", "4/9"]}, {"id": 16, "chapter": "", "title": "みを受け取り、６日間で金型を設計・製作した。それまで通常 45 日かかっていた。今では、設計－試作－", "body": ["みを受け取り、６日間で金型を設計・製作した。それまで通常 45 日かかっていた。今では、設計－試作－金型とい", "う一気通貫の開発工程が 365 日 24 時間対応できる体制ができあがった。", "世界一の金型産業を失ってはいけない", "３次元 CAD や、データベースを駆使して図面レス、書類レスを実現し、インターネット、イントラネットなどの", "IT で各工程を一気通貫でつなげば、開発工程は劇的に短縮される。", "IT 開発化は、一気に進めないと成功しない", "理想的には、製品データからポンと金型ができ、いきなり量産できるのがいちばんいい。３次元設計に移行すると", "図面はなくなる。このとき一気に図面をなくさずに、２次元の図面と３次元データを併用すると、IT 開発化は必ず失", "敗する。", "第４章", "驚異のプロセス・テクノロジー", "一気通貫を可能にする３つの条件", "従来 45 日かかっていた金型設計・製作工程を６日に短縮し、さらに 45 時間まで短縮する、３つのポイント。", "第１に従来の金型工程を詳細に分析し、その全工程を「IT でできる工程」", "「機械で行う工程」"]}, {"id": 17, "chapter": "", "title": "「人間の判断力を利用", "body": ["「人間の判断力を利用", "する工程」の３つに分け、それらを更に意思決定（＝判断）単位で細分化し、標準化してマニュアルに落とし込んだ。", "第２に、その標準化された工程をコンピュータ・ネットワークの中に入れ、設計から物理的な出力まで一気通貫で", "つなげた。これにより意思の伝達スピードは飛躍的に速くなる。", "第３は、金型工程における職人の技能を技術に置き換えデジタル化する。かつてのような金型職人＝巧みの技を不", "要とした。", "①工程表＜徹底的な工程分析＞、②意思伝達の仕組み＜IT を駆使した一気通貫＞、③単純頭脳労働＜熟練させない、", "判断させない、やる気を起こさせない＞の３つ。", "インクス流工程分析の手法", "(1)現状を調査する", "(2)工程間の因果関係を明確にする", "(3)滞留している工程を削減する", "(4)工程を細分化し、細分化した工程を並列に並べ替える", "(5)細分化された各小工程について、人間の判断を必要とする工程と、判断を必要としない工程作業に分類する", "(6)判断工程における判断数を削減する"]}, {"id": 18, "chapter": "", "title": "(7)全工程を再構築する", "body": ["(7)全工程を再構築する", "(1)から(4)までは、いわば現状工程のムダを省く作業である。やろうと思えば、いますぐどの現場でもできる工程", "分析・工程短縮である。しかし(5)以降の分析は、誰でもできるわけではない。例えば従来 40 日かかっていた金型製", "作工程は、(4)までの工程分析と滞留工程の削減を行うだけで 26 日くらいまで簡単に短縮される。さらに(5)から(7)", "までのインクス流工程分析・短縮手法によって、確実に 10 日まで短縮される。実に４分の１である。", "要する期間は、現状調査から(4)並列化までで約３ヵ月。その後、約１年ほどかけて(5)から(7)の徹底的な見直しを", "行い、従来の４分の１の工程を構築する。", "一連のタイムチャートを誰が描けるか", "(1)現状調査", "設計から実際のモノができあがるまでの工程を、縦軸に工程、横軸に時間をとった「タイムチャート」と呼ばれる", "工程表に落とし込む。設計から成形までの工程は通常、製品設計・金型設計・CAM・加工・型組・成形といった具合", "に、各々違う部署が担当している。", "タイムチャートを描いてみて初めて、部署間に滞留があることに気づく。ムダな時間である。したがって、部署間", "の連動を図るだけで、まずは全体で８日間の短縮が理論上可能。", "(2)工程間因果関係の明確化"]}, {"id": 19, "chapter": "", "title": "因果関係を「IO マトリックス」", "body": ["因果関係を「IO マトリックス」", "（インプットとアウトプットをマトリックスで表したもの）で明確にする。どこか", "ら出されたデータが、次にどこで使われるかが明確になる。最も長い時間を要するパス（クリティカルパス）を把握", "する。", "(3)滞留工程の削減", "クリティカルパスが明確になれば、そのパス上で何も作業をしていない工程（滞留工程）を削減することで、工期", "は短くなる。", "因果関係と並列化", "(4)工程の並列化", "１つの工程としてくくられていた塊を、いくつかの細かい工程にバラしていく。細かい工程について、先ほどの IO", "マトリックスをさらに詳細に作り込んでいく。", "5/9", "例えば、金型設計において穴形状が決まれば、金型設計の終了を待たずに、CAM の穴加工がスタートできる。こ", "のようにスタートできるものから、どんどん前倒しでやっていく。工程の並列化。", "ここまでの作業でどこの会社も、従来の 40％くらいは工程を短縮することができる。"]}, {"id": 20, "chapter": "", "title": "工程の概念を変えるプロセス・テクノロジーの考え方", "body": ["工程の概念を変えるプロセス・テクノロジーの考え方", "目指す工程は、自動・無人工程である。その実現のためには、熟練者の技に踏みこまざるを得ない。", "(5)判断／作業の分類＝判断を伴う作業の抽出", "作業単位というのは、例えば金型製作工程で言えば「型割り」", "「検査」", "「発送」といった分類。物の単位とは、", "「CAM", "データ」", "「加工指示書」", "「検査成績表」といったアウトプットによる分類。ポイントは、工程を細分化する際の単位が", "「人の判断」を基準とするところ。", "●判断を伴う工程とは", "・未定の事項（設計値など）を決定する工程", "・工程上の「Go」と「No-Go」の判断を行う工程", "●判断を伴わない工程とは"]}, {"id": 21, "chapter": "", "title": "・与えられた情報をもとに、手順に従って行えば誰にでもできる工程", "body": ["・与えられた情報をもとに、手順に従って行えば誰にでもできる工程", "工程を細分化し「判断」と「作業」にまで分解すると、通常、全工程の８割以上が、作業工程という位置づけとな", "る。作業というのは、必要なインプット情報があれば、コンピュータで行うようにすることで、作業は一瞬で終わる。", "しかし熟練者の判断を伴う工程は、最後まで残る。", "その判断は、本当に必要か？", "(6)判断数の削減＝判断事項の最小化", "自動化・無人化実現のためには、人による判断を限りなくゼロに近づけていかなければならない。熟練者が暗黙知", "に基づいて多くの判断を行いながら実施している工程を、非熟練者でも実施できる工程に置き換えていかなければな", "らない。", "よく話を聞いてみると、多くの暗黙知による判断は、何らかのルールによって行われる判断であって、順番に整理", "すると自動化できてしまう。インプット情報をもとにアウトプット事項を決定するプロセスの中に、熟練者の暗黙知", "が詰まっている。熟練者の暗黙知は、誰か、引き出してくれる相手がいて、「ここはこうですね」と対話を繰り返し", "ながら、尐しずつ数値化されていく。", "判断数を削減する手法を整理してまとめると、大きく３つある。", "①判断を不要にする（判断工程を作業にする）"]}, {"id": 22, "chapter": "", "title": "②判断を選択肢化する（判断のレベルを下げる）", "body": ["②判断を選択肢化する（判断のレベルを下げる）", "③干渉工程をなくす", "(7)工程の再構築＝並列化と非同期化による作業指示", "工程要素を、インプットとアウトプットの関連だけでつなげていくことで、並列化を行い、最短の工程を作る。", "プロセスの本質と本質的短縮", "短縮に寄与するのは、３次元 CAD と高速切削の２つの要素だけではなく、人間の判断をコンピュータに委譲する", "こともまた同程度に効果があるということ。", "１．プロローグ・・・かつての作業分析では", "工場である作業を分析するときに、その作業が理論的にどれだけの時間を要するのかを、細かい作業に分解して積み上げ", "ることにより算出する。", "２．プロセス・テクノロジーにおける作業分析のあり方", "人間の脳の情報処理やマシン、ネットワークなどすべて含めても、同じような考え方は可能。", "３．作業の本質をつかめば、携帯金型も１日で！", "目標は意志なので、決めてから達成方法を意志の力で考え、意志の力で実行する。", "実態→本当に意味のある部分の抽出"]}, {"id": 23, "chapter": "", "title": "→無駄の排除（方法検討、実施）", "body": ["→無駄の排除（方法検討、実施）", "→本質部分の本質的短縮", "もしソフトが進化して、製品設計のバックグラウンドで金型設計が自動で進むようになれば、その日のうちにトライできると思", "います。", "４．エピローグ――テクノナルド化が人間に与える影響", "余談ですが、本当に本質のことだけをやるようになると、人間はかなり辛くなると思います。", "高速から光速へ", "6/9", "IT（Information Technology：情報技術）と、MT（Manufacturing Technology：製造技術）と、PT（Process", "Technology：工程技術）が、融合する。モノ作り工程において人間の判断を限りなくゼロに近づける。", "意思の伝達でいちばん大きな問題は、ネットワークから、意思を、人の脳に伝達するときに生じる。スピードは、", "圧倒的にダウンする。そのスピードダウンを最小限にするためには、表示を人間の脳がすぐにわかるような文字、図", "形、立体で構成しなければならない。判断すべき項目を脳に入力していからレスポンスするまでのスピードを如何に", "速くするか。", "ネットワークを通じて、デザイン、設計、モデリング、試作、金型設計、金型製作など各工程で稼動する端末コン"]}, {"id": 24, "chapter": "", "title": "ピュータと情報のやり取りをし、さらにはエンジニアやスタッフの作業の進行状況をチェックする。", "body": ["ピュータと情報のやり取りをし、さらにはエンジニアやスタッフの作業の進行状況をチェックする。", "目標は意志である", "2002 年春、目標は「金型製作 45 時間」", "。当時、インクス内での携帯電話の金型製作期間は、６日。もし「まずは", "４日に短縮しよう」などという甘い目標を設定したら、日本人の器用さで、現在の技術をシコシコ改良して４日にし", "てしまう。しかし「一気に 45 時間」という到底できそうにない目標を立てると、目標達成のために技術の根本的な", "ブレークスルーが絶対に必要となる。", "新しい世代が築く新しい製造業のかたち", "IT 技術が製造業の生産性とつながったとき、そこには新しい産業が生まれる。実現するには、元来の熟練した手作", "業を定量的な技術に置き換えて、誰でもできる作業にする必要がある。そのためには、生産設備のすみずみまで、瞬", "時に情報が行き渡る伝達の仕組みが不可欠。", "商品／製品／システムを提案する人とそれを実際に作る人が、もっと明確に分かれてくる。頭脳労働者は、作業し", "なくてすむ分、開発に専念できる。誰でも作業労働はできるので、決して人や設備が余るのではない、むしろ雇用を", "生み出す。", "いったん爆発的に価値が見出されると、それはすごい早さで共有される。誰もが瞬時に情報を共有できる伝達の仕"]}, {"id": 25, "chapter": "", "title": "組みが完備したとき、消費者が製品開発に関与できる生産の仕組みが可能になる。自分が参加できる。自分がつ", "body": ["組みが完備したとき、消費者が製品開発に関与できる生産の仕組みが可能になる。自分が参加できる。自分がつなが", "っているモノ作り。", "第５章", "かくして「知的産業革命」は、日本から始まる", "モノ作りの勝ち組は、みな日本に戻ってくる", "「キヤノン、低価格品を中国から国内生産に転換。製造を完全自動化」。2003 年２月９日付け日経新聞の第１面。", "コスト２分の１にすることができれば、国内生産は、中国での生産より優位に立つ。経営トップが口を揃えて「コス", "ト２分の１」と言い出した理由。", "200 年前の産業革命。当時のイギリスにとって織物業は、主要産業であったが、インド産のキャラコ（綿織物）が", "世界中に出回るようになると、急速に競争力を失っていった。この危機感が、蒸気機関を取り込んだ紡績機の発明な", "ど新しい技術を開発し、爆発的な生産性の向上を引き起こした。結果、イギリス産の綿織物は、インド産との競争に", "おいて圧倒的優位に立つ。", "キヤノンのように、新生産システムを構築し、すでに日本に生産を戻す会社が出てきていることは、注目すべき。", "日本でしかできないこと", "「日本でしかできないモノ」をいち早く見つけた企業なり人が、一気に世界市場を握るだろう。いま我々が開発し"]}, {"id": 26, "chapter": "", "title": "ている新しい「意思伝達装置」こそ、", "body": ["ている新しい「意思伝達装置」こそ、", "「日本でしかできないモノ」ではないか。", "「意思伝達装置」と呼んでいる、ハー", "ド、ソフト、プロセス・テクノロジーすべてが渾然一体となって動くネットワーク装置を作り出す知が、新しい革命", "を牽引する工作機械。30 倍の早さでモノを作る仕組みを生み出せる。", "なぜ、ナビゲーションが必要か", "通常、携帯電話の金型は、一型で約 300 個の金型部品から成り立っている。300 部品のうちのネジ１本が間に合わ", "なくても、金型は完成しない。", "携帯電話に使われているプラスティック部品は、大きいものだけでも 10 部品くらい。金型にすると 10 型である。", "金型部品点数にして約 3,000 部品になる。ちなみに 10 商品＝100 型流すことを想定する。100 型分の 30,000 部品の", "それぞれが、いつ、どの工程にあれば、金型を組み立てる日に、揃うのか。人間がどうやって把握できるか？", "工場全体を流れているすべての金型部品が、いま、どの工程を流れているかをカーナビのように、リアルタイムに", "ナビゲートできる仕組みを作ればいい。", "KATA-NAVI と新工程管理の思想", "いつ、誰が、どこで、何をしているか。その人がどのコンピュータや機械を使って、どのオーダーを、何時間行っ"]}, {"id": 27, "chapter": "", "title": "ているのかも知る必要がある。", "body": ["ているのかも知る必要がある。", "このデータをもとに、誰が（人件費）", "、どの機械で（減価償却）、何時間、どのオーダー（売上げ）をしたかを総計", "すると、リアルタイムに原価計算ができる。", "携帯電話の金型工程は、約 1,000 工程もある。1,000 工程を管理して、一型 300 部品が同時に揃うようにコントロ", "7/9", "ールしなければいけない。新管理システム：ファラオは、人と、モノと、情報と、時間と、お金を管理している。", "ファラオによって架空の宇宙が出現した", "ネットワークが作り出したバーチャルな宇宙。", "「架宇宙」。受注から、金型設計、金型部品を加工する NC データ作", "成まで、すべてネットワークの中で行われている。架宇宙で最も重要なことは、人間の判断を極限までなくすことで", "ある。熟練しなくても、判断しなくても、やる気がなくても、十分な品質のものを生産できる仕組みをめざしている", "こと。我々の工程管理の思想は、この人間の判断をいかになくしていくかの追求。", "インクス流工程分析手法で携帯の金型工程を構築すると、約 750 工程（プロセス）になる。つまり、750 回人の判", "断が入っている。１デシジョン（判断）を平均５分としても、延べ 62 時間かかる。"]}, {"id": 28, "chapter": "", "title": "架宇宙と実宇宙は、どのようにシンクロするのか", "body": ["架宇宙と実宇宙は、どのようにシンクロするのか", "モノ作りにおいても、サービス業同様に、架宇宙のほうがより重要になっていることを認識すべき。", "「１分１型」への思い", "同時に 20 型を流すと、まだまだ混乱を起こし、一型作るのに平均的に６日間かかる。それぞれの工程は予定時間", "以内で加工しており合計すると 45 時間。なぜ６日間もかかるのか？ ①人の判断時間のバラツキ ②加工の優先順", "位 ③モノの移動時間、の３つの要素が重なり合って起きる。", "金型を加工するのに、①穴あけ、②ワイヤーカット、③荒削り、④仕上げ削りの４つの加工工程がある。工程間の", "移動時間に滞留を起こしているのと、どの優先順位で流せばいいかを、もはや人間の能力ではさばききれなくなって", "いることに起因。", "ネットワークの速度に合わせて、バラツキなく、モノを移動させることができるのは、ロボットしかない。結局、", "行き着くところは無人工場である。夢は、まず、１ヵ月 30 日、720 型を生産する金型工場を完成させること。", "30 倍の生産性の向上が起きると", "今回の知的産業革命において、IT はかつての蒸気機関であり、MT は自働織機。蒸気エンジンがそうであったよう", "に、IT だけではモノの生産はできない。アメリカは、IT というエンジンを開発したが、そのパワーはモノの生産に", "はつながっていない。日本は、いままさに、既存産業の情報工業化を起こすには最もいい位置にいる。"]}, {"id": 29, "chapter": "", "title": "生産性の向上で、モノの価値（価格）は急激に落ちる。価格が下がろうがモノの生産量はいまと同じで十分。し", "body": ["生産性の向上で、モノの価値（価格）は急激に落ちる。価格が下がろうがモノの生産量はいまと同じで十分。した", "がって、現在 97％の労働市場を閉める既存産業は、いまの３％の労働者しか要らなくなる。", "新しい時代の工作機械とは？", "モノ作りのマザーである、金型の 42％、工作機械の 25％、工作機械に NC データを送る NC コントローラの 50％", "を、いまだに日本が生産している。", "佐吉翁は、世界中を回って織物工業の“次なる産業”である自動車工業に出合えたが、我々は、いま世界中を見渡", "しても、自動車工業の“次なる産業”を見出すことができない。", "「原始的情報工業」は、もう出現している", "９０年代は、仕入れてお客さんの要望する商品を届ける流通の仕組みを、IT を駆使して作った会社が成功。流通と", "いう「製品仕入れ－在庫管理－受注－選別梱包－発送－料金回収」。20 工程くらい。", "流通産業に比べて、製造産業はケタ違いの工程数を有する。金型製作工程を見ても、「受注－部品・材料仕入れ－", "在庫管理－金型設計・製作・成形－品質管理－複雑な原価管理－梱包－発送－売掛金管理－売掛金回収」までで 1,000", "工程以上ある。自動車の組み立てラインのほうが、金型製作工程より簡単。", "モノ作りの工程というのは、大きく分けると、", "「アイデア－開発－部品製造－組み立て」。難しい開発工程「設計－"]}, {"id": 30, "chapter": "", "title": "CAE－試作－実験－金型製造」の工程には、爆発的な生産性の向上が起きることは間違いない。結局、最終的", "body": ["CAE－試作－実験－金型製造」の工程には、爆発的な生産性の向上が起きることは間違いない。結局、最終的に大切", "な工程は、アイデアとデザインだけになる。いわゆるブランドの部分。日本が握るべきは、「アイデア－デザイン－", "開発工程」の仕組みとしてのデファクトスタンダード。そうすれば、NIKE のように、アメリカでは一足も靴を生産", "することなしに、アメリカにお金を集められるようになる。", "２つの暗黙知", "インクスでは、2001 年 第２金型工場「K2」を開設。投資総額５億円。ミッションは、", "「45 時間金型」", "。開発メン", "バーは、総勢 35 人。35 人の平均勤続年数は 3.5 ヵ月、平均年齢 26 歳。工場長は、2000 年に入社した 32 歳の男性", "（元外資系コンサルタント）", "。工場といっても、総面積わずか 70 坪。わずか５ヵ月で、平均年齢 26 歳の若者たちが", "最速工場を完成させた。この一気に立ち上げる加速度が、これからの競争力である。", "「Speed is Money」。単位時間当", "たりの仕事量、すなわちスピードをいかに上げるかで勝負が決まる。", "野中郁次郎教授、"]}, {"id": 31, "chapter": "", "title": "「平均勤続年数 3.5 ヵ月。ここでは、暗黙知は要らないのですか？」", "body": ["「平均勤続年数 3.5 ヵ月。ここでは、暗黙知は要らないのですか？」", "「たしかに、工程や、仕組み、ソフトウェアの開発には、若い人の方がいいです。むしろ、金型のことをまったく", "知らないほうがいいくらいです。暗黙知がある人は、その体験に縛られていて、なぜできないかという理由から探し", "ます」", "。", "新たな技術、新たな産業、新たな社会が生まれるとき、新たな暗黙知もまた同時に芽生える。戦後 50 年の機械産", "業暗黙知と、90 年からの IT 暗黙知。", "国力は「GNI」で測ろう", "8/9", "昔の日本の国力を測るのは、米の生産高、", "「石高」", "。", "明治維新の産業革命からわずか 140 年。国力は、GDP いわゆるいくらモノを生産したかで測られる。", "今回の知的産業革命で、人類が 200 年持ち続けた「モノ」に対する価値観はなくなるであろう。「モノ」に代わっ", "て、価値を持つものは、"]}, {"id": 32, "chapter": "", "title": "「知」である。", "body": ["「知」である。", "「知」とは、人類に「楽」を与えるもの。洗濯機の「らく」に金を払う。ルイ・", "ヴィトンのバックの「楽しい」に金を払う。ベンツは、「らく」と「楽しい」を併せ持っている。「知」こそが、21", "世紀の産業。21 世紀の国力を測る単位は、GNI（Gross National Intelligence）", "。", "9/9"]}];
+function startReading(){document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');}
+function showTab(tab){
+  document.getElementById('btn-index').classList.toggle('active',tab==='index');
+  document.getElementById('btn-read').classList.toggle('active',tab==='read');
+  const ip=document.getElementById('index-panel-scroll');const rv=document.getElementById('reading-view');
+  if(tab==='index'){ip.classList.remove('hidden');rv.classList.remove('active');}
+  else{ip.classList.add('hidden');buildReadingView();rv.classList.add('active');}
+}
+function buildReadingView(){
+  const inner=document.getElementById('reading-inner');let h='';let lc='';
+  sections.forEach(s=>{
+    const ch=s.chapter||'';
+    if(ch!==lc){lc=ch;if(ch)h+='<div class="reading-chapter">'+esc(ch)+'</div>';}
+    const bh=s.body.map(p=>'<p>'+esc(p)+'</p>').join('');
+    h+='<div class="reading-section"><h3><span class="rnum">\u00a7'+(s.id+1)+'</span>'+esc(s.title)+'</h3>'+bh+'</div>';
+  });
+  inner.innerHTML=h;
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toggleSection(header){header.parentElement.classList.toggle('open');}
+function goSec(id){
+  document.getElementById('btn-index').classList.add('active');document.getElementById('btn-read').classList.remove('active');
+  document.getElementById('index-panel-scroll').classList.remove('hidden');document.getElementById('reading-view').classList.remove('active');
+  document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');
+  const el=document.getElementById('sec-'+id);if(!el)return;
+  setTimeout(()=>{el.scrollIntoView({behavior:'smooth',block:'start'});},50);
+  if(!el.classList.contains('open'))el.classList.add('open');
+  document.querySelectorAll('.nav-item').forEach(item=>item.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(item=>{if(item.getAttribute('onclick')==='goSec('+id+')')item.classList.add('active');});
+  document.getElementById('sidebar').classList.remove('open');
+}
+function expandAll(){document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');document.querySelectorAll('.section').forEach(s=>s.classList.add('open'));}
+function collapseAll(){document.querySelectorAll('.section').forEach(s=>s.classList.remove('open'));}
+function filterNav(q){const l=q.toLowerCase();document.querySelectorAll('.nav-item').forEach(item=>{item.style.display=(!q||item.textContent.toLowerCase().includes(l))?'':'none';});}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
+document.getElementById('index-panel-scroll').addEventListener('click',()=>{if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('open');});
+document.getElementById('reading-view').addEventListener('click',()=>{if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('open');});
+
+</script>
+</body>
+</html>

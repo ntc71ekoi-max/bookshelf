@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>海馬 脳は疲れない | Claude本棚</title>
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;--text:#e6edf3;--text2:#8b949e;--accent:#f0883e;--accent2:#d29922;--chapter-color:#79c0ff;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Helvetica Neue','Hiragino Sans','Yu Gothic',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.7;}
+#app{display:flex;height:100vh;overflow:hidden;}
+#sidebar{width:300px;min-width:300px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+#header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;flex-shrink:0;}
+#header h1{font-size:15px;font-weight:700;color:var(--accent);line-height:1.4;}
+#header .subtitle{font-size:12px;color:var(--text2);margin-top:2px;}
+#header .meta{font-size:11px;color:var(--text2);margin-top:3px;}
+#top-nav{display:flex;align-items:center;gap:8px;padding:8px 24px;background:var(--surface2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;}
+.top-nav-btn{padding:5px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:inherit;transition:all 0.15s;white-space:nowrap;text-decoration:none;display:inline-block;}
+.top-nav-btn:hover{background:var(--surface);color:var(--text);border-color:var(--accent);}
+.top-nav-btn.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600;}
+#progress-area{margin-left:auto;font-size:11px;color:var(--text2);white-space:nowrap;}
+#search-bar{padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+#search-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:13px;font-family:inherit;outline:none;}
+#search-input:focus{border-color:var(--accent);}
+#nav-scroll{flex:1;overflow-y:auto;padding:8px 0;}
+#nav-scroll::-webkit-scrollbar{width:4px;}
+#nav-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.nav-chapter{padding:8px 16px 4px;font-size:10px;font-weight:700;color:var(--chapter-color);border-top:1px solid var(--border);margin-top:4px;}
+.nav-chapter:first-child{border-top:none;margin-top:0;}
+.nav-item{padding:5px 16px;font-size:12px;color:var(--text2);cursor:pointer;transition:all 0.1s;border-left:2px solid transparent;}
+.nav-item:hover{background:var(--surface2);color:var(--text);border-left-color:var(--accent2);}
+.nav-item.active{background:var(--surface2);color:var(--accent);border-left-color:var(--accent);}
+#index-panel-scroll{flex:1;overflow-y:auto;padding:24px;}
+#index-panel-scroll::-webkit-scrollbar{width:6px;}
+#index-panel-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.chapter-header{margin:18px 0 6px;padding:9px 16px;background:rgba(121,192,255,0.08);border-left:3px solid var(--chapter-color);border-radius:0 6px 6px 0;font-size:13px;font-weight:600;color:var(--chapter-color);}
+.chapter-header:first-child{margin-top:0;}
+.section{margin-bottom:5px;border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color 0.2s;}
+.section:hover{border-color:var(--accent2);}
+.section.open{border-color:var(--accent);}
+.section-header{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;background:var(--surface);user-select:none;transition:background 0.15s;}
+.section-header:hover{background:var(--surface2);}
+.sec-num{font-size:10px;color:var(--text2);min-width:28px;flex-shrink:0;}
+.sec-title{flex:1;font-size:13px;font-weight:500;color:var(--text);line-height:1.4;}
+.toggle-icon{font-size:10px;color:var(--text2);transition:transform 0.2s;flex-shrink:0;}
+.section.open .toggle-icon{transform:rotate(180deg);}
+.detail-body{display:none;padding:14px 20px;background:var(--bg);border-top:1px solid var(--border);}
+.section.open .detail-body{display:block;}
+.detail-body p{margin-bottom:10px;font-size:14px;color:#cdd9e5;line-height:1.85;text-align:justify;}
+.detail-body p:last-child{margin-bottom:0;}
+#reading-view{display:none;flex:1;overflow-y:auto;padding:40px;}
+#reading-view.active{display:block;}
+#reading-view::-webkit-scrollbar{width:6px;}
+#reading-view::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.reading-inner{max-width:780px;margin:0 auto;}
+.reading-chapter{margin:24px 0 8px;padding:9px 18px;border-left:3px solid var(--chapter-color);font-size:14px;font-weight:600;color:var(--chapter-color);}
+.reading-chapter:first-child{margin-top:0;}
+.reading-section{margin-bottom:18px;padding:16px 20px;background:var(--surface);border-radius:8px;border:1px solid var(--border);}
+.reading-section h3{font-size:14px;font-weight:700;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.reading-section h3 .rnum{font-size:11px;color:var(--text2);font-weight:400;}
+.reading-section p{font-size:14px;color:#cdd9e5;line-height:1.85;margin-bottom:8px;text-align:justify;}
+.reading-section p:last-child{margin-bottom:0;}
+#splash{text-align:center;padding:60px 24px;}
+#splash h2{font-size:22px;color:var(--accent);margin-bottom:8px;}
+#splash .sp-sub{color:var(--text2);font-size:14px;margin-bottom:32px;}
+#splash .stats{display:flex;justify-content:center;gap:40px;margin-bottom:32px;}
+#splash .stat .num{font-size:36px;font-weight:800;color:var(--accent2);}
+#splash .stat .lbl{font-size:12px;color:var(--text2);margin-top:2px;}
+#splash .start-btn{background:var(--accent);color:#000;border:none;padding:14px 44px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity 0.2s;}
+#splash .start-btn:hover{opacity:0.85;}
+#menu-toggle{display:none;background:transparent;border:none;color:var(--text);font-size:20px;cursor:pointer;padding:4px 8px;vertical-align:middle;margin-right:8px;}
+.hidden{display:none !important;}
+@media(max-width:768px){
+  #sidebar{position:fixed;top:0;left:0;bottom:0;z-index:100;transform:translateX(-100%);transition:transform 0.25s ease;width:280px;}
+  #sidebar.open{transform:translateX(0);}
+  #menu-toggle{display:inline-block;}
+  #index-panel-scroll{padding:14px;}
+  #top-nav{padding:8px 14px;}
+  #header{padding:11px 14px;}
+  #reading-view{padding:16px;}
+}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="sidebar">
+  <div id="search-bar"><input id="search-input" type="text" placeholder="🔍 節タイトルを検索..." oninput="filterNav(this.value)"></div>
+  <div id="nav-scroll">
+<div class="nav-chapter">第１章のまとめ</div>
+<div class="nav-item" onclick="goSec(0)">３．ストッパーをはずすと成長できる</div>
+<div class="nav-item" onclick="goSec(1)">４．30 歳を過ぎてから頭はよくなる</div>
+<div class="nav-item" onclick="goSec(2)">５．脳は疲れない</div>
+<div class="nav-chapter">第２章のはじめに</div>
+<div class="nav-item" onclick="goSec(3)">30 代から頭のはたらきがよくなるのも、「脳が、経験メモリーどうしの似た点を探すと、『つな</div>
+<div class="nav-chapter">第２章のまとめ</div>
+<div class="nav-item" onclick="goSec(4)">４．海馬は増やせる</div>
+<div class="nav-item" onclick="goSec(5)">７．</div>
+<div class="nav-chapter">第３章</div>
+<div class="nav-item" onclick="goSec(6)">眠っているあいだに、海馬が情報を整理することを、レミネセンス（追憶）という。とてもおもしろ</div>
+<div class="nav-chapter">第３章のまとめ</div>
+<div class="nav-item" onclick="goSec(7)">２．やりはじめないと、やる気はでない</div>
+<div class="nav-item" onclick="goSec(8)">３．寝ることで記憶が整理される</div>
+<div class="nav-chapter">第４章のはじめに</div>
+<div class="nav-item" onclick="goSec(9)">ある時にふと、</div>
+<div class="nav-item" onclick="goSec(10)">山ほどある問題の中からひとつずつ潰していくから、忙しいと、解決していくものごとの数が増える</div>
+<div class="nav-chapter">第４章のまとめ</div>
+<div class="nav-item" onclick="goSec(11)">６．言ってしまったことが未来を決める</div>
+  </div>
+</div>
+<div id="main">
+  <div id="header">
+    <button id="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <h1>海馬 脳は疲れない</h1>
+    <div class="subtitle">脳の「安定を好む性質」に抗い、死ぬまで進化させる科学的メソッド</div>
+    <div class="meta">池谷裕二・糸井重里 著</div>
+  </div>
+  <div id="top-nav">
+    <button class="top-nav-btn active" id="btn-index" onclick="showTab('index')">目次モード</button>
+    <button class="top-nav-btn" id="btn-read" onclick="showTab('read')">通読モード</button>
+    <button class="top-nav-btn" onclick="expandAll()">全展開</button>
+    <button class="top-nav-btn" onclick="collapseAll()">全折畳</button>
+    <a href="top.html" class="top-nav-btn">← 本棚へ</a>
+    <span id="progress-area">12節</span>
+  </div>
+  <div id="index-panel-scroll">
+    <div id="splash">
+      <h2>海馬 脳は疲れない</h2>
+      <p class="sp-sub">脳の「安定を好む性質」に抗い、死ぬまで進化させる科学的メソッド</p>
+      <div class="stats"><div class="stat"><div class="num">12</div><div class="lbl">節</div></div></div>
+      <button class="start-btn" onclick="startReading()">読み始める</button>
+    </div>
+    <div id="content-area" class="hidden">
+<div class="chapter-header">第１章のまとめ</div>
+<div class="section" id="sec-0">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§1</span>
+    <span class="sec-title">３．ストッパーをはずすと成長できる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「できないかもしれない」と心配するストッパーをはずさないことには、無意識のうちに能力にブレーキを</p><p>かけてしまいます。一見「無理だ」と思えることでも、気持ちにストッパーをかけずにやり続けてみると、</p><p>あなたの能力は飛躍的に向上する。</p></div>
+</div>
+<div class="section" id="sec-1">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§2</span>
+    <span class="sec-title">４．30 歳を過ぎてから頭はよくなる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「あるものとあるものとのあいだにつながりを感じる能力」は、30 歳を超えた時から飛躍的に伸びる。</p></div>
+</div>
+<div class="section" id="sec-2">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§3</span>
+    <span class="sec-title">５．脳は疲れない</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>脳はいつでも元気いっぱい。ぜんぜん疲れません。「脳が疲れたなぁ」と思わず言いたくなる時でも、実際</p><p>に疲れているのは、</p><p>「目」</p><p>。</p><p>６．脳は刺激がないことに耐えられない</p><p>何の刺激もない部屋に 2～3 日間放置されると、脳は、幻覚や幻聴を生み出してしまいます。新しい刺激が</p><p>ないところでは、人間は、生きていくことが難しくなります。脳は、本能的には刺激があるほうに向かいま</p><p>す。</p><p>７．脳は、見たいものしか見ない</p><p>脳は、自分が混乱しないようにものを見たがります。見たいものしか見ない。脳は、非常に主観的で不自由</p><p>な性質も持っています。</p></div>
+</div>
+<div class="chapter-header">第２章のはじめに</div>
+<div class="section" id="sec-3">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§4</span>
+    <span class="sec-title">30 代から頭のはたらきがよくなるのも、「脳が、経験メモリーどうしの似た点を探すと、『つながりの発</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>見』が起こって、急に爆発的に頭のはたらきがよくなっていく」ということ。最初のチカラを 1 としますと、べ</p><p>き乗（たとえば 2 の何乗）で成長。つまり、Ａを憶えたあとにＢを憶える時には、Ａを憶えたことを思い出して</p><p>やるので、まず方法を記憶しやすくなる。そのうえにＡとＢふたつを知るだけでなく、Ａから見たＢ、Ｂから見</p><p>たＡというように、脳の中で自然に 4 つの関係が理解できる。つまり、2 の 2 乗。こうやって方法を学んでいく</p><p>学び方の進行が「べき乗」で起こり、やればやるほど飛躍的に経験メモリーのつながりが、緊密になっていく。</p><p>「ひとつのことを毎日、10 年くりかえしさえすれば、才能があろうがなかろうがモノになる」という言葉があ</p><p>るけど、やっぱりそれは正しい。脳の組み合わせ能力というのは自分の予想以上に発展するので、今現在自分よ</p><p>り上の人を、これはすごいと思う必要もありません。続ければ、いかに身になるか。習いごとをしていた人は、</p><p>本能的に理解している種類のもの。</p><p>科学者が海馬に惹かれる理由</p><p>脳の記憶の仕方にとって、大切な特色は、</p><p>「可塑性」。脳は変化し、それを変化したままにしておく。まさに、</p><p>それこそが記憶。赤ちゃんに近い時のショックは、戻りにくい。衝撃を受けるとひとつひとつ変形していき、そ</p><p>の変形を抱えながら生きるというわけ。可塑性とは、つまり「記憶できるということ」。その記憶を扱っている</p><p>部位が、脳の中で海馬と呼ばれている。人間の脳の中で最も可塑性に富んだ場所が、海馬。</p><p>神経細胞の動きを知る直接の道具は、脳の動きを電圧で計るオシロスコープという機械。つまり研究者が頼り</p><p>にできるのは、神経細胞の中における電気の活動だけ。</p><p>海馬があるから人間でいられる</p><p>海馬は、ちょっとした外傷で傷がつかないように、脳の奥の大切なところにしまわれています。直径 1 センチ、</p><p>長さは 5 センチぐらい。ちょうど小指くらいの大きさ。動物にも人間にもある程度の大きさを保って存在する海</p><p>馬は、生命にとって大切。海馬の神経細胞は、だいたい 1 個が 20,000 個から 30,000 個の神経細胞と常に連絡を</p><p>取っています。人間の海馬の神経細胞は、だいたい 1,000 万個ぐらい。脳全体の神経細胞が 1,000 億個ぐらいの</p><p>数ですから、海馬の細胞たちは、すごくよくはたらく尐数精鋭って言いますか、よりすぐりの細胞集団。海馬は、</p><p>記憶の製造工場。</p><p>海馬がなくなったら、新たな記憶を製造できなくなる。5 分くらいは憶えてるんですけれども、5 分経つと忘</p><p>れてしまっている。短期的な記憶は、長期的な記憶とは異なり、海馬を介さないで 5 分ぐらいだけ蓄えられる。</p><p>人間はいちどに 7 つのことしか憶えられない</p><p>おもしろいことに、感情の記憶に、海馬は関係していません。実は、感情をつかさどる扁桃体の「感情」の記</p><p>4/11</p><p>憶というのは、より本質的。「怖いと思ったからヘビから逃げる」という記憶は、生命に直接関係のあることで</p><p>すから、よりいっそう強固にできています。</p><p>人の名前を忘れてしまっても、</p><p>「こいつは、いいヤツ」「こいつは、悪いヤツ」という印象はわりと憶えている。</p><p>「好き嫌い」は、実は記憶が生むもの。感情は、全部過去の記憶から生まれます。</p><p>表に出ている記憶って、ものすごく尐ない。脳の中に存在している記憶の中で、意識される記憶は、ほんの一</p><p>部。7 つの記憶をさらに細かく枝分かれさせるようにして、容量を増やすことはできますが、基本は 7 個程度と</p><p>いう容量。人が意識できる記憶は、かなり尐ない。ただ、記憶に限りがあるのは、とてもいいこと。考えすぎな</p><p>いでいいから。ひとつのことに集中すると他のことを忘れられる。それは、人の記憶のキャパシティに限界があ</p><p>るから。</p><p>扁桃体はだめだけど海馬はある。つまり感情がないけど記憶はできるという病気。親に会っても親しみの感情</p><p>が生まれず、</p><p>「あなたは親にそっくりだけど、にせものだ」。扁桃体は、親指の爪ぐらいの大きさ。神経細胞の数</p><p>が増えるのは海馬だけですから、扁桃体の神経細胞の数は増えることはありません。扁桃体がないと、まず恐怖</p><p>心を感じなくなる。</p><p>「扁桃体がなければ、生存維持のためには、かなりキツイ」</p><p>ウソをつくのが人間の本性</p><p>海馬がなくなってしまった患者さんは、海馬があった時のことは、憶えている。ただ、新しいことを思い出せ</p><p>ない。記憶は、海馬の中に蓄えられているわけではない。海馬は、情報の要・不要を判断して、他の部位に記憶</p><p>を蓄えるんです。だから海馬を「記憶の製造工場」と言うのです。同時に、海馬がない人を見ていると、人間の</p><p>本質も見えてきます。だから非合理なことが起きた時に、自我を保とうとして延々とつくり話をしてしまう。日</p><p>常でささいな不合理に直面した時には、知らないうちにつくり話を沢山している。知らないうちにウソを重ねる</p><p>のが、わたしたちのふだんの会話。脳の本質は、ウソつき。</p><p>脳には、意識するしないに関わらず、すごくたくさんの情報が入ってきます。その情報は一度ぜんぶ海馬に送</p><p>り込まれる。しかし、その情報のほとんどは、そのまま捨てられてしまいます。なぜかというと、情報が整理さ</p><p>れないまま、脳が今受けている情報をすべて記憶してしまうとしたら、数分で容量一杯になってしまうから。海</p><p>馬が、これが「役に立つ情報」で、これが「役に立たないから忘れていい情報」だとか、仕分けをしたりフラグ</p><p>（目印になる旗）を立てる。海馬の役割は、情報の「ふるい」。</p><p>何歳になっても海馬の神経細胞は増えている</p><p>脳の神経細胞は生まれた時の数がいちばん多くて、あとはどんどん減っていく一方。だけど実は、海馬では、</p><p>細胞が次々と生み出される。次々と死んでいくスピードも速いのですが、どんどん生まれてもいるわけ。海馬は、</p><p>情報の仕分けという非常に大切な役割を担っていますから、海馬の神経細胞の数が多ければ多いほど、たくさん</p><p>の情報を同時に処理できます。ということは、海馬が発達すれば、たくさんの情報を同時に残そうと判断できる。</p><p>生存に絶対に必要である情報でなければ、海馬は、どんどん捨てていってしまう。</p><p>ですから逆に、お勉強の丸暗記をしたいと思えば、そのままでは脳が欲しいものではないわけだから、いかに</p><p>海馬をだませるかが、重要。情報の関所の海馬をだまして、いかに通っていくかが、大事。そして海馬は、感情</p><p>をつかさどる扁桃体の隣にある。そのふたつは、すごい密接に連絡を取り合っています。好きなものを判断する</p><p>のが、扁桃体。だから好きなものを憶えやすいというのは、「扁桃体を活性化すると、海馬も活性化する」とい</p><p>う方向で説明することができます。</p><p>脳は毎日が面白いかどうかに反忚</p><p>海馬の神経が増えると、かしこくなる。海馬の神経の寿命は、数ヶ月ぐらい。何ヶ月か経つとすっかり入れ替</p><p>わってしまう。</p><p>「入れ替えをしない構造」を脳はつくるんですが、海馬は入れ替わる。これは不思議。しかも唯</p><p>一入れ替わる場所が、記憶をつかさどる海馬なわけ。</p><p>ふだんから人は、どうやってものを憶えるかのか。ひとつは、好き嫌いといった感情が絡むと憶えます。海馬</p><p>が記憶を製造するチカラを増強させるためには、たのしいことや悲しいことの刺激をたくさん受けることが、重</p><p>要。</p><p>「ずっと病院で寝て天井を見ているような生活」は、海馬のはたらきを衰えさせる。</p><p>「1 回だめな環境にいると、</p><p>一生つまらないまま」ということはない。</p><p>「刺激を増やせば、人はいつだっておもしろくもなれるし、いつだっ</p><p>てつまらない人になる危険性だってある」</p><p>。</p><p>タクシードライバーとそうじゃない人との海馬を比べると、タクシードライバーの海馬のほうが、大きかった。</p><p>いろいろな人に会うというような、新規の刺激にいつもさらされているから。海馬がいちばん大きいのは、50</p><p>年以上もタクシードライバーをやった人。新規な刺激にさらされている人は、いつでも入力の判断をする海馬に</p><p>刺激があるから、海馬の細胞が増えていく割合と消えていく割合とでは、細胞の増えていく割合が加速していく。</p><p>そして、海馬が大きくなると処理する能力が増えますから、さらに対照にする刺激が増えるという、そういうポ</p><p>ジティブな回転が起きる。</p><p>「かわいい子には旅をさせよ」</p><p>海馬にとっていちばんの刺激になるのが、まさに「空間の情報」。部屋の隅に移動するというだけでも、空間</p><p>5/11</p><p>的な概念が、海馬に刺激を与えます。実際には動かなくても、頭の中で移動を想像するだけでも、ちゃんと刺激</p><p>になる。</p><p>インターネットの欠点は、人には視・聴・味・嗅・触という五感があるけれども、インターネットでは、目と</p><p>耳だけの刺激の世界。想像に限界が生じてしまうのはそこ。</p><p>実際の旅のほうが、海馬にすばらしい刺激を与える。</p><p>ハリウッドは血の入れ換えで成長した</p><p>失業者の多い時代に「モーションピクチャー」という見せもの小屋をつくったところから、ハリウッドの映画</p><p>産業ははじまった。行き詰まると新しい血を入れる。安定した古きよきもので伝統を受け継ぐよりも、その場そ</p><p>の場でいちばんいいものをよしとするというのは、海馬が情報を選択する姿に似ています。それまでの映画界に</p><p>いるみんなが反対しそうな「ナイスな変わりもの」に大きな映画を任せるところがハリウッドのものすごさ。</p><p>「恋愛が、人をキレイにする。</p><p>」</p><p>クリエイティブは、脳への挑戦</p><p>専門分野のことができると思い込んでいる人たちとプロジェクトを組んでいて、「意外とたいしたことがない</p><p>な」と感じる時があります。専門領域を何か特別なことだから口を出すな、という態度を取るってことは、誰で</p><p>もやらかしてしまいそう。</p><p>ほんとうにその分野に精通しているプロは、そういうことがない。むしろ素人の何気ない「不満足」を敏感に</p><p>察知して、自分の側の問題点を積極的に改良しはじめたりする。</p><p>脳の頑固さ「1 回分類をしてしまうと、それ以外の尺度では分離ができなくなってしまう」。クリエイティブな</p><p>ことを仕事にするというのは、常識をちょっと破ってみることが必要。脳に逆らった仕事をしなければいけない。</p><p>ある分野で経験を積んだ人が、ともするとつまらなくなってしまうのは、逆らわなくなるから。</p><p>海馬は、</p><p>「新しい環境は、ストレスではないんだよ」と自分に伝える役割をする。つまり海馬は、新しいこと</p><p>を処理する能力に長けている。</p><p>新しい価値観を持とうとしない人とは、一緒に仕事をしにくい。</p><p>今までは「アイツは、風見鶏だ」とか「日和見主義者だ」とか文句を言われがちだったし、それと同時に「一</p><p>貫性のある人ですね」とか「信念を貫いた」とかいう言葉に、かなりだまされてきた。貫くことがあるとしたら、</p><p>「ウソをつかないこと」だけでいい。</p><p>悩みを解決するコツ</p><p>悩みを自分のこととして考えてしまうと、悩みの本質を見失う場合がある。「悩みを解決する」という以上の</p><p>欲望が絡んでしまいがちですから。たとえば、別れ話を個人的に考えてしまうと、「あの子と別れたら、一緒に</p><p>行っていたあの店には、もう行けない」といった、別れるかどうかということ以外の要素が入ってくる。</p><p>おなじ悩みを他人のものだと考えると、</p><p>「おまえ、それは未練がましいよ」</p><p>「ぜんぶを失わないでいようなんて、</p><p>ムシがよすぎる」</p><p>。冷酷すぎるまでに悩みの本質に根ざした考えを出すことができる。</p></div>
+</div>
+<div class="chapter-header">第２章のまとめ</div>
+<div class="section" id="sec-4">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§5</span>
+    <span class="sec-title">４．海馬は増やせる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>脳の中で情報の選別を担当している「海馬」の神経細胞は、成人を超えても増える。</p><p>５．旅は脳を鍛える</p><p>海馬にとっていちばん刺激のあるものは空間の情報。つまり、旅をするほど海馬に刺激</p><p>が与えられると推測できる。</p></div>
+</div>
+<div class="section" id="sec-5">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§6</span>
+    <span class="sec-title">７．</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「これが、他人の悩みだったら･･･」が、悩みを解決するコツ</p></div>
+</div>
+<div class="chapter-header">第３章</div>
+<div class="section" id="sec-6">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§7</span>
+    <span class="sec-title">眠っているあいだに、海馬が情報を整理することを、レミネセンス（追憶）という。とてもおもしろい現</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>象で、たとえばずっと勉強していて「わからなかったなぁ」と思っていたのに、ある時急に目からウロコが落ち</p><p>るようにわかる場合がある。あれは、脳が夜、情報のつなぎ換えをしているうちに、できるようになったのです。</p><p>レミネセンスを生かすには、眠る前に一通り仕事をやってみるという工夫があるといい。そうすると、眠ってい</p><p>るあいだに脳が無意識のうちに考えてくれるので、仕事もよりはかどる。たとえば、仕事の〆切がまだまだ先で</p><p>あっても、早めに目を通しておくということは、とても重要な姿勢。</p><p>ちなみに、夢を見る刺激を与える物質も、さきほどやる気を与える物質のアセチルコリン。ですから風邪薬の</p><p>ようなアセチルコリンを抑えるものを飲むと、情報が整理できない睡眠になってしまいます。</p><p>酸化防止剤は老化防止剤</p><p>今の世界に合わせて動物が生きている。酸素が 20％という状態に合わせて、動物は進化してきたし、体温も</p><p>7/11</p><p>36 度や 37 度ぐらいでいちばん活発に生きるように適合しています。</p><p>痴呆とは、神経細胞が死にすぎてしまう病気。でも、死んでしまった神経細胞は、もう 2 度生き返らないから、</p><p>痴呆を回復させることができる方法は、ふたつしかありません。つまり、生きのこった細胞の「可塑性を高める」</p><p>という方法と、もうひとつは、</p><p>「生き残っている細胞を死なないようにさせる」という方法。今、いちばん死な</p><p>ないようにさせるのが、酸化防止剤。もともと人間の身体には酸化防止機能が備わっていて、酸化を防止するた</p><p>んぱく質があるのですが、それがはたらかなくなってしまうと ALS になる。</p><p>やる気を出すコツはたくさんある</p><p>達成感が、A10 神経という快楽に関わる神経を刺激して、ドーパミンという物質を出させ、やる気を維持させ</p><p>る。達成感という快楽をいかに味わうかと言うと、</p><p>「目標は大きく」ではなく、「目標は小刻みに」と心掛けるほ</p><p>うがうまくいく。もちろん、大きな目標を持つことは大切なのですが、「今日はここまでやろう」とか「1 時間で</p><p>これをやろう」と、実行可能な目標を立てると、目標を達成するたびに快楽物質が出て、やる気を維持できます。</p><p>心理学の言葉で初頭効果と終末効果。あることのはじめと終わりには、仕事がはかどるんです。それを逆手に</p><p>取ると、たとえば 1 時間何かをやるとしても、30 分が 2 回あるんだと思うと、はじめと終わりが 1 回ずつ増え</p><p>るから、よりはかどる。</p><p>自分に適した目標というのは、ほんとうに大事。いきなり高い目標を設定しても、なかなかクリアできません。</p><p>学習の過程で、より多くのミスをしたサルのほうが将来的には記憶の定着率がいい。失敗をくりかえさないと、</p><p>あまりかしこくならない。</p><p>脳をはたらかせる細かいコツ。ブドウ糖を吸収したほうがいい、コーヒーの香りが、脳のはたらきを明晰にす</p><p>る。扁桃体を活躍させると、海馬も活躍します。扁桃体をいちばん活躍させる状況は、生命の危機状況。だから、</p><p>ちょっと部屋を寒くするとか、お腹をちょっと空かせるという状態は、脳を余計に動かします。扁桃体をはたら</p><p>かせる卑近な例としては、</p><p>「感情に絡むエッチな発想をするとものごとを憶えやすい」</p><p>。</p></div>
+</div>
+<div class="chapter-header">第３章のまとめ</div>
+<div class="section" id="sec-7">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§8</span>
+    <span class="sec-title">２．やりはじめないと、やる気はでない</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>仕事をやる気がしないと思っても、実際にやりはじめてみるというのは、かなりいい方法。</p></div>
+</div>
+<div class="section" id="sec-8">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§9</span>
+    <span class="sec-title">３．寝ることで記憶が整理される</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>４．酸化させることは腐ること</p><p>酸化防止剤は、老化を防ぐ効果もある。</p><p>５．失恋や失敗が人をかしこくする</p><p>６．生命の危機が脳をはたらかせる</p></div>
+</div>
+<div class="chapter-header">第４章のはじめに</div>
+<div class="section" id="sec-9">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§10</span>
+    <span class="sec-title">ある時にふと、</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「これおもしろいなぁ」と思って、自分の視点にひとつ新しいものが加われば、脳の中の</p><p>パターン認識が飛躍的に増える。そえをくりかえせば、人の考えというのは、驚くほどおもしろいものに発達す</p><p>る。新しい視点を加えることは、自分の努力でできるし、教えてもらったりして外部から影響を受けることでも</p><p>できる。そのこと事態には、何にも難しいことはないというか、誰にでもできること。つまり、何歳になっても</p><p>頭はよくなる。</p><p>「今さら考えたってダメだ」と思っちゃもったいない。</p><p>漢字テストは 100 点中 2 点だった</p><p>「東大薬学部に進学する時にも、大学院に進学する時も、池谷さんは首席だった。」小学校 6 年ぐらいで、小</p><p>学校で習うぜんぶの漢字の試験。先生が「池谷はたった 2 点だ」って、みんなの前で答案用紙を見せて言いまし</p><p>た。けど、それは、別に悔しいことだとは思わなかった。勉強に対しては、劣等感はなかったし、学校は楽しか</p><p>った。うちの親には生まれてから一度も勉強しろと言われたことがない。</p><p>9/11</p><p>テストのたびに公式を導きだす</p><p>中学の時に、変わりました。小学校の頃には、</p><p>「九九ができないけど、どうしよう」「漢字ができないけど、ど</p><p>うしよう」</p><p>。記憶力が弱くても、何かをやった時の方法がわかっていれば、テストには十分に対処できる。毎回</p><p>毎回、試験のたびに公式を導き出していればいいわけ。導き出す方法は、わかっている。「公式を丸暗記してる</p><p>人よりも、公式を導き出せる人のほうが、原理をしっているから忚用力があるんじゃないか？」って。</p><p>池谷さんて「九かける八」をどう計算するんですか？ 90 から 9 を 2 回（18）を引くと「72」って出てきま</p><p>す。九九を 81 個も暗記するより、ぼくの方法なら 10 倍することと 2 倍することと半分にすることの 3 つの方法</p><p>だけでぜんぶできる。</p><p>池谷さんが、経験メモリーで行けばいいんだと発見できた理由は？ きっと、危機感。危機感があるからこそ、</p><p>何かに対処しなければいけないわけですから。</p><p>ひとつのものを試しにつくりあげてみて、それを一度壊すというのは、危機感がないと、人間はなかなかしな</p><p>い。</p><p>一生つらくなくて一生ラクなままだという人生って、たぶん、しあわせじゃないと思う。しあわせな人生って</p><p>いうのは、きっと、ラクな人生じゃない。天国はラクで快適なだけで、変化に富んでいておもしろいのは地獄。</p><p>問題をひとつずつ解くこと</p></div>
+</div>
+<div class="section" id="sec-10">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§11</span>
+    <span class="sec-title">山ほどある問題の中からひとつずつ潰していくから、忙しいと、解決していくものごとの数が増えると思</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>う。解決するたびに小さな達成感が、連チャンでごほうびとして与えられる。「ものすごく複雑なんです。もう</p><p>ダメです」みたいに言っていたことも、10 個ぐらいの個別の問題を順に解けばいいだけ。いっぺんに解決しよ</p><p>うとしたら、手もつけられない。それが 1 個ずつだと、ひとつずつ解決のよろこびがプレゼントされていく。ひ</p><p>とつずつ解いていくというのは、1 回でも実際に自分でやってみれば、方法記憶として吸収します。</p><p>「まず、やってみろよ」っていうことは、ほんとうに大事。経験メモリーは、実際に試した手順だけを憶える</p><p>ものですから、実行してみたらその分だけ経験メモリーの貯金は増えるし、経験メモリーの貯金が増えたら、ま</p><p>た次にやれることが増えるという、いい循環。秀才って「エレガント」とかが好き。泥くさいことを試している</p><p>ヤツのほうが、解決する力を持っている。</p><p>言葉の呪い</p><p>強い力で宣言すると、言葉が走っていって、新しい回路を潮流のように生み出してしまうマジック。「俺は馬</p><p>鹿だから」って言ったとたんに、すべての可能性が終わっちゃう。いいことを言うと、その通りになる。悪いこ</p><p>とを言っても、その通りになる。脳は安定化したいという性質が強いので、自分があらかじめ言ったことに対し</p><p>ても、どんどん安定化していこうとする。</p><p>結果ではなくプロセス</p><p>誇りを生むためには、ちょっとでも完成したものを残しておくというか、そうしないと、自信って出てこない。</p><p>昔の科学は、結果勝負なところがあって、ぜんぶを証明してつくりあげたあとにはじめて発表していたんですが、</p><p>今は仮説のまま公表。仮説の発表後に人が寄ってきて、その仮説を証明していくというように、科学全体がプロ</p><p>セス重視に変わっている。</p><p>言語化することのいい面と悪い面。何かが明確になる場合と、固定観念がつくられてしまう場合。</p></div>
+</div>
+<div class="chapter-header">第４章のまとめ</div>
+<div class="section" id="sec-11">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§12</span>
+    <span class="sec-title">６．言ってしまったことが未来を決める</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>脳は、ひとつのこと決めつけたがり、なおかつ安定化したがります。自分があらかじめ</p><p>言ったことに対しても安定化しようとします。</p><p>７．他人とつながっている中で出た仮説には、意味がある。</p><p>人類史上稀に見るロングセラー『聖書』</p><p>『論語』などは、いずれも「･･･である」と断定</p><p>したエッセンスだけを述べることは、していません。必ず「･･･と言った」と他人とのつながりの中で語ら</p><p>れる仕組みを取っています。</p><p>あとがき</p><p>心は、脳が活動している状態を指す。脳がコンピュータと決定的に異なる点は、外界に反忚しながら変容する</p><p>10/11</p><p>自発性にある。</p><p>プロセス重視の生き方が、より人間らしい存在に直結する。当面の問題は、自分に備わった可塑性の権利を個々</p><p>が行使するか否かに絞られる。</p><p>この本は、この地球上に生きるすべての人への忚援歌である。</p><p>11/11</p></div>
+</div>
+    </div>
+  </div>
+  <div id="reading-view"><div class="reading-inner" id="reading-inner"></div></div>
+</div>
+</div>
+<script>
+
+const sections = [{"id": 0, "chapter": "第１章のまとめ", "title": "３．ストッパーをはずすと成長できる", "body": ["「できないかもしれない」と心配するストッパーをはずさないことには、無意識のうちに能力にブレーキを", "かけてしまいます。一見「無理だ」と思えることでも、気持ちにストッパーをかけずにやり続けてみると、", "あなたの能力は飛躍的に向上する。"]}, {"id": 1, "chapter": "第１章のまとめ", "title": "４．30 歳を過ぎてから頭はよくなる", "body": ["「あるものとあるものとのあいだにつながりを感じる能力」は、30 歳を超えた時から飛躍的に伸びる。"]}, {"id": 2, "chapter": "第１章のまとめ", "title": "５．脳は疲れない", "body": ["脳はいつでも元気いっぱい。ぜんぜん疲れません。「脳が疲れたなぁ」と思わず言いたくなる時でも、実際", "に疲れているのは、", "「目」", "。", "６．脳は刺激がないことに耐えられない", "何の刺激もない部屋に 2～3 日間放置されると、脳は、幻覚や幻聴を生み出してしまいます。新しい刺激が", "ないところでは、人間は、生きていくことが難しくなります。脳は、本能的には刺激があるほうに向かいま", "す。", "７．脳は、見たいものしか見ない", "脳は、自分が混乱しないようにものを見たがります。見たいものしか見ない。脳は、非常に主観的で不自由", "な性質も持っています。"]}, {"id": 3, "chapter": "第２章のはじめに", "title": "30 代から頭のはたらきがよくなるのも、「脳が、経験メモリーどうしの似た点を探すと、『つながりの発", "body": ["見』が起こって、急に爆発的に頭のはたらきがよくなっていく」ということ。最初のチカラを 1 としますと、べ", "き乗（たとえば 2 の何乗）で成長。つまり、Ａを憶えたあとにＢを憶える時には、Ａを憶えたことを思い出して", "やるので、まず方法を記憶しやすくなる。そのうえにＡとＢふたつを知るだけでなく、Ａから見たＢ、Ｂから見", "たＡというように、脳の中で自然に 4 つの関係が理解できる。つまり、2 の 2 乗。こうやって方法を学んでいく", "学び方の進行が「べき乗」で起こり、やればやるほど飛躍的に経験メモリーのつながりが、緊密になっていく。", "「ひとつのことを毎日、10 年くりかえしさえすれば、才能があろうがなかろうがモノになる」という言葉があ", "るけど、やっぱりそれは正しい。脳の組み合わせ能力というのは自分の予想以上に発展するので、今現在自分よ", "り上の人を、これはすごいと思う必要もありません。続ければ、いかに身になるか。習いごとをしていた人は、", "本能的に理解している種類のもの。", "科学者が海馬に惹かれる理由", "脳の記憶の仕方にとって、大切な特色は、", "「可塑性」。脳は変化し、それを変化したままにしておく。まさに、", "それこそが記憶。赤ちゃんに近い時のショックは、戻りにくい。衝撃を受けるとひとつひとつ変形していき、そ", "の変形を抱えながら生きるというわけ。可塑性とは、つまり「記憶できるということ」。その記憶を扱っている", "部位が、脳の中で海馬と呼ばれている。人間の脳の中で最も可塑性に富んだ場所が、海馬。", "神経細胞の動きを知る直接の道具は、脳の動きを電圧で計るオシロスコープという機械。つまり研究者が頼り", "にできるのは、神経細胞の中における電気の活動だけ。", "海馬があるから人間でいられる", "海馬は、ちょっとした外傷で傷がつかないように、脳の奥の大切なところにしまわれています。直径 1 センチ、", "長さは 5 センチぐらい。ちょうど小指くらいの大きさ。動物にも人間にもある程度の大きさを保って存在する海", "馬は、生命にとって大切。海馬の神経細胞は、だいたい 1 個が 20,000 個から 30,000 個の神経細胞と常に連絡を", "取っています。人間の海馬の神経細胞は、だいたい 1,000 万個ぐらい。脳全体の神経細胞が 1,000 億個ぐらいの", "数ですから、海馬の細胞たちは、すごくよくはたらく尐数精鋭って言いますか、よりすぐりの細胞集団。海馬は、", "記憶の製造工場。", "海馬がなくなったら、新たな記憶を製造できなくなる。5 分くらいは憶えてるんですけれども、5 分経つと忘", "れてしまっている。短期的な記憶は、長期的な記憶とは異なり、海馬を介さないで 5 分ぐらいだけ蓄えられる。", "人間はいちどに 7 つのことしか憶えられない", "おもしろいことに、感情の記憶に、海馬は関係していません。実は、感情をつかさどる扁桃体の「感情」の記", "4/11", "憶というのは、より本質的。「怖いと思ったからヘビから逃げる」という記憶は、生命に直接関係のあることで", "すから、よりいっそう強固にできています。", "人の名前を忘れてしまっても、", "「こいつは、いいヤツ」「こいつは、悪いヤツ」という印象はわりと憶えている。", "「好き嫌い」は、実は記憶が生むもの。感情は、全部過去の記憶から生まれます。", "表に出ている記憶って、ものすごく尐ない。脳の中に存在している記憶の中で、意識される記憶は、ほんの一", "部。7 つの記憶をさらに細かく枝分かれさせるようにして、容量を増やすことはできますが、基本は 7 個程度と", "いう容量。人が意識できる記憶は、かなり尐ない。ただ、記憶に限りがあるのは、とてもいいこと。考えすぎな", "いでいいから。ひとつのことに集中すると他のことを忘れられる。それは、人の記憶のキャパシティに限界があ", "るから。", "扁桃体はだめだけど海馬はある。つまり感情がないけど記憶はできるという病気。親に会っても親しみの感情", "が生まれず、", "「あなたは親にそっくりだけど、にせものだ」。扁桃体は、親指の爪ぐらいの大きさ。神経細胞の数", "が増えるのは海馬だけですから、扁桃体の神経細胞の数は増えることはありません。扁桃体がないと、まず恐怖", "心を感じなくなる。", "「扁桃体がなければ、生存維持のためには、かなりキツイ」", "ウソをつくのが人間の本性", "海馬がなくなってしまった患者さんは、海馬があった時のことは、憶えている。ただ、新しいことを思い出せ", "ない。記憶は、海馬の中に蓄えられているわけではない。海馬は、情報の要・不要を判断して、他の部位に記憶", "を蓄えるんです。だから海馬を「記憶の製造工場」と言うのです。同時に、海馬がない人を見ていると、人間の", "本質も見えてきます。だから非合理なことが起きた時に、自我を保とうとして延々とつくり話をしてしまう。日", "常でささいな不合理に直面した時には、知らないうちにつくり話を沢山している。知らないうちにウソを重ねる", "のが、わたしたちのふだんの会話。脳の本質は、ウソつき。", "脳には、意識するしないに関わらず、すごくたくさんの情報が入ってきます。その情報は一度ぜんぶ海馬に送", "り込まれる。しかし、その情報のほとんどは、そのまま捨てられてしまいます。なぜかというと、情報が整理さ", "れないまま、脳が今受けている情報をすべて記憶してしまうとしたら、数分で容量一杯になってしまうから。海", "馬が、これが「役に立つ情報」で、これが「役に立たないから忘れていい情報」だとか、仕分けをしたりフラグ", "（目印になる旗）を立てる。海馬の役割は、情報の「ふるい」。", "何歳になっても海馬の神経細胞は増えている", "脳の神経細胞は生まれた時の数がいちばん多くて、あとはどんどん減っていく一方。だけど実は、海馬では、", "細胞が次々と生み出される。次々と死んでいくスピードも速いのですが、どんどん生まれてもいるわけ。海馬は、", "情報の仕分けという非常に大切な役割を担っていますから、海馬の神経細胞の数が多ければ多いほど、たくさん", "の情報を同時に処理できます。ということは、海馬が発達すれば、たくさんの情報を同時に残そうと判断できる。", "生存に絶対に必要である情報でなければ、海馬は、どんどん捨てていってしまう。", "ですから逆に、お勉強の丸暗記をしたいと思えば、そのままでは脳が欲しいものではないわけだから、いかに", "海馬をだませるかが、重要。情報の関所の海馬をだまして、いかに通っていくかが、大事。そして海馬は、感情", "をつかさどる扁桃体の隣にある。そのふたつは、すごい密接に連絡を取り合っています。好きなものを判断する", "のが、扁桃体。だから好きなものを憶えやすいというのは、「扁桃体を活性化すると、海馬も活性化する」とい", "う方向で説明することができます。", "脳は毎日が面白いかどうかに反忚", "海馬の神経が増えると、かしこくなる。海馬の神経の寿命は、数ヶ月ぐらい。何ヶ月か経つとすっかり入れ替", "わってしまう。", "「入れ替えをしない構造」を脳はつくるんですが、海馬は入れ替わる。これは不思議。しかも唯", "一入れ替わる場所が、記憶をつかさどる海馬なわけ。", "ふだんから人は、どうやってものを憶えるかのか。ひとつは、好き嫌いといった感情が絡むと憶えます。海馬", "が記憶を製造するチカラを増強させるためには、たのしいことや悲しいことの刺激をたくさん受けることが、重", "要。", "「ずっと病院で寝て天井を見ているような生活」は、海馬のはたらきを衰えさせる。", "「1 回だめな環境にいると、", "一生つまらないまま」ということはない。", "「刺激を増やせば、人はいつだっておもしろくもなれるし、いつだっ", "てつまらない人になる危険性だってある」", "。", "タクシードライバーとそうじゃない人との海馬を比べると、タクシードライバーの海馬のほうが、大きかった。", "いろいろな人に会うというような、新規の刺激にいつもさらされているから。海馬がいちばん大きいのは、50", "年以上もタクシードライバーをやった人。新規な刺激にさらされている人は、いつでも入力の判断をする海馬に", "刺激があるから、海馬の細胞が増えていく割合と消えていく割合とでは、細胞の増えていく割合が加速していく。", "そして、海馬が大きくなると処理する能力が増えますから、さらに対照にする刺激が増えるという、そういうポ", "ジティブな回転が起きる。", "「かわいい子には旅をさせよ」", "海馬にとっていちばんの刺激になるのが、まさに「空間の情報」。部屋の隅に移動するというだけでも、空間", "5/11", "的な概念が、海馬に刺激を与えます。実際には動かなくても、頭の中で移動を想像するだけでも、ちゃんと刺激", "になる。", "インターネットの欠点は、人には視・聴・味・嗅・触という五感があるけれども、インターネットでは、目と", "耳だけの刺激の世界。想像に限界が生じてしまうのはそこ。", "実際の旅のほうが、海馬にすばらしい刺激を与える。", "ハリウッドは血の入れ換えで成長した", "失業者の多い時代に「モーションピクチャー」という見せもの小屋をつくったところから、ハリウッドの映画", "産業ははじまった。行き詰まると新しい血を入れる。安定した古きよきもので伝統を受け継ぐよりも、その場そ", "の場でいちばんいいものをよしとするというのは、海馬が情報を選択する姿に似ています。それまでの映画界に", "いるみんなが反対しそうな「ナイスな変わりもの」に大きな映画を任せるところがハリウッドのものすごさ。", "「恋愛が、人をキレイにする。", "」", "クリエイティブは、脳への挑戦", "専門分野のことができると思い込んでいる人たちとプロジェクトを組んでいて、「意外とたいしたことがない", "な」と感じる時があります。専門領域を何か特別なことだから口を出すな、という態度を取るってことは、誰で", "もやらかしてしまいそう。", "ほんとうにその分野に精通しているプロは、そういうことがない。むしろ素人の何気ない「不満足」を敏感に", "察知して、自分の側の問題点を積極的に改良しはじめたりする。", "脳の頑固さ「1 回分類をしてしまうと、それ以外の尺度では分離ができなくなってしまう」。クリエイティブな", "ことを仕事にするというのは、常識をちょっと破ってみることが必要。脳に逆らった仕事をしなければいけない。", "ある分野で経験を積んだ人が、ともするとつまらなくなってしまうのは、逆らわなくなるから。", "海馬は、", "「新しい環境は、ストレスではないんだよ」と自分に伝える役割をする。つまり海馬は、新しいこと", "を処理する能力に長けている。", "新しい価値観を持とうとしない人とは、一緒に仕事をしにくい。", "今までは「アイツは、風見鶏だ」とか「日和見主義者だ」とか文句を言われがちだったし、それと同時に「一", "貫性のある人ですね」とか「信念を貫いた」とかいう言葉に、かなりだまされてきた。貫くことがあるとしたら、", "「ウソをつかないこと」だけでいい。", "悩みを解決するコツ", "悩みを自分のこととして考えてしまうと、悩みの本質を見失う場合がある。「悩みを解決する」という以上の", "欲望が絡んでしまいがちですから。たとえば、別れ話を個人的に考えてしまうと、「あの子と別れたら、一緒に", "行っていたあの店には、もう行けない」といった、別れるかどうかということ以外の要素が入ってくる。", "おなじ悩みを他人のものだと考えると、", "「おまえ、それは未練がましいよ」", "「ぜんぶを失わないでいようなんて、", "ムシがよすぎる」", "。冷酷すぎるまでに悩みの本質に根ざした考えを出すことができる。"]}, {"id": 4, "chapter": "第２章のまとめ", "title": "４．海馬は増やせる", "body": ["脳の中で情報の選別を担当している「海馬」の神経細胞は、成人を超えても増える。", "５．旅は脳を鍛える", "海馬にとっていちばん刺激のあるものは空間の情報。つまり、旅をするほど海馬に刺激", "が与えられると推測できる。"]}, {"id": 5, "chapter": "第２章のまとめ", "title": "７．", "body": ["「これが、他人の悩みだったら･･･」が、悩みを解決するコツ"]}, {"id": 6, "chapter": "第３章", "title": "眠っているあいだに、海馬が情報を整理することを、レミネセンス（追憶）という。とてもおもしろい現", "body": ["象で、たとえばずっと勉強していて「わからなかったなぁ」と思っていたのに、ある時急に目からウロコが落ち", "るようにわかる場合がある。あれは、脳が夜、情報のつなぎ換えをしているうちに、できるようになったのです。", "レミネセンスを生かすには、眠る前に一通り仕事をやってみるという工夫があるといい。そうすると、眠ってい", "るあいだに脳が無意識のうちに考えてくれるので、仕事もよりはかどる。たとえば、仕事の〆切がまだまだ先で", "あっても、早めに目を通しておくということは、とても重要な姿勢。", "ちなみに、夢を見る刺激を与える物質も、さきほどやる気を与える物質のアセチルコリン。ですから風邪薬の", "ようなアセチルコリンを抑えるものを飲むと、情報が整理できない睡眠になってしまいます。", "酸化防止剤は老化防止剤", "今の世界に合わせて動物が生きている。酸素が 20％という状態に合わせて、動物は進化してきたし、体温も", "7/11", "36 度や 37 度ぐらいでいちばん活発に生きるように適合しています。", "痴呆とは、神経細胞が死にすぎてしまう病気。でも、死んでしまった神経細胞は、もう 2 度生き返らないから、", "痴呆を回復させることができる方法は、ふたつしかありません。つまり、生きのこった細胞の「可塑性を高める」", "という方法と、もうひとつは、", "「生き残っている細胞を死なないようにさせる」という方法。今、いちばん死な", "ないようにさせるのが、酸化防止剤。もともと人間の身体には酸化防止機能が備わっていて、酸化を防止するた", "んぱく質があるのですが、それがはたらかなくなってしまうと ALS になる。", "やる気を出すコツはたくさんある", "達成感が、A10 神経という快楽に関わる神経を刺激して、ドーパミンという物質を出させ、やる気を維持させ", "る。達成感という快楽をいかに味わうかと言うと、", "「目標は大きく」ではなく、「目標は小刻みに」と心掛けるほ", "うがうまくいく。もちろん、大きな目標を持つことは大切なのですが、「今日はここまでやろう」とか「1 時間で", "これをやろう」と、実行可能な目標を立てると、目標を達成するたびに快楽物質が出て、やる気を維持できます。", "心理学の言葉で初頭効果と終末効果。あることのはじめと終わりには、仕事がはかどるんです。それを逆手に", "取ると、たとえば 1 時間何かをやるとしても、30 分が 2 回あるんだと思うと、はじめと終わりが 1 回ずつ増え", "るから、よりはかどる。", "自分に適した目標というのは、ほんとうに大事。いきなり高い目標を設定しても、なかなかクリアできません。", "学習の過程で、より多くのミスをしたサルのほうが将来的には記憶の定着率がいい。失敗をくりかえさないと、", "あまりかしこくならない。", "脳をはたらかせる細かいコツ。ブドウ糖を吸収したほうがいい、コーヒーの香りが、脳のはたらきを明晰にす", "る。扁桃体を活躍させると、海馬も活躍します。扁桃体をいちばん活躍させる状況は、生命の危機状況。だから、", "ちょっと部屋を寒くするとか、お腹をちょっと空かせるという状態は、脳を余計に動かします。扁桃体をはたら", "かせる卑近な例としては、", "「感情に絡むエッチな発想をするとものごとを憶えやすい」", "。"]}, {"id": 7, "chapter": "第３章のまとめ", "title": "２．やりはじめないと、やる気はでない", "body": ["仕事をやる気がしないと思っても、実際にやりはじめてみるというのは、かなりいい方法。"]}, {"id": 8, "chapter": "第３章のまとめ", "title": "３．寝ることで記憶が整理される", "body": ["４．酸化させることは腐ること", "酸化防止剤は、老化を防ぐ効果もある。", "５．失恋や失敗が人をかしこくする", "６．生命の危機が脳をはたらかせる"]}, {"id": 9, "chapter": "第４章のはじめに", "title": "ある時にふと、", "body": ["「これおもしろいなぁ」と思って、自分の視点にひとつ新しいものが加われば、脳の中の", "パターン認識が飛躍的に増える。そえをくりかえせば、人の考えというのは、驚くほどおもしろいものに発達す", "る。新しい視点を加えることは、自分の努力でできるし、教えてもらったりして外部から影響を受けることでも", "できる。そのこと事態には、何にも難しいことはないというか、誰にでもできること。つまり、何歳になっても", "頭はよくなる。", "「今さら考えたってダメだ」と思っちゃもったいない。", "漢字テストは 100 点中 2 点だった", "「東大薬学部に進学する時にも、大学院に進学する時も、池谷さんは首席だった。」小学校 6 年ぐらいで、小", "学校で習うぜんぶの漢字の試験。先生が「池谷はたった 2 点だ」って、みんなの前で答案用紙を見せて言いまし", "た。けど、それは、別に悔しいことだとは思わなかった。勉強に対しては、劣等感はなかったし、学校は楽しか", "った。うちの親には生まれてから一度も勉強しろと言われたことがない。", "9/11", "テストのたびに公式を導きだす", "中学の時に、変わりました。小学校の頃には、", "「九九ができないけど、どうしよう」「漢字ができないけど、ど", "うしよう」", "。記憶力が弱くても、何かをやった時の方法がわかっていれば、テストには十分に対処できる。毎回", "毎回、試験のたびに公式を導き出していればいいわけ。導き出す方法は、わかっている。「公式を丸暗記してる", "人よりも、公式を導き出せる人のほうが、原理をしっているから忚用力があるんじゃないか？」って。", "池谷さんて「九かける八」をどう計算するんですか？ 90 から 9 を 2 回（18）を引くと「72」って出てきま", "す。九九を 81 個も暗記するより、ぼくの方法なら 10 倍することと 2 倍することと半分にすることの 3 つの方法", "だけでぜんぶできる。", "池谷さんが、経験メモリーで行けばいいんだと発見できた理由は？ きっと、危機感。危機感があるからこそ、", "何かに対処しなければいけないわけですから。", "ひとつのものを試しにつくりあげてみて、それを一度壊すというのは、危機感がないと、人間はなかなかしな", "い。", "一生つらくなくて一生ラクなままだという人生って、たぶん、しあわせじゃないと思う。しあわせな人生って", "いうのは、きっと、ラクな人生じゃない。天国はラクで快適なだけで、変化に富んでいておもしろいのは地獄。", "問題をひとつずつ解くこと"]}, {"id": 10, "chapter": "第４章のはじめに", "title": "山ほどある問題の中からひとつずつ潰していくから、忙しいと、解決していくものごとの数が増えると思", "body": ["う。解決するたびに小さな達成感が、連チャンでごほうびとして与えられる。「ものすごく複雑なんです。もう", "ダメです」みたいに言っていたことも、10 個ぐらいの個別の問題を順に解けばいいだけ。いっぺんに解決しよ", "うとしたら、手もつけられない。それが 1 個ずつだと、ひとつずつ解決のよろこびがプレゼントされていく。ひ", "とつずつ解いていくというのは、1 回でも実際に自分でやってみれば、方法記憶として吸収します。", "「まず、やってみろよ」っていうことは、ほんとうに大事。経験メモリーは、実際に試した手順だけを憶える", "ものですから、実行してみたらその分だけ経験メモリーの貯金は増えるし、経験メモリーの貯金が増えたら、ま", "た次にやれることが増えるという、いい循環。秀才って「エレガント」とかが好き。泥くさいことを試している", "ヤツのほうが、解決する力を持っている。", "言葉の呪い", "強い力で宣言すると、言葉が走っていって、新しい回路を潮流のように生み出してしまうマジック。「俺は馬", "鹿だから」って言ったとたんに、すべての可能性が終わっちゃう。いいことを言うと、その通りになる。悪いこ", "とを言っても、その通りになる。脳は安定化したいという性質が強いので、自分があらかじめ言ったことに対し", "ても、どんどん安定化していこうとする。", "結果ではなくプロセス", "誇りを生むためには、ちょっとでも完成したものを残しておくというか、そうしないと、自信って出てこない。", "昔の科学は、結果勝負なところがあって、ぜんぶを証明してつくりあげたあとにはじめて発表していたんですが、", "今は仮説のまま公表。仮説の発表後に人が寄ってきて、その仮説を証明していくというように、科学全体がプロ", "セス重視に変わっている。", "言語化することのいい面と悪い面。何かが明確になる場合と、固定観念がつくられてしまう場合。"]}, {"id": 11, "chapter": "第４章のまとめ", "title": "６．言ってしまったことが未来を決める", "body": ["脳は、ひとつのこと決めつけたがり、なおかつ安定化したがります。自分があらかじめ", "言ったことに対しても安定化しようとします。", "７．他人とつながっている中で出た仮説には、意味がある。", "人類史上稀に見るロングセラー『聖書』", "『論語』などは、いずれも「･･･である」と断定", "したエッセンスだけを述べることは、していません。必ず「･･･と言った」と他人とのつながりの中で語ら", "れる仕組みを取っています。", "あとがき", "心は、脳が活動している状態を指す。脳がコンピュータと決定的に異なる点は、外界に反忚しながら変容する", "10/11", "自発性にある。", "プロセス重視の生き方が、より人間らしい存在に直結する。当面の問題は、自分に備わった可塑性の権利を個々", "が行使するか否かに絞られる。", "この本は、この地球上に生きるすべての人への忚援歌である。", "11/11"]}];
+function startReading(){document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');}
+function showTab(tab){
+  document.getElementById('btn-index').classList.toggle('active',tab==='index');
+  document.getElementById('btn-read').classList.toggle('active',tab==='read');
+  const ip=document.getElementById('index-panel-scroll');const rv=document.getElementById('reading-view');
+  if(tab==='index'){ip.classList.remove('hidden');rv.classList.remove('active');}
+  else{ip.classList.add('hidden');buildReadingView();rv.classList.add('active');}
+}
+function buildReadingView(){
+  const inner=document.getElementById('reading-inner');let h='';let lc='';
+  sections.forEach(s=>{
+    const ch=s.chapter||'';
+    if(ch!==lc){lc=ch;if(ch)h+='<div class="reading-chapter">'+esc(ch)+'</div>';}
+    const bh=s.body.map(p=>'<p>'+esc(p)+'</p>').join('');
+    h+='<div class="reading-section"><h3><span class="rnum">\u00a7'+(s.id+1)+'</span>'+esc(s.title)+'</h3>'+bh+'</div>';
+  });
+  inner.innerHTML=h;
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toggleSection(header){header.parentElement.classList.toggle('open');}
+function goSec(id){
+  document.getElementById('btn-index').classList.add('active');document.getElementById('btn-read').classList.remove('active');
+  document.getElementById('index-panel-scroll').classList.remove('hidden');document.getElementById('reading-view').classList.remove('active');
+  document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');
+  const el=document.getElementById('sec-'+id);if(!el)return;
+  setTimeout(()=>{el.scrollIntoView({behavior:'smooth',block:'start'});},50);
+  if(!el.classList.contains('open'))el.classList.add('open');
+  document.querySelectorAll('.nav-item').forEach(item=>item.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(item=>{if(item.getAttribute('onclick')==='goSec('+id+')')item.classList.add('active');});
+  document.getElementById('sidebar').classList.remove('open');
+}
+function expandAll(){document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');document.querySelectorAll('.section').forEach(s=>s.classList.add('open'));}
+function collapseAll(){document.querySelectorAll('.section').forEach(s=>s.classList.remove('open'));}
+function filterNav(q){const l=q.toLowerCase();document.querySelectorAll('.nav-item').forEach(item=>{item.style.display=(!q||item.textContent.toLowerCase().includes(l))?'':'none';});}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
+document.getElementById('index-panel-scroll').addEventListener('click',()=>{if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('open');});
+document.getElementById('reading-view').addEventListener('click',()=>{if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('open');});
+
+</script>
+</body>
+</html>

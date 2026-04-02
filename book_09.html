@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>実学の超研究術 | Claude本棚</title>
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;--text:#e6edf3;--text2:#8b949e;--accent:#f0883e;--accent2:#d29922;--chapter-color:#79c0ff;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Helvetica Neue','Hiragino Sans','Yu Gothic',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.7;}
+#app{display:flex;height:100vh;overflow:hidden;}
+#sidebar{width:300px;min-width:300px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+#header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;flex-shrink:0;}
+#header h1{font-size:15px;font-weight:700;color:var(--accent);line-height:1.4;}
+#header .subtitle{font-size:12px;color:var(--text2);margin-top:2px;}
+#header .meta{font-size:11px;color:var(--text2);margin-top:3px;}
+#top-nav{display:flex;align-items:center;gap:8px;padding:8px 24px;background:var(--surface2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;}
+.top-nav-btn{padding:5px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:inherit;transition:all 0.15s;white-space:nowrap;text-decoration:none;display:inline-block;}
+.top-nav-btn:hover{background:var(--surface);color:var(--text);border-color:var(--accent);}
+.top-nav-btn.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600;}
+#progress-area{margin-left:auto;font-size:11px;color:var(--text2);white-space:nowrap;}
+#search-bar{padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+#search-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:13px;font-family:inherit;outline:none;}
+#search-input:focus{border-color:var(--accent);}
+#nav-scroll{flex:1;overflow-y:auto;padding:8px 0;}
+#nav-scroll::-webkit-scrollbar{width:4px;}
+#nav-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.nav-chapter{padding:8px 16px 4px;font-size:10px;font-weight:700;color:var(--chapter-color);border-top:1px solid var(--border);margin-top:4px;}
+.nav-chapter:first-child{border-top:none;margin-top:0;}
+.nav-item{padding:5px 16px;font-size:12px;color:var(--text2);cursor:pointer;transition:all 0.1s;border-left:2px solid transparent;}
+.nav-item:hover{background:var(--surface2);color:var(--text);border-left-color:var(--accent2);}
+.nav-item.active{background:var(--surface2);color:var(--accent);border-left-color:var(--accent);}
+#index-panel-scroll{flex:1;overflow-y:auto;padding:24px;}
+#index-panel-scroll::-webkit-scrollbar{width:6px;}
+#index-panel-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.chapter-header{margin:18px 0 6px;padding:9px 16px;background:rgba(121,192,255,0.08);border-left:3px solid var(--chapter-color);border-radius:0 6px 6px 0;font-size:13px;font-weight:600;color:var(--chapter-color);}
+.chapter-header:first-child{margin-top:0;}
+.section{margin-bottom:5px;border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color 0.2s;}
+.section:hover{border-color:var(--accent2);}
+.section.open{border-color:var(--accent);}
+.section-header{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;background:var(--surface);user-select:none;transition:background 0.15s;}
+.section-header:hover{background:var(--surface2);}
+.sec-num{font-size:10px;color:var(--text2);min-width:28px;flex-shrink:0;}
+.sec-title{flex:1;font-size:13px;font-weight:500;color:var(--text);line-height:1.4;}
+.toggle-icon{font-size:10px;color:var(--text2);transition:transform 0.2s;flex-shrink:0;}
+.section.open .toggle-icon{transform:rotate(180deg);}
+.detail-body{display:none;padding:14px 20px;background:var(--bg);border-top:1px solid var(--border);}
+.section.open .detail-body{display:block;}
+.detail-body p{margin-bottom:10px;font-size:14px;color:#cdd9e5;line-height:1.85;text-align:justify;}
+.detail-body p:last-child{margin-bottom:0;}
+#reading-view{display:none;flex:1;overflow-y:auto;padding:40px;}
+#reading-view.active{display:block;}
+#reading-view::-webkit-scrollbar{width:6px;}
+#reading-view::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.reading-inner{max-width:780px;margin:0 auto;}
+.reading-chapter{margin:24px 0 8px;padding:9px 18px;border-left:3px solid var(--chapter-color);font-size:14px;font-weight:600;color:var(--chapter-color);}
+.reading-chapter:first-child{margin-top:0;}
+.reading-section{margin-bottom:18px;padding:16px 20px;background:var(--surface);border-radius:8px;border:1px solid var(--border);}
+.reading-section h3{font-size:14px;font-weight:700;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.reading-section h3 .rnum{font-size:11px;color:var(--text2);font-weight:400;}
+.reading-section p{font-size:14px;color:#cdd9e5;line-height:1.85;margin-bottom:8px;text-align:justify;}
+.reading-section p:last-child{margin-bottom:0;}
+#splash{text-align:center;padding:60px 24px;}
+#splash h2{font-size:22px;color:var(--accent);margin-bottom:8px;}
+#splash .sp-sub{color:var(--text2);font-size:14px;margin-bottom:32px;}
+#splash .stats{display:flex;justify-content:center;gap:40px;margin-bottom:32px;}
+#splash .stat .num{font-size:36px;font-weight:800;color:var(--accent2);}
+#splash .stat .lbl{font-size:12px;color:var(--text2);margin-top:2px;}
+#splash .start-btn{background:var(--accent);color:#000;border:none;padding:14px 44px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity 0.2s;}
+#splash .start-btn:hover{opacity:0.85;}
+#menu-toggle{display:none;background:transparent;border:none;color:var(--text);font-size:20px;cursor:pointer;padding:4px 8px;vertical-align:middle;margin-right:8px;}
+.hidden{display:none !important;}
+@media(max-width:768px){
+  #sidebar{position:fixed;top:0;left:0;bottom:0;z-index:100;transform:translateX(-100%);transition:transform 0.25s ease;width:280px;}
+  #sidebar.open{transform:translateX(0);}
+  #menu-toggle{display:inline-block;}
+  #index-panel-scroll{padding:14px;}
+  #top-nav{padding:8px 14px;}
+  #header{padding:11px 14px;}
+  #reading-view{padding:16px;}
+}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="sidebar">
+  <div id="search-bar"><input id="search-input" type="text" placeholder="🔍 節タイトルを検索..." oninput="filterNav(this.value)"></div>
+  <div id="nav-scroll">
+<div class="nav-chapter">（本文）</div>
+<div class="nav-item" onclick="goSec(0)">基礎科学と実学の関係</div>
+<div class="nav-item" onclick="goSec(1)">使えるようになれば、電力が大幅に削減できる。</div>
+<div class="nav-item" onclick="goSec(2)">特許を出す研究者にもっと評価を</div>
+<div class="nav-item" onclick="goSec(3)">理研の大河内正敏（三代目所長）はただちにこれを産業にした。理化学興業を設立し、理</div>
+<div class="nav-item" onclick="goSec(4)">多くの研究者は「世の中のため」</div>
+<div class="nav-item" onclick="goSec(5)">ほんとうの実学のタネはどこにあるか</div>
+<div class="nav-item" onclick="goSec(6)">切削屑をファイバーとするアイデアがいきなり出てくると、すごい発想だと思われるが、</div>
+<div class="nav-item" onclick="goSec(7)">然と教える。一方、研究はエスタブリッシュされた学問を打ち破り、新しいものや未知の</div>
+<div class="nav-item" onclick="goSec(8)">若いころは広い範囲に興味があるかもしれないが、狭い分野で徹底的に深く追究する必</div>
+<div class="nav-item" onclick="goSec(9)">研究資金を企業から出してもらうためには、</div>
+<div class="nav-item" onclick="goSec(10)">ーナーの協力さえ得られれば進めることができる。企業と協同研究をやりはじめたら、一</div>
+<div class="nav-item" onclick="goSec(11)">「ファインテック」は情報通信機器に使用される超</div>
+  </div>
+</div>
+<div id="main">
+  <div id="header">
+    <button id="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <h1>実学の超研究術</h1>
+    <div class="subtitle">真のイノベーションは現場の困り事の中にある</div>
+    <div class="meta">中川威雄 著</div>
+  </div>
+  <div id="top-nav">
+    <button class="top-nav-btn active" id="btn-index" onclick="showTab('index')">目次モード</button>
+    <button class="top-nav-btn" id="btn-read" onclick="showTab('read')">通読モード</button>
+    <button class="top-nav-btn" onclick="expandAll()">全展開</button>
+    <button class="top-nav-btn" onclick="collapseAll()">全折畳</button>
+    <a href="top.html" class="top-nav-btn">← 本棚へ</a>
+    <span id="progress-area">12節</span>
+  </div>
+  <div id="index-panel-scroll">
+    <div id="splash">
+      <h2>実学の超研究術</h2>
+      <p class="sp-sub">真のイノベーションは現場の困り事の中にある</p>
+      <div class="stats"><div class="stat"><div class="num">12</div><div class="lbl">節</div></div></div>
+      <button class="start-btn" onclick="startReading()">読み始める</button>
+    </div>
+    <div id="content-area" class="hidden">
+<div class="section" id="sec-0">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§1</span>
+    <span class="sec-title">基礎科学と実学の関係</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>基礎科学と実学の関係</p><p>自然の不思議さ、自然の中の色々な法則を見つけていく、これが基礎科学である。それ</p><p>を人間の社会に役立つものにしようとうのが、実学である。</p><p>基礎科学といえども、実学から生まれることもあり、物理学の基礎である量子力学があ</p><p>る。</p><p>（１８９０年前後からドイツで製鉄業が発達。溶鉱炉の温度をきちんと測ろうというこ</p><p>とになり、溶鉱炉から出てくる光の分析が進んだ。光の分析を進めていくと、ニュートン</p><p>力学では説明がつかないということになり、プランクが量子仮説を導入する。）</p><p>実学は、基礎科学でわかった自然のさまざまなメカニズム・はたらきを人間の社会に応</p><p>用していく技術であり、基礎科学よりも実学のほうが、人間の生活に密着してくる。</p><p>なぜ実学の研究が重要なのか</p><p>たとえば超伝導現象（金属や合金などをある温度以下まで冷却すると電気抵抗がゼロに</p><p>なる現象）</p><p>。超伝導体に大容量の電流を流すのが難しい。やっとある程度できるようになっ</p><p>て超伝導磁石が生まれ、加湿器に実用化されている。超伝導がもっと低コストで日常的に</p></div>
+</div>
+<div class="section" id="sec-1">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§2</span>
+    <span class="sec-title">使えるようになれば、電力が大幅に削減できる。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>使えるようになれば、電力が大幅に削減できる。</p><p>今世紀半ばには世界の人口は８０億から１００億になるといわれており、そのときには</p><p>食糧不足になる恐れがある。となると、食糧をどうやって安く増やしていくか。</p><p>日本はやや基礎科学を軽視してしまう傾向があるから、基礎科学も進めなければならな</p><p>い。と同時に基礎科学者もまた、応用や技術に対して関心をもつことが必要。</p><p>実学の研究者に必要な視点と条件</p><p>基礎科学に関心をもちながら、</p><p>その発展をよく理解し、</p><p>実学をどのように応用できるか、</p><p>技術としてどのように生かせるかという視点でものごとを見る。中村修二さんの青色発光</p><p>ダイオードや半導体レーザーもそうで、実現するまでにはずいぶん苦労した。</p><p>とくに基礎科学の研究と、世の中のニーズがどういうところにあるのかをつねに見てお</p><p>く必要がある。好奇心をもち、なおかつ闘争力をもつ。世の中に立ち向かって逆境を切り</p><p>開いていくだけの覚悟が必要であり、最低限必要なことは勉強する。そのうえで忍耐力を</p><p>もっていればよい。最終的には体力である。</p></div>
+</div>
+<div class="section" id="sec-2">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§3</span>
+    <span class="sec-title">特許を出す研究者にもっと評価を</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>特許を出す研究者にもっと評価を</p><p>特許という形で、自分の発明をまとめていくのがよい。</p><p>「ＴＬＯ法」の制度を積極的に活用しよう</p><p>アメリカでバイ・ドール法（政府資金を使って研究・取得した特許であっても、そこか</p><p>ら生じる利益は政府ではなくその所属大学に帰属するものとし、他者への独占的実施権の</p><p>許諾を認めた法律）がつくられたのは８０年。</p><p>「大学等技術移転催促法（ＴＬＯ法）」が日本でやっとできたのは９８年。ＴＬＯ法にも</p><p>とづいて技術移転機関がつくられてはじめて、国立大学の研究者が自由にＴＬＯをつかっ</p><p>て産業界と連携し、産業界に特許を買ってもらうことができるようになった。バイ・ドー</p><p>ル法が効果を生み出すまでには１０年の時間がかかったのである。</p><p>「理研ベンチャー」の先進性</p><p>鈴木梅太郎は理研に入る前にオリザニン（ビタミンＢ1）を発見して、世界から脚気が</p><p>なくなった。</p><p>弟子の高橋克己が、</p><p>すでに知られていたビタミンＡの大量生産方式を発見し、</p></div>
+</div>
+<div class="section" id="sec-3">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§4</span>
+    <span class="sec-title">理研の大河内正敏（三代目所長）はただちにこれを産業にした。理化学興業を設立し、理</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>理研の大河内正敏（三代目所長）はただちにこれを産業にした。理化学興業を設立し、理</p><p>研が生みだしている特許を全部売る努力をした。大河内先生は理化学研究所のまわりに、</p><p>お金を生みだす会社を６３社、工場数にして１２１もの産業をおこして、その収益で理化</p><p>学研究所を運営した。これがいわゆる「理研コンツェルン」である。</p><p>ここにきて大学や研究所の研究者によるベンチャー企業の設立がますます話題になって</p><p>いる。日本のベンチャー企業の問題点のひとつは、財政的な面である。お金を借りた場合、</p><p>失敗するとお金を返さなくてはならない仕組みになっている。アメリカにはエンジェル資</p><p>金があり、失敗すると損をした部分を補ってくれる制度がある。失敗したときにどうする</p><p>か、日本の金融業界は考えてほしい。</p><p>「研究テーマは現場にある！」基礎研究を実用化する産学連携の進め方</p><p>著者：中川威雄</p><p>過去の研究生活を振り返ってみると、若いころの体験がその後の研究に結構大きな影響</p><p>を与えているように思う。かつて学位論文をまとめている過程で、棒材のせん断加工に応</p><p>用できることを思いつき、それを企業に提案し、棒材の精密せん断法の誕生となった。そ</p><p>れ以来、できるだけほかの研究者がやらないようなアイデアで研究するようになった。</p></div>
+</div>
+<div class="section" id="sec-4">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§5</span>
+    <span class="sec-title">多くの研究者は「世の中のため」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>多くの研究者は「世の中のため」</p><p>「学問のため」に研究しているというが、私の研究の動</p><p>機は「実用化の感激をもう一度」と、「言い出した以上みっともない」という意地である。</p><p>「論文を書くのはあとでもいい。まず実用の目途をたてよう」という気持ちが全ての研究</p><p>のテーマにあった。研究の動機というのは、きれいごとばかりではなく、真理の追及と同</p><p>列に名誉欲や出世欲や金銭欲なども含めて色々な動機があるものである。</p><p>実用化できるかどうかは研究テーマの選択がすべて</p><p>大学のものづくりの研究の地位は相当下位に位置する。大学は工場をもっていないので、</p><p>製造技術の研究にとっては非常に不利である。しかし企業では現実の課題からすこし離れ</p><p>た研究や変わったアイデアはやらせてもらえない。あるいはリスクの大きい研究開発や、</p><p>長期間要するような研究はなかなかできない。そこに私は生きる道を見いだしたのである。</p><p>したがって、大学での研究対象としては、</p><p>‘もしこういう現象がものづくりに活用できたら</p><p>すばらしい’というテーマを取り上げた。このニーズにもとづいた研究テーマの選択は、</p><p>実用化できる確率が高い。</p></div>
+</div>
+<div class="section" id="sec-5">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§6</span>
+    <span class="sec-title">ほんとうの実学のタネはどこにあるか</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ほんとうの実学のタネはどこにあるか</p><p>大学の研究者が工場に直結するためには、相当の努力をして工場などの現場とコンタク</p><p>トをもつか、自分で現場を勉強しなければならない。インターネットで企業情報を調べた</p><p>り学会に出席して論文や発表を聞いたりするのと、現場を見るのとでは全然違うものであ</p><p>り、現場から研究テーマを探してくる努力をしなければならない。</p><p>工場に行くと、いろいろなものをいろいろなやり方でつくっている。そこに自分の研究</p><p>との接点が出てくる。いろいろな人と知り合いになるという努力も必要である。大学の研</p><p>究者の特権は、警戒心をもたれずに製造現場を見せてもらえることだ。</p><p>逆転の発想を生みだす方法</p><p>私の場合、第一次オイルショックのころ、切削屑を何かに有効活用しようと考えたのが</p><p>粉末冶金の研究をはじめるきかっけだった。切削屑を使って粉末鍛造のコストを安くしよ</p><p>うというのがねらいであった。鋳鉄粉の焼結技術は、含油軸受に実用化されることになっ</p><p>た。鋳鉄粉を粉末鍛造用に使えるようにするのが本来の目標であったので、鋳鉄粉から黒</p><p>鉛を取り除く方法を考えた。この脱炭鋳鉄粉を使って粉末鍛造で歯車をつくると、五倍以</p><p>上の強度になった。開発した鋳鉄粉は意外なところで使われた。使い捨てカイロである。</p></div>
+</div>
+<div class="section" id="sec-6">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§7</span>
+    <span class="sec-title">切削屑をファイバーとするアイデアがいきなり出てくると、すごい発想だと思われるが、</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>切削屑をファイバーとするアイデアがいきなり出てくると、すごい発想だと思われるが、</p><p>コンクリートを補強するファイバーを安く作りたいという相談を受けたとき、切削屑をフ</p><p>ァイバーにすることを考えた。産業のいろいろなニーズを知っていれば、このように何か</p><p>のチャンスに結びつくわけである。</p><p>開発が成功し「もっと細かいファイバーができないものか」との相談を受け、思いつい</p><p>たのが、金属棒を旋盤で切削し、バイトをびびらせて細かい切粉を生産する方法。二重の</p><p>逆転の発想である。</p><p>大学では三段論法のような理屈のとおる知識を教えるが、逆転の発想などは教育とは相</p><p>容れないものである。</p><p>加工技術は、要するに自然現象の上手な活用である。産業のニーズと現象をマッチング</p><p>させる。ここに実学の研究テーマが存在する。よい研究テーマは、強いニーズの存在のも</p><p>とに、どこかで見たとか、研究室で何か変わった現象を見つけた、といったきっかけがな</p><p>いと出てくるものではない。</p><p>ブレークスルーを生みだす研究術</p><p>大学の研究者の役割は教育と研究である。教育はエスタブリッシュされた学問を理路整</p></div>
+</div>
+<div class="section" id="sec-7">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§8</span>
+    <span class="sec-title">然と教える。一方、研究はエスタブリッシュされた学問を打ち破り、新しいものや未知の</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>然と教える。一方、研究はエスタブリッシュされた学問を打ち破り、新しいものや未知の</p><p>ものにも挑戦する。研究では同じ頭脳であれば知識や情報量の多いほうが勝ちである。新</p><p>しい研究をしようと思ったら、知識や情報を得るためにつねに貪欲でなければならない。</p><p>アイデアはまったくの無から出るものではなく、アナロジー（類推）によって生まれる</p><p>ものである。知識が広がったり、異なる分野の知識や情報を積極的に取り込んでいけば、</p><p>別の新しいアイデアが生まれ、ブレークスルーへとつながる。</p><p>私はいろいろな分野の研究をした。行き当たりばったりに見えるかもしれないが、私の</p><p>中ではそれぞれの研究テーマがチェーンのようにつながっている。そのうちのひとつでも</p><p>切れていたら生まれなかった技術がたくさんあった。どれもそれなりにベース技術があり、</p><p>互いに連結させテーマをエスカレートさせてきた。</p><p>専門分野では自分は玄人であり、自分が素人の分野に入ったときにやりやすい方法は、</p><p>自分の玄人の知識を新しい分野に導入することである。新しい分野に入ったときほど大き</p><p>な成果が出て、考え方が大きく変わる。既存の概念をひっくり返すのは、むしろその分野</p><p>の素人の方ができるのである。</p><p>大学院時代から３５歳までにやるべきこと</p></div>
+</div>
+<div class="section" id="sec-8">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§9</span>
+    <span class="sec-title">若いころは広い範囲に興味があるかもしれないが、狭い分野で徹底的に深く追究する必</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>若いころは広い範囲に興味があるかもしれないが、狭い分野で徹底的に深く追究する必</p><p>要がある。誰でもそうだが、身近な人の影響を大きく受け、手法をまねして見習っていく</p><p>から成長していくのである。研究の手法は、それぞれの指導教官がそれぞれの独特なもの</p><p>をもっている。その中から自分独自の研究手法を生みだしていかなければならない。世の</p><p>中には立派な研究者が多いので、それらの方々のいいところを学んでほしい。違った研究</p><p>者と一緒に仕事をしてみると、いい勉強になる。</p><p>産学連携を成功させる条件</p><p>残念ながら企業と競争している分野はほとんど大学が地盤沈下している。いまの企業の</p><p>パワーはものすごいものがあり、</p><p>そういう中で実学の研究をするにはどうすればいいのか。</p><p>その鍵を握るのは人である。産学連携をうまくやっている大学の研究者は産業技術に詳し</p><p>く、産業に貢献するような仕事をしている。現在、国は産学連携を援助しており、特許の</p><p>取得やＴＬＯもその一環である。</p><p>企業は成果が上がると思う研究者にしかお金を出さず、成果が上がるテーマでないとお</p><p>金も人も出さない。</p></div>
+</div>
+<div class="section" id="sec-9">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§10</span>
+    <span class="sec-title">研究資金を企業から出してもらうためには、</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>研究資金を企業から出してもらうためには、</p><p>「こういう研究をやりたい。</p><p>こういう装置をつくってほしい。そのためには、これだけの費用が必要です」と自分のほ</p><p>うから説得に行かなければならない。工学の研究、とくにものづくりは人と研究資金を引</p><p>きつけられないと難しい。産学連携を進めたいと思うなら研究室に閉じこもっていてはダ</p><p>メ。</p><p>研究発表にも配慮が必要で、産業界のニーズに沿った表現を使って分かりやすく解説す</p><p>るのが重要である。また実際にやってみると、人間関係・信頼関係が非常に重要である。</p><p>相手企業をどのように選ぶか</p><p>相手企業を選ぶ際に重要な視点は、販売力のない企業と組んだために実用化した製品が</p><p>売れず、しかも棄てられたあとにライバル企業に技術を売ることもできず、開発した技術</p><p>が活用されないといったこともある。相手企業はかならずしも大企業がいいパートナーと</p><p>は限らない。</p><p>何度も会社に足を運んでも名刺の数が増えるだけで、結論はなかなか出ない。</p><p>私の場合、大半はオーナー会社と組んだ。オーナー会社はトップダウンで決まるので、オ</p></div>
+</div>
+<div class="section" id="sec-10">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§11</span>
+    <span class="sec-title">ーナーの協力さえ得られれば進めることができる。企業と協同研究をやりはじめたら、一</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ーナーの協力さえ得られれば進めることができる。企業と協同研究をやりはじめたら、一</p><p>心同体でやらないと成功しない。</p><p>研究者を有利にする特許のとり方</p><p>特許を出していると、特許を実施する企業側には弱みになる。企業側からみれば研究者</p><p>が特許をもっていたほうが特許を独占できるのでやりやすいのである。</p><p>本当にいい特許は基本特許である。大学の研究者が周辺特許まで押さえるのは現実的に</p><p>難しいので、企業と協同して周辺特許までとることもある。研究者であろうとなんであろ</p><p>うと、特許を出すということは“お金儲け”で、特許は論文より強力なものである。</p><p>「ベンチャー冬の時代」に起業をする</p><p>ベンチャー企業は、景気がいいときに起こすもので、景気が悪いときに起業すると、す</p><p>ぐにつぶれてしまう。じつは私も企業を３社設立しており、</p><p>「ティームズ研究所」は技術開</p><p>発のコンサルティングを業務としている。</p><p>次の「ファインテック」は、出資してくれた外資も「日本でなければできない技術をと</p><p>りあげて開発してくれ」といってきた。</p></div>
+</div>
+<div class="section" id="sec-11">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§12</span>
+    <span class="sec-title">「ファインテック」は情報通信機器に使用される超</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「ファインテック」は情報通信機器に使用される超</p><p>精密金型と部品をつくる分野である。</p><p>「積層金型研究所」では、切ったボール紙を積み上げて立体をつくる方式は昔からある</p><p>が、これを、コンピュータに結びつけて金型をつくる技術を２０年前に提唱したものを実</p><p>用化している。</p><p>産業界は厳しい競争で毎日しのぎを削っている。いままでの研究生活を振り返ってみて、</p><p>大学の研究者はベンチャー企業には向かないと思う。逆にそれを前提にしてベンチャー企</p><p>業を起こすときは、研究や技術開発は自分が責任をもつ、しかし経営は経営のプロにやっ</p><p>てもらうといった住み分けが必要である。自分でベンチャー企業を起こしてみると、ほか</p><p>の人たちに気楽にベンチャーを、といえなくなる。しかし、大学など公的研究機関の研究</p><p>者も、これからは何らかの形で実際の技術に役にたつ研究に挑戦しなければならないし、</p><p>社会もそれを求めている。どんな仕事でも厳しくなっているので、大学の研究者だけがの</p><p>んびりと、</p><p>「研究のための研究」だけをしていられるような時代ではない。</p></div>
+</div>
+    </div>
+  </div>
+  <div id="reading-view"><div class="reading-inner" id="reading-inner"></div></div>
+</div>
+</div>
+<script>
+
+const sections = [{"id": 0, "chapter": "", "title": "基礎科学と実学の関係", "body": ["基礎科学と実学の関係", "自然の不思議さ、自然の中の色々な法則を見つけていく、これが基礎科学である。それ", "を人間の社会に役立つものにしようとうのが、実学である。", "基礎科学といえども、実学から生まれることもあり、物理学の基礎である量子力学があ", "る。", "（１８９０年前後からドイツで製鉄業が発達。溶鉱炉の温度をきちんと測ろうというこ", "とになり、溶鉱炉から出てくる光の分析が進んだ。光の分析を進めていくと、ニュートン", "力学では説明がつかないということになり、プランクが量子仮説を導入する。）", "実学は、基礎科学でわかった自然のさまざまなメカニズム・はたらきを人間の社会に応", "用していく技術であり、基礎科学よりも実学のほうが、人間の生活に密着してくる。", "なぜ実学の研究が重要なのか", "たとえば超伝導現象（金属や合金などをある温度以下まで冷却すると電気抵抗がゼロに", "なる現象）", "。超伝導体に大容量の電流を流すのが難しい。やっとある程度できるようになっ", "て超伝導磁石が生まれ、加湿器に実用化されている。超伝導がもっと低コストで日常的に"]}, {"id": 1, "chapter": "", "title": "使えるようになれば、電力が大幅に削減できる。", "body": ["使えるようになれば、電力が大幅に削減できる。", "今世紀半ばには世界の人口は８０億から１００億になるといわれており、そのときには", "食糧不足になる恐れがある。となると、食糧をどうやって安く増やしていくか。", "日本はやや基礎科学を軽視してしまう傾向があるから、基礎科学も進めなければならな", "い。と同時に基礎科学者もまた、応用や技術に対して関心をもつことが必要。", "実学の研究者に必要な視点と条件", "基礎科学に関心をもちながら、", "その発展をよく理解し、", "実学をどのように応用できるか、", "技術としてどのように生かせるかという視点でものごとを見る。中村修二さんの青色発光", "ダイオードや半導体レーザーもそうで、実現するまでにはずいぶん苦労した。", "とくに基礎科学の研究と、世の中のニーズがどういうところにあるのかをつねに見てお", "く必要がある。好奇心をもち、なおかつ闘争力をもつ。世の中に立ち向かって逆境を切り", "開いていくだけの覚悟が必要であり、最低限必要なことは勉強する。そのうえで忍耐力を", "もっていればよい。最終的には体力である。"]}, {"id": 2, "chapter": "", "title": "特許を出す研究者にもっと評価を", "body": ["特許を出す研究者にもっと評価を", "特許という形で、自分の発明をまとめていくのがよい。", "「ＴＬＯ法」の制度を積極的に活用しよう", "アメリカでバイ・ドール法（政府資金を使って研究・取得した特許であっても、そこか", "ら生じる利益は政府ではなくその所属大学に帰属するものとし、他者への独占的実施権の", "許諾を認めた法律）がつくられたのは８０年。", "「大学等技術移転催促法（ＴＬＯ法）」が日本でやっとできたのは９８年。ＴＬＯ法にも", "とづいて技術移転機関がつくられてはじめて、国立大学の研究者が自由にＴＬＯをつかっ", "て産業界と連携し、産業界に特許を買ってもらうことができるようになった。バイ・ドー", "ル法が効果を生み出すまでには１０年の時間がかかったのである。", "「理研ベンチャー」の先進性", "鈴木梅太郎は理研に入る前にオリザニン（ビタミンＢ1）を発見して、世界から脚気が", "なくなった。", "弟子の高橋克己が、", "すでに知られていたビタミンＡの大量生産方式を発見し、"]}, {"id": 3, "chapter": "", "title": "理研の大河内正敏（三代目所長）はただちにこれを産業にした。理化学興業を設立し、理", "body": ["理研の大河内正敏（三代目所長）はただちにこれを産業にした。理化学興業を設立し、理", "研が生みだしている特許を全部売る努力をした。大河内先生は理化学研究所のまわりに、", "お金を生みだす会社を６３社、工場数にして１２１もの産業をおこして、その収益で理化", "学研究所を運営した。これがいわゆる「理研コンツェルン」である。", "ここにきて大学や研究所の研究者によるベンチャー企業の設立がますます話題になって", "いる。日本のベンチャー企業の問題点のひとつは、財政的な面である。お金を借りた場合、", "失敗するとお金を返さなくてはならない仕組みになっている。アメリカにはエンジェル資", "金があり、失敗すると損をした部分を補ってくれる制度がある。失敗したときにどうする", "か、日本の金融業界は考えてほしい。", "「研究テーマは現場にある！」基礎研究を実用化する産学連携の進め方", "著者：中川威雄", "過去の研究生活を振り返ってみると、若いころの体験がその後の研究に結構大きな影響", "を与えているように思う。かつて学位論文をまとめている過程で、棒材のせん断加工に応", "用できることを思いつき、それを企業に提案し、棒材の精密せん断法の誕生となった。そ", "れ以来、できるだけほかの研究者がやらないようなアイデアで研究するようになった。"]}, {"id": 4, "chapter": "", "title": "多くの研究者は「世の中のため」", "body": ["多くの研究者は「世の中のため」", "「学問のため」に研究しているというが、私の研究の動", "機は「実用化の感激をもう一度」と、「言い出した以上みっともない」という意地である。", "「論文を書くのはあとでもいい。まず実用の目途をたてよう」という気持ちが全ての研究", "のテーマにあった。研究の動機というのは、きれいごとばかりではなく、真理の追及と同", "列に名誉欲や出世欲や金銭欲なども含めて色々な動機があるものである。", "実用化できるかどうかは研究テーマの選択がすべて", "大学のものづくりの研究の地位は相当下位に位置する。大学は工場をもっていないので、", "製造技術の研究にとっては非常に不利である。しかし企業では現実の課題からすこし離れ", "た研究や変わったアイデアはやらせてもらえない。あるいはリスクの大きい研究開発や、", "長期間要するような研究はなかなかできない。そこに私は生きる道を見いだしたのである。", "したがって、大学での研究対象としては、", "‘もしこういう現象がものづくりに活用できたら", "すばらしい’というテーマを取り上げた。このニーズにもとづいた研究テーマの選択は、", "実用化できる確率が高い。"]}, {"id": 5, "chapter": "", "title": "ほんとうの実学のタネはどこにあるか", "body": ["ほんとうの実学のタネはどこにあるか", "大学の研究者が工場に直結するためには、相当の努力をして工場などの現場とコンタク", "トをもつか、自分で現場を勉強しなければならない。インターネットで企業情報を調べた", "り学会に出席して論文や発表を聞いたりするのと、現場を見るのとでは全然違うものであ", "り、現場から研究テーマを探してくる努力をしなければならない。", "工場に行くと、いろいろなものをいろいろなやり方でつくっている。そこに自分の研究", "との接点が出てくる。いろいろな人と知り合いになるという努力も必要である。大学の研", "究者の特権は、警戒心をもたれずに製造現場を見せてもらえることだ。", "逆転の発想を生みだす方法", "私の場合、第一次オイルショックのころ、切削屑を何かに有効活用しようと考えたのが", "粉末冶金の研究をはじめるきかっけだった。切削屑を使って粉末鍛造のコストを安くしよ", "うというのがねらいであった。鋳鉄粉の焼結技術は、含油軸受に実用化されることになっ", "た。鋳鉄粉を粉末鍛造用に使えるようにするのが本来の目標であったので、鋳鉄粉から黒", "鉛を取り除く方法を考えた。この脱炭鋳鉄粉を使って粉末鍛造で歯車をつくると、五倍以", "上の強度になった。開発した鋳鉄粉は意外なところで使われた。使い捨てカイロである。"]}, {"id": 6, "chapter": "", "title": "切削屑をファイバーとするアイデアがいきなり出てくると、すごい発想だと思われるが、", "body": ["切削屑をファイバーとするアイデアがいきなり出てくると、すごい発想だと思われるが、", "コンクリートを補強するファイバーを安く作りたいという相談を受けたとき、切削屑をフ", "ァイバーにすることを考えた。産業のいろいろなニーズを知っていれば、このように何か", "のチャンスに結びつくわけである。", "開発が成功し「もっと細かいファイバーができないものか」との相談を受け、思いつい", "たのが、金属棒を旋盤で切削し、バイトをびびらせて細かい切粉を生産する方法。二重の", "逆転の発想である。", "大学では三段論法のような理屈のとおる知識を教えるが、逆転の発想などは教育とは相", "容れないものである。", "加工技術は、要するに自然現象の上手な活用である。産業のニーズと現象をマッチング", "させる。ここに実学の研究テーマが存在する。よい研究テーマは、強いニーズの存在のも", "とに、どこかで見たとか、研究室で何か変わった現象を見つけた、といったきっかけがな", "いと出てくるものではない。", "ブレークスルーを生みだす研究術", "大学の研究者の役割は教育と研究である。教育はエスタブリッシュされた学問を理路整"]}, {"id": 7, "chapter": "", "title": "然と教える。一方、研究はエスタブリッシュされた学問を打ち破り、新しいものや未知の", "body": ["然と教える。一方、研究はエスタブリッシュされた学問を打ち破り、新しいものや未知の", "ものにも挑戦する。研究では同じ頭脳であれば知識や情報量の多いほうが勝ちである。新", "しい研究をしようと思ったら、知識や情報を得るためにつねに貪欲でなければならない。", "アイデアはまったくの無から出るものではなく、アナロジー（類推）によって生まれる", "ものである。知識が広がったり、異なる分野の知識や情報を積極的に取り込んでいけば、", "別の新しいアイデアが生まれ、ブレークスルーへとつながる。", "私はいろいろな分野の研究をした。行き当たりばったりに見えるかもしれないが、私の", "中ではそれぞれの研究テーマがチェーンのようにつながっている。そのうちのひとつでも", "切れていたら生まれなかった技術がたくさんあった。どれもそれなりにベース技術があり、", "互いに連結させテーマをエスカレートさせてきた。", "専門分野では自分は玄人であり、自分が素人の分野に入ったときにやりやすい方法は、", "自分の玄人の知識を新しい分野に導入することである。新しい分野に入ったときほど大き", "な成果が出て、考え方が大きく変わる。既存の概念をひっくり返すのは、むしろその分野", "の素人の方ができるのである。", "大学院時代から３５歳までにやるべきこと"]}, {"id": 8, "chapter": "", "title": "若いころは広い範囲に興味があるかもしれないが、狭い分野で徹底的に深く追究する必", "body": ["若いころは広い範囲に興味があるかもしれないが、狭い分野で徹底的に深く追究する必", "要がある。誰でもそうだが、身近な人の影響を大きく受け、手法をまねして見習っていく", "から成長していくのである。研究の手法は、それぞれの指導教官がそれぞれの独特なもの", "をもっている。その中から自分独自の研究手法を生みだしていかなければならない。世の", "中には立派な研究者が多いので、それらの方々のいいところを学んでほしい。違った研究", "者と一緒に仕事をしてみると、いい勉強になる。", "産学連携を成功させる条件", "残念ながら企業と競争している分野はほとんど大学が地盤沈下している。いまの企業の", "パワーはものすごいものがあり、", "そういう中で実学の研究をするにはどうすればいいのか。", "その鍵を握るのは人である。産学連携をうまくやっている大学の研究者は産業技術に詳し", "く、産業に貢献するような仕事をしている。現在、国は産学連携を援助しており、特許の", "取得やＴＬＯもその一環である。", "企業は成果が上がると思う研究者にしかお金を出さず、成果が上がるテーマでないとお", "金も人も出さない。"]}, {"id": 9, "chapter": "", "title": "研究資金を企業から出してもらうためには、", "body": ["研究資金を企業から出してもらうためには、", "「こういう研究をやりたい。", "こういう装置をつくってほしい。そのためには、これだけの費用が必要です」と自分のほ", "うから説得に行かなければならない。工学の研究、とくにものづくりは人と研究資金を引", "きつけられないと難しい。産学連携を進めたいと思うなら研究室に閉じこもっていてはダ", "メ。", "研究発表にも配慮が必要で、産業界のニーズに沿った表現を使って分かりやすく解説す", "るのが重要である。また実際にやってみると、人間関係・信頼関係が非常に重要である。", "相手企業をどのように選ぶか", "相手企業を選ぶ際に重要な視点は、販売力のない企業と組んだために実用化した製品が", "売れず、しかも棄てられたあとにライバル企業に技術を売ることもできず、開発した技術", "が活用されないといったこともある。相手企業はかならずしも大企業がいいパートナーと", "は限らない。", "何度も会社に足を運んでも名刺の数が増えるだけで、結論はなかなか出ない。", "私の場合、大半はオーナー会社と組んだ。オーナー会社はトップダウンで決まるので、オ"]}, {"id": 10, "chapter": "", "title": "ーナーの協力さえ得られれば進めることができる。企業と協同研究をやりはじめたら、一", "body": ["ーナーの協力さえ得られれば進めることができる。企業と協同研究をやりはじめたら、一", "心同体でやらないと成功しない。", "研究者を有利にする特許のとり方", "特許を出していると、特許を実施する企業側には弱みになる。企業側からみれば研究者", "が特許をもっていたほうが特許を独占できるのでやりやすいのである。", "本当にいい特許は基本特許である。大学の研究者が周辺特許まで押さえるのは現実的に", "難しいので、企業と協同して周辺特許までとることもある。研究者であろうとなんであろ", "うと、特許を出すということは“お金儲け”で、特許は論文より強力なものである。", "「ベンチャー冬の時代」に起業をする", "ベンチャー企業は、景気がいいときに起こすもので、景気が悪いときに起業すると、す", "ぐにつぶれてしまう。じつは私も企業を３社設立しており、", "「ティームズ研究所」は技術開", "発のコンサルティングを業務としている。", "次の「ファインテック」は、出資してくれた外資も「日本でなければできない技術をと", "りあげて開発してくれ」といってきた。"]}, {"id": 11, "chapter": "", "title": "「ファインテック」は情報通信機器に使用される超", "body": ["「ファインテック」は情報通信機器に使用される超", "精密金型と部品をつくる分野である。", "「積層金型研究所」では、切ったボール紙を積み上げて立体をつくる方式は昔からある", "が、これを、コンピュータに結びつけて金型をつくる技術を２０年前に提唱したものを実", "用化している。", "産業界は厳しい競争で毎日しのぎを削っている。いままでの研究生活を振り返ってみて、", "大学の研究者はベンチャー企業には向かないと思う。逆にそれを前提にしてベンチャー企", "業を起こすときは、研究や技術開発は自分が責任をもつ、しかし経営は経営のプロにやっ", "てもらうといった住み分けが必要である。自分でベンチャー企業を起こしてみると、ほか", "の人たちに気楽にベンチャーを、といえなくなる。しかし、大学など公的研究機関の研究", "者も、これからは何らかの形で実際の技術に役にたつ研究に挑戦しなければならないし、", "社会もそれを求めている。どんな仕事でも厳しくなっているので、大学の研究者だけがの", "んびりと、", "「研究のための研究」だけをしていられるような時代ではない。"]}];
+function startReading(){document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');}
+function showTab(tab){
+  document.getElementById('btn-index').classList.toggle('active',tab==='index');
+  document.getElementById('btn-read').classList.toggle('active',tab==='read');
+  const ip=document.getElementById('index-panel-scroll');const rv=document.getElementById('reading-view');
+  if(tab==='index'){ip.classList.remove('hidden');rv.classList.remove('active');}
+  else{ip.classList.add('hidden');buildReadingView();rv.classList.add('active');}
+}
+function buildReadingView(){
+  const inner=document.getElementById('reading-inner');let h='';let lc='';
+  sections.forEach(s=>{
+    const ch=s.chapter||'';
+    if(ch!==lc){lc=ch;if(ch)h+='<div class="reading-chapter">'+esc(ch)+'</div>';}
+    const bh=s.body.map(p=>'<p>'+esc(p)+'</p>').join('');
+    h+='<div class="reading-section"><h3><span class="rnum">\u00a7'+(s.id+1)+'</span>'+esc(s.title)+'</h3>'+bh+'</div>';
+  });
+  inner.innerHTML=h;
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toggleSection(header){header.parentElement.classList.toggle('open');}
+function goSec(id){
+  document.getElementById('btn-index').classList.add('active');document.getElementById('btn-read').classList.remove('active');
+  document.getElementById('index-panel-scroll').classList.remove('hidden');document.getElementById('reading-view').classList.remove('active');
+  document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');
+  const el=document.getElementById('sec-'+id);if(!el)return;
+  setTimeout(()=>{el.scrollIntoView({behavior:'smooth',block:'start'});},50);
+  if(!el.classList.contains('open'))el.classList.add('open');
+  document.querySelectorAll('.nav-item').forEach(item=>item.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(item=>{if(item.getAttribute('onclick')==='goSec('+id+')')item.classList.add('active');});
+  document.getElementById('sidebar').classList.remove('open');
+}
+function expandAll(){document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');document.querySelectorAll('.section').forEach(s=>s.classList.add('open'));}
+function collapseAll(){document.querySelectorAll('.section').forEach(s=>s.classList.remove('open'));}
+function filterNav(q){const l=q.toLowerCase();document.querySelectorAll('.nav-item').forEach(item=>{item.style.display=(!q||item.textContent.toLowerCase().includes(l))?'':'none';});}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
+document.getElementById('index-panel-scroll').addEventListener('click',()=>{if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('open');});
+document.getElementById('reading-view').addEventListener('click',()=>{if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('open');});
+
+</script>
+</body>
+</html>

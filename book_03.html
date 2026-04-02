@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>プログラムはなぜ動くのか | Claude本棚</title>
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;--text:#e6edf3;--text2:#8b949e;--accent:#f0883e;--accent2:#d29922;--chapter-color:#79c0ff;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Helvetica Neue','Hiragino Sans','Yu Gothic',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.7;}
+#app{display:flex;height:100vh;overflow:hidden;}
+#sidebar{width:300px;min-width:300px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+#header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;flex-shrink:0;}
+#header h1{font-size:15px;font-weight:700;color:var(--accent);line-height:1.4;}
+#header .subtitle{font-size:12px;color:var(--text2);margin-top:2px;}
+#header .meta{font-size:11px;color:var(--text2);margin-top:3px;}
+#top-nav{display:flex;align-items:center;gap:8px;padding:8px 24px;background:var(--surface2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;}
+.top-nav-btn{padding:5px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:inherit;transition:all 0.15s;white-space:nowrap;text-decoration:none;display:inline-block;}
+.top-nav-btn:hover{background:var(--surface);color:var(--text);border-color:var(--accent);}
+.top-nav-btn.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600;}
+#progress-area{margin-left:auto;font-size:11px;color:var(--text2);white-space:nowrap;}
+#search-bar{padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+#search-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:13px;font-family:inherit;outline:none;}
+#search-input:focus{border-color:var(--accent);}
+#nav-scroll{flex:1;overflow-y:auto;padding:8px 0;}
+#nav-scroll::-webkit-scrollbar{width:4px;}
+#nav-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.nav-chapter{padding:8px 16px 4px;font-size:10px;font-weight:700;color:var(--chapter-color);border-top:1px solid var(--border);margin-top:4px;}
+.nav-chapter:first-child{border-top:none;margin-top:0;}
+.nav-item{padding:5px 16px;font-size:12px;color:var(--text2);cursor:pointer;transition:all 0.1s;border-left:2px solid transparent;}
+.nav-item:hover{background:var(--surface2);color:var(--text);border-left-color:var(--accent2);}
+.nav-item.active{background:var(--surface2);color:var(--accent);border-left-color:var(--accent);}
+#index-panel-scroll{flex:1;overflow-y:auto;padding:24px;}
+#index-panel-scroll::-webkit-scrollbar{width:6px;}
+#index-panel-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.chapter-header{margin:18px 0 6px;padding:9px 16px;background:rgba(121,192,255,0.08);border-left:3px solid var(--chapter-color);border-radius:0 6px 6px 0;font-size:13px;font-weight:600;color:var(--chapter-color);}
+.chapter-header:first-child{margin-top:0;}
+.section{margin-bottom:5px;border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color 0.2s;}
+.section:hover{border-color:var(--accent2);}
+.section.open{border-color:var(--accent);}
+.section-header{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;background:var(--surface);user-select:none;transition:background 0.15s;}
+.section-header:hover{background:var(--surface2);}
+.sec-num{font-size:10px;color:var(--text2);min-width:28px;flex-shrink:0;}
+.sec-title{flex:1;font-size:13px;font-weight:500;color:var(--text);line-height:1.4;}
+.toggle-icon{font-size:10px;color:var(--text2);transition:transform 0.2s;flex-shrink:0;}
+.section.open .toggle-icon{transform:rotate(180deg);}
+.detail-body{display:none;padding:14px 20px;background:var(--bg);border-top:1px solid var(--border);}
+.section.open .detail-body{display:block;}
+.detail-body p{margin-bottom:10px;font-size:14px;color:#cdd9e5;line-height:1.85;text-align:justify;}
+.detail-body p:last-child{margin-bottom:0;}
+#reading-view{display:none;flex:1;overflow-y:auto;padding:40px;}
+#reading-view.active{display:block;}
+#reading-view::-webkit-scrollbar{width:6px;}
+#reading-view::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.reading-inner{max-width:780px;margin:0 auto;}
+.reading-chapter{margin:24px 0 8px;padding:9px 18px;border-left:3px solid var(--chapter-color);font-size:14px;font-weight:600;color:var(--chapter-color);}
+.reading-chapter:first-child{margin-top:0;}
+.reading-section{margin-bottom:18px;padding:16px 20px;background:var(--surface);border-radius:8px;border:1px solid var(--border);}
+.reading-section h3{font-size:14px;font-weight:700;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.reading-section h3 .rnum{font-size:11px;color:var(--text2);font-weight:400;}
+.reading-section p{font-size:14px;color:#cdd9e5;line-height:1.85;margin-bottom:8px;text-align:justify;}
+.reading-section p:last-child{margin-bottom:0;}
+#splash{text-align:center;padding:60px 24px;}
+#splash h2{font-size:22px;color:var(--accent);margin-bottom:8px;}
+#splash .sp-sub{color:var(--text2);font-size:14px;margin-bottom:32px;}
+#splash .stats{display:flex;justify-content:center;gap:40px;margin-bottom:32px;}
+#splash .stat .num{font-size:36px;font-weight:800;color:var(--accent2);}
+#splash .stat .lbl{font-size:12px;color:var(--text2);margin-top:2px;}
+#splash .start-btn{background:var(--accent);color:#000;border:none;padding:14px 44px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity 0.2s;}
+#splash .start-btn:hover{opacity:0.85;}
+#menu-toggle{display:none;background:transparent;border:none;color:var(--text);font-size:20px;cursor:pointer;padding:4px 8px;vertical-align:middle;margin-right:8px;}
+.hidden{display:none !important;}
+@media(max-width:768px){
+  #sidebar{position:fixed;top:0;left:0;bottom:0;z-index:100;transform:translateX(-100%);transition:transform 0.25s ease;width:280px;}
+  #sidebar.open{transform:translateX(0);}
+  #menu-toggle{display:inline-block;}
+  #index-panel-scroll{padding:14px;}
+  #top-nav{padding:8px 14px;}
+  #header{padding:11px 14px;}
+  #reading-view{padding:16px;}
+}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="sidebar">
+  <div id="search-bar"><input id="search-input" type="text" placeholder="🔍 節タイトルを検索..." oninput="filterNav(this.value)"></div>
+  <div id="nav-scroll">
+<div class="nav-chapter">（本文）</div>
+<div class="nav-item" onclick="goSec(0)">プログラムはなぜ動くのか</div>
+<div class="nav-item" onclick="goSec(1)">･･･ 命令やデータを格納する（20～100 個）</div>
+<div class="nav-item" onclick="goSec(2)">＊値の種類によって、それを格納するレジスタの種類も異なる。</div>
+<div class="nav-item" onclick="goSec(3)">＋インデックス・レジスタ（ベース・レジスタからの相対アドレスを格納するレジス</div>
+<div class="nav-item" onclick="goSec(4)">※メモリやディスクには、バイト単位でデータの格納やデータの読み書きがされる。</div>
+<div class="nav-item" onclick="goSec(5)">００１００１１１</div>
+<div class="nav-item" onclick="goSec(6)">“反転して＋１”</div>
+<div class="nav-item" onclick="goSec(7)">・値がグラフィックスのパターンなどの場合･･･上位桁ほど「０」←論理右シフト</div>
+<div class="nav-item" onclick="goSec(8)">（A OR B）</div>
+<div class="nav-item" onclick="goSec(9)">「指数」で表す</div>
+<div class="nav-item" onclick="goSec(10)">「１」は実際のデータの中に格納しない。</div>
+<div class="nav-item" onclick="goSec(11)">・単精度浮動小数点数（全体 32 ビット）</div>
+<div class="nav-item" onclick="goSec(12)">②小数点数を整数に置き換えて計算する</div>
+<div class="nav-item" onclick="goSec(13)">1 バイトのデータ</div>
+<div class="nav-item" onclick="goSec(14)">ex：char *d； //char 型ポインタｄの宣言</div>
+<div class="nav-item" onclick="goSec(15)">１バイト</div>
+<div class="nav-item" onclick="goSec(16)">･</div>
+<div class="nav-item" onclick="goSec(17)">ﾃﾞｰﾀ 3</div>
+<div class="nav-item" onclick="goSec(18)">p[3]</div>
+<div class="nav-item" onclick="goSec(19)">5</div>
+<div class="nav-item" onclick="goSec(20)">777</div>
+<div class="nav-item" onclick="goSec(21)">ータと２つのインデックス情報を付加する。</div>
+<div class="nav-item" onclick="goSec(22)">ページ１</div>
+<div class="nav-item" onclick="goSec(23)">複数のアプリケーションが共有することで、メモリを節約する。</div>
+<div class="nav-item" onclick="goSec(24)">(14)</div>
+<div class="nav-item" onclick="goSec(25)">７章</div>
+<div class="nav-item" onclick="goSec(26)">ソース・コード</div>
+<div class="nav-item" onclick="goSec(27)">オブジェクト・ファイル 1</div>
+<div class="nav-item" onclick="goSec(28)">仮メモリアドレス関数</div>
+<div class="nav-item" onclick="goSec(29)">OS のための</div>
+<div class="nav-item" onclick="goSec(30)">↓</div>
+<div class="nav-item" onclick="goSec(31)">③GUI を採用したユーザーインターフェースを採用。</div>
+<div class="nav-item" onclick="goSec(32)">7/9</div>
+<div class="nav-item" onclick="goSec(33)">ソースコード</div>
+<div class="nav-item" onclick="goSec(34)">call A</div>
+<div class="nav-item" onclick="goSec(35)">↓</div>
+<div class="nav-item" onclick="goSec(36)">CPU</div>
+<div class="nav-item" onclick="goSec(37)">た値をレジスタに戻す</div>
+  </div>
+</div>
+<div id="main">
+  <div id="header">
+    <button id="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <h1>プログラムはなぜ動くのか</h1>
+    <div class="subtitle">CPUからメモリまで、コンピュータの原理原則を解き明かす</div>
+    <div class="meta">矢沢久雄 著</div>
+  </div>
+  <div id="top-nav">
+    <button class="top-nav-btn active" id="btn-index" onclick="showTab('index')">目次モード</button>
+    <button class="top-nav-btn" id="btn-read" onclick="showTab('read')">通読モード</button>
+    <button class="top-nav-btn" onclick="expandAll()">全展開</button>
+    <button class="top-nav-btn" onclick="collapseAll()">全折畳</button>
+    <a href="top.html" class="top-nav-btn">← 本棚へ</a>
+    <span id="progress-area">38節</span>
+  </div>
+  <div id="index-panel-scroll">
+    <div id="splash">
+      <h2>プログラムはなぜ動くのか</h2>
+      <p class="sp-sub">CPUからメモリまで、コンピュータの原理原則を解き明かす</p>
+      <div class="stats"><div class="stat"><div class="num">38</div><div class="lbl">節</div></div></div>
+      <button class="start-btn" onclick="startReading()">読み始める</button>
+    </div>
+    <div id="content-area" class="hidden">
+<div class="section" id="sec-0">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§1</span>
+    <span class="sec-title">プログラムはなぜ動くのか</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>プログラムはなぜ動くのか</p><p>著者：矢沢久雄 監修：日経ソフトウエア （日経 BP 社）</p><p>＞</p><p>１章</p><p>CPU</p><p>ＣＰＵとは何か</p><p>・・・ プログラムの内容を解釈して実行する</p><p>制御装置</p><p>･･･ メモリ上の命令やデータをレジスタに読み出し</p><p>実行結果に応じてコンピュータ全体を制御する</p><p>演算装置</p><p>･･･ メモリからレジスタに読み出されたデータを演算する</p><p>クロック</p><p>･･･ コンピュータが動作するタミングとなるクロック信号を発生</p><p>レジスタ</p></div>
+</div>
+<div class="section" id="sec-1">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§2</span>
+    <span class="sec-title">･･･ 命令やデータを格納する（20～100 個）</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>･･･ 命令やデータを格納する（20～100 個）</p><p>タの</p><p>出し</p><p>込み</p><p>メモリ</p><p>（メイン・メモリ）</p><p>１バイトずつにアドレスが付いている</p><p>・CPU は、レジスタの集合体</p><p>プログラムはレジスタを使ってデータを処理する</p><p>レジスタに格</p><p>納される値</p><p>「命令」</p><p>「データ」</p><p>演算に使われる値</p><p>メモリのアドレスを表す値</p></div>
+</div>
+<div class="section" id="sec-2">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§3</span>
+    <span class="sec-title">＊値の種類によって、それを格納するレジスタの種類も異なる。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>＊値の種類によって、それを格納するレジスタの種類も異なる。</p><p>《レジスタの種類》</p><p>・CPU の制御装置は、プログラム・カウンタ（次に実行する命令が格納されたアドレス</p><p>を格納するレジスタ）の値を参照してメモリから命令を読み出して実行する。</p><p>・プログラムの流れの１つ「条件分岐」では、ジャンプ命令の前に何らかの比較演算</p><p>が行われ、命令を実行するかどうかは、CPU がフラグ・レジスタの値を参照して判断。</p><p>・フラグレジスタ（演算処理後の CPU の状態を格納するレジスタ）は、直前に実行した</p><p>演 算の結果としてアキュムレータ（演算を行うデータを格納するレジスタ）の値が、負、ゼロ、正のいずれに</p><p>なったかを記録する役割を持つ。</p><p>《関数呼び出し》･･･コール命令とリターン命令</p><p>・コール命令･･･関数の入り口のアドレスをプログラム・カウンタに設定する前に、関数</p><p>読み出しの次に実行すべき命令のアドレスをメインメモリ上の「スタッ</p><p>ク」という領域に保存。</p><p>・リターン命令･･･スタックに保存されたアドレスをプログラム・カウンタに設定する。</p><p>・CPU はベース・レジスタ（データ用のメモリ領域の先頭アドレスを格納するレジスタ）</p></div>
+</div>
+<div class="section" id="sec-3">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§4</span>
+    <span class="sec-title">＋インデックス・レジスタ（ベース・レジスタからの相対アドレスを格納するレジス</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>＋インデックス・レジスタ（ベース・レジスタからの相対アドレスを格納するレジス</p><p>タ）の値を実際に参照するメモリのアドレスとして解釈する。</p><p>《CPU にできること》</p><p>・マシン語の命令の主な種類と機能</p><p>◎データ転送命令･･･レジスタとメモリ、メモリとメモリ、レジスタと周辺装置の間でデ</p><p>ータを読み書きする。</p><p>◎演算命令･･･アキュムレータで算術演算、論理演算、比較演算およびシフト演算を行う。</p><p>◎ジャンプ命令･･･条件分岐、繰り返し、および無条件のジャンプを行う。</p><p>1/9</p><p>◎コール・リターン命令･･･関数を呼び出す／呼び出し元に戻る</p><p>２章</p><p>データを２進数でイメージしよう</p><p>・コンピュータでは、情報を２進数で取り扱う。</p><p>情報の最小単位「ビット」･･･２進数の１桁に相当</p><p>情報の基本単位「バイト」･･･８桁の２進数</p></div>
+</div>
+<div class="section" id="sec-4">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§5</span>
+    <span class="sec-title">※メモリやディスクには、バイト単位でデータの格納やデータの読み書きがされる。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>※メモリやディスクには、バイト単位でデータの格納やデータの読み書きがされる。</p><p>★２進数→１０進数への変換</p><p>００１００１１１ 重み「○○の××乗」○○＝○○進数、××＝桁位置―１</p><p>↓</p><p>０×２７＋０×２６＋１×２５＋０×２４＋０×２３＋１×２２＋１×２＋１×２０</p><p>＝０＋０＋３２＋０＋０＋４＋２＋１</p><p>＝３９</p><p>《シフト演算》２進数で表された数値の桁を左右にシフト（ずらす）演算</p><p>◎左シフト</p><p>in+a,b;</p><p>a=39;</p><p>b=a&lt;&lt;2;</p><p>←a に 39 という値を格納する</p><p>←a の値を２桁左にシフトし、その値を b に格納する</p><p>39 は</p></div>
+</div>
+<div class="section" id="sec-5">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§6</span>
+    <span class="sec-title">００１００１１１</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>００１００１１１</p><p>↓ ２桁左にずらす</p><p>１００１１１００ （空いた下位桁には“0”が入る）</p><p>↓</p><p>１×２７＋１×２４＋１×２３＋１×２２</p><p>＝１２８＋１６＋８＋４＋＝１５６</p><p>※掛け算の代用になる。左にシフトすることで２倍、４倍、８倍･･･となる。</p><p>（10 進数が 10 倍、100 倍、1000 倍･･･となるのと同じ）</p><p>◎右シフト</p><p>・空いた最上位桁を符号のために使う←符号ビット</p><p>０･･･プラスの値を表す</p><p>１･･･マイナスの値を表す</p><p>・マイナスの値を表すときに「２の補数（</p><p>“反転して＋１”で求める）</p><p>」を使う。</p></div>
+</div>
+<div class="section" id="sec-6">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§7</span>
+    <span class="sec-title">“反転して＋１”</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>“反転して＋１”</p><p>１ → 00000001 → 11111110 → 11111111 → －１</p><p>・何故 補数を使うのか</p><p>ex:３－５は、３＋（－５）と考える</p><p>３＝0000011，５＝00000101 → 11111010 → 11111011</p><p>だから ３－５＝００００００１１</p><p>←最上位桁が「１」なのでマイナスの値</p><p>＋）１１１１１０１１</p><p>※演算結果がマイナス</p><p>１１１１１１１０</p><p>↓ 反転 +1</p><p>００００００１０</p><p>結果の値も補数で表されている</p><p>∥</p><p>２</p></div>
+</div>
+<div class="section" id="sec-7">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§8</span>
+    <span class="sec-title">・値がグラフィックスのパターンなどの場合･･･上位桁ほど「０」←論理右シフト</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>・値がグラフィックスのパターンなどの場合･･･上位桁ほど「０」←論理右シフト</p><p>・値を数値として演算する場合･･･上位桁は「符号ビット」（0or１）←算術右シフト</p><p>※わり算の代用にもなる。右シフトすることで 1/2 倍、1/4 倍、1/8 倍･･･となる。</p><p>★符号拡張･･･８桁の２進数をあたいを変えずに 16 桁、32 桁に変換すること。</p><p>←符号ビットの値（0 または１）で上位桁を埋める。</p><p>ex:01111111 → 0000000001111111</p><p>《論理演算》</p><p>2/9</p><p>・算術演算･･･加減乗除の四則演算</p><p>・論理演算･･･２進数の各桁の０と１を個別に取り扱う演算</p><p>論理演算：すべてを反転する</p><p>（NOT A）</p><p>論理積：部分的に０１にする</p><p>（A AND B）</p><p>論理和：部分的に１にする</p></div>
+</div>
+<div class="section" id="sec-8">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§9</span>
+    <span class="sec-title">（A OR B）</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>（A OR B）</p><p>排他的論理和：部分的に反転する （A XOR B）</p><p>３章</p><p>コンピュータが小数計算を間違える理由</p><p>10 進数の小数点数の中には、２進数に変換できないものがある！！</p><p>・２進数の小数点以下は</p><p>２－４＝０．０６２５</p><p>２－３＝０．１２５</p><p>の組み合わせの値しか表せない</p><p>２－２＝０．２５</p><p>２－１＝０．５</p><p>◎浮動小数点数の表現</p><p>小数点数を「符号」</p><p>「仮数」</p><p>「基数」</p></div>
+</div>
+<div class="section" id="sec-9">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§10</span>
+    <span class="sec-title">「指数」で表す</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「指数」で表す</p><p>±</p><p>m × ｎ e 指数</p><p>符号 仮数</p><p>基数</p><p>１･･･負</p><p>２進数なら２</p><p>0･･･正 or０</p><p>仮数･･･小数点以上の値を１に固定する正規表現</p><p>指数･･･イクセス表現</p><p>・正規表現･･･２進数の小数点数を表すのに「小数点以上の値を１に固定する」という</p><p>ルールにする。</p><p>→何回か右シフトあるいは左シフトして、整数部の１桁目を「１」</p><p>、２桁目以上を「０」</p><p>にする。</p></div>
+</div>
+<div class="section" id="sec-10">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§11</span>
+    <span class="sec-title">「１」は実際のデータの中に格納しない。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「１」は実際のデータの中に格納しない。</p><p>ex:10110011 → 00010110011 → 0001.01100110000000000000000</p><p>右シフト 0 1</p><p>小数点以下を 23 ビットに</p><p>→ 01100110000000000000000</p><p>小数点以下だけにすると正規表現に。</p><p>・イクセス表現･･･指数部で表せる最大値の 1/2 の値を 0 とみなすことにより、指数のた</p><p>めの符号ビットを使わなくてすむようにする。</p><p>ex：◯</p><p>単 において</p><p>11111111 → 実際の値 255 → イクセス表現 128（127 がゼロ）</p><p>00000001 →</p><p>１ →</p><p>–126</p><p>・倍精度浮動小数点数（全体 64 ビット）</p></div>
+</div>
+<div class="section" id="sec-11">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§12</span>
+    <span class="sec-title">・単精度浮動小数点数（全体 32 ビット）</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>・単精度浮動小数点数（全体 32 ビット）</p><p>符号部</p><p>指数部</p><p>1 ビット</p><p>11 ビット</p><p>仮数部</p><p>52 ビット</p><p>符号部</p><p>指数部</p><p>1 ビット</p><p>8 ビット</p><p>仮数部</p><p>23 ビット</p><p>◎コンピュータの計算間違いを回避するには</p><p>①わずかな誤差をムシする</p></div>
+</div>
+<div class="section" id="sec-12">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§13</span>
+    <span class="sec-title">②小数点数を整数に置き換えて計算する</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>②小数点数を整数に置き換えて計算する</p><p>ex：0.1 を 100 回加える → 0.1×10＝1 を 100 回加える → 1×10＝10</p><p>③BCD（２進化 10 進数）を使う。</p><p>４章</p><p>四角いメモリを丸く使う</p><p>メモリ IC ･･･内部に８ビットのデータを格納できる場所がいくつかあり、その場所やア</p><p>ドレスで指定してデータの読み書きを行う。</p><p>アドレス</p><p>00000000</p><p>00000001</p><p>00000010</p><p>･</p><p>メモリの内容</p><p>3/9</p><p>1 バイトのデータ</p></div>
+</div>
+<div class="section" id="sec-13">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§14</span>
+    <span class="sec-title">1 バイトのデータ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>1 バイトのデータ</p><p>1 バイトのデータ</p><p>※プログラムで変数の型を指定</p><p>↓</p><p>メモリを読み書きするサイズを変えられる。</p><p>ex：C 言語</p><p>１バイト型：char</p><p>２バイト型：short</p><p>1 バイトのデータ</p><p>４バイト型：long</p><p>だいたい 4 バイト（32 ビット）で表す</p><p>◎ポインタ</p><p>データが格納されているメモリのアドレスを持つ変数のことで、ポインタを使うと任意</p><p>のアドレスを指定してデータの読み書きが可能。ポインタにも「型」があり、ポインタ</p><p>に格納されたアドレスから一度に何バイトのデータを読み書きするかを示す。</p></div>
+</div>
+<div class="section" id="sec-14">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§15</span>
+    <span class="sec-title">ex：char *d； //char 型ポインタｄの宣言</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ex：char *d； //char 型ポインタｄの宣言</p><p>→ｄ番地のアドレスから１バイトのデータを読み書き</p><p>long *e； //long 型ポインタ e の宣言</p><p>→ｅ番地のアドレスから４バイトのデータを読み書き</p><p>◎配列</p><p>同じデータ型（サイズ）の複数のデータが、メモリ上に並んだもの。</p><p>char g[100];</p><p>short h[100];</p><p>long i[100];</p><p>アドレス</p><p>X</p><p>１バイト</p><p>g[0]=１バイト</p><p>h[0]=２バイト</p><p>X+1</p></div>
+</div>
+<div class="section" id="sec-15">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§16</span>
+    <span class="sec-title">１バイト</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>１バイト</p><p>g[1]=１バイト</p><p>i[0]=４バイト</p><p>X+2</p><p>１バイト</p><p>g[2]=１バイト</p><p>h[1]=２バイト</p><p>･</p><p>X+3</p><p>１バイト</p><p>･</p><p>･･</p><p>･</p><p>･･</p><p>･</p></div>
+</div>
+<div class="section" id="sec-16">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§17</span>
+    <span class="sec-title">･</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>･</p><p>･</p><p>･</p><p>･</p><p>char 型配列 g</p><p>short 型配列 h</p><p>long 型配列 i</p><p>◎スタックとキュー</p><p>アドレスやインデックスを指定せずに、データを一時的に格納しておいて必要になったときに読み出すことができ</p><p>る。</p><p>・スタック･･･Push で読み込み Pop で読み出す。後入れ先出し（1,2,3→3,2,1）</p><p>・キュー･･･Put で書き込み、Get で読み出す。先入れ先出し（1,2,3→1,2,3）</p><p>・リング・バッファの形態で使われる。</p><p>ﾃﾞｰﾀ 1</p><p>ﾃﾞｰﾀ 2</p></div>
+</div>
+<div class="section" id="sec-17">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§18</span>
+    <span class="sec-title">ﾃﾞｰﾀ 3</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ﾃﾞｰﾀ 3</p><p>ﾃﾞｰﾀ 2</p><p>ﾃﾞｰﾀ 4</p><p>ﾃﾞｰﾀ 3</p><p>ﾃﾞｰﾀ 5</p><p>ﾃﾞｰﾀ 4</p><p>ﾃﾞｰﾀ 3</p><p>ぐるぐる回りながらデータの格納と取り出しをくり返す。</p><p>◎リスト</p><p>データの値と次の要素のインデックスを組み合わせて、配列の１つの要素とする。</p><p>１つの要素を参照したら、その要素の持つ情報をたどって次の要素を参照する。</p><p>→単なる配列の要素より、データの追加や削除が効率的。</p><p>p[0]</p><p>p[1]</p><p>p[2]</p></div>
+</div>
+<div class="section" id="sec-18">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§19</span>
+    <span class="sec-title">p[3]</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>p[3]</p><p>p[4]</p><p>p[5]</p><p>値 111、次の要素１</p><p>↓</p><p>222</p><p>2</p><p>↓</p><p>333</p><p>3</p><p>↓</p><p>444</p><p>4</p><p>↓</p><p>555</p></div>
+</div>
+<div class="section" id="sec-19">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§20</span>
+    <span class="sec-title">5</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>5</p><p>↓</p><p>666</p><p>6</p><p>111 1</p><p>↓</p><p>222 ③</p><p>333 3</p><p>444 4 ↓</p><p>555 5 ↓</p><p>666 -1</p><p>4/9</p><p>削除</p><p>111</p><p>222</p></div>
+</div>
+<div class="section" id="sec-20">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§21</span>
+    <span class="sec-title">777</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>777</p><p>444</p><p>555</p><p>666</p><p>1</p><p>3</p><p>１</p><p>4</p><p>５</p><p>３</p><p>↓</p><p>↓</p><p>※他の要素を移動することなく追加・削除ができる。</p><p>◎２分探索木</p><p>配列に要素を追加するときに、その大小関係を考慮して左右２つの方向に分岐するリストとする。個々の要素にデ</p></div>
+</div>
+<div class="section" id="sec-21">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§22</span>
+    <span class="sec-title">ータと２つのインデックス情報を付加する。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ータと２つのインデックス情報を付加する。</p><p>配列に格納されたデータを効率的に検索できる。</p><p>５章</p><p>メモリとディスクの関係</p><p>ディスクに格納されたプログラムは、メモリにロードされてから実行される</p><p>◎ディスク・キャッシュ</p><p>一度ディスクからの読み出されたデータを保存しておくメイン・メモリ内の領域のこと。</p><p>次に同じデータが読み出されるときには、ディスク・キャッシュの内容を読み出す。</p><p>→ディスクのアクセス速度の向上。</p><p>◎仮想記憶</p><p>ディスクの一部を仮想的にメモリとして使う。</p><p>→メモリ不足の状態でもプログラムの実行が可能。</p><p>ページング方式</p><p>アプリケーション</p><p>ディスク＝仮想メモリ</p></div>
+</div>
+<div class="section" id="sec-22">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§23</span>
+    <span class="sec-title">ページ１</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ページ１</p><p>ページ３</p><p>ページ２</p><p>ページ４</p><p>ページ３</p><p>ページ４</p><p>メモリ</p><p>参照するページのみ</p><p>メモリにインされる</p><p>1 つのプログラムを</p><p>複数のページに分け</p><p>る</p><p>《メモリを節約するプログラミング》</p><p>①DLL ファイルで関数を共有する</p><p>プログラムの実行時にライブラリ（関数やデータ）が動的に結合する。</p></div>
+</div>
+<div class="section" id="sec-23">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§24</span>
+    <span class="sec-title">複数のアプリケーションが共有することで、メモリを節約する。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>複数のアプリケーションが共有することで、メモリを節約する。</p><p>②_Stdcall 呼び出しでプログラムのサイズを小さくする</p><p>C 言語では、関数を呼び出した時、スタックのクリーンアップ（メモリ上のスタックの中</p><p>から不要となったデータを削除すること）処理を行う必要がある。</p><p>呼び出す側よりも呼び出された関数の側で</p><p>関数の前に_stadcall を置く</p><p>クリーンアップ処理を行うことで、</p><p>プログラムサイズが、より小さくなる。</p><p>６章</p><p>データの圧縮</p><p>データは、ファイルにバイト単位で格納される</p><p>《データの圧縮》</p><p>◎ラングレス法</p><p>ファイルの内容を「データ×繰り返し回数」で表すことで圧縮。</p><p>ex：AAAAAABBCDDEEE → A6B2C1D2E3</p></div>
+</div>
+<div class="section" id="sec-24">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§25</span>
+    <span class="sec-title">(14)</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>(14)</p><p>(10)</p><p>圧縮</p><p>・画像ファイルに効果的</p><p>◎ハフマン法</p><p>5/9</p><p>・</p><p>「何回も使われているデータは８ビットより少ないビット数で表し、あまり現れないデ</p><p>ータを表すには８ビットを超えても構わない」という概念。</p><p>・圧縮対象となるファイルごとに、最適な符号体系を構築する。</p><p>→何というデータに何という符号を当てはめるかは、ファイルごとに異なる。</p><p>◎非可逆圧縮</p><p>可逆圧縮･･･圧縮前の状態に戻せる。</p><p>非可逆圧縮･･･圧縮前の状態に戻せない。</p><p>※画像ファイルは圧縮前の状態に戻す必要がないことが多い。</p></div>
+</div>
+<div class="section" id="sec-25">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§26</span>
+    <span class="sec-title">７章</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>７章</p><p>プログラムが動く環境</p><p>動作環境 ＝ ＯＳ ＋ ハードウェア</p><p>↑</p><p>↑</p><p>ex：Windows</p><p>コンピュータ本体</p><p>特にマイクロプロセッサの種類。</p><p>それ固有のマシン語しか解釈しない。</p><p>８章</p><p>ソース・ファイルから実行可能ファイルができるまで</p><p>・何らかのプログラミング言語で記述されたプログラム → ソース・コード</p><p>・ソース・コードをファイルとして保存したもの → ソース・ファイル</p><p>※ソース・ファイルは、</p><p>「メモ帳」などのテキストエディタで作成可能</p></div>
+</div>
+<div class="section" id="sec-26">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§27</span>
+    <span class="sec-title">ソース・コード</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ソース・コード</p><p>ネイティブ・コード</p><p>（プログラミング言語）</p><p>翻訳</p><p>マイクロプロセッサ</p><p>（マシン語）</p><p>解釈・実行</p><p>様々な数値の羅列</p><p>コンパイラ</p><p>・プログラミング言語</p><p>・マイクロプロセッサの種類</p><p>・動作環境</p><p>ース・ファイル</p><p>コンパイル</p><p>に応じて</p></div>
+</div>
+<div class="section" id="sec-27">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§28</span>
+    <span class="sec-title">オブジェクト・ファイル 1</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>オブジェクト・ファイル 1</p><p>リンク</p><p>オブジェクト・ファイル 2</p><p>EXE ファイル</p><p>結合</p><p>＜結合プログラム&gt;</p><p>リンカー</p><p>◎ライブラリ・ファイル：複数のオブジェクト・ファイルをまとめて記録したもので、</p><p>必要なファイルだけを抽出して他のオブジェクトファイルと</p><p>結合する。</p><p>◎DLL ファイル：プログラムの実行時に EXE ファイルに結合される。</p><p>《実行可能ファイル（EXE ファイル）の実行》</p><p>EXE ファイル</p><p>実行可能プログラム</p><p>仮メモリアドレス変数</p></div>
+</div>
+<div class="section" id="sec-28">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§29</span>
+    <span class="sec-title">仮メモリアドレス関数</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>仮メモリアドレス関数</p><p>プログラム</p><p>実行</p><p>仮メモリアドレスを</p><p>実際のメモリアドレスに変換</p><p>※リンカーによって EXE ファイルの先頭に</p><p>「再配置情報」が付加されている</p><p>6/9</p><p>◎スタック･･･関数の内部で一時的に使用される変数や関数を呼び出すための</p><p>パラメータを格納するためのメモリ領域。</p><p>※自動確保、自動解放</p><p>◎ヒープ･･･プログラムの実行時に動的に作成される配列やオブジェクトを格納するため</p><p>のメモリ領域。</p><p>※プログラマによって確保、解放。</p><p>メモリの構成</p></div>
+</div>
+<div class="section" id="sec-29">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§30</span>
+    <span class="sec-title">OS のための</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>OS のための</p><p>領域</p><p>空き</p><p>変数</p><p>関数</p><p>１つのプログラムが</p><p>スタック</p><p>占有している領域</p><p>ヒープ</p><p>空き</p><p>９章</p><p>OS とアプリケーションの関係</p><p>ソフトウェア</p><p>（OS が動作している環境）</p><p>アプリケーション</p></div>
+</div>
+<div class="section" id="sec-30">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§31</span>
+    <span class="sec-title">↓</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>↓</p><p>OS</p><p>間接的制御</p><p>解釈</p><p>制御</p><p>ハードウェア</p><p>◎高水準言語で記述されたアプリケーションをコンパイルするとシステム・コール（関数呼び出し）を実行するネイ</p><p>ティブ・コードになる。</p><p>《windows の OS としての特徴》</p><p>①32 ビット OS である。</p><p>データを処理する基準単位が、32 ビット。</p><p>②API や COM によってシステム・コールを提供する。</p><p>API･･･DLL ファイルの中に収録された関数セット。</p><p>COM･･･DLL ファイル、EXE ファイル、OCX ファイルの中に収録されたオブジェクト</p><p>のセット。</p></div>
+</div>
+<div class="section" id="sec-31">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§32</span>
+    <span class="sec-title">③GUI を採用したユーザーインターフェースを採用。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>③GUI を採用したユーザーインターフェースを採用。</p><p>GUI･･･（Graphical User Interface）ディスプレイに表示されたウィンドウやアイコン</p><p>などをマウスでクリックすることで操作できる。</p><p>④WYSIWYG によるプリンタ出力ができる。</p><p>ディスプレイに表示されたものを、そのままプリンタで印刷できる。</p><p>→同じプログラムコードで表示と印刷の両方を実現。</p><p>⑤マルチタスク機能を提供</p><p>マルチタスク･･･複数のプログラムを同時に実行する機能のこと。</p><p>時分割：複数のプログラムを切り替えながら実行。</p><p>メッセージ：Windows からメセージを出し、指示されたプログラムを実行。</p><p>ユーザが使用していないプログラムは、休んでいる。</p><p>⑥ネットワーク機能やデータベース機能を提供</p><p>⑦プラグ＆プレイによるデバイス・ドライバの自動設定ができる。</p><p>新しい装置をパソコンに接続すると、その装置を制御するための「デバイス・ドライバ」</p><p>というプログラムが、自動的にインストール・設定される。</p></div>
+</div>
+<div class="section" id="sec-32">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§33</span>
+    <span class="sec-title">7/9</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>7/9</p><p>１０章</p><p>アセンブリ言語からプログラムの本当の姿を知る</p><p>アセンブリ言語の</p><p>ソースコード</p><p>※ソースコードとネイティブコードが</p><p>逆アセンブル</p><p>１対１で対応する</p><p>アセンブル</p><p>ネイティブ</p><p>C 言語の</p><p>ソースコード</p><p>コード</p><p>コンパイル</p><p>BASIC の</p></div>
+</div>
+<div class="section" id="sec-33">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§34</span>
+    <span class="sec-title">ソースコード</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ソースコード</p><p>コンパイル</p><p>アセンブリ言語の</p><p>ソースコード</p><p>ネイティブコードに変換される命令</p><p>疑似命令（ネイティブコードに変換されない）</p><p>※プログラムの構造やアセンブルの方法を</p><p>アセンブリ言語の命令</p><p>アセンブラに指示する</p><p>オペコード（命令の動作）＋オペランド（命令の対象）</p><p>ex：mov A,B （A に B の値を格納する）</p><p>add A,B</p><p>（A と B の値を加算し、その結果を A に格納）</p><p>push A</p><p>（A の値をスタックに格納する）</p></div>
+</div>
+<div class="section" id="sec-34">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§35</span>
+    <span class="sec-title">call A</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>call A</p><p>（A という関数を呼び出す）</p><p>※１行でマイクロプロセッサに対する１つの命令を表す。</p><p>・外部変数･･･関数の外側で定義。ソースコードのあらゆる部分から参照できる。</p><p>・内部変数･･･関数の内側で宣言。宣言された関数の中からしか参照できない。</p><p>※内部変数はスタックやレジスタを使って確保</p><p>→関数処理が終了するとスタックは元の状態に戻り、レジスタは、他の用途に</p><p>使われるため、確保が一時的。</p><p>・繰り返し処理</p><p>・条件分岐</p><p>１１章</p><p>･･･アセンブリ言語のソースコードでは、</p><p>比較命令とジャンプ命令で実現</p><p>ハードウェアを制御する方法</p><p>・アプリケーションからハードウェアを間接的に制御する手段</p></div>
+</div>
+<div class="section" id="sec-35">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§36</span>
+    <span class="sec-title">↓</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>↓</p><p>OS が提供するシステム・コールを使う</p><p>windows では、API</p><p>・windows は、入出力命令を使って、ハードウェアを制御</p><p>IN 命令：◯</p><p>IN ＋ レジスタ名、ポート番号</p><p>番号で指定したポートからデータを入力し、プロセッサ内部のレジスタに格納</p><p>OUT 命令： OUT ＋ ポート番号、レジスタ名</p><p>プロセッサのレジスタに格納されているデータを指定した番号のポートに出力</p><p>※ポート･･･コンピュータ本体と周辺装置（ex．ディスプレイ、キーボード）を接続する</p><p>ための「I/O コントローラ」内にある、データを一時的に格納しておくため</p><p>の一種のメモリ。</p><p>8/9</p><p>・割り込み処理</p><p>現在実行中のプログラムをいったん停止して他のプログラムに実行を移すために必要な仕組み。</p></div>
+</div>
+<div class="section" id="sec-36">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§37</span>
+    <span class="sec-title">CPU</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>CPU</p><p>順番に伝える</p><p>割り込みコントローラ</p><p>01 番</p><p>02 番</p><p>キーボード用 I/O</p><p>マウス用 I/O</p><p>メインプログラム</p><p>割り込み処理</p><p>割り込み処理プログラム</p><p>レジスタの値をメモリ</p><p>上のスタックに退避</p><p>レジスタの退避</p><p>周辺装置の制御</p><p>スタックに退避しておい</p></div>
+</div>
+<div class="section" id="sec-37">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§38</span>
+    <span class="sec-title">た値をレジスタに戻す</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>た値をレジスタに戻す</p><p>レジスタの復帰</p><p>本来の処理</p><p>・DMA（Direct Memory Access）</p><p>マイクロプロセッサ（CPU）を仲介させずに、周辺装置が直接コンピュータのメインメ</p><p>モリに書き込みを行うこと。</p><p>DMA によって大量のデータを短時間にメインメモリに書き込むことができる。（ディス</p><p>ク装置など）</p><p>9/9</p></div>
+</div>
+    </div>
+  </div>
+  <div id="reading-view"><div class="reading-inner" id="reading-inner"></div></div>
+</div>
+</div>
+<script>
+
+const sections = [{"id": 0, "chapter": "", "title": "プログラムはなぜ動くのか", "body": ["プログラムはなぜ動くのか", "著者：矢沢久雄 監修：日経ソフトウエア （日経 BP 社）", "＞", "１章", "CPU", "ＣＰＵとは何か", "・・・ プログラムの内容を解釈して実行する", "制御装置", "･･･ メモリ上の命令やデータをレジスタに読み出し", "実行結果に応じてコンピュータ全体を制御する", "演算装置", "･･･ メモリからレジスタに読み出されたデータを演算する", "クロック", "･･･ コンピュータが動作するタミングとなるクロック信号を発生", "レジスタ"]}, {"id": 1, "chapter": "", "title": "･･･ 命令やデータを格納する（20～100 個）", "body": ["･･･ 命令やデータを格納する（20～100 個）", "タの", "出し", "込み", "メモリ", "（メイン・メモリ）", "１バイトずつにアドレスが付いている", "・CPU は、レジスタの集合体", "プログラムはレジスタを使ってデータを処理する", "レジスタに格", "納される値", "「命令」", "「データ」", "演算に使われる値", "メモリのアドレスを表す値"]}, {"id": 2, "chapter": "", "title": "＊値の種類によって、それを格納するレジスタの種類も異なる。", "body": ["＊値の種類によって、それを格納するレジスタの種類も異なる。", "《レジスタの種類》", "・CPU の制御装置は、プログラム・カウンタ（次に実行する命令が格納されたアドレス", "を格納するレジスタ）の値を参照してメモリから命令を読み出して実行する。", "・プログラムの流れの１つ「条件分岐」では、ジャンプ命令の前に何らかの比較演算", "が行われ、命令を実行するかどうかは、CPU がフラグ・レジスタの値を参照して判断。", "・フラグレジスタ（演算処理後の CPU の状態を格納するレジスタ）は、直前に実行した", "演 算の結果としてアキュムレータ（演算を行うデータを格納するレジスタ）の値が、負、ゼロ、正のいずれに", "なったかを記録する役割を持つ。", "《関数呼び出し》･･･コール命令とリターン命令", "・コール命令･･･関数の入り口のアドレスをプログラム・カウンタに設定する前に、関数", "読み出しの次に実行すべき命令のアドレスをメインメモリ上の「スタッ", "ク」という領域に保存。", "・リターン命令･･･スタックに保存されたアドレスをプログラム・カウンタに設定する。", "・CPU はベース・レジスタ（データ用のメモリ領域の先頭アドレスを格納するレジスタ）"]}, {"id": 3, "chapter": "", "title": "＋インデックス・レジスタ（ベース・レジスタからの相対アドレスを格納するレジス", "body": ["＋インデックス・レジスタ（ベース・レジスタからの相対アドレスを格納するレジス", "タ）の値を実際に参照するメモリのアドレスとして解釈する。", "《CPU にできること》", "・マシン語の命令の主な種類と機能", "◎データ転送命令･･･レジスタとメモリ、メモリとメモリ、レジスタと周辺装置の間でデ", "ータを読み書きする。", "◎演算命令･･･アキュムレータで算術演算、論理演算、比較演算およびシフト演算を行う。", "◎ジャンプ命令･･･条件分岐、繰り返し、および無条件のジャンプを行う。", "1/9", "◎コール・リターン命令･･･関数を呼び出す／呼び出し元に戻る", "２章", "データを２進数でイメージしよう", "・コンピュータでは、情報を２進数で取り扱う。", "情報の最小単位「ビット」･･･２進数の１桁に相当", "情報の基本単位「バイト」･･･８桁の２進数"]}, {"id": 4, "chapter": "", "title": "※メモリやディスクには、バイト単位でデータの格納やデータの読み書きがされる。", "body": ["※メモリやディスクには、バイト単位でデータの格納やデータの読み書きがされる。", "★２進数→１０進数への変換", "００１００１１１ 重み「○○の××乗」○○＝○○進数、××＝桁位置―１", "↓", "０×２７＋０×２６＋１×２５＋０×２４＋０×２３＋１×２２＋１×２＋１×２０", "＝０＋０＋３２＋０＋０＋４＋２＋１", "＝３９", "《シフト演算》２進数で表された数値の桁を左右にシフト（ずらす）演算", "◎左シフト", "in+a,b;", "a=39;", "b=a<<2;", "←a に 39 という値を格納する", "←a の値を２桁左にシフトし、その値を b に格納する", "39 は"]}, {"id": 5, "chapter": "", "title": "００１００１１１", "body": ["００１００１１１", "↓ ２桁左にずらす", "１００１１１００ （空いた下位桁には“0”が入る）", "↓", "１×２７＋１×２４＋１×２３＋１×２２", "＝１２８＋１６＋８＋４＋＝１５６", "※掛け算の代用になる。左にシフトすることで２倍、４倍、８倍･･･となる。", "（10 進数が 10 倍、100 倍、1000 倍･･･となるのと同じ）", "◎右シフト", "・空いた最上位桁を符号のために使う←符号ビット", "０･･･プラスの値を表す", "１･･･マイナスの値を表す", "・マイナスの値を表すときに「２の補数（", "“反転して＋１”で求める）", "」を使う。"]}, {"id": 6, "chapter": "", "title": "“反転して＋１”", "body": ["“反転して＋１”", "１ → 00000001 → 11111110 → 11111111 → －１", "・何故 補数を使うのか", "ex:３－５は、３＋（－５）と考える", "３＝0000011，５＝00000101 → 11111010 → 11111011", "だから ３－５＝００００００１１", "←最上位桁が「１」なのでマイナスの値", "＋）１１１１１０１１", "※演算結果がマイナス", "１１１１１１１０", "↓ 反転 +1", "００００００１０", "結果の値も補数で表されている", "∥", "２"]}, {"id": 7, "chapter": "", "title": "・値がグラフィックスのパターンなどの場合･･･上位桁ほど「０」←論理右シフト", "body": ["・値がグラフィックスのパターンなどの場合･･･上位桁ほど「０」←論理右シフト", "・値を数値として演算する場合･･･上位桁は「符号ビット」（0or１）←算術右シフト", "※わり算の代用にもなる。右シフトすることで 1/2 倍、1/4 倍、1/8 倍･･･となる。", "★符号拡張･･･８桁の２進数をあたいを変えずに 16 桁、32 桁に変換すること。", "←符号ビットの値（0 または１）で上位桁を埋める。", "ex:01111111 → 0000000001111111", "《論理演算》", "2/9", "・算術演算･･･加減乗除の四則演算", "・論理演算･･･２進数の各桁の０と１を個別に取り扱う演算", "論理演算：すべてを反転する", "（NOT A）", "論理積：部分的に０１にする", "（A AND B）", "論理和：部分的に１にする"]}, {"id": 8, "chapter": "", "title": "（A OR B）", "body": ["（A OR B）", "排他的論理和：部分的に反転する （A XOR B）", "３章", "コンピュータが小数計算を間違える理由", "10 進数の小数点数の中には、２進数に変換できないものがある！！", "・２進数の小数点以下は", "２－４＝０．０６２５", "２－３＝０．１２５", "の組み合わせの値しか表せない", "２－２＝０．２５", "２－１＝０．５", "◎浮動小数点数の表現", "小数点数を「符号」", "「仮数」", "「基数」"]}, {"id": 9, "chapter": "", "title": "「指数」で表す", "body": ["「指数」で表す", "±", "m × ｎ e 指数", "符号 仮数", "基数", "１･･･負", "２進数なら２", "0･･･正 or０", "仮数･･･小数点以上の値を１に固定する正規表現", "指数･･･イクセス表現", "・正規表現･･･２進数の小数点数を表すのに「小数点以上の値を１に固定する」という", "ルールにする。", "→何回か右シフトあるいは左シフトして、整数部の１桁目を「１」", "、２桁目以上を「０」", "にする。"]}, {"id": 10, "chapter": "", "title": "「１」は実際のデータの中に格納しない。", "body": ["「１」は実際のデータの中に格納しない。", "ex:10110011 → 00010110011 → 0001.01100110000000000000000", "右シフト 0 1", "小数点以下を 23 ビットに", "→ 01100110000000000000000", "小数点以下だけにすると正規表現に。", "・イクセス表現･･･指数部で表せる最大値の 1/2 の値を 0 とみなすことにより、指数のた", "めの符号ビットを使わなくてすむようにする。", "ex：◯", "単 において", "11111111 → 実際の値 255 → イクセス表現 128（127 がゼロ）", "00000001 →", "１ →", "–126", "・倍精度浮動小数点数（全体 64 ビット）"]}, {"id": 11, "chapter": "", "title": "・単精度浮動小数点数（全体 32 ビット）", "body": ["・単精度浮動小数点数（全体 32 ビット）", "符号部", "指数部", "1 ビット", "11 ビット", "仮数部", "52 ビット", "符号部", "指数部", "1 ビット", "8 ビット", "仮数部", "23 ビット", "◎コンピュータの計算間違いを回避するには", "①わずかな誤差をムシする"]}, {"id": 12, "chapter": "", "title": "②小数点数を整数に置き換えて計算する", "body": ["②小数点数を整数に置き換えて計算する", "ex：0.1 を 100 回加える → 0.1×10＝1 を 100 回加える → 1×10＝10", "③BCD（２進化 10 進数）を使う。", "４章", "四角いメモリを丸く使う", "メモリ IC ･･･内部に８ビットのデータを格納できる場所がいくつかあり、その場所やア", "ドレスで指定してデータの読み書きを行う。", "アドレス", "00000000", "00000001", "00000010", "･", "メモリの内容", "3/9", "1 バイトのデータ"]}, {"id": 13, "chapter": "", "title": "1 バイトのデータ", "body": ["1 バイトのデータ", "1 バイトのデータ", "※プログラムで変数の型を指定", "↓", "メモリを読み書きするサイズを変えられる。", "ex：C 言語", "１バイト型：char", "２バイト型：short", "1 バイトのデータ", "４バイト型：long", "だいたい 4 バイト（32 ビット）で表す", "◎ポインタ", "データが格納されているメモリのアドレスを持つ変数のことで、ポインタを使うと任意", "のアドレスを指定してデータの読み書きが可能。ポインタにも「型」があり、ポインタ", "に格納されたアドレスから一度に何バイトのデータを読み書きするかを示す。"]}, {"id": 14, "chapter": "", "title": "ex：char *d； //char 型ポインタｄの宣言", "body": ["ex：char *d； //char 型ポインタｄの宣言", "→ｄ番地のアドレスから１バイトのデータを読み書き", "long *e； //long 型ポインタ e の宣言", "→ｅ番地のアドレスから４バイトのデータを読み書き", "◎配列", "同じデータ型（サイズ）の複数のデータが、メモリ上に並んだもの。", "char g[100];", "short h[100];", "long i[100];", "アドレス", "X", "１バイト", "g[0]=１バイト", "h[0]=２バイト", "X+1"]}, {"id": 15, "chapter": "", "title": "１バイト", "body": ["１バイト", "g[1]=１バイト", "i[0]=４バイト", "X+2", "１バイト", "g[2]=１バイト", "h[1]=２バイト", "･", "X+3", "１バイト", "･", "･･", "･", "･･", "･"]}, {"id": 16, "chapter": "", "title": "･", "body": ["･", "･", "･", "･", "char 型配列 g", "short 型配列 h", "long 型配列 i", "◎スタックとキュー", "アドレスやインデックスを指定せずに、データを一時的に格納しておいて必要になったときに読み出すことができ", "る。", "・スタック･･･Push で読み込み Pop で読み出す。後入れ先出し（1,2,3→3,2,1）", "・キュー･･･Put で書き込み、Get で読み出す。先入れ先出し（1,2,3→1,2,3）", "・リング・バッファの形態で使われる。", "ﾃﾞｰﾀ 1", "ﾃﾞｰﾀ 2"]}, {"id": 17, "chapter": "", "title": "ﾃﾞｰﾀ 3", "body": ["ﾃﾞｰﾀ 3", "ﾃﾞｰﾀ 2", "ﾃﾞｰﾀ 4", "ﾃﾞｰﾀ 3", "ﾃﾞｰﾀ 5", "ﾃﾞｰﾀ 4", "ﾃﾞｰﾀ 3", "ぐるぐる回りながらデータの格納と取り出しをくり返す。", "◎リスト", "データの値と次の要素のインデックスを組み合わせて、配列の１つの要素とする。", "１つの要素を参照したら、その要素の持つ情報をたどって次の要素を参照する。", "→単なる配列の要素より、データの追加や削除が効率的。", "p[0]", "p[1]", "p[2]"]}, {"id": 18, "chapter": "", "title": "p[3]", "body": ["p[3]", "p[4]", "p[5]", "値 111、次の要素１", "↓", "222", "2", "↓", "333", "3", "↓", "444", "4", "↓", "555"]}, {"id": 19, "chapter": "", "title": "5", "body": ["5", "↓", "666", "6", "111 1", "↓", "222 ③", "333 3", "444 4 ↓", "555 5 ↓", "666 -1", "4/9", "削除", "111", "222"]}, {"id": 20, "chapter": "", "title": "777", "body": ["777", "444", "555", "666", "1", "3", "１", "4", "５", "３", "↓", "↓", "※他の要素を移動することなく追加・削除ができる。", "◎２分探索木", "配列に要素を追加するときに、その大小関係を考慮して左右２つの方向に分岐するリストとする。個々の要素にデ"]}, {"id": 21, "chapter": "", "title": "ータと２つのインデックス情報を付加する。", "body": ["ータと２つのインデックス情報を付加する。", "配列に格納されたデータを効率的に検索できる。", "５章", "メモリとディスクの関係", "ディスクに格納されたプログラムは、メモリにロードされてから実行される", "◎ディスク・キャッシュ", "一度ディスクからの読み出されたデータを保存しておくメイン・メモリ内の領域のこと。", "次に同じデータが読み出されるときには、ディスク・キャッシュの内容を読み出す。", "→ディスクのアクセス速度の向上。", "◎仮想記憶", "ディスクの一部を仮想的にメモリとして使う。", "→メモリ不足の状態でもプログラムの実行が可能。", "ページング方式", "アプリケーション", "ディスク＝仮想メモリ"]}, {"id": 22, "chapter": "", "title": "ページ１", "body": ["ページ１", "ページ３", "ページ２", "ページ４", "ページ３", "ページ４", "メモリ", "参照するページのみ", "メモリにインされる", "1 つのプログラムを", "複数のページに分け", "る", "《メモリを節約するプログラミング》", "①DLL ファイルで関数を共有する", "プログラムの実行時にライブラリ（関数やデータ）が動的に結合する。"]}, {"id": 23, "chapter": "", "title": "複数のアプリケーションが共有することで、メモリを節約する。", "body": ["複数のアプリケーションが共有することで、メモリを節約する。", "②_Stdcall 呼び出しでプログラムのサイズを小さくする", "C 言語では、関数を呼び出した時、スタックのクリーンアップ（メモリ上のスタックの中", "から不要となったデータを削除すること）処理を行う必要がある。", "呼び出す側よりも呼び出された関数の側で", "関数の前に_stadcall を置く", "クリーンアップ処理を行うことで、", "プログラムサイズが、より小さくなる。", "６章", "データの圧縮", "データは、ファイルにバイト単位で格納される", "《データの圧縮》", "◎ラングレス法", "ファイルの内容を「データ×繰り返し回数」で表すことで圧縮。", "ex：AAAAAABBCDDEEE → A6B2C1D2E3"]}, {"id": 24, "chapter": "", "title": "(14)", "body": ["(14)", "(10)", "圧縮", "・画像ファイルに効果的", "◎ハフマン法", "5/9", "・", "「何回も使われているデータは８ビットより少ないビット数で表し、あまり現れないデ", "ータを表すには８ビットを超えても構わない」という概念。", "・圧縮対象となるファイルごとに、最適な符号体系を構築する。", "→何というデータに何という符号を当てはめるかは、ファイルごとに異なる。", "◎非可逆圧縮", "可逆圧縮･･･圧縮前の状態に戻せる。", "非可逆圧縮･･･圧縮前の状態に戻せない。", "※画像ファイルは圧縮前の状態に戻す必要がないことが多い。"]}, {"id": 25, "chapter": "", "title": "７章", "body": ["７章", "プログラムが動く環境", "動作環境 ＝ ＯＳ ＋ ハードウェア", "↑", "↑", "ex：Windows", "コンピュータ本体", "特にマイクロプロセッサの種類。", "それ固有のマシン語しか解釈しない。", "８章", "ソース・ファイルから実行可能ファイルができるまで", "・何らかのプログラミング言語で記述されたプログラム → ソース・コード", "・ソース・コードをファイルとして保存したもの → ソース・ファイル", "※ソース・ファイルは、", "「メモ帳」などのテキストエディタで作成可能"]}, {"id": 26, "chapter": "", "title": "ソース・コード", "body": ["ソース・コード", "ネイティブ・コード", "（プログラミング言語）", "翻訳", "マイクロプロセッサ", "（マシン語）", "解釈・実行", "様々な数値の羅列", "コンパイラ", "・プログラミング言語", "・マイクロプロセッサの種類", "・動作環境", "ース・ファイル", "コンパイル", "に応じて"]}, {"id": 27, "chapter": "", "title": "オブジェクト・ファイル 1", "body": ["オブジェクト・ファイル 1", "リンク", "オブジェクト・ファイル 2", "EXE ファイル", "結合", "＜結合プログラム>", "リンカー", "◎ライブラリ・ファイル：複数のオブジェクト・ファイルをまとめて記録したもので、", "必要なファイルだけを抽出して他のオブジェクトファイルと", "結合する。", "◎DLL ファイル：プログラムの実行時に EXE ファイルに結合される。", "《実行可能ファイル（EXE ファイル）の実行》", "EXE ファイル", "実行可能プログラム", "仮メモリアドレス変数"]}, {"id": 28, "chapter": "", "title": "仮メモリアドレス関数", "body": ["仮メモリアドレス関数", "プログラム", "実行", "仮メモリアドレスを", "実際のメモリアドレスに変換", "※リンカーによって EXE ファイルの先頭に", "「再配置情報」が付加されている", "6/9", "◎スタック･･･関数の内部で一時的に使用される変数や関数を呼び出すための", "パラメータを格納するためのメモリ領域。", "※自動確保、自動解放", "◎ヒープ･･･プログラムの実行時に動的に作成される配列やオブジェクトを格納するため", "のメモリ領域。", "※プログラマによって確保、解放。", "メモリの構成"]}, {"id": 29, "chapter": "", "title": "OS のための", "body": ["OS のための", "領域", "空き", "変数", "関数", "１つのプログラムが", "スタック", "占有している領域", "ヒープ", "空き", "９章", "OS とアプリケーションの関係", "ソフトウェア", "（OS が動作している環境）", "アプリケーション"]}, {"id": 30, "chapter": "", "title": "↓", "body": ["↓", "OS", "間接的制御", "解釈", "制御", "ハードウェア", "◎高水準言語で記述されたアプリケーションをコンパイルするとシステム・コール（関数呼び出し）を実行するネイ", "ティブ・コードになる。", "《windows の OS としての特徴》", "①32 ビット OS である。", "データを処理する基準単位が、32 ビット。", "②API や COM によってシステム・コールを提供する。", "API･･･DLL ファイルの中に収録された関数セット。", "COM･･･DLL ファイル、EXE ファイル、OCX ファイルの中に収録されたオブジェクト", "のセット。"]}, {"id": 31, "chapter": "", "title": "③GUI を採用したユーザーインターフェースを採用。", "body": ["③GUI を採用したユーザーインターフェースを採用。", "GUI･･･（Graphical User Interface）ディスプレイに表示されたウィンドウやアイコン", "などをマウスでクリックすることで操作できる。", "④WYSIWYG によるプリンタ出力ができる。", "ディスプレイに表示されたものを、そのままプリンタで印刷できる。", "→同じプログラムコードで表示と印刷の両方を実現。", "⑤マルチタスク機能を提供", "マルチタスク･･･複数のプログラムを同時に実行する機能のこと。", "時分割：複数のプログラムを切り替えながら実行。", "メッセージ：Windows からメセージを出し、指示されたプログラムを実行。", "ユーザが使用していないプログラムは、休んでいる。", "⑥ネットワーク機能やデータベース機能を提供", "⑦プラグ＆プレイによるデバイス・ドライバの自動設定ができる。", "新しい装置をパソコンに接続すると、その装置を制御するための「デバイス・ドライバ」", "というプログラムが、自動的にインストール・設定される。"]}, {"id": 32, "chapter": "", "title": "7/9", "body": ["7/9", "１０章", "アセンブリ言語からプログラムの本当の姿を知る", "アセンブリ言語の", "ソースコード", "※ソースコードとネイティブコードが", "逆アセンブル", "１対１で対応する", "アセンブル", "ネイティブ", "C 言語の", "ソースコード", "コード", "コンパイル", "BASIC の"]}, {"id": 33, "chapter": "", "title": "ソースコード", "body": ["ソースコード", "コンパイル", "アセンブリ言語の", "ソースコード", "ネイティブコードに変換される命令", "疑似命令（ネイティブコードに変換されない）", "※プログラムの構造やアセンブルの方法を", "アセンブリ言語の命令", "アセンブラに指示する", "オペコード（命令の動作）＋オペランド（命令の対象）", "ex：mov A,B （A に B の値を格納する）", "add A,B", "（A と B の値を加算し、その結果を A に格納）", "push A", "（A の値をスタックに格納する）"]}, {"id": 34, "chapter": "", "title": "call A", "body": ["call A", "（A という関数を呼び出す）", "※１行でマイクロプロセッサに対する１つの命令を表す。", "・外部変数･･･関数の外側で定義。ソースコードのあらゆる部分から参照できる。", "・内部変数･･･関数の内側で宣言。宣言された関数の中からしか参照できない。", "※内部変数はスタックやレジスタを使って確保", "→関数処理が終了するとスタックは元の状態に戻り、レジスタは、他の用途に", "使われるため、確保が一時的。", "・繰り返し処理", "・条件分岐", "１１章", "･･･アセンブリ言語のソースコードでは、", "比較命令とジャンプ命令で実現", "ハードウェアを制御する方法", "・アプリケーションからハードウェアを間接的に制御する手段"]}, {"id": 35, "chapter": "", "title": "↓", "body": ["↓", "OS が提供するシステム・コールを使う", "windows では、API", "・windows は、入出力命令を使って、ハードウェアを制御", "IN 命令：◯", "IN ＋ レジスタ名、ポート番号", "番号で指定したポートからデータを入力し、プロセッサ内部のレジスタに格納", "OUT 命令： OUT ＋ ポート番号、レジスタ名", "プロセッサのレジスタに格納されているデータを指定した番号のポートに出力", "※ポート･･･コンピュータ本体と周辺装置（ex．ディスプレイ、キーボード）を接続する", "ための「I/O コントローラ」内にある、データを一時的に格納しておくため", "の一種のメモリ。", "8/9", "・割り込み処理", "現在実行中のプログラムをいったん停止して他のプログラムに実行を移すために必要な仕組み。"]}, {"id": 36, "chapter": "", "title": "CPU", "body": ["CPU", "順番に伝える", "割り込みコントローラ", "01 番", "02 番", "キーボード用 I/O", "マウス用 I/O", "メインプログラム", "割り込み処理", "割り込み処理プログラム", "レジスタの値をメモリ", "上のスタックに退避", "レジスタの退避", "周辺装置の制御", "スタックに退避しておい"]}, {"id": 37, "chapter": "", "title": "た値をレジスタに戻す", "body": ["た値をレジスタに戻す", "レジスタの復帰", "本来の処理", "・DMA（Direct Memory Access）", "マイクロプロセッサ（CPU）を仲介させずに、周辺装置が直接コンピュータのメインメ", "モリに書き込みを行うこと。", "DMA によって大量のデータを短時間にメインメモリに書き込むことができる。（ディス", "ク装置など）", "9/9"]}];
+function startReading(){document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');}
+function showTab(tab){
+  document.getElementById('btn-index').classList.toggle('active',tab==='index');
+  document.getElementById('btn-read').classList.toggle('active',tab==='read');
+  const ip=document.getElementById('index-panel-scroll');const rv=document.getElementById('reading-view');
+  if(tab==='index'){ip.classList.remove('hidden');rv.classList.remove('active');}
+  else{ip.classList.add('hidden');buildReadingView();rv.classList.add('active');}
+}
+function buildReadingView(){
+  const inner=document.getElementById('reading-inner');let h='';let lc='';
+  sections.forEach(s=>{
+    const ch=s.chapter||'';
+    if(ch!==lc){lc=ch;if(ch)h+='<div class="reading-chapter">'+esc(ch)+'</div>';}
+    const bh=s.body.map(p=>'<p>'+esc(p)+'</p>').join('');
+    h+='<div class="reading-section"><h3><span class="rnum">\u00a7'+(s.id+1)+'</span>'+esc(s.title)+'</h3>'+bh+'</div>';
+  });
+  inner.innerHTML=h;
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toggleSection(header){header.parentElement.classList.toggle('open');}
+function goSec(id){
+  document.getElementById('btn-index').classList.add('active');document.getElementById('btn-read').classList.remove('active');
+  document.getElementById('index-panel-scroll').classList.remove('hidden');document.getElementById('reading-view').classList.remove('active');
+  document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');
+  const el=document.getElementById('sec-'+id);if(!el)return;
+  setTimeout(()=>{el.scrollIntoView({behavior:'smooth',block:'start'});},50);
+  if(!el.classList.contains('open'))el.classList.add('open');
+  document.querySelectorAll('.nav-item').forEach(item=>item.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(item=>{if(item.getAttribute('onclick')==='goSec('+id+')')item.classList.add('active');});
+  document.getElementById('sidebar').classList.remove('open');
+}
+function expandAll(){document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');document.querySelectorAll('.section').forEach(s=>s.classList.add('open'));}
+function collapseAll(){document.querySelectorAll('.section').forEach(s=>s.classList.remove('open'));}
+function filterNav(q){const l=q.toLowerCase();document.querySelectorAll('.nav-item').forEach(item=>{item.style.display=(!q||item.textContent.toLowerCase().includes(l))?'':'none';});}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
+document.getElementById('index-panel-scroll').addEventListener('click',()=>{if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('open');});
+document.getElementById('reading-view').addEventListener('click',()=>{if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('open');});
+
+</script>
+</body>
+</html>

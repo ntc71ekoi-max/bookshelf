@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>佐藤一斎「重職心得箇条」を読む | Claude本棚</title>
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;--text:#e6edf3;--text2:#8b949e;--accent:#f0883e;--accent2:#d29922;--chapter-color:#79c0ff;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Helvetica Neue','Hiragino Sans','Yu Gothic',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.7;}
+#app{display:flex;height:100vh;overflow:hidden;}
+#sidebar{width:300px;min-width:300px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+#header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;flex-shrink:0;}
+#header h1{font-size:15px;font-weight:700;color:var(--accent);line-height:1.4;}
+#header .subtitle{font-size:12px;color:var(--text2);margin-top:2px;}
+#header .meta{font-size:11px;color:var(--text2);margin-top:3px;}
+#top-nav{display:flex;align-items:center;gap:8px;padding:8px 24px;background:var(--surface2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;}
+.top-nav-btn{padding:5px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:inherit;transition:all 0.15s;white-space:nowrap;text-decoration:none;display:inline-block;}
+.top-nav-btn:hover{background:var(--surface);color:var(--text);border-color:var(--accent);}
+.top-nav-btn.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600;}
+#progress-area{margin-left:auto;font-size:11px;color:var(--text2);white-space:nowrap;}
+#search-bar{padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+#search-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:13px;font-family:inherit;outline:none;}
+#search-input:focus{border-color:var(--accent);}
+#nav-scroll{flex:1;overflow-y:auto;padding:8px 0;}
+#nav-scroll::-webkit-scrollbar{width:4px;}
+#nav-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.nav-chapter{padding:8px 16px 4px;font-size:10px;font-weight:700;color:var(--chapter-color);border-top:1px solid var(--border);margin-top:4px;}
+.nav-chapter:first-child{border-top:none;margin-top:0;}
+.nav-item{padding:5px 16px;font-size:12px;color:var(--text2);cursor:pointer;transition:all 0.1s;border-left:2px solid transparent;}
+.nav-item:hover{background:var(--surface2);color:var(--text);border-left-color:var(--accent2);}
+.nav-item.active{background:var(--surface2);color:var(--accent);border-left-color:var(--accent);}
+#index-panel-scroll{flex:1;overflow-y:auto;padding:24px;}
+#index-panel-scroll::-webkit-scrollbar{width:6px;}
+#index-panel-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.chapter-header{margin:18px 0 6px;padding:9px 16px;background:rgba(121,192,255,0.08);border-left:3px solid var(--chapter-color);border-radius:0 6px 6px 0;font-size:13px;font-weight:600;color:var(--chapter-color);}
+.chapter-header:first-child{margin-top:0;}
+.section{margin-bottom:5px;border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color 0.2s;}
+.section:hover{border-color:var(--accent2);}
+.section.open{border-color:var(--accent);}
+.section-header{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;background:var(--surface);user-select:none;transition:background 0.15s;}
+.section-header:hover{background:var(--surface2);}
+.sec-num{font-size:10px;color:var(--text2);min-width:28px;flex-shrink:0;}
+.sec-title{flex:1;font-size:13px;font-weight:500;color:var(--text);line-height:1.4;}
+.toggle-icon{font-size:10px;color:var(--text2);transition:transform 0.2s;flex-shrink:0;}
+.section.open .toggle-icon{transform:rotate(180deg);}
+.detail-body{display:none;padding:14px 20px;background:var(--bg);border-top:1px solid var(--border);}
+.section.open .detail-body{display:block;}
+.detail-body p{margin-bottom:10px;font-size:14px;color:#cdd9e5;line-height:1.85;text-align:justify;}
+.detail-body p:last-child{margin-bottom:0;}
+#reading-view{display:none;flex:1;overflow-y:auto;padding:40px;}
+#reading-view.active{display:block;}
+#reading-view::-webkit-scrollbar{width:6px;}
+#reading-view::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.reading-inner{max-width:780px;margin:0 auto;}
+.reading-chapter{margin:24px 0 8px;padding:9px 18px;border-left:3px solid var(--chapter-color);font-size:14px;font-weight:600;color:var(--chapter-color);}
+.reading-chapter:first-child{margin-top:0;}
+.reading-section{margin-bottom:18px;padding:16px 20px;background:var(--surface);border-radius:8px;border:1px solid var(--border);}
+.reading-section h3{font-size:14px;font-weight:700;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.reading-section h3 .rnum{font-size:11px;color:var(--text2);font-weight:400;}
+.reading-section p{font-size:14px;color:#cdd9e5;line-height:1.85;margin-bottom:8px;text-align:justify;}
+.reading-section p:last-child{margin-bottom:0;}
+#splash{text-align:center;padding:60px 24px;}
+#splash h2{font-size:22px;color:var(--accent);margin-bottom:8px;}
+#splash .sp-sub{color:var(--text2);font-size:14px;margin-bottom:32px;}
+#splash .stats{display:flex;justify-content:center;gap:40px;margin-bottom:32px;}
+#splash .stat .num{font-size:36px;font-weight:800;color:var(--accent2);}
+#splash .stat .lbl{font-size:12px;color:var(--text2);margin-top:2px;}
+#splash .start-btn{background:var(--accent);color:#000;border:none;padding:14px 44px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity 0.2s;}
+#splash .start-btn:hover{opacity:0.85;}
+#menu-toggle{display:none;background:transparent;border:none;color:var(--text);font-size:20px;cursor:pointer;padding:4px 8px;vertical-align:middle;margin-right:8px;}
+.hidden{display:none !important;}
+@media(max-width:768px){
+  #sidebar{position:fixed;top:0;left:0;bottom:0;z-index:100;transform:translateX(-100%);transition:transform 0.25s ease;width:280px;}
+  #sidebar.open{transform:translateX(0);}
+  #menu-toggle{display:inline-block;}
+  #index-panel-scroll{padding:14px;}
+  #top-nav{padding:8px 14px;}
+  #header{padding:11px 14px;}
+  #reading-view{padding:16px;}
+}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="sidebar">
+  <div id="search-bar"><input id="search-input" type="text" placeholder="🔍 節タイトルを検索..." oninput="filterNav(this.value)"></div>
+  <div id="nav-scroll">
+<div class="nav-chapter">（本文）</div>
+<div class="nav-item" onclick="goSec(0)">はじめに</div>
+<div class="nav-item" onclick="goSec(1)">多くこの一斎先生の門を叩いて教えを受けておりますが、その中に幕末の志士で不羈奔放な性格でも</div>
+<div class="nav-item" onclick="goSec(2)">ですが、国政にあずかる重要な職務にあたるものはかくしなければならんということを、実に要領よ</div>
+<div class="nav-item" onclick="goSec(3)">1/6</div>
+<div class="nav-item" onclick="goSec(4)">重職、大臣は、まちがいのないようにするのが根本であり、始めである。</div>
+<div class="nav-item" onclick="goSec(5)">アラ探しをしたら、アラのない人間はいない。用うべき人間はなくなってしまう。</div>
+<div class="nav-item" onclick="goSec(6)">「又仕切仕癖の習あり、是は時に従て変易あるべし」</div>
+<div class="nav-item" onclick="goSec(7)">癖の例格」</div>
+<div class="nav-item" onclick="goSec(8)">切。</div>
+<div class="nav-item" onclick="goSec(9)">女が古くなると、まあまあと何でも妥協的になる。テキパキやらないでそのままにしておく。「引除</div>
+<div class="nav-item" onclick="goSec(10)">「勤向繁多と云口上は恥ずべき事なり」</div>
+<div class="nav-item" onclick="goSec(11)">刑賞与奪の権</div>
+<div class="nav-item" onclick="goSec(12)">包容の心</div>
+<div class="nav-item" onclick="goSec(13)">「胸中に定見ありて」</div>
+<div class="nav-item" onclick="goSec(14)">「役員の仕組事皆虚政也」</div>
+<div class="nav-item" onclick="goSec(15)">両般の心ありて治めにくし。何分此六かしみを去り」</div>
+<div class="nav-item" onclick="goSec(16)">「財帑窮迫の所より、徒に剥落厳沍の令のみにては、始終行立ぬ事となるべし」</div>
+<div class="nav-item" onclick="goSec(17)">以上です。</div>
+  </div>
+</div>
+<div id="main">
+  <div id="header">
+    <button id="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <h1>佐藤一斎「重職心得箇条」を読む</h1>
+    <div class="subtitle">リーダーに求められる人格的重厚さと帝王学</div>
+    <div class="meta">安岡正篤 著</div>
+  </div>
+  <div id="top-nav">
+    <button class="top-nav-btn active" id="btn-index" onclick="showTab('index')">目次モード</button>
+    <button class="top-nav-btn" id="btn-read" onclick="showTab('read')">通読モード</button>
+    <button class="top-nav-btn" onclick="expandAll()">全展開</button>
+    <button class="top-nav-btn" onclick="collapseAll()">全折畳</button>
+    <a href="top.html" class="top-nav-btn">← 本棚へ</a>
+    <span id="progress-area">18節</span>
+  </div>
+  <div id="index-panel-scroll">
+    <div id="splash">
+      <h2>佐藤一斎「重職心得箇条」を読む</h2>
+      <p class="sp-sub">リーダーに求められる人格的重厚さと帝王学</p>
+      <div class="stats"><div class="stat"><div class="num">18</div><div class="lbl">節</div></div></div>
+      <button class="start-btn" onclick="startReading()">読み始める</button>
+    </div>
+    <div id="content-area" class="hidden">
+<div class="section" id="sec-0">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§1</span>
+    <span class="sec-title">はじめに</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>はじめに</p><p>安岡先生は人間には「縁」というものがあり、これは最も大切で、また尊ばねばならない。常日頃、忙しい忙しい</p><p>と口癖のように言っておった重役が先生の講義を聴いた後、「勤向繁多という口上は恥ずべき事なり。仮令世話敷と</p><p>も世話敷と言わぬがよきなり」</p><p>。或る支社長から「平生嫌ひな人を能く用ゐると云うこそ手際なり、此工夫あるべし」</p><p>。</p><p>これは、昭和 54 年 4 月の安岡先生の講義の筆録。</p><p>人物と事業</p><p>佐藤一斎という人物</p><p>佐藤一斎先生（1772－1859）</p><p>。現代流に一言にしていえば幕府の大学総長であった。美濃の岩村藩の家老の子息で、</p><p>尐年のころから非常によく出来た人。そのころ岩村藩主の御曹司で林衡（後の述斎）という大変英邁な公子がいまし</p><p>て、一斎先生はその人の学友。幕府の総理であった松平定信（1758－1829）に見込まれて林家を嗣ぎ、述斎と称し、</p><p>幕府の大学長になりましたが、一斎先生はその縁にひかれて述斎が亡くなった後、学頭を継承し、安政 6 年に、88</p><p>歳で亡くなりました。非常に自由な、そして風格に富んだ文字どおり碩学というべき人。</p></div>
+</div>
+<div class="section" id="sec-1">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§2</span>
+    <span class="sec-title">多くこの一斎先生の門を叩いて教えを受けておりますが、その中に幕末の志士で不羈奔放な性格でも有名な佐久</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>多くこの一斎先生の門を叩いて教えを受けておりますが、その中に幕末の志士で不羈奔放な性格でも有名な佐久間</p><p>象山がいました。象山とよく並び称せられます山田方谷という人。今は高梁といっております備中松山というところ</p><p>のたった五万石の小藩板倉藩の家老。この藩公板倉勝静が老中をしていたある時、控の間で老中のお供の人々が雑談。</p><p>時局論になった。その時たいていの者は、</p><p>「何、我が幕府の威力をもってすれば、この時局など問題ない」と山田方</p><p>谷だけは、「いや、方今、この徳川将軍の治世というものは、荒い風濤（風が荒れ、波が高い）に竿さしている舟の</p><p>ようなもので、非常に危うい。</p><p>」方谷がやはり一時、佐藤一斎の門下におりまして、たまたま佐久間象山と一緒でし</p><p>た。毎晩夜がふけますと象山と方谷とが論議を始める。段々議論が激しくなって、やかましくて仕様がない。他の塾</p><p>生が迷惑がり、代表者が一斎のところへ陣情。一斎先生は、「あの二人がやるならば、お前達はがまんせい」と言わ</p><p>れた。一斎先生もただ者ではない、なかなか線の太い、豪邁な人であるということをよくあらわしている。</p><p>「重職心得箇条」という書</p><p>一斎先生が自分の出身の岩村藩のために選定しました藩の 17 条憲法。これは、段々有名になりまして、伝え聞く</p><p>諸藩が続々と使いを派遣してこの憲法を写させて貰ったということ。大正になりまして、ふとしたことから東京帝大</p><p>の図書館の蔵書の中から発見され、改めて識者の間に注意を引く。聖徳太子の 17 条の憲法なども非常に優れたもの</p></div>
+</div>
+<div class="section" id="sec-2">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§3</span>
+    <span class="sec-title">ですが、国政にあずかる重要な職務にあたるものはかくしなければならんということを、実に要領よく把握して</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ですが、国政にあずかる重要な職務にあたるものはかくしなければならんということを、実に要領よく把握している</p><p>名作。これは現在でも大変参考になる。</p><p>＊各条の本文をまず先に掲げ、そのあとに先生のお話を記述。</p><p>「人物」の条件</p><p>一</p><p>重職と申すは、家國の大事を取計べき職にして、此重の字を取失ひ、軽々しきはあしく候。</p><p>「重職と申すは･･･軽々しきはあしく候」</p><p>重職、重役というものは、重役らしくどっしりとしておらなければいかんということ。</p><p>「大事に油断ありては、その職を得ずと申すべく候」</p><p>大いなる問題に油断があってはならない。大事な問題に油断があるのでは重役たるに値しない。</p><p>「先づ挙動言語より厚重にいたし、威厳を養ふべし」</p><p>この言葉は実は東洋の人物学というものと大変深い関連を有するもの。</p><p>人物と申しますと、</p><p>「出来た人間」</p><p>、しっかりした人間。人物の優れた段階といいますと「深沈厚重」人間がどこか深</p></div>
+</div>
+<div class="section" id="sec-3">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§4</span>
+    <span class="sec-title">1/6</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>1/6</p><p>みがあって落ちついている。厚み、重みがある。これを東洋人物学では第一等にあげております。その次は何かと申</p><p>しますと、</p><p>「磊落豪雄」と申しております。貫禄、つまり重み、厚みがある人です。それから第三に、「聡明才弁」、</p><p>頭がよくて、才があって、弁舌が立つ。</p><p>「大臣重ふして百事挙るべく」</p><p>大臣がどっしりしておって初めていろいろの仕事、成績がある。</p><p>「物を鎮定する所ありて、人心をしつむべし」</p><p>その人の手にかければ、いろいろ厄介な問題も自然に落ちつく。人心、民衆の心を落ちつかせる。</p><p>「又小事に区々たれば、大事に手抜あるもの、瑣末を省く時は、自然と大事抜目あるべからず」</p><p>こせこせ枝葉末節に走るというとつい大事なことに手抜かりが出来て落ちつかない。つまらないことは省いて大き</p><p>な問題について抜け目なく、どっしりとして安定感をもたせる。</p><p>「凡そ政事名を正すより始まる」</p><p>大義名分、これをいい加減にするというと何が何やらわからないものになる。</p><p>「今先づ重職大臣の名を正す本始となすのみ」</p></div>
+</div>
+<div class="section" id="sec-4">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§5</span>
+    <span class="sec-title">重職、大臣は、まちがいのないようにするのが根本であり、始めである。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>重職、大臣は、まちがいのないようにするのが根本であり、始めである。</p><p>大臣の心得</p><p>「大臣の心得は、先づ諸有司の了簡を尽さしめて、是を公平に裁決する所其職なるべし」</p><p>国家、藩、その存在の場の代表になる人はその下にいるいろいろの役目の人、つまり諸有司。</p><p>「了簡」「りょうけん」</p><p>と読みます。「了」は悟るという意味。悟から物事を解決することができる。「簡」は「選ぶ」、いろいろな問題を、</p><p>これは要らない、これはどうでもよい、これはこうしなければならない、というように選ぶこと。いろいろの役目の</p><p>人物に「それはこうだ」</p><p>「こうすればよい」ということを十分に議論をさせ、その議論を公平に裁決するところが重</p><p>職たる者の職務。</p><p>「もし、有司の了簡より一層能き了簡有りとも、さして害なき事は、有司の議を用るにしかず。有司を引立て、気乗</p><p>り能き様に駆使する事、要務にて候」</p><p>さして害のない事はそれぞれの役目の者のいう事を用いた方がよい。そうするとその役目にある者は、自分の考え</p><p>が通るから、調子がよい。</p><p>「又些尐の過失に目つきて、人を容れる用る事ならば、取るべき人は１人も無之様になるべし」</p></div>
+</div>
+<div class="section" id="sec-5">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§6</span>
+    <span class="sec-title">アラ探しをしたら、アラのない人間はいない。用うべき人間はなくなってしまう。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>アラ探しをしたら、アラのない人間はいない。用うべき人間はなくなってしまう。</p><p>「功を以て過を補はしむる事可也」</p><p>いけないところだということがあれば、それに対する功業、手柄、つまりプラスを奨励してマイナスを補わせるよ</p><p>うにしたらよい。</p><p>「又賢才と云う程のものは無くても、其藩だけの相応のものはあるべし」</p><p>それぞれの藩にはそれ藩だけの相応の者はいる。</p><p>「自分流儀のものを取計るは、水へ水をさす頬にて、塩梅を調和するに非ず」</p><p>これではうまい味にはならない。</p><p>「平生嫌ひな人を能く用ゐると云う事こそ手際なり。此工夫あるべし」</p><p>「重職心得箇条」の中で一つの名言。たとえ自分の気に入らなくても「できる」「これはよくやる」とか「これは正</p><p>しい」</p><p>「善い」ということになれば、たとえ嫌いな人間でもそれをよく用いる。</p><p>時世につれて動かすべきを動かす</p><p>「家々の祖先の法あり、取失ふべからず」</p><p>伝統を尊重しなければならない。</p></div>
+</div>
+<div class="section" id="sec-6">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§7</span>
+    <span class="sec-title">「又仕切仕癖の習あり、是は時に従て変易あるべし」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「又仕切仕癖の習あり、是は時に従て変易あるべし」</p><p>2/6</p><p>習慣、慣習というものは祖先の法と違って時には変わる。変えるということがあってよい。</p><p>「兎角目の付け方間違ふて、家法を古代と心得て除け置き、守株せり」</p><p>ところが原理、原則というものを古いとして除けてしまう。逆に因襲というものを何か憲法のような、その家に伝</p><p>わっている重要な問題と考え、守株する、拘泥するということが多い。「守株」とはある愚かな百姓が、どこからか</p><p>追われてきた兎が勢いこんで飛び込んできたとたん、切株にぶつかって死んだ。兎を一匹うまく拾った。それから、</p><p>いつもそこで、また兎が出てきて鼻づらをぶつけて死ぬのを待っておったという故事、これから愚かな習慣にとらわ</p><p>れることを守株と申します。</p><p>「時世に連れて動すべきを動かさざれば、大勢立たぬものなり」</p><p>人間にも、自然にも、大勢、大きな勢い、傾向というものがある。この大勢を立てることが大変大事なこと。くだ</p><p>らない仕来り、仕癖、言いかえれば因襲というものにとらわれてはいけない。</p><p>「きまり」にこだわらない</p><p>「先格古例に二つあり、家法の例格あり、仕癖の例格あり」</p><p>「先格」とは、祖先からの格式、法則。一つには「家法の例格」つまり憲法的なきまりというもの。もう一つは「仕</p></div>
+</div>
+<div class="section" id="sec-7">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§8</span>
+    <span class="sec-title">癖の例格」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>癖の例格」</p><p>、これは因襲のきまり。</p><p>「先づ今此事を処するに、斯様あるべしと自案を付」</p><p>ある問題を処理する場合、まず、こうでなければならんという自分の案をつけて、そして、「時宜を考へて」どう</p><p>すればその時の宜しきを得るか、</p><p>「然る後例格を検し、今日に引合すべし」前々からのしきたり、法則、きまりを調</p><p>べて、それが今日に適合されるかどうかを考える。</p><p>「時宜に叶はざる事は拘泥すべからず」</p><p>もはや時が変わってしまって適応できないことには拘泥してはならん。</p><p>「自案と云うもの無しに、先づ例格より入るは、当今役人の通病なり」</p><p>自分の独特の案、自主的な案というものを持たないで、まず先例古格、仕来り、仕癖というようなものから入る。</p><p>これは今ごろの役人の共通の病気。</p><p>機に応ずるということ</p><p>「応機と云う事あり肝要也」</p><p>人間することなすこと、そこからいろいろの問題が生ずる。それは一つの機というもの。その機に応ずることが大</p></div>
+</div>
+<div class="section" id="sec-8">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§9</span>
+    <span class="sec-title">切。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>切。</p><p>「肝腎要」</p><p>。肝臓と腎臓と腰、これは人体の最も大事なところです。「肝」は動力機関、「腎」は浄化装置である。</p><p>「物事何によらず後の機は前に見ゆるもの也」</p><p>注意しておると、あとどういうことが起こるかということが先に見える。そこで「其機の動き方を察して、是に従</p><p>ふべし」</p><p>「物に拘わりたる時は、後に及んでとんと行き支えて難渋あるものなり」</p><p>物に拘泥するというと後になって困る。機をみるということができないとみすみす後になって行きつかえて苦しま</p><p>なければならない。</p><p>「公平」を保つ</p><p>「公平を失ふては、善き事も行はれず」</p><p>特に政治を行うときに公平ということを失えば良いことも行えない。</p><p>「凡そ物事の内に入ては、大体の中すみ見へず」</p><p>物事にとらわれてしまうと全体が見えない。</p><p>「姑く引除て」</p></div>
+</div>
+<div class="section" id="sec-9">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§10</span>
+    <span class="sec-title">女が古くなると、まあまあと何でも妥協的になる。テキパキやらないでそのままにしておく。「引除て」そうい</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>女が古くなると、まあまあと何でも妥協的になる。テキパキやらないでそのままにしておく。「引除て」そういう</p><p>問題にこだわらない。</p><p>3/6</p><p>「活眼にて惣体の体面を視て中を取るべし」</p><p>眼の届かないところがないように全体を観察して、そしえそのまん中をとるのがよろしい。問題の中にはいって、</p><p>すみずみが見えなくなってしまうと危ういということ。</p><p>知識・見識・胆識</p><p>七 衆人の厭服する所を心掛べし、無利押付の事あるべからず。苛察を威厳と認め、又好む所に私す</p><p>るは皆尐量の病なり。</p><p>「苛察」とは、いらいらとああかこうかと探索すること、うるさく立ち入ること。「尐量」とは、度量が小さいこ</p><p>と。人物学で申しますと、まず元気、意気、志気、気骨というものが第一要素。これがあって、そこから人間の知能、</p><p>見識というものが出てくる。知識というものは一番手近なもので、知識がいくらあっても見識というものになりませ</p><p>ん。見識というのは判断力です。見識の次に実行という段になると肝っ玉というものが必要。これを胆識。知識、見</p><p>識、胆識、これが「識」というものの三つの大事なこと。</p><p>「世話敷と云はぬが能きなり」</p></div>
+</div>
+<div class="section" id="sec-10">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§11</span>
+    <span class="sec-title">「勤向繁多と云口上は恥ずべき事なり」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「勤向繁多と云口上は恥ずべき事なり」</p><p>いくら忙しくても仕事が忙しい、勤めが忙しいという口上は、重職としては言ってはならないこと。</p><p>「心に有余あるに非れば、大事に心付かぬもの也」</p><p>心に余裕がないと、こせこせと小さな事に心を奪われて、大事に気づかないということ。</p><p>「重職小事を自らし、諸役に任使する事能はざる故に、諸役自然ともたれる所ありて、重職多事になる勢あり」</p><p>人間が人間を用いる。これの初歩は、</p><p>「使用」</p><p>。</p><p>「使用」から一歩進んで、その使用する人物に任す、これを「任用」</p><p>。</p><p>任すということができないから諸役は自然と上役にもたれてしまう。</p><p>「使用する」</p><p>「任用する」その次に、ただ任せる</p><p>だけでなく信じて任せる、これが「信用」</p><p>。</p></div>
+</div>
+<div class="section" id="sec-11">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§12</span>
+    <span class="sec-title">刑賞与奪の権</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>刑賞与奪の権</p><p>九 刑賞与奪の権は、人主のものにして、大臣是を預るべきなり、倒に有司に授くべからず、斯の如</p><p>き大事に至ては、厳敷透間ありべからず。</p><p>人間を使ううえにおいては、罰することも必要。また、賞めることも必要。与えること、あるいは奪うということ</p><p>も必要。そういう刑賞与奪の権は、</p><p>「人に任せる」ということをしてはいけないということ。</p><p>何を先に成し、何を後に成すか</p><p>「政事は大小軽重の弁を失ふべからず」</p><p>大勢もあり、小勢もあり、大事があり小事がある。それをしっかりと弁別する。</p><p>「緩急先後の序を誤るべからず」</p><p>ゆるやかでよいこと、急にやらなければならないこと、先にやらなければならない、あと回しでよろしい、という</p><p>緩急先後の順序をまちがってはいけない。</p><p>「徐緩にても失し、火急にても過つ也」</p><p>ただゆっくりのんびりでもいかん。といってがさがさ慌てるというのも物事をあやまつことがある。</p><p>「着眼を高くし、惣体を見廻し、･･･手順を遂て施行すべし」</p></div>
+</div>
+<div class="section" id="sec-12">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§13</span>
+    <span class="sec-title">包容の心</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>包容の心</p><p>「胸中を豁大寛広にすべし」</p><p>「豁大」</p><p>、広い大きいということ。</p><p>「寛」はゆるやかということ。</p><p>「僅尐の事を大造に心得て、狭迫なる振舞あるべからず」</p><p>「大造」</p><p>、大仰なこと。</p><p>「狭迫なる」こせこせした、がつがつしたの意味。</p><p>「仮令才ありても其用を果さず」</p><p>役に立たない。</p><p>4/6</p><p>「人を容る、気象と･･･大臣の体と云うべし」</p><p>大臣、重役というものは人間を包容しなければならん。</p><p>私心、私欲があってはならない</p></div>
+</div>
+<div class="section" id="sec-13">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§14</span>
+    <span class="sec-title">「胸中に定見ありて」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「胸中に定見ありて」</p><p>ちゃんとした一定の見識というもの。</p><p>「虚懐公平にして人言を採り」</p><p>心に先入主、偏見を持たないで人の言うことを採用する。</p><p>「沛然と一時に転化すべき事もあり」</p><p>大雨が降ってくるように、大変な勢いで、からりと転化しなければならないこともある。</p><p>「此虚懐転化なきは我意の弊を免れがたし」</p><p>己れを空しうしていろいろな問題にこだわらず、一転するときは思い切って転ずる。自分に私心、私欲があるとそ</p><p>れができない。</p><p>「能々視察あるべし」</p><p>人の事をよく観察して会得しなければならない。</p><p>抑揚の勢</p><p>十三 政事に抑揚の勢を取る事あり。有司上下に釣合を持事あり。能々弁ふべし。此所手に入て信を</p><p>以て貫き義を以て裁する時は、成し難き事はなかるべし。</p><p>手数を省く事肝要</p></div>
+</div>
+<div class="section" id="sec-14">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§15</span>
+    <span class="sec-title">「役員の仕組事皆虚政也」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「役員の仕組事皆虚政也」</p><p>いろいろな役職につく人間はとかく慣習、因襲にとらわれて内容のないことにしてしまう弊害がある。</p><p>「老臣なと此風を始むべからず」</p><p>大切な経験を積んだ年寄り、重役などがこういう虚政、内容のない空しい政治をやってはいけません。</p><p>「常時」</p><p>「成べき丈は簡易にすべし」</p><p>なるべく簡易にするがいい。</p><p>「手数を省く事肝要なり」</p><p>「省」という字には、尐なくとも二つの大事な意味。一つは省みるいうこと、もう一つは省くということ。反省し、</p><p>省みることによって、不要なこと、むだなことを省いていく。役員という者はとかくむだが多い、慣れて省みなくな</p><p>る。</p><p>風儀は上より起る</p><p>「風儀は上より起るもの也」</p><p>「人を猜疑し、蔭事を発き･･･人心に癖を持つ」</p><p>民衆、人心にこの癖をもつと、どうしようもない。こういう癖のあるというのは始末が悪いもの。「上下とも表裡</p></div>
+</div>
+<div class="section" id="sec-15">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§16</span>
+    <span class="sec-title">両般の心ありて治めにくし。何分此六かしみを去り」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>両般の心ありて治めにくし。何分此六かしみを去り」</p><p>表と裏がある、見えない所がある、陰で何をするかわからないというようにむつかしみを去ってということ。</p><p>機事は密なるべけれども･･･</p><p>「機事は密なるべけれども」</p><p>問題が、どういう影響や効果、作業を起こすかわからんという非常に微妙なこと。こういう微妙な問題は秘密でな</p><p>ければならないが、</p><p>「打出して能き事迄も韜み隠す･･･様になるもの也」</p><p>「人君の初政は、年に春のある如きものなり」</p><p>政治の初めにあたっては年に春の季節があるようなもの。</p><p>5/6</p><p>「先人心を一新して、発揚歓欣の所を持たしむべし」</p><p>まず人心を一新して、意気があがるといいますか、「ああいい人が来てくれたなぁ」と皆が喜ぶようにしなければ</p><p>いかん。</p><p>「刑賞に至ても明白なるべし」</p><p>何を罰する、何を賞める、これも明白でなければならぬ。</p></div>
+</div>
+<div class="section" id="sec-16">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§17</span>
+    <span class="sec-title">「財帑窮迫の所より、徒に剥落厳沍の令のみにては、始終行立ぬ事となるべし」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「財帑窮迫の所より、徒に剥落厳沍の令のみにては、始終行立ぬ事となるべし」</p><p>金がない、予算がないというところから、いたずらにあれもいかん、これもいかんという。きびしくしめ、寒々と</p><p>した令だけの政治では、始終行き立たぬことになるだろうといって、最後に「此手心にて取扱あり度ものなり」と結</p><p>んでいる。</p><p>一斎先生には、</p><p>「言志四録」という有名な著書がある。初年の「言志録」から始まって「言志後録」</p><p>「言志晩録」に</p><p>つづき、最後に「言志耋録」に終わってます。80 歳のことを「耋」という。これを熟読され、折りにふれ事に臨んで</p><p>活用されますと、単なる知識でなく、大いに見識を養うことになり、また難問題に取り込まれる時は、見識のもう一</p><p>つ上の胆識、すなわち実行力を身につけるうえに役立つ。このように、先哲、先賢の言葉や行い、言行を知る、学ぶ、</p><p>行う、これを「活学」という。</p><p>＜著者略歴＞安岡正篤</p><p>明治 31 年大阪市に生まれる。大正 11 年、東京帝国大学法学部政治学科を卒業。昭和 2 年（財）金鶏学院、同 6 年</p><p>日本農士学校を設立、東洋思想の研究と後進の育成につとめる。戦後、昭和 24 年師友会を設立。政財界のトップを</p><p>指導・育成する。</p></div>
+</div>
+<div class="section" id="sec-17">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§18</span>
+    <span class="sec-title">以上です。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>以上です。</p><p>6/6</p></div>
+</div>
+    </div>
+  </div>
+  <div id="reading-view"><div class="reading-inner" id="reading-inner"></div></div>
+</div>
+</div>
+<script>
+
+const sections = [{"id": 0, "chapter": "", "title": "はじめに", "body": ["はじめに", "安岡先生は人間には「縁」というものがあり、これは最も大切で、また尊ばねばならない。常日頃、忙しい忙しい", "と口癖のように言っておった重役が先生の講義を聴いた後、「勤向繁多という口上は恥ずべき事なり。仮令世話敷と", "も世話敷と言わぬがよきなり」", "。或る支社長から「平生嫌ひな人を能く用ゐると云うこそ手際なり、此工夫あるべし」", "。", "これは、昭和 54 年 4 月の安岡先生の講義の筆録。", "人物と事業", "佐藤一斎という人物", "佐藤一斎先生（1772－1859）", "。現代流に一言にしていえば幕府の大学総長であった。美濃の岩村藩の家老の子息で、", "尐年のころから非常によく出来た人。そのころ岩村藩主の御曹司で林衡（後の述斎）という大変英邁な公子がいまし", "て、一斎先生はその人の学友。幕府の総理であった松平定信（1758－1829）に見込まれて林家を嗣ぎ、述斎と称し、", "幕府の大学長になりましたが、一斎先生はその縁にひかれて述斎が亡くなった後、学頭を継承し、安政 6 年に、88", "歳で亡くなりました。非常に自由な、そして風格に富んだ文字どおり碩学というべき人。"]}, {"id": 1, "chapter": "", "title": "多くこの一斎先生の門を叩いて教えを受けておりますが、その中に幕末の志士で不羈奔放な性格でも有名な佐久", "body": ["多くこの一斎先生の門を叩いて教えを受けておりますが、その中に幕末の志士で不羈奔放な性格でも有名な佐久間", "象山がいました。象山とよく並び称せられます山田方谷という人。今は高梁といっております備中松山というところ", "のたった五万石の小藩板倉藩の家老。この藩公板倉勝静が老中をしていたある時、控の間で老中のお供の人々が雑談。", "時局論になった。その時たいていの者は、", "「何、我が幕府の威力をもってすれば、この時局など問題ない」と山田方", "谷だけは、「いや、方今、この徳川将軍の治世というものは、荒い風濤（風が荒れ、波が高い）に竿さしている舟の", "ようなもので、非常に危うい。", "」方谷がやはり一時、佐藤一斎の門下におりまして、たまたま佐久間象山と一緒でし", "た。毎晩夜がふけますと象山と方谷とが論議を始める。段々議論が激しくなって、やかましくて仕様がない。他の塾", "生が迷惑がり、代表者が一斎のところへ陣情。一斎先生は、「あの二人がやるならば、お前達はがまんせい」と言わ", "れた。一斎先生もただ者ではない、なかなか線の太い、豪邁な人であるということをよくあらわしている。", "「重職心得箇条」という書", "一斎先生が自分の出身の岩村藩のために選定しました藩の 17 条憲法。これは、段々有名になりまして、伝え聞く", "諸藩が続々と使いを派遣してこの憲法を写させて貰ったということ。大正になりまして、ふとしたことから東京帝大", "の図書館の蔵書の中から発見され、改めて識者の間に注意を引く。聖徳太子の 17 条の憲法なども非常に優れたもの"]}, {"id": 2, "chapter": "", "title": "ですが、国政にあずかる重要な職務にあたるものはかくしなければならんということを、実に要領よく把握して", "body": ["ですが、国政にあずかる重要な職務にあたるものはかくしなければならんということを、実に要領よく把握している", "名作。これは現在でも大変参考になる。", "＊各条の本文をまず先に掲げ、そのあとに先生のお話を記述。", "「人物」の条件", "一", "重職と申すは、家國の大事を取計べき職にして、此重の字を取失ひ、軽々しきはあしく候。", "「重職と申すは･･･軽々しきはあしく候」", "重職、重役というものは、重役らしくどっしりとしておらなければいかんということ。", "「大事に油断ありては、その職を得ずと申すべく候」", "大いなる問題に油断があってはならない。大事な問題に油断があるのでは重役たるに値しない。", "「先づ挙動言語より厚重にいたし、威厳を養ふべし」", "この言葉は実は東洋の人物学というものと大変深い関連を有するもの。", "人物と申しますと、", "「出来た人間」", "、しっかりした人間。人物の優れた段階といいますと「深沈厚重」人間がどこか深"]}, {"id": 3, "chapter": "", "title": "1/6", "body": ["1/6", "みがあって落ちついている。厚み、重みがある。これを東洋人物学では第一等にあげております。その次は何かと申", "しますと、", "「磊落豪雄」と申しております。貫禄、つまり重み、厚みがある人です。それから第三に、「聡明才弁」、", "頭がよくて、才があって、弁舌が立つ。", "「大臣重ふして百事挙るべく」", "大臣がどっしりしておって初めていろいろの仕事、成績がある。", "「物を鎮定する所ありて、人心をしつむべし」", "その人の手にかければ、いろいろ厄介な問題も自然に落ちつく。人心、民衆の心を落ちつかせる。", "「又小事に区々たれば、大事に手抜あるもの、瑣末を省く時は、自然と大事抜目あるべからず」", "こせこせ枝葉末節に走るというとつい大事なことに手抜かりが出来て落ちつかない。つまらないことは省いて大き", "な問題について抜け目なく、どっしりとして安定感をもたせる。", "「凡そ政事名を正すより始まる」", "大義名分、これをいい加減にするというと何が何やらわからないものになる。", "「今先づ重職大臣の名を正す本始となすのみ」"]}, {"id": 4, "chapter": "", "title": "重職、大臣は、まちがいのないようにするのが根本であり、始めである。", "body": ["重職、大臣は、まちがいのないようにするのが根本であり、始めである。", "大臣の心得", "「大臣の心得は、先づ諸有司の了簡を尽さしめて、是を公平に裁決する所其職なるべし」", "国家、藩、その存在の場の代表になる人はその下にいるいろいろの役目の人、つまり諸有司。", "「了簡」「りょうけん」", "と読みます。「了」は悟るという意味。悟から物事を解決することができる。「簡」は「選ぶ」、いろいろな問題を、", "これは要らない、これはどうでもよい、これはこうしなければならない、というように選ぶこと。いろいろの役目の", "人物に「それはこうだ」", "「こうすればよい」ということを十分に議論をさせ、その議論を公平に裁決するところが重", "職たる者の職務。", "「もし、有司の了簡より一層能き了簡有りとも、さして害なき事は、有司の議を用るにしかず。有司を引立て、気乗", "り能き様に駆使する事、要務にて候」", "さして害のない事はそれぞれの役目の者のいう事を用いた方がよい。そうするとその役目にある者は、自分の考え", "が通るから、調子がよい。", "「又些尐の過失に目つきて、人を容れる用る事ならば、取るべき人は１人も無之様になるべし」"]}, {"id": 5, "chapter": "", "title": "アラ探しをしたら、アラのない人間はいない。用うべき人間はなくなってしまう。", "body": ["アラ探しをしたら、アラのない人間はいない。用うべき人間はなくなってしまう。", "「功を以て過を補はしむる事可也」", "いけないところだということがあれば、それに対する功業、手柄、つまりプラスを奨励してマイナスを補わせるよ", "うにしたらよい。", "「又賢才と云う程のものは無くても、其藩だけの相応のものはあるべし」", "それぞれの藩にはそれ藩だけの相応の者はいる。", "「自分流儀のものを取計るは、水へ水をさす頬にて、塩梅を調和するに非ず」", "これではうまい味にはならない。", "「平生嫌ひな人を能く用ゐると云う事こそ手際なり。此工夫あるべし」", "「重職心得箇条」の中で一つの名言。たとえ自分の気に入らなくても「できる」「これはよくやる」とか「これは正", "しい」", "「善い」ということになれば、たとえ嫌いな人間でもそれをよく用いる。", "時世につれて動かすべきを動かす", "「家々の祖先の法あり、取失ふべからず」", "伝統を尊重しなければならない。"]}, {"id": 6, "chapter": "", "title": "「又仕切仕癖の習あり、是は時に従て変易あるべし」", "body": ["「又仕切仕癖の習あり、是は時に従て変易あるべし」", "2/6", "習慣、慣習というものは祖先の法と違って時には変わる。変えるということがあってよい。", "「兎角目の付け方間違ふて、家法を古代と心得て除け置き、守株せり」", "ところが原理、原則というものを古いとして除けてしまう。逆に因襲というものを何か憲法のような、その家に伝", "わっている重要な問題と考え、守株する、拘泥するということが多い。「守株」とはある愚かな百姓が、どこからか", "追われてきた兎が勢いこんで飛び込んできたとたん、切株にぶつかって死んだ。兎を一匹うまく拾った。それから、", "いつもそこで、また兎が出てきて鼻づらをぶつけて死ぬのを待っておったという故事、これから愚かな習慣にとらわ", "れることを守株と申します。", "「時世に連れて動すべきを動かさざれば、大勢立たぬものなり」", "人間にも、自然にも、大勢、大きな勢い、傾向というものがある。この大勢を立てることが大変大事なこと。くだ", "らない仕来り、仕癖、言いかえれば因襲というものにとらわれてはいけない。", "「きまり」にこだわらない", "「先格古例に二つあり、家法の例格あり、仕癖の例格あり」", "「先格」とは、祖先からの格式、法則。一つには「家法の例格」つまり憲法的なきまりというもの。もう一つは「仕"]}, {"id": 7, "chapter": "", "title": "癖の例格」", "body": ["癖の例格」", "、これは因襲のきまり。", "「先づ今此事を処するに、斯様あるべしと自案を付」", "ある問題を処理する場合、まず、こうでなければならんという自分の案をつけて、そして、「時宜を考へて」どう", "すればその時の宜しきを得るか、", "「然る後例格を検し、今日に引合すべし」前々からのしきたり、法則、きまりを調", "べて、それが今日に適合されるかどうかを考える。", "「時宜に叶はざる事は拘泥すべからず」", "もはや時が変わってしまって適応できないことには拘泥してはならん。", "「自案と云うもの無しに、先づ例格より入るは、当今役人の通病なり」", "自分の独特の案、自主的な案というものを持たないで、まず先例古格、仕来り、仕癖というようなものから入る。", "これは今ごろの役人の共通の病気。", "機に応ずるということ", "「応機と云う事あり肝要也」", "人間することなすこと、そこからいろいろの問題が生ずる。それは一つの機というもの。その機に応ずることが大"]}, {"id": 8, "chapter": "", "title": "切。", "body": ["切。", "「肝腎要」", "。肝臓と腎臓と腰、これは人体の最も大事なところです。「肝」は動力機関、「腎」は浄化装置である。", "「物事何によらず後の機は前に見ゆるもの也」", "注意しておると、あとどういうことが起こるかということが先に見える。そこで「其機の動き方を察して、是に従", "ふべし」", "「物に拘わりたる時は、後に及んでとんと行き支えて難渋あるものなり」", "物に拘泥するというと後になって困る。機をみるということができないとみすみす後になって行きつかえて苦しま", "なければならない。", "「公平」を保つ", "「公平を失ふては、善き事も行はれず」", "特に政治を行うときに公平ということを失えば良いことも行えない。", "「凡そ物事の内に入ては、大体の中すみ見へず」", "物事にとらわれてしまうと全体が見えない。", "「姑く引除て」"]}, {"id": 9, "chapter": "", "title": "女が古くなると、まあまあと何でも妥協的になる。テキパキやらないでそのままにしておく。「引除て」そうい", "body": ["女が古くなると、まあまあと何でも妥協的になる。テキパキやらないでそのままにしておく。「引除て」そういう", "問題にこだわらない。", "3/6", "「活眼にて惣体の体面を視て中を取るべし」", "眼の届かないところがないように全体を観察して、そしえそのまん中をとるのがよろしい。問題の中にはいって、", "すみずみが見えなくなってしまうと危ういということ。", "知識・見識・胆識", "七 衆人の厭服する所を心掛べし、無利押付の事あるべからず。苛察を威厳と認め、又好む所に私す", "るは皆尐量の病なり。", "「苛察」とは、いらいらとああかこうかと探索すること、うるさく立ち入ること。「尐量」とは、度量が小さいこ", "と。人物学で申しますと、まず元気、意気、志気、気骨というものが第一要素。これがあって、そこから人間の知能、", "見識というものが出てくる。知識というものは一番手近なもので、知識がいくらあっても見識というものになりませ", "ん。見識というのは判断力です。見識の次に実行という段になると肝っ玉というものが必要。これを胆識。知識、見", "識、胆識、これが「識」というものの三つの大事なこと。", "「世話敷と云はぬが能きなり」"]}, {"id": 10, "chapter": "", "title": "「勤向繁多と云口上は恥ずべき事なり」", "body": ["「勤向繁多と云口上は恥ずべき事なり」", "いくら忙しくても仕事が忙しい、勤めが忙しいという口上は、重職としては言ってはならないこと。", "「心に有余あるに非れば、大事に心付かぬもの也」", "心に余裕がないと、こせこせと小さな事に心を奪われて、大事に気づかないということ。", "「重職小事を自らし、諸役に任使する事能はざる故に、諸役自然ともたれる所ありて、重職多事になる勢あり」", "人間が人間を用いる。これの初歩は、", "「使用」", "。", "「使用」から一歩進んで、その使用する人物に任す、これを「任用」", "。", "任すということができないから諸役は自然と上役にもたれてしまう。", "「使用する」", "「任用する」その次に、ただ任せる", "だけでなく信じて任せる、これが「信用」", "。"]}, {"id": 11, "chapter": "", "title": "刑賞与奪の権", "body": ["刑賞与奪の権", "九 刑賞与奪の権は、人主のものにして、大臣是を預るべきなり、倒に有司に授くべからず、斯の如", "き大事に至ては、厳敷透間ありべからず。", "人間を使ううえにおいては、罰することも必要。また、賞めることも必要。与えること、あるいは奪うということ", "も必要。そういう刑賞与奪の権は、", "「人に任せる」ということをしてはいけないということ。", "何を先に成し、何を後に成すか", "「政事は大小軽重の弁を失ふべからず」", "大勢もあり、小勢もあり、大事があり小事がある。それをしっかりと弁別する。", "「緩急先後の序を誤るべからず」", "ゆるやかでよいこと、急にやらなければならないこと、先にやらなければならない、あと回しでよろしい、という", "緩急先後の順序をまちがってはいけない。", "「徐緩にても失し、火急にても過つ也」", "ただゆっくりのんびりでもいかん。といってがさがさ慌てるというのも物事をあやまつことがある。", "「着眼を高くし、惣体を見廻し、･･･手順を遂て施行すべし」"]}, {"id": 12, "chapter": "", "title": "包容の心", "body": ["包容の心", "「胸中を豁大寛広にすべし」", "「豁大」", "、広い大きいということ。", "「寛」はゆるやかということ。", "「僅尐の事を大造に心得て、狭迫なる振舞あるべからず」", "「大造」", "、大仰なこと。", "「狭迫なる」こせこせした、がつがつしたの意味。", "「仮令才ありても其用を果さず」", "役に立たない。", "4/6", "「人を容る、気象と･･･大臣の体と云うべし」", "大臣、重役というものは人間を包容しなければならん。", "私心、私欲があってはならない"]}, {"id": 13, "chapter": "", "title": "「胸中に定見ありて」", "body": ["「胸中に定見ありて」", "ちゃんとした一定の見識というもの。", "「虚懐公平にして人言を採り」", "心に先入主、偏見を持たないで人の言うことを採用する。", "「沛然と一時に転化すべき事もあり」", "大雨が降ってくるように、大変な勢いで、からりと転化しなければならないこともある。", "「此虚懐転化なきは我意の弊を免れがたし」", "己れを空しうしていろいろな問題にこだわらず、一転するときは思い切って転ずる。自分に私心、私欲があるとそ", "れができない。", "「能々視察あるべし」", "人の事をよく観察して会得しなければならない。", "抑揚の勢", "十三 政事に抑揚の勢を取る事あり。有司上下に釣合を持事あり。能々弁ふべし。此所手に入て信を", "以て貫き義を以て裁する時は、成し難き事はなかるべし。", "手数を省く事肝要"]}, {"id": 14, "chapter": "", "title": "「役員の仕組事皆虚政也」", "body": ["「役員の仕組事皆虚政也」", "いろいろな役職につく人間はとかく慣習、因襲にとらわれて内容のないことにしてしまう弊害がある。", "「老臣なと此風を始むべからず」", "大切な経験を積んだ年寄り、重役などがこういう虚政、内容のない空しい政治をやってはいけません。", "「常時」", "「成べき丈は簡易にすべし」", "なるべく簡易にするがいい。", "「手数を省く事肝要なり」", "「省」という字には、尐なくとも二つの大事な意味。一つは省みるいうこと、もう一つは省くということ。反省し、", "省みることによって、不要なこと、むだなことを省いていく。役員という者はとかくむだが多い、慣れて省みなくな", "る。", "風儀は上より起る", "「風儀は上より起るもの也」", "「人を猜疑し、蔭事を発き･･･人心に癖を持つ」", "民衆、人心にこの癖をもつと、どうしようもない。こういう癖のあるというのは始末が悪いもの。「上下とも表裡"]}, {"id": 15, "chapter": "", "title": "両般の心ありて治めにくし。何分此六かしみを去り」", "body": ["両般の心ありて治めにくし。何分此六かしみを去り」", "表と裏がある、見えない所がある、陰で何をするかわからないというようにむつかしみを去ってということ。", "機事は密なるべけれども･･･", "「機事は密なるべけれども」", "問題が、どういう影響や効果、作業を起こすかわからんという非常に微妙なこと。こういう微妙な問題は秘密でな", "ければならないが、", "「打出して能き事迄も韜み隠す･･･様になるもの也」", "「人君の初政は、年に春のある如きものなり」", "政治の初めにあたっては年に春の季節があるようなもの。", "5/6", "「先人心を一新して、発揚歓欣の所を持たしむべし」", "まず人心を一新して、意気があがるといいますか、「ああいい人が来てくれたなぁ」と皆が喜ぶようにしなければ", "いかん。", "「刑賞に至ても明白なるべし」", "何を罰する、何を賞める、これも明白でなければならぬ。"]}, {"id": 16, "chapter": "", "title": "「財帑窮迫の所より、徒に剥落厳沍の令のみにては、始終行立ぬ事となるべし」", "body": ["「財帑窮迫の所より、徒に剥落厳沍の令のみにては、始終行立ぬ事となるべし」", "金がない、予算がないというところから、いたずらにあれもいかん、これもいかんという。きびしくしめ、寒々と", "した令だけの政治では、始終行き立たぬことになるだろうといって、最後に「此手心にて取扱あり度ものなり」と結", "んでいる。", "一斎先生には、", "「言志四録」という有名な著書がある。初年の「言志録」から始まって「言志後録」", "「言志晩録」に", "つづき、最後に「言志耋録」に終わってます。80 歳のことを「耋」という。これを熟読され、折りにふれ事に臨んで", "活用されますと、単なる知識でなく、大いに見識を養うことになり、また難問題に取り込まれる時は、見識のもう一", "つ上の胆識、すなわち実行力を身につけるうえに役立つ。このように、先哲、先賢の言葉や行い、言行を知る、学ぶ、", "行う、これを「活学」という。", "＜著者略歴＞安岡正篤", "明治 31 年大阪市に生まれる。大正 11 年、東京帝国大学法学部政治学科を卒業。昭和 2 年（財）金鶏学院、同 6 年", "日本農士学校を設立、東洋思想の研究と後進の育成につとめる。戦後、昭和 24 年師友会を設立。政財界のトップを", "指導・育成する。"]}, {"id": 17, "chapter": "", "title": "以上です。", "body": ["以上です。", "6/6"]}];
+function startReading(){document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');}
+function showTab(tab){
+  document.getElementById('btn-index').classList.toggle('active',tab==='index');
+  document.getElementById('btn-read').classList.toggle('active',tab==='read');
+  const ip=document.getElementById('index-panel-scroll');const rv=document.getElementById('reading-view');
+  if(tab==='index'){ip.classList.remove('hidden');rv.classList.remove('active');}
+  else{ip.classList.add('hidden');buildReadingView();rv.classList.add('active');}
+}
+function buildReadingView(){
+  const inner=document.getElementById('reading-inner');let h='';let lc='';
+  sections.forEach(s=>{
+    const ch=s.chapter||'';
+    if(ch!==lc){lc=ch;if(ch)h+='<div class="reading-chapter">'+esc(ch)+'</div>';}
+    const bh=s.body.map(p=>'<p>'+esc(p)+'</p>').join('');
+    h+='<div class="reading-section"><h3><span class="rnum">\u00a7'+(s.id+1)+'</span>'+esc(s.title)+'</h3>'+bh+'</div>';
+  });
+  inner.innerHTML=h;
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toggleSection(header){header.parentElement.classList.toggle('open');}
+function goSec(id){
+  document.getElementById('btn-index').classList.add('active');document.getElementById('btn-read').classList.remove('active');
+  document.getElementById('index-panel-scroll').classList.remove('hidden');document.getElementById('reading-view').classList.remove('active');
+  document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');
+  const el=document.getElementById('sec-'+id);if(!el)return;
+  setTimeout(()=>{el.scrollIntoView({behavior:'smooth',block:'start'});},50);
+  if(!el.classList.contains('open'))el.classList.add('open');
+  document.querySelectorAll('.nav-item').forEach(item=>item.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(item=>{if(item.getAttribute('onclick')==='goSec('+id+')')item.classList.add('active');});
+  document.getElementById('sidebar').classList.remove('open');
+}
+function expandAll(){document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');document.querySelectorAll('.section').forEach(s=>s.classList.add('open'));}
+function collapseAll(){document.querySelectorAll('.section').forEach(s=>s.classList.remove('open'));}
+function filterNav(q){const l=q.toLowerCase();document.querySelectorAll('.nav-item').forEach(item=>{item.style.display=(!q||item.textContent.toLowerCase().includes(l))?'':'none';});}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
+document.getElementById('index-panel-scroll').addEventListener('click',()=>{if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('open');});
+document.getElementById('reading-view').addEventListener('click',()=>{if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('open');});
+
+</script>
+</body>
+</html>

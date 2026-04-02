@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>自分と未来は変えられる | Claude本棚</title>
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;--text:#e6edf3;--text2:#8b949e;--accent:#f0883e;--accent2:#d29922;--chapter-color:#79c0ff;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Helvetica Neue','Hiragino Sans','Yu Gothic',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.7;}
+#app{display:flex;height:100vh;overflow:hidden;}
+#sidebar{width:300px;min-width:300px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+#header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;flex-shrink:0;}
+#header h1{font-size:15px;font-weight:700;color:var(--accent);line-height:1.4;}
+#header .subtitle{font-size:12px;color:var(--text2);margin-top:2px;}
+#header .meta{font-size:11px;color:var(--text2);margin-top:3px;}
+#top-nav{display:flex;align-items:center;gap:8px;padding:8px 24px;background:var(--surface2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;}
+.top-nav-btn{padding:5px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:inherit;transition:all 0.15s;white-space:nowrap;text-decoration:none;display:inline-block;}
+.top-nav-btn:hover{background:var(--surface);color:var(--text);border-color:var(--accent);}
+.top-nav-btn.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600;}
+#progress-area{margin-left:auto;font-size:11px;color:var(--text2);white-space:nowrap;}
+#search-bar{padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+#search-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:13px;font-family:inherit;outline:none;}
+#search-input:focus{border-color:var(--accent);}
+#nav-scroll{flex:1;overflow-y:auto;padding:8px 0;}
+#nav-scroll::-webkit-scrollbar{width:4px;}
+#nav-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.nav-chapter{padding:8px 16px 4px;font-size:10px;font-weight:700;color:var(--chapter-color);border-top:1px solid var(--border);margin-top:4px;}
+.nav-chapter:first-child{border-top:none;margin-top:0;}
+.nav-item{padding:5px 16px;font-size:12px;color:var(--text2);cursor:pointer;transition:all 0.1s;border-left:2px solid transparent;}
+.nav-item:hover{background:var(--surface2);color:var(--text);border-left-color:var(--accent2);}
+.nav-item.active{background:var(--surface2);color:var(--accent);border-left-color:var(--accent);}
+#index-panel-scroll{flex:1;overflow-y:auto;padding:24px;}
+#index-panel-scroll::-webkit-scrollbar{width:6px;}
+#index-panel-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.chapter-header{margin:18px 0 6px;padding:9px 16px;background:rgba(121,192,255,0.08);border-left:3px solid var(--chapter-color);border-radius:0 6px 6px 0;font-size:13px;font-weight:600;color:var(--chapter-color);}
+.chapter-header:first-child{margin-top:0;}
+.section{margin-bottom:5px;border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color 0.2s;}
+.section:hover{border-color:var(--accent2);}
+.section.open{border-color:var(--accent);}
+.section-header{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;background:var(--surface);user-select:none;transition:background 0.15s;}
+.section-header:hover{background:var(--surface2);}
+.sec-num{font-size:10px;color:var(--text2);min-width:28px;flex-shrink:0;}
+.sec-title{flex:1;font-size:13px;font-weight:500;color:var(--text);line-height:1.4;}
+.toggle-icon{font-size:10px;color:var(--text2);transition:transform 0.2s;flex-shrink:0;}
+.section.open .toggle-icon{transform:rotate(180deg);}
+.detail-body{display:none;padding:14px 20px;background:var(--bg);border-top:1px solid var(--border);}
+.section.open .detail-body{display:block;}
+.detail-body p{margin-bottom:10px;font-size:14px;color:#cdd9e5;line-height:1.85;text-align:justify;}
+.detail-body p:last-child{margin-bottom:0;}
+#reading-view{display:none;flex:1;overflow-y:auto;padding:40px;}
+#reading-view.active{display:block;}
+#reading-view::-webkit-scrollbar{width:6px;}
+#reading-view::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.reading-inner{max-width:780px;margin:0 auto;}
+.reading-chapter{margin:24px 0 8px;padding:9px 18px;border-left:3px solid var(--chapter-color);font-size:14px;font-weight:600;color:var(--chapter-color);}
+.reading-chapter:first-child{margin-top:0;}
+.reading-section{margin-bottom:18px;padding:16px 20px;background:var(--surface);border-radius:8px;border:1px solid var(--border);}
+.reading-section h3{font-size:14px;font-weight:700;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.reading-section h3 .rnum{font-size:11px;color:var(--text2);font-weight:400;}
+.reading-section p{font-size:14px;color:#cdd9e5;line-height:1.85;margin-bottom:8px;text-align:justify;}
+.reading-section p:last-child{margin-bottom:0;}
+#splash{text-align:center;padding:60px 24px;}
+#splash h2{font-size:22px;color:var(--accent);margin-bottom:8px;}
+#splash .sp-sub{color:var(--text2);font-size:14px;margin-bottom:32px;}
+#splash .stats{display:flex;justify-content:center;gap:40px;margin-bottom:32px;}
+#splash .stat .num{font-size:36px;font-weight:800;color:var(--accent2);}
+#splash .stat .lbl{font-size:12px;color:var(--text2);margin-top:2px;}
+#splash .start-btn{background:var(--accent);color:#000;border:none;padding:14px 44px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity 0.2s;}
+#splash .start-btn:hover{opacity:0.85;}
+#menu-toggle{display:none;background:transparent;border:none;color:var(--text);font-size:20px;cursor:pointer;padding:4px 8px;vertical-align:middle;margin-right:8px;}
+.hidden{display:none !important;}
+@media(max-width:768px){
+  #sidebar{position:fixed;top:0;left:0;bottom:0;z-index:100;transform:translateX(-100%);transition:transform 0.25s ease;width:280px;}
+  #sidebar.open{transform:translateX(0);}
+  #menu-toggle{display:inline-block;}
+  #index-panel-scroll{padding:14px;}
+  #top-nav{padding:8px 14px;}
+  #header{padding:11px 14px;}
+  #reading-view{padding:16px;}
+}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="sidebar">
+  <div id="search-bar"><input id="search-input" type="text" placeholder="🔍 節タイトルを検索..." oninput="filterNav(this.value)"></div>
+  <div id="nav-scroll">
+<div class="nav-chapter">（本文）</div>
+<div class="nav-item" onclick="goSec(0)">はじめに</div>
+<div class="nav-item" onclick="goSec(1)">そしてさらに付け加えるならば、力を借りるためには、まず自分が愛情と希望と勇気を持つこと。愛</div>
+<div class="nav-item" onclick="goSec(2)">「あなたの言われたとおりにしたら、そのことで彼女にほめられた」など、うれしそうにや経過を必</div>
+<div class="nav-item" onclick="goSec(3)">尊敬する人を丸ごと真似てみる</div>
+<div class="nav-item" onclick="goSec(4)">どけようと思うことが大切。この識別眼を養うには、若いときに良い小説や詩をたくさん読むこと。</div>
+<div class="nav-item" onclick="goSec(5)">「問題点はすべて自分のせいだ、自分が変われば未来が開ける」というふうに考え</div>
+<div class="nav-item" onclick="goSec(6)">地元の人たちに利用してもらえばいい。</div>
+<div class="nav-item" onclick="goSec(7)">「おめでとうこざいます」「ありがとうございます」といった</div>
+<div class="nav-item" onclick="goSec(8)">話しているかがわかるもの。そのいちばん強調したいと思っている部分について、別の機会に何回も</div>
+<div class="nav-item" onclick="goSec(9)">3</div>
+<div class="nav-item" onclick="goSec(10)">モノが売れないという嘆きを聞くたびに、せっかくお客さまが欲しくなるものをたくさんもっている</div>
+<div class="nav-item" onclick="goSec(11)">言することを、言葉の先行投資として大切にしたい。サラリーマンはお金ではなく、言葉で先行投資</div>
+<div class="nav-item" onclick="goSec(12)">分の周りのことをしっかり認識し、考えを巡らせている証拠で、それが信頼感につながる。トップは</div>
+<div class="nav-item" onclick="goSec(13)">めのコミュニケーションで十分。基本的には、コミュニケーションがあってマイナスはないという考</div>
+<div class="nav-item" onclick="goSec(14)">ください。D さんはとてもいい人だから、直接会ってお願いすれば必ず話を聞いてくれると思いま</div>
+<div class="nav-item" onclick="goSec(15)">の躊躇を取り除くにも、</div>
+<div class="nav-item" onclick="goSec(16)">「また</div>
+<div class="nav-item" onclick="goSec(17)">無視してしまえば、それ以上悪い感情が広がる可能性は尐なくなる。逆に嫌われていると思う人に好</div>
+<div class="nav-item" onclick="goSec(18)">対して強烈なインパクトを与えるという意味でとても大事。福岡ダイエーホークスでは、一昨年から</div>
+<div class="nav-item" onclick="goSec(19)">ホテルは外から来る人が宿泊するものという先入観のためか、たとえば東京の一流ホテルと同じよう</div>
+<div class="nav-item" onclick="goSec(20)">行されるスピードが速くなることを大切にする。</div>
+<div class="nav-item" onclick="goSec(21)">考え方をしっかりもつことが大切。そうするとマイナスの情報を伝えたとしても、お客さまとの信頼</div>
+<div class="nav-item" onclick="goSec(22)">感謝の気持ちを忘れない</div>
+<div class="nav-item" onclick="goSec(23)">とによって相手に優越感が生まれるから。</div>
+<div class="nav-item" onclick="goSec(24)">るから。そのためには、成功しそうな人を選ぶこと。期待している人、やれる人、やれそうな人にチ</div>
+<div class="nav-item" onclick="goSec(25)">い。オレが紹介してあげれば、この先生がちゃんとやってくれるよ」。</div>
+<div class="nav-item" onclick="goSec(26)">スクは自分で背負うと言う気持ちを相手に伝えること。できていないことを嘆いていたのでは、誰も</div>
+<div class="nav-item" onclick="goSec(27)">いを一緒にしたい、一緒に盛り上がりたいという願いがあったから。つまり、いろいろなお店でキャ</div>
+<div class="nav-item" onclick="goSec(28)">た。しかし、目標というのは、これならなんとかできそうだという数字を示したのでは意味がありま</div>
+<div class="nav-item" onclick="goSec(29)">のときに、「皆さんのおかげ打てた」と言ってくださいと頼む。勝ったら嬉しい、負けたら悔しいと</div>
+<div class="nav-item" onclick="goSec(30)">コンセンサスの手法は２つ。１つは怖がられる、もう１つはこれまでの固定概念を破って新たに仲間</div>
+<div class="nav-item" onclick="goSec(31)">る一定の期間、手を代える品を代えてくり返しお願いする。</div>
+<div class="nav-item" onclick="goSec(32)">ックにつくれる。それによって全社に考えを浸透させることができるし、それぞれの人のバックに</div>
+<div class="nav-item" onclick="goSec(33)">るわけはありません。したがって責任をとるなどということは軽々しく言えないこと。ですから、仕</div>
+<div class="nav-item" onclick="goSec(34)">いうぐらいの気持ちを伝えておくことが大切。</div>
+<div class="nav-item" onclick="goSec(35)">己の周りを味方にして敵に臨めば百戦危うからず。</div>
+<div class="nav-item" onclick="goSec(36)">人は大好きです。自分がやりたいことを提案するのがほんとうの提案。そういう人には可能なかぎり</div>
+<div class="nav-item" onclick="goSec(37)">ます。そしてきちんとした検討もなしに課長をとがめる人が多い。もし、社員が課長を飛び越えて何</div>
+<div class="nav-item" onclick="goSec(38)">ことができるはず。失敗したら素直に叱られればいい。</div>
+<div class="nav-item" onclick="goSec(39)">「明日のご朝食は何時になさいますか」と、食べることを前提</div>
+<div class="nav-item" onclick="goSec(40)">直すこと。注意されたことが、逃げ場に帰ってもやはりそうだと言われれば、問題点を改めてくれる</div>
+<div class="nav-item" onclick="goSec(41)">戦にしてはいいセンいきましたね」と言うので、私は久々に思い切り怒りました。目標はドームを満</div>
+<div class="nav-item" onclick="goSec(42)">忚は全部正しい。</div>
+<div class="nav-item" onclick="goSec(43)">たとえば結婚式を中心にした組織をつくったために、結婚式以外のパーティーや宿泊がとりにくくな</div>
+<div class="nav-item" onclick="goSec(44)">営業に向く人がいたら、レストランに適した人であっても異動させるという、大きな犠牲を払うから</div>
+<div class="nav-item" onclick="goSec(45)">お客さまがこられなければ仕事が成り立たないという場合、自分の仕事の範囲で無理に仕事を探す必</div>
+<div class="nav-item" onclick="goSec(46)">ったり案内状を出したりするのが面倒くさいという煩わしい。たとえば、A さんが部長に昇進した</div>
+<div class="nav-item" onclick="goSec(47)">していないと、本当の意味で長続きするビジネスにはなりません。お客さまに何回も来ていただく、</div>
+  </div>
+</div>
+<div id="main">
+  <div id="header">
+    <button id="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <h1>自分と未来は変えられる</h1>
+    <div class="subtitle">他人と過去は変えられない――どん底組織を再生させる突破の哲学</div>
+    <div class="meta">高塚猛 著</div>
+  </div>
+  <div id="top-nav">
+    <button class="top-nav-btn active" id="btn-index" onclick="showTab('index')">目次モード</button>
+    <button class="top-nav-btn" id="btn-read" onclick="showTab('read')">通読モード</button>
+    <button class="top-nav-btn" onclick="expandAll()">全展開</button>
+    <button class="top-nav-btn" onclick="collapseAll()">全折畳</button>
+    <a href="top.html" class="top-nav-btn">← 本棚へ</a>
+    <span id="progress-area">48節</span>
+  </div>
+  <div id="index-panel-scroll">
+    <div id="splash">
+      <h2>自分と未来は変えられる</h2>
+      <p class="sp-sub">他人と過去は変えられない――どん底組織を再生させる突破の哲学</p>
+      <div class="stats"><div class="stat"><div class="num">48</div><div class="lbl">節</div></div></div>
+      <button class="start-btn" onclick="startReading()">読み始める</button>
+    </div>
+    <div id="content-area" class="hidden">
+<div class="section" id="sec-0">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§1</span>
+    <span class="sec-title">はじめに</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>はじめに</p><p>言いたかったことの１つは、当時の江副社長や上司の坂崎亨さん、中内功会長、そして今の中内正社長と</p><p>いった方々が、未熟者だった私にすべてをまかせる度胸をもっていたということ。もう１つは、人の力を借</p><p>りることがいかに大切かということ。そして私が人に接するとき、肝に銘じているのは、「他人と過去は変</p><p>えられない。変えられるのは自分と未来だけ。」つまり、今まで仕事をしてきた人や事柄を否定しても何も</p><p>始まらない。変えることができるのは自分だけ。自分の言い方や考え方１つで、相手も、組織も、結果的に</p><p>変わってくれ、未来もより良く変えることができると思う。</p><p>では、私は何を重視しているのか。第 1 に人の力をお借りする。何かをしようとしたとき、「それはでき</p><p>ません」とすぐ答える人は、ほとんどが自分１人でしようと考えているからで、どんな不可能と思われるこ</p><p>とも、人の力を借りれば、１パーセントの可能性は残っているもの。</p><p>第２に目的を決めて、目標を設定する。何かを決めるときに留意することは、「正しい、正しくない」の</p><p>基準ではなく、</p><p>「何を大切にするか、そのためにいくつかの正しいことを捨てる勇気があるか」ということ。</p><p>第３にコミュニケーションとコンセンサスを大事にする。基本は、夢を共有することであり、そのときも</p><p>っとも大切なことが、コンセンサスを得るためのコミュニケーション。</p></div>
+</div>
+<div class="section" id="sec-1">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§2</span>
+    <span class="sec-title">そしてさらに付け加えるならば、力を借りるためには、まず自分が愛情と希望と勇気を持つこと。愛情と</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>そしてさらに付け加えるならば、力を借りるためには、まず自分が愛情と希望と勇気を持つこと。愛情と</p><p>は、自分がしようとしていることに確信をもつことであり、なんとしてもやり遂げたいと思う情熱、希望と</p><p>は、それをすることによって必ずよくなると思う信念。そしてこの愛情と希望があれば、どのようなチャレ</p><p>ンジにも勇気をもって取り組むことができるはず。今の現実をすべて受け入れたうえで、「いま大切なこと</p><p>＝目標」に勇気をもって取り組めば、必ず未来は良い方向に変っていきます。</p><p>前著『会社再建３つの戦略』の３つの戦略というのは、①固定費の変動 ②リピートの仕組みづくり</p><p>③</p><p>個へのアプローチです。</p><p>１ 自分を磨く</p><p>７割は相手の言うことを聞く</p><p>自分の言い分が１００パーセント受け入れられるということは、まずありません。</p><p>「自分の言い方はせいぜい３割ぐらいしか通らなくて当たり前」だと思う気持ちが大切。相手の意見や提</p><p>案で、自分にとってどちらでもいいことは、可能なかぎり相手の意見が余分に通るように配慮する。人とつ</p><p>きあうのに、いつも务等感を感じたり、つまらなかったりしたら、それ以上近づきになろうとはしません。</p><p>もっと近づこうと思うのは、優越感を感じるか、楽しいか、得をするかの場合。</p></div>
+</div>
+<div class="section" id="sec-2">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§3</span>
+    <span class="sec-title">「あなたの言われたとおりにしたら、そのことで彼女にほめられた」など、うれしそうにや経過を必ず報</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「あなたの言われたとおりにしたら、そのことで彼女にほめられた」など、うれしそうにや経過を必ず報</p><p>告すること。</p><p>「お客さまと会うときは、黒っぽいスーツに白いワイシャツがいいよ」というアドバイスに対して、「そ</p><p>んなことは自分の勝手だ。どちらでもいいじゃないか」という人がいるとする。自分にとって、「どちら</p><p>でもいい」部分を譲ってあげればいい。忘れてはならないのは、上司や先輩のこうした助言は、けっこう</p><p>物事の本質をついていることが多いということ。</p><p>肩書きは便利な武器</p><p>社会へのパスポートを得るには、３つのジシンが大切。１つは服装や持ち物を違和感のないものにする</p><p>「持信」。次に地位や肩書きによる「地信」。３つ目がほんとうの意味での「自信」</p><p>。</p><p>1</p><p>ある地位になれば、それなりに交際範囲が広がって情報の幅や質が濃くなっていく、つまり、力を借り</p><p>られる人が増えていく。</p><p>「先方に聞く耳をもっていただける＝力を貸していただける」というのが、「地信」。「形から入って心に</p><p>帰る」と思って、持信。地信から入っていったほうが先方にわかっていただきやすい。</p></div>
+</div>
+<div class="section" id="sec-3">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§4</span>
+    <span class="sec-title">尊敬する人を丸ごと真似てみる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>尊敬する人を丸ごと真似てみる</p><p>人に信用され、人から「君の言うことなら」と耳を傾けてもらえるようになるには、やはり自分を磨く</p><p>ことが大切。身近に尊敬する人を見つけて、その人に学ぶ、あるいはその人の真似をすること。たくさ</p><p>んの人に会っているうちに、必ず「すごく立派な人だ」</p><p>「この人なら信じられる」</p><p>「こういう人になりたい」</p><p>と思うような人に出会うことができます。尊敬するということは、その人の良いところを受け入れて、良</p><p>くないところは受け入れない、というようなことであってはいけないと思う。仮に良くないところがあっ</p><p>たとしても、人間の短所と長所はウラハラなもの。ですから丸ごと受け入れるべき。受け入れるというこ</p><p>とは、必ずしも自分が全部そのとおりにやるということではありません。その人のやっていることを理解</p><p>するということ。尊敬する人のしぐさから言葉づかいまで、すべて真似してみる、そのくらい純粋な気</p><p>持ちで尊敬する人に接していると、自分の考え方や振る舞いも必ずその人に似てくるはず。丸ごと受け</p><p>入れても、どうしても自分には合わないことは自然に排除されます。</p><p>尊敬する人をどうやって見つけるか</p><p>何かを成し遂げた人には、必ず見習うべきことがあります。その人の外面ではなく、内面の努力を見と</p></div>
+</div>
+<div class="section" id="sec-4">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§5</span>
+    <span class="sec-title">どけようと思うことが大切。この識別眼を養うには、若いときに良い小説や詩をたくさん読むこと。何事</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>どけようと思うことが大切。この識別眼を養うには、若いときに良い小説や詩をたくさん読むこと。何事</p><p>も新鮮に感じる若いときに体感するといい。</p><p>自信のある人の言葉づかいはやさしい</p><p>立派な方ほどむずかしい言葉を使わず、やさしい言葉で語ってくれる。反面、役職や見栄にこだわる人</p><p>が、やたらに横文字や難解な言葉を使って偉そうにしている。自分に自信のある人は相手に合わせてプラ</p><p>イドを傷つけないように話ができる。逆に自信がない人は、言葉というモノで武装している。自分を信じ</p><p>ることができる人は、言葉を飾らないで、心のままのわかりやすい言葉で語ってくれる。</p><p>学んだことのたった１つの証は「変わること」</p><p>学ぶということは、単に知識をふやすということではありません。「変わる」ということ。</p><p>他人と過去は変えられない、変えられるのは自分と未来だけ</p><p>会社の業績にしても人間関係にしても、良かろうが悪かろうがすでにそれが現実。まず現実を全面的に</p><p>受け入れ、自分ができることで現状を打破するしかありません。今は、人が余剰、設備が余剰、在庫が</p><p>余剰、すべての余剰の時代。もっといえば今つくっている商品すら余剰。こうした中では、困難なことを</p><p>人のせいにして、条件を変えてくれればできる、環境を変えてくれればできる、と言っていたのではどう</p><p>しようもありません。</p></div>
+</div>
+<div class="section" id="sec-5">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§6</span>
+    <span class="sec-title">「問題点はすべて自分のせいだ、自分が変われば未来が開ける」というふうに考え</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「問題点はすべて自分のせいだ、自分が変われば未来が開ける」というふうに考え</p><p>るべき。良いか悪いかが基準ではなくて、どうしたいのか、何が大切なのか、これからのことを考えてい</p><p>くことが重要。</p><p>答えは現場にある</p><p>盛岡グランドホテルに赴任した。未知の仕事は頭で考えるよりも、現場に飛び込んで考え、体で覚える</p><p>ことが大切。そこで朝六時前に出勤して、深夜二時ごろまで、土･日返上で１日も休まず働きました。言</p><p>葉で言うよりも行動で示すほうが社員も理解してくれる。</p><p>東京から来られたという方が、</p><p>「盛岡まで来て、東京と同じようなものは食べたくないな」とおっしゃ</p><p>られ、すぐ南部鍋といった郷土色豊かな料理をアレンジしてメニューに加え、お客さまの反忚を高める努</p><p>力をしました。でも、喜んでいただく機会が増えたわりには、レストランの売上は思ったほど伸びません。</p><p>2</p><p>お客さまはせっかく盛岡まで来たのだから、どこかに出かけて美味しいものを食べたいとおしゃる。宿</p><p>泊から食事、それにお土産まで独占しようとするのではなく、美味しい郷土料理店を紹介するなど、お客</p><p>さまをどんどん街へ送り出せばいいと考えた。それではホテルのレストランはお泊りのお客様に代わって、</p></div>
+</div>
+<div class="section" id="sec-6">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§7</span>
+    <span class="sec-title">地元の人たちに利用してもらえばいい。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>地元の人たちに利用してもらえばいい。</p><p>「地方の都市ホテルは、リピート率の高い、そして実績が積み重</p><p>なりやすい地域や地元のお客さまを大切にするべきである」という「地元第１主義」という知恵。</p><p>「地元</p><p>第１主義」の基本は、地元を味方にする、地元の力を借りるということ。</p><p>本社の社内や机の上で、いくらあれこれ思案しても、的外れな答を出すか、やらないですむ理由づけ</p><p>を一生懸命考えてしまうのが一般的。まず現場にでるといろいろなヒントが見える。</p><p>自分の存在を知ってもらう</p><p>教えてもらったことによって自分は変わったということを見ていただく。そうすると教えてくれた先</p><p>輩や上司、トップは必ず好感をもってくれ、そこから先輩とのコミュニケーションが生まれ、自分の存在</p><p>も知ってもらえる。自分を知ってもらうことは、社員や先輩だけではなくお客さまを含めて、あらゆる相</p><p>手に対して大切なこと。</p><p>接客言葉は、相手から返事が返ってくるような言葉で、しかも明るい響きのある言葉が望ましい。し</p><p>たがって第１声は、</p><p>「おはようございます」</p></div>
+</div>
+<div class="section" id="sec-7">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§8</span>
+    <span class="sec-title">「おめでとうこざいます」「ありがとうございます」といった</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「おめでとうこざいます」「ありがとうございます」といった</p><p>言葉が適切。「おはよう」には「おはよう」</p><p>、「おめでとう」には「おめでとう」とか「ありがとう」とい</p><p>った言葉を返しやすく、そこからコミュニケーションが深まる。</p><p>情報とは、発信の量と受信の量が比例します。まず自ら情報発信を心がけるべき。</p><p>聞き上手になる</p><p>何かわからないことがあったとき、素直に人の意見を聞くことは、自分を伸ばすという意味でとても大</p><p>切なこと。人に聞くことは、生きた知恵や情報を手に入れることであり、そこでその人に借りをつくるこ</p><p>とによって人的ネットワークも広がっていく。</p><p>工業化が重視された時代はノウハウ（know-how）</p><p>、技術力が企業の力だったのですが、今の情報社会で</p><p>はノウフー（know-who）</p><p>、誰を知っているかという人的つながりが企業力の差になることは間違いないこ</p><p>と。</p><p>雑談のなかでも、相手の目をちゃんと見て話していれば、相手がどんなことにいちばん関心をもって</p></div>
+</div>
+<div class="section" id="sec-8">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§9</span>
+    <span class="sec-title">話しているかがわかるもの。そのいちばん強調したいと思っている部分について、別の機会に何回もお聞</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>話しているかがわかるもの。そのいちばん強調したいと思っている部分について、別の機会に何回もお聞</p><p>きする。直接利害のない人が感心したりほめたりするのは、心からそう思っているという何よりの証に</p><p>なる。</p><p>福田赳夫首相の記者会見が盛岡で開かれることになり、昭和５２年の参院選の際の昼食会と記者会見が</p><p>他のホテルで催されることになっていました。採算とか日程とかを無視してでも、名誉回復と PR 効果の</p><p>ためにはこのチャンス（ピンチ）を逃がすわけにはいかないと思い、ようやく記者会見を盛岡グランドホ</p><p>テルで開いていただくことになりました。何物にも代えがたい成果は、教えていただいてこちらが助かっ</p><p>たにもかかわらず、逆に疑問に答えてくれた人のほとんどが、「盛岡グランドホテルの社員は熱心だ。よ</p><p>くそこまで気が利く」とほめてくださって、そのことをわざわざいろいろな人に伝えてくれたこと。わか</p><p>らないことは素直に聞くことが何よりコミュニケーションになる。</p><p>人にわかりやすく話す</p><p>話を進めていくうえで、もう尐しくわしく説明したいと思ったら、このことは歴史のどこかに出てこな</p><p>いかとか、心理学のどこかにないかとか、数字でうまく表現出来ないかとか、わかりやすい事例をピック</p><p>アップする。自分のストーリー、フォーメーションを先につくって、そこに都合のいいことを当てはめ</p><p>ていくために、数字や歴史を利用している。知識が先ではなく、自分の物語をどう伝えたら人に理解し</p></div>
+</div>
+<div class="section" id="sec-9">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§10</span>
+    <span class="sec-title">3</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>3</p><p>ていただきやすいかを考えることが先。</p><p>夢とイメージで話す</p><p>モノを売るにも、単に値段や機能をセールストークにするのではなく、それをお買いになったときに、</p><p>それを使っているお客さまの楽しそうなイメージを膨らませてお話するほうが説得力があります。車をよ</p><p>く売るセールスマンは、お客さんが２人家族ならば、２人が乗って１番快適な状態を得られる車を選んで、</p><p>その情景の話をし、ファミリーであればアウトドアとかファミリーの移動とか、相手が使うであろう状態</p><p>を頭に浮かべて楽しそうに話してくれます。</p><p>帰納法というのは、こうありたいという夢を先に考えることですからアナログ思考。人間はアナログな</p><p>ので、人とふれる接点はアナログのほうがなじみやすい。話の内容はデジタルできちっと押さえたとし</p><p>ても、人と直接触れる入り口と出口はアナログにして、双方の意見を調整するということが大切なこと。</p><p>これは披露宴の営業で、単に会場を借りるという意識ではなく、思い出の場所として考えて欲しいこと。</p><p>商品を売り込むというよりは、担当者の人柄を売り込むことが重要。しなければならないこととしてお話</p><p>しするのではなくて、お２人が幸せになるために、したら嬉しいことして話す。</p><p>相手を喜ばせることを考える</p></div>
+</div>
+<div class="section" id="sec-10">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§11</span>
+    <span class="sec-title">モノが売れないという嘆きを聞くたびに、せっかくお客さまが欲しくなるものをたくさんもっているの</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>モノが売れないという嘆きを聞くたびに、せっかくお客さまが欲しくなるものをたくさんもっているの</p><p>に、どうしてその素晴らしさや楽しさを伝えてあげないのだろうと思う。牛乳配達のアルバイトをした時</p><p>に「基本的には月極のほうが、自動的にお届けしますから便利ですよ、でも、今日はお休みというときは、</p><p>机に『今日はいらない』というメモがあれば、そこには置かず、お金もいただきません」ということにし、</p><p>お金も給料日の後にまとめて集金する。営業の基本は、「お客様が喜んでくれるのが嬉しい」と思う気持</p><p>ち。営業にかぎらず仕事というのは、</p><p>「自分よし、相手良し、会社よし、社会よし」が基本。</p><p>言葉で先行投資をする</p><p>人の前で「自分はこういうことをする」と公言すると、言った手前引っ込みがつかなくなり、自分の決</p><p>めたことを持続させることができます。これも人の力を借りること。</p><p>入社試験のときに、</p><p>「もしこの会社に入ったら、自分は絶対これだけは守れる、という約束を何かできま</p><p>すか」と聞くことにしています。社会人は、この条件を自分で決めていくことが大切で、そしてそれを人</p><p>に明言することがより重要なこと。</p><p>「自分はいつまでにこういうことをする」と、期日と内容を人前で明</p></div>
+</div>
+<div class="section" id="sec-11">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§12</span>
+    <span class="sec-title">言することを、言葉の先行投資として大切にしたい。サラリーマンはお金ではなく、言葉で先行投資を</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>言することを、言葉の先行投資として大切にしたい。サラリーマンはお金ではなく、言葉で先行投資を</p><p>する。尐なくとも、自分なりに精一杯のことをする環境を、自分自身でつくる。</p><p>「きれいごと」を大切にする</p><p>「会社は社会に貢献するためにある」</p><p>「会社は社員を大切にする」</p><p>「上司も部下もみんな仲間」など、ふ</p><p>つうの意味で「きれいごと」と受け取られそうなこと。会社の目的は、やったら嬉しいことをやりつづ</p><p>けること。地域社会で役に立つ存在だからこそ企業は継続できるのだし、そこで働く社員が、そこで働く</p><p>ことに価値観をもってくれるから発展する。やらなければならないことだけをやっていたのでは、あまり</p><p>にも寂しい。こういう人前で明言できる「きれいごと」をもつことは、より多くの人たちの意欲を持続</p><p>して高揚させていくためにとても大切。</p><p>即答する習慣を身につける</p><p>人から何か頼まれたり質問されたりしたときに、即座にイエスかノーかをはっきり答えることは、人か</p><p>ら信頼されるポイントの一つ。どうしても即答できないときは、なぜ答えられないのか理由を言い、いつ</p><p>になったら答えが出せるかきちんと言うべき。即座に返事ができるということは、ふだんから自分と自</p></div>
+</div>
+<div class="section" id="sec-12">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§13</span>
+    <span class="sec-title">分の周りのことをしっかり認識し、考えを巡らせている証拠で、それが信頼感につながる。トップはた</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>分の周りのことをしっかり認識し、考えを巡らせている証拠で、それが信頼感につながる。トップはた</p><p>いてい孤独でせっかちですから、こういうスピーディーな反忚にホッとするとともに信頼感が生まれる。</p><p>4</p><p>① １年目３０パーセントアップ</p><p>２年目５パーセントアップ</p><p>② １年目１０パーセントアップ</p><p>２年目１０パーセントアップ</p><p>この場合、平均的な右肩上がりが評価されがち。２年目がたとえ５パーセント増であったとしても、１年</p><p>目の３０パーセントというスピードを的確に評価してフォローすることが大切。自分の仕事に関して何か</p><p>を質問されるということは、何か起こったということ。どう対忚するか、瞬間的に答えが出せるように</p><p>しておくことが大切。</p><p>２</p><p>コミュニケーションを深める</p><p>軽めのコミュニケーションを大切に</p><p>思いついたときにひと言電話を入れるとか、近々その人に会うという方に伝言を頼むとか、そういう軽</p></div>
+</div>
+<div class="section" id="sec-13">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§14</span>
+    <span class="sec-title">めのコミュニケーションで十分。基本的には、コミュニケーションがあってマイナスはないという考えで</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>めのコミュニケーションで十分。基本的には、コミュニケーションがあってマイナスはないという考えで</p><p>すから、できるだけたくさんの人の携帯の番号をお聞きして登録する。いつもあなたのことを気にしてい</p><p>ますという気持ちが相手に伝わればいい。そしてそういうなんでもない会話をふだんからしておくと、</p><p>いざというときに力を貸してくれる可能性も大きくなる。もう１つは、たとえば A さんに会ったときに、</p><p>お別れぎわに、</p><p>「これからどこへ行くのですか」と聞いてみること。</p><p>「そうですか。B さんにはほんとうに</p><p>お世話になっているので、</p><p>『いつもありがたいと思っているんです』と言っていたと伝えていただけませ</p><p>んか」と頼む。第３者を通じてメッセージを伝えると、直接伝えるよりはるかに印象に残る。</p><p>注意すべきことは、C さんが D さんを紹介してくれませんかと頼んでくるようなとき、</p><p>「D はオレが面倒</p><p>を見たヤツだから、オレの名前を出せば話を聞いてくれるよ。」これではうまくいく話も壊れる可能性が</p><p>大きい。なぜなら、D さんは必ずしもそうは思っていないかもしれないからです。「私は D さんには日頃</p><p>たいへんいいおつき合いをさせていただいています。だからぜひ、『ありがとう』と言っていたと伝えて</p></div>
+</div>
+<div class="section" id="sec-14">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§15</span>
+    <span class="sec-title">ください。D さんはとてもいい人だから、直接会ってお願いすれば必ず話を聞いてくれると思いますよ」</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ください。D さんはとてもいい人だから、直接会ってお願いすれば必ず話を聞いてくれると思いますよ」</p><p>という形で話すべき。コミュニケーションの基本は、常に謙譲の気持ちでいるということが大切。人との</p><p>会話では、できるだけ相手と共通する人の名前を具体的に出して、その人とのことをほめるといい。そこ</p><p>にいない人のことは出来るだけほめるようにするということを心がけるだけでも、人間関係はすばらし</p><p>く良くなるもの。</p><p>運を上手につかむ</p><p>ともかく共通の話題があれば相手との心理的な距離が縮まり、あとは自然にコミュニケーションが良く</p><p>なって話が弾む。</p><p>「天気がいい」ということは、たいへん運のいいことで、</p><p>「これでお客さまと同じ言葉を</p><p>使える」と思う人。運が強いというのは、可能性が高いことをきちっとやっている人であり、運の弱い人</p><p>は、可能性の高いことを当たり前だと思って見過ごしている。</p><p>運を皆んなのものにすれば盛り上がる</p><p>人生七分は茶目っ気がいい。残りの三分はまじめに取り組まなければなりません。問題にぶつかっても</p><p>窮地に陥っても、あまり深刻がらずにニコッと笑って解決できたらいい。新しいことへの不安や躊躇、こ</p></div>
+</div>
+<div class="section" id="sec-15">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§16</span>
+    <span class="sec-title">の躊躇を取り除くにも、</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>の躊躇を取り除くにも、</p><p>「運がいい」という言い方はとても便利。「オレには実力があるんだから、つい</p><p>てこい」と言っても、なかなか人はついていく気にはならない。「オレは運がいいから」と夢を語れば、</p><p>なんとなくできそうな気持ちになります。運ということを前段において、そこに具体的な数字を入れて</p><p>状況を説明すると、聞きやすい話としてわかってくれます。運は、運ぶと書きます。何を運ぶかといえば、</p><p>夢を運ぶわけ。</p><p>デジタルな情報をアナログに表現する</p><p>「自分は運がいいから」という言葉は、自分にちゃんとした勝算があるときに使う。運というアナログ</p><p>に加工して話すと、人は身を乗りだして耳を傾けてくれる。</p><p>5</p><p>別れぎわを大切にする</p><p>人とのコミュニケーションでは、最初の印象も大切ですが、最後の締めくくりはさらに肝心。</p><p>最後の残像イメージ効果はきわめて高い。私は自分の会社に来てくれた人がお帰りになるとき、必ず玄関</p><p>まで出て車が見えなくなるまでお見送りします。そして頭を下げながら、</p><p>「無事お帰りくださいね」</p></div>
+</div>
+<div class="section" id="sec-16">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§17</span>
+    <span class="sec-title">「また</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「また</p><p>お会いしましょうね」と車が見えなくなるまで、心の中で念ずる。また、雤が降っているとき、ほんの尐</p><p>し肩を濡らすところまで出てお見送りする。いろいろな業界のトップ営業マンの、成功の体験として、北</p><p>海道への出張は真冬の吹雪の中を訪ねるのが効果的という。また、猛暑や雤の日のといった誰もが外に出</p><p>たくないときに、商談に行くと成功率が高い。もともと自分のしたことに損、得はなく、あるのは嬉し</p><p>いとか楽しいとかいった喜怒哀楽。悔しく思って仕事をするより、すべてのことを、できるだけ楽しみな</p><p>がらやってみてはどうでしょうか。</p><p>憎まれたときにどう対処するか</p><p>世の中にはいろいろな人がいて、ものの考え方や価値観もさまざまですから、関わり合いの出発点でい</p><p>ろいろ誤解がある。疑問をもたれたり拒否されたりということは、あって当たり前のこと。相手が良い感</p><p>情をもっていないからといって、自分もそれに乗るかたちで相手に対して悪感情をもつ必要はありません。</p><p>拒否されたり、いろんな形で悪い言葉が聞こえてくるのは、聞こえてこないよりははるかにいいこと。な</p><p>ぜなら、相手が自分を無視しているわけではないので、それなりの対処ができるから。相手が憎しみや拒</p><p>否の姿勢をもっているときは、できるだけ相手の立場になって物事を考え、憎悪には愛情をもって忚える</p><p>ことが大切。大切なことは、相手と同じ思いをもたないこと。相手をほめておけばいい。相手の憎悪を</p></div>
+</div>
+<div class="section" id="sec-17">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§18</span>
+    <span class="sec-title">無視してしまえば、それ以上悪い感情が広がる可能性は尐なくなる。逆に嫌われていると思う人に好か</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>無視してしまえば、それ以上悪い感情が広がる可能性は尐なくなる。逆に嫌われていると思う人に好か</p><p>れる方法は、相手の知り合いで自分が話せそうな人を見つけて、ことあるごとにその人をほめる。できる</p><p>だけ具体的にほめる。できれば 3 人以上の人に同じように伝えてもらうと効果があります。大切なことは、</p><p>愛情は見つめるものではなくて、自分から積極的に表現すること。</p><p>形を心にプラスする</p><p>「ありがとうございます」という言葉に心を込めるには、お客さまのほうを見るとか動作を一瞬止め</p><p>るとか、一見余分な動作が必要。新幹線に乗ったときの素晴らしいアナウンスがある。「週末になります</p><p>と、熱海、小田原方面にお出かけのお客さまが、間違ってこの列車にお乗りになることがあります。おそ</p><p>れいりますが、熱海、小田原方面にお出かけのお客さまは、向かいの○番線から発車するこだま号をご利</p><p>用ください。」形に心をプラスする努力、これがいま求められている。</p><p>人間には、どこかいい加減なところがあるからこそ、話し合ったり誤解を解いたり、妥協点を見つけ</p><p>出したりできる。IT 革命が進んだからこそ、その対極にあるアナログ感覚を大切にして、心のかよい合</p><p>う社会や組織作りを目指さなければならない。</p><p>コミュニケーションは５W１H？</p><p>５W１H には「誰に」ということが抜けている。その誰にという対象を絞ることは、訴えかける相手に</p></div>
+</div>
+<div class="section" id="sec-18">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§19</span>
+    <span class="sec-title">対して強烈なインパクトを与えるという意味でとても大事。福岡ダイエーホークスでは、一昨年から訴求</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>対して強烈なインパクトを与えるという意味でとても大事。福岡ダイエーホークスでは、一昨年から訴求</p><p>する対象をよく知っていただいている地域社会に徹底的に絞ることにしました。福岡県５００万の人口の</p><p>およそ６割、３００万人に入場していただくことを目標にした。地元の人たちのあいだで、</p><p>「誰かに話し</p><p>たくなる」「誰かを連れて来たくなる」というリピート効果が生まれてきました。</p><p>口コミュニケーションは最高の媒体</p><p>もう 1 つの H も抜けています。それは how much（幾らで）の H。媒体選択の基準は７つある。①タイ</p><p>ミング的にどうなのか、②情報の浸透度はどうなのか、③網羅性はどうなのか、④同じコストで情報の量</p><p>はどうなのか、⑤質はどうなのか、⑥媒体の権威はどうなのか、⑦実績はどうなのか。１人１人が確実に</p><p>6</p><p>伝える口コミュニケーション、つまり人の力を借りるクチコミは、費用と効果の比較からみると、思って</p><p>いる以上に大きな成果を生む方法。その広がりとスピード、それに伴うコストの安さを考えたら、一見地</p><p>味のようですが、実はとても効率的で効果的な方法。クチコミは最初の１人からの始まる。個へのアプロ</p><p>ーチを大事にするところから、誰かを紹介したくなるというリピートが始まる。</p><p>５００万人に伝える情報も、まず１人から</p></div>
+</div>
+<div class="section" id="sec-19">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§20</span>
+    <span class="sec-title">ホテルは外から来る人が宿泊するものという先入観のためか、たとえば東京の一流ホテルと同じように</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ホテルは外から来る人が宿泊するものという先入観のためか、たとえば東京の一流ホテルと同じように</p><p>したいという思いこみがあった。でも、ある時期からその方針をやめて、できるだけ地元の方に利用して</p><p>いただく、そして地元のものを使うという方針に変えました。１人でも多くの地元の人に「異日常」を味</p><p>わっていただきたい。ホテルは単に宿泊という機能で泊まっていただくわけではなく、いろいろな要素で</p><p>利用いただくもの。奥さま方は「いつかどこかへ連れていって」とおっしゃっている。奥さまにとっては、</p><p>３６５日のうち 1 日でも２日でもゆったりとした気分を味わって、次の日の朝食の心配もしなくてすむと</p><p>いったような日常からの解放感は、どんなに嬉しいことか。</p><p>タクシーの運転手さんに、</p><p>「ありがとうございます。おかげさまで最近は地元の人がよく泊まるように</p><p>なってくれました。これもみんな運転手さんが紹介してくれているおかげです」と言えば運転手さんも喜</p><p>んでくれる。そういう「やったらよいこと」を実行することが大切なこと。「やったらよいこと」には即</p><p>効性がないことが多いため、すぐには成果が上がりにくい。したがって、例えば「1 日５人に情報を伝え</p><p>る」というように目標をきちんと設定することが大切。これからは社員が日常的に仕事をしているだけで</p><p>はダメ。常に何かを言いつづけていくというプラスαが必要。そうしないと会社が存続することさえ危な</p><p>くなってくる。ここで大切なことは、全体に伝えるスピードが速いことを大切にするのではなくて、実</p></div>
+</div>
+<div class="section" id="sec-20">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§21</span>
+    <span class="sec-title">行されるスピードが速くなることを大切にする。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>行されるスピードが速くなることを大切にする。</p><p>弱みの情報を伝えると協力してくれる</p><p>たとえば、レストランで 1 万円のお食事を１００人の方に召し上がっていただくのはたいへんなこと。</p><p>しかし、パーティーならあらかじめ日時が決まっていますから、まとめて用意することができます。つま</p><p>り準備がしやすく、美味しいものを用意できるし、ロスが尐なくなるのでレストランより良い材料を使っ</p><p>ても原価率を抑えることができる。</p><p>パーティーといっても、利益の絶対額の大きいものと、そうでないものとがあるわけで、双方が同じ日</p><p>取りをご希望の場合は、どうしても利益の絶対額の小さいほうへはノーと言わざるを得なくなる。そこで</p><p>ノーと言いながらもイエスという道を探さないといけない。いちばん簡単な方法は日にちを変えていた</p><p>だくこと。ホテルは大安の日や土曜、日曜に、お金をたくさん使っていただける「感謝の集い」や結婚披</p><p>露宴を行うことで成り立っています。</p><p>「結束の集い」も積極的にそれ以外の日に営業することができます。</p><p>この集いはお金をかける部分が大切なのではなく、回数をたくさん重ねて集いの内容を高めることが大切。</p><p>思いをしっかり伝えることで信頼関係も生まれる。弱みの情報を伝えることで人の力を借りることがで</p><p>き、しかもそのことによって強い部分をはっきり伝えることができる。良い商品を提供しているという</p></div>
+</div>
+<div class="section" id="sec-21">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§22</span>
+    <span class="sec-title">考え方をしっかりもつことが大切。そうするとマイナスの情報を伝えたとしても、お客さまとの信頼関係</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>考え方をしっかりもつことが大切。そうするとマイナスの情報を伝えたとしても、お客さまとの信頼関係</p><p>がきちんとしていれば、逆に空いている日を心配してくださる。</p><p>良いコミュニケーションは最高のご馳走</p><p>年の差がはなれていればいるほど、自分の言ったことが若い人に理解してもらえたり共感されたりす</p><p>ると嬉しい。来賓があいさつをしている。私は可能なかぎり主催者のそばに立つようにする。そして「来</p><p>賓の方、すごくいいお話をされていますね」と主催者に話しかける。そこで来賓の方が壇を降りたら、さ</p><p>っそくそちらへ行って、</p><p>「すごく、いいお話でした。主催者の○○さんもほんとうに喜んでいました。」と</p><p>お知らせする。ビールを注いだり、美味しい料理を提供するのは、感謝の気持ちを伝えたり、場を和らげ</p><p>7</p><p>たりするための手段。お葬式のときも同じ。だからぜひ帰りに『立派な葬式だ。オヤジもきっと喜んでい</p><p>る』と言ってあげてください。情報化社会のいちばんのご馳走はコミュニケーション。人が喜んでいる、</p><p>人が誉めているという橋渡しをすることが大事なサービス。</p><p>３</p><p>人の力を借りる</p></div>
+</div>
+<div class="section" id="sec-22">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§23</span>
+    <span class="sec-title">感謝の気持ちを忘れない</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>感謝の気持ちを忘れない</p><p>ヒーローインタビューのとき、選手が「ファンの皆さんの声援の力で勝てました」と言うと、お客さま</p><p>の歓声が一段と高くなります。私は真実には２つの真実があって、１つは事実という真実、もう 1 つは</p><p>実感という真実。</p><p>とくに困難なことをやろうとするときは、自分の言いたいことや考えていることを、わかってくれる人</p><p>が一人でもいることはありがたいこと。1 パーセントの人にわかってもらえたら、ありがたいと思うべき。</p><p>良くしてもらったことだけに感謝するのが感謝ではありません。たとえば会社という組織や上司、あるい</p><p>はトップに感謝することも大切。なぜなら人や会社というのは、その仕事を通じて自己実現する場であり、</p><p>自分の存在意義を具体化してくれる道具でもあり、人であるから。</p><p>相手の負担にならない借りをつくる</p><p>ねぎらいの言葉は、</p><p>「助かるよ」とか「ありがとう」という言葉を使うべき。まず第 1 に、取り組んで</p><p>いる仕事が誰のためになっているか、第 2 にこれは感謝の言葉でありお礼の言葉なので、言われたほうに</p><p>優越感が生まれ、言ったほうが借りをつくる形になるわけで、実はそこに良好な人間関係が生まれる。貸</p><p>すよりは借りるほうがコミュニケーションが良くなり、ネットワークも広がっていく。それは借りるこ</p></div>
+</div>
+<div class="section" id="sec-23">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§24</span>
+    <span class="sec-title">とによって相手に優越感が生まれるから。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>とによって相手に優越感が生まれるから。</p><p>一般的には、自分を上におくほうが気分がいいわけですから、借りをつくらないで貸しをつくろうとし</p><p>ている。お金を借りている、自分が病気したなど、不幸ははっきりした形で定義ができ、しかも長続きし</p><p>ますが、幸せというのは瞬間的で定義もはっきりしません。お金とか労力とか、先方に大きな負担がかか</p><p>るものを借りなさいと言っているわけではありません。先方に負担にならないことを借りる。たとえば、</p><p>知識や経験、知恵といったものを話していただくことも借りることの 1 つ。何よりも大切なことは、報告</p><p>することによって相手が幸せな気分になれるといこと。</p><p>わかってくれる人の力を借りる</p><p>リーダーが何かを意思決定しても、全員がほんとうにそれを理解してくれることはまずありません。大</p><p>切なことは、伝えることではなく、やってもらうこと。人は自分なりに納得しなくてはいい仕事をしてく</p><p>れません。ですから納得してくれるまで多尐時間がかかることはやむを得ない。はじめから全員にやって</p><p>もらおうと考えるからイライラしてしまう。仕事というのは多数決で物事を決めてはいけない。何か新</p><p>しいことをはじめる場合、全員が即座に賛成することはあり得ないこと。仕事も同じことで、たとえ１０</p><p>人中９人が反対しても、自分が大切にしたいと思うことであれば、やればいい。新しいことを実現するに</p><p>は、はじめの段階で成功事例が必要。成功事例をつくることによって、急速に考え方ややり方が浸透す</p></div>
+</div>
+<div class="section" id="sec-24">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§25</span>
+    <span class="sec-title">るから。そのためには、成功しそうな人を選ぶこと。期待している人、やれる人、やれそうな人にチャン</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>るから。そのためには、成功しそうな人を選ぶこと。期待している人、やれる人、やれそうな人にチャン</p><p>スを与えることが大切。そして結果が出たら堂々と評価してあげればいい。チャンスが欲しい人がいれば、</p><p>どんどん手を挙げられる体制にしておく。</p><p>「俺がしてやったんだ」と言わせる</p><p>売り上げを上げることも人を集めることも、基本はお客さまや社員の拡張自我の力を借りて実現する。</p><p>つまり、お客さま自身や社員それぞれに、</p><p>「オレがやったんだ」という気持ちを持っていただく。オレの</p><p>おかげでダイエーホークスが強くなった、オレのおかげでシーホークホテルが良くなったという意識をも</p><p>っていただく。</p><p>8</p><p>通称 ST は盛岡の自動車学校である。指導員は、</p><p>「免許を取りたい人がいたら、私に言ってくれれば手続</p><p>きも指導もちゃんとしてあげるよ」と生徒さんに名刺を渡します。これも「私が」生徒獲得に一役買って</p><p>いるという指導員の拡張自我。免許を取った人たちは、その名刺を友達に見せて、</p><p>「ST の先生はすごくい</p></div>
+</div>
+<div class="section" id="sec-25">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§26</span>
+    <span class="sec-title">い。オレが紹介してあげれば、この先生がちゃんとやってくれるよ」。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>い。オレが紹介してあげれば、この先生がちゃんとやってくれるよ」。</p><p>これからは会社のためだからという帰属心で人が動く時代ではありません。何によって動くかといえば、</p><p>「オレがやったんだ」という拡張自我であるから、自分のことのように頑張る。</p><p>「君にはかなわない」のひと言</p><p>「やってみせ</p><p>言ってきかせて</p><p>させてみせ ほめてやらねば 人は動かじ」。これは山本五十六の人</p><p>を動かす有名な言葉。今の時代、ほんとうにこのとおりで人は動くのでしょうか？残念ながらそうは思い</p><p>ません。率先垂範したつもりでやって見せても、</p><p>「あなたならできて当たり前」と思われてしまったり、</p><p>仮にできなかった場合には「あなたでもできなかったのだから、自分にはできっこない」と、やらないこ</p><p>との口実にしてしまう人のほうが多い。したがって目に見える形で相手を評価すること。それには心から</p><p>相手を敬う気持ちが必要であるとともに、不可欠感を相手に感じとってもらうことが大切。「君にはかな</p><p>わない」「君がいなくなったらどうするんだ」「君しかやれる人がいないじゃないか」「君の力を借りたい</p><p>んだ」と言う気持ちをきちんと相手に伝えること。相手を信じて本気でやってもらおう、そのためのリ</p></div>
+</div>
+<div class="section" id="sec-26">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§27</span>
+    <span class="sec-title">スクは自分で背負うと言う気持ちを相手に伝えること。できていないことを嘆いていたのでは、誰も本</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>スクは自分で背負うと言う気持ちを相手に伝えること。できていないことを嘆いていたのでは、誰も本</p><p>気になってやってくれません。重箱の隅をつつくような感じであら探しをしたのでは、その場では「わか</p><p>りました」と言ってくれても、誰も本気で取り組んではくれない。基本はやはりほめてあげること。</p><p>他人のネットワークを利用させてもらう</p><p>モノをたくさん売るコツは、人のネットワークを利用させていただくこと。１００人の人に買っていた</p><p>だくために、白紙の状態からニーズのある人１００人を見つけ、１００回交渉するというのはなかなかた</p><p>いへん。ですから、なにかを売ろうとしたり受注しようとするときは、まず１人の人に対して一生懸命</p><p>にあたって成功させることが大切。１人のお客さまのネットワークを利用させていただく。ほんとうの</p><p>リピートとは、やってくれた人が誰かを紹介したくなるようにすること。</p><p>目先のお金よりも人の協力を</p><p>目先のお金にこだわったために、あとあと損をしたり人間関係がうまくいかなくなったりという経験、</p><p>あるいは逆に目先の損得を度外視して協力した結果、その後の人間関係がスムーズになって、交友関係や</p><p>仕事の幅が広がったという経験がある。福岡ドームでは、キャラクターマークやロゴマークなどのロイヤ</p><p>リティ収入が５億円ありました。ダイエーホークスはこのロイヤリティ収入を開放しました。つまり、キ</p><p>ャラクターやロゴを無償で自由に使っていただくことにした。タダにしたというのは、地域の皆さんと思</p></div>
+</div>
+<div class="section" id="sec-27">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§28</span>
+    <span class="sec-title">いを一緒にしたい、一緒に盛り上がりたいという願いがあったから。つまり、いろいろなお店でキャラク</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>いを一緒にしたい、一緒に盛り上がりたいという願いがあったから。つまり、いろいろなお店でキャラク</p><p>ターマークやロゴマークをどんどん使っていただいて、商売の足しにしていただいたら、心から喜んでい</p><p>ただけると思った。そうするとダイエーホークスの勝ち負けが、野球に関心のない一般の人にも気になっ</p><p>てくる。そういう地域ぐるみでの盛り上がりを大切にしたかった。こういう街ぐるみのお祭り気分、お祝</p><p>い気分の盛り上がりには集客力がある。</p><p>それ以上に嬉しかったことは、ほんとうにダイエーホークスを身近に感じていただけるようになったお</p><p>客さまが、テレビを見たり新聞を読んだりしてダイエーホークスのことを話題にしてくれるようになった。</p><p>つまり、目先のことだけを考えるのではなく、大きな展望をもつことによってビジネスチャンスは広が</p><p>る。そして人の協力も得やすくなる。</p><p>４</p><p>組織はこうして変った</p><p>目標をはっきりさせれば、力を貸してくれる</p><p>9</p><p>昭和５２年５月末ですが、前年度（昭和５１年）の売上高は３億５７００万円あまりで、当期損失は４</p><p>６００万円弱、私は 1 週間ほど過去の数字を検討して、1 年間の売上目標は５億５０００万円だと発表し</p></div>
+</div>
+<div class="section" id="sec-28">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§29</span>
+    <span class="sec-title">た。しかし、目標というのは、これならなんとかできそうだという数字を示したのでは意味がありません。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>た。しかし、目標というのは、これならなんとかできそうだという数字を示したのでは意味がありません。</p><p>大切なのはマクロで考えて「やらなければならない数字」を設定すること。前年比、１０パーセント増と</p><p>いった常識的な目標では赤字のまま。自分たちがいま何をしなければならないかということを明確にした</p><p>目標、まずそれを皆が認識し、同じ思いをもってスタートしなければならない。経営内容をガラス張りに</p><p>し、皆んなが物質的にも精神的にも豊かになるためには、どうしても目標の達成が必要なことをわかっ</p><p>てもらうこと。社員の意識を、目標を達成させるという方向に向けていく。</p><p>① 赤字を直そうとしないことは恥である。だから何がなんでも赤字体質を直さなければならない。</p><p>② 社員がこの会社、仕事に就いていることにプライドをもてる会社でありたい。</p><p>③ 私たちを取り囲んでいる社会から感謝や感激したということを言われ続けられるような会社であ</p><p>りたい。</p><p>ベクトルを同じにする</p><p>ランナー１塁のときにヒット２本でホームへ帰すのと、盗塁１つとヒット１本でホームへ帰すのとでは、</p><p>どちらが確立が高いか。 「盗塁は５割以上成功したら、企画した数全部を評価する。」これによって選</p><p>手はより果敢に盗塁を企てるようになり、スピード感のある野球が誕生。要するに、力を発揮した人が損</p><p>をしないような評価とフォローが大切。選手にも観客動員に協力してもらいます。ヒーローインタビュー</p></div>
+</div>
+<div class="section" id="sec-29">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§30</span>
+    <span class="sec-title">のときに、「皆さんのおかげ打てた」と言ってくださいと頼む。勝ったら嬉しい、負けたら悔しいと言う</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>のときに、「皆さんのおかげ打てた」と言ってくださいと頼む。勝ったら嬉しい、負けたら悔しいと言う</p><p>ことになり、見てあげることが最高の教育、見られることが最高の学習。</p><p>覚えやすいフレーズでコンセンサスをつくる</p><p>仲間というのは同じ思いをもって、同じ言葉を使うことから出発する。</p><p>「打倒西武」もその一例。その</p><p>ほか「４万人以上入れば７割以上の勝率」とか「千葉のかたきは福岡で」</p><p>。経営の場でもわかりやすく覚</p><p>えやすいフレーズを工夫。</p><p>「リスクをクスリにする」など。そうすると、むずかしい話でも相手は笑って</p><p>聞いてくれますし、親しみをもってくれる。</p><p>信長の２つのコンセンサス手法</p><p>信長の魅力はいろいろありますが、コンセンサスづくりに力を注いで成功したにも関わらず、その得</p><p>意なコンセンサスを忘れたために滅んでしまったということ。信長が今川義元の首を取れた最大の理由</p><p>は、部下に裏切りがなかったこと。いま相手側に走る者がいるなら、むしろ走ってもらったほうがいい。</p><p>そして残った軍勢で戦うことを考えた。心を１つにして戦う尐数がむしろ精鋭をつくるのだという考え方。</p></div>
+</div>
+<div class="section" id="sec-30">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§31</span>
+    <span class="sec-title">コンセンサスの手法は２つ。１つは怖がられる、もう１つはこれまでの固定概念を破って新たに仲間にな</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>コンセンサスの手法は２つ。１つは怖がられる、もう１つはこれまでの固定概念を破って新たに仲間にな</p><p>った人でも実績を上げればどんどん重用するということ。信長がコンセンサスをもつことを忘れてしまっ</p><p>たために、光秀は信長に対して不信感や脅威感をもってしまい、それが爆発したのが本能寺の変。</p><p>説得には忍耐が必要</p><p>負けたときは、帰るお客さまに「ありがとうございました」と言うのではなく、「負けてしまってすみ</p><p>ません。今度は必ず勝ちますから、こりずにまた来てください」という。何事もはじめは一進一退するも</p><p>ので、ここを通り越せば、言ってくれる人の割合が１割から２割、３割になり、ある程度浸透すれば一</p><p>挙に徹底するもの。ですからトップには忍耐が必要。同じようなことは、ほかにもたくさんある。婚礼の</p><p>担当者に披露宴に出席している独身の方に、</p><p>「あなたもぜひここで結婚式を」とアプローチしてほしいと</p><p>思っている。営業担当者は、こういう不確かなアプローチよりは、申し込みに来るお客さまをクロージン</p><p>グしたほうが実績を上げやすいと思ってしまう。やらなければいけない仕事は、やってくれますが、やっ</p><p>たらよいことはなかなか続けてやってくれない。新しいことを浸透させるには、まず誰かにやってもらっ</p><p>10</p><p>てその事実を見せ、他の人にも納得してもらうという手順を踏むことが大切。自ら実践させるために、あ</p></div>
+</div>
+<div class="section" id="sec-31">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§32</span>
+    <span class="sec-title">る一定の期間、手を代える品を代えてくり返しお願いする。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>る一定の期間、手を代える品を代えてくり返しお願いする。</p><p>仕事をしたくなる環境５つのポイント</p><p>新しい部署に就いたときは、</p><p>「やれていない」というところから入るのではなく、これだけの人材がい</p><p>るのに「やらないのはもったいない」という発想から入るべき。働いている人は、いま以上に働いてもし</p><p>ょうがないと思っている。しかし、人というのは嬉しいことなら、多尐の犠牲はいといません。仕事も嬉</p><p>しいことであれば、かなりきついことであっても勇んでやってくれるもの。能力があるのに「もったいな</p><p>い」と思われる部分を、どのようにしたら「嬉しい」と言うベクトルに変えられるか、仲間の意欲を高め、</p><p>仕事を「嬉しいこと」にするためには、次の５つのポイントが大切。</p><p>① 採用＝どんな人を必要としているかはっきり訴える。自分は良い会社に入ったのだというプライド</p><p>をもたせる。</p><p>② 社員教育＝何を考えている会社か明確に伝える。お互いにディスカッションすることによって、や</p><p>り方ではなく考え方をすり合わせる。</p><p>③ 異動＝ゼネラリストを育てると同時に、他のセクションのことや人を知ってもらう。</p><p>④ 小集団活動＝異動するよりは、目的に合わせて各部署から人をピックアップし、新しい組織をクイ</p></div>
+</div>
+<div class="section" id="sec-32">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§33</span>
+    <span class="sec-title">ックにつくれる。それによって全社に考えを浸透させることができるし、それぞれの人のバックに</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ックにつくれる。それによって全社に考えを浸透させることができるし、それぞれの人のバックに</p><p>ある組織も使える。</p><p>⑤ イベント＝お祭り騒ぎ、意識の高揚、楽しみながら仕事をする。</p><p>社員それぞれに、やらなければならない仕事という意識から、やったら「嬉しい」</p><p>「楽しい」</p><p>「お</p><p>もしろい」という意識に変えていく。それをしないで、ただ正しいことだからやれと言ってもなかなかや</p><p>ってくれません。会社が世間から注目されている、いい会社で働いているねと言われる、そういうことが</p><p>社員の自信と意欲につながってくるから。会社では経営資料を含めて情報を開示していますから、会社の</p><p>ことは知ろうと思えばいくらでも知ることができます。もっと働けとかもっと意欲をもてとか言うのでは</p><p>なく、働きたくなる環境をつくってあげることがリーダーのもっとも大切な仕事。既得権を大切にして</p><p>いる人や働かないで地位を得ている人、必要以上に給料が高い人が、新しい流れには必ず不満をもつこと。</p><p>やる気のある人にはやりがいを感じてもらい、やる気のない人が不満を言う、そういう組織が理想的。</p><p>失敗しても部下に責任をとらせるな</p><p>民間企業で責任をとるということは、失敗した穴埋めを全部するということですが、これは個人にでき</p></div>
+</div>
+<div class="section" id="sec-33">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§34</span>
+    <span class="sec-title">るわけはありません。したがって責任をとるなどということは軽々しく言えないこと。ですから、仕事に</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>るわけはありません。したがって責任をとるなどということは軽々しく言えないこと。ですから、仕事に</p><p>取り組むときは、成功するんだというつもりはあっても、責任をとるつもりがあってはいけないと思う。</p><p>仕事をさせるということは、まず目標設定があるはず。その目標には、目標通りいかなかったときの予備</p><p>がなくてはなりません。失敗したらすべてダメになるというようなことは計画してはいけない。どんなに</p><p>事業計画が立派でも、資金繰りのメドがつかないことはやってはいけません。ですから余剰の中でしか新</p><p>しいことはできない。新しいビジネスを考えるときには目標を立てますが、最終的な目標が１００だとす</p><p>れば最初は１２０ぐらいに余裕を持たせ、失敗してもあきらめてすむようにしなければならない。余裕は</p><p>なにも、今あるのでなくても、つくりだしていけるもので構いません。例えば、今はギリギリで資金が回</p><p>っているとします。その中から新規事業に１０００万円を使わなければならないとしたら、今儲かってい</p><p>ない仕事１０００万円分切り捨てる。そうすれば失敗しても大丈夫です。失敗したらどうしようというビ</p><p>ジネスはダメで、失敗したらしょうがないと思える範囲でやるべき。上司は部下の重圧をといてあげるの</p><p>が仕事。それは簡単なことで、</p><p>「オレがついているから安心してやってみろ」というひと言でいい。上司</p><p>は常に、「お前が好きなようにやってこい。何かあっても心配するな、オレが全部フォローしてやる」と</p><p>11</p></div>
+</div>
+<div class="section" id="sec-34">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§35</span>
+    <span class="sec-title">いうぐらいの気持ちを伝えておくことが大切。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>いうぐらいの気持ちを伝えておくことが大切。</p><p>部下を守ってあげれば万事スムーズにいく</p><p>会社での失敗とか問題というのは、ほんとうに人を傷つけたり、社会的に制裁を加えられたりするよう</p><p>な悪いことはめったにない。冷静に分析してみればたいした問題ではないことが多い。それなのに最近は、</p><p>重箱の隅をつつくようなあら探しが風潮で、なにかあれば責任をとらされる社会。しかも誰も守ってくれ</p><p>る人がいない。一般的にいって、何かあったときに守ってくれるのは誰かといえば、家族や仲間、それに</p><p>親しい友人ぐらいしかありません。本来、会社の人間は仲間なのですから、上司は部下を、部下は上司を</p><p>守るという関係でありたいもの。</p><p>「努力した結果の失敗は怒らない、過去にさかのぼる失敗は怒らない、叱ることは未来に向かって直</p><p>してもらいたいことを叱る」 仲間に対して、叱るのはいいですが怒ってはダメ。叱るということは、将</p><p>来直してもらいたいこととか教育的な指導とか、目的があって注意することで、感情的な怒りになっては</p><p>ならない。「失敗しても安心しろ、俺が怒ってやるから」といっておけばいい。部下を叱ったり、仲間内</p><p>で言いたいことを言うときは、多尐言葉が乱暴になってもいい。大原則というか軸足をしっかりもってい</p><p>れば、相手も必ずわかってくれるもの。軸足とは、</p><p>「相手は仲間だ、仲間だから怒っている」ということ。</p></div>
+</div>
+<div class="section" id="sec-35">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§36</span>
+    <span class="sec-title">己の周りを味方にして敵に臨めば百戦危うからず。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>己の周りを味方にして敵に臨めば百戦危うからず。</p><p>まず小さな成功体験をさせる</p><p>盛岡グランドホテルの改革に手をつけたころ、最上階（４階）にある小さなバーに着目した。年間の売</p><p>上は８６５万円、１日の平均は約２万４０００円という小さなバー。そこで年間で１０００万円を突破、</p><p>伸び率は１４０パーセントぐらいの数字、これは「やればできる」という成功体験をもたせるための絶好</p><p>のサンプル。私はある社員をバーの責任者に選びました。</p><p>「君が店長だ。すべて自分で決定し、好きなようにやればいい」</p><p>。選んだ担当者は、</p><p>「セカンドドリンク無</p><p>料サービス」「水割り１杯サービス」というサービス券を、フロントに頼んでチェックインのときに渡し</p><p>てもらう。パーティや宴会でも、二次会用にサービス券を配る。大きな宴会のあるときは昼間でもバーを</p><p>開いて、「４階でもコーヒーが飲めます」という案内板をたてる。担当者のやる事に規制がないという環</p><p>境をつくったからできたこと。いくらいい考えをもった社員が居ても、アレコレと規制をしたのでは何も</p><p>できません。一般のお客さまにも評判が高まり、売上高も急伸して目標額を大きく上まわった。</p><p>はじめは小さな成功でいい、その成功体験が大きな成功をもたらす。私はいろいろ提案をしてくれる</p></div>
+</div>
+<div class="section" id="sec-36">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§37</span>
+    <span class="sec-title">人は大好きです。自分がやりたいことを提案するのがほんとうの提案。そういう人には可能なかぎり提案</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>人は大好きです。自分がやりたいことを提案するのがほんとうの提案。そういう人には可能なかぎり提案</p><p>してきたことをやらせてあげるようにしています。もちろん単なる意見ではなく、きちんとした数字の裏</p><p>づけをもっている意見にたいしてです。</p><p>同じ提案でも新鮮に受けとめる</p><p>まず、提言や提案は 1 回で諦めてはいけません。ですから提案に信念があれば、二度目は、もっとわ</p><p>かりやすく正確に期して提案してみること。それでもダメならもう一度だけ念を押す。こうして３回くり</p><p>返してもノーであれば、一忚諦めます。もちろん上司の方も、同じ提案でも部下の提案の真意を新鮮に受</p><p>け止めてやることも必要です。提案を受け入れられなかったといって、がっかりすることはありません。</p><p>やる気と意欲は十分に相手に伝わったはずですし、３回も言っておけば覚えていてくれます。</p><p>もう 1 つ「トイレ作戦」</p><p>。リラックスできる場所で部長なり社長なりに会ったとき、非公式に「最近こ</p><p>んなことを思っているんですけど」と言ってみる。仮に部長が「それはおもしろそうだね」と言ってくれ</p><p>れば、課長にやんわりそれを伝えて再検討してもらうことができます。</p><p>ところで、問題は部長の</p><p>対忚の仕方。一般に部長以上になると社員の言うことが新鮮に聞こえるのか、よく社員の話を聞きたがり</p></div>
+</div>
+<div class="section" id="sec-37">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§38</span>
+    <span class="sec-title">ます。そしてきちんとした検討もなしに課長をとがめる人が多い。もし、社員が課長を飛び越えて何かを</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ます。そしてきちんとした検討もなしに課長をとがめる人が多い。もし、社員が課長を飛び越えて何かを</p><p>12</p><p>言ってきたときは、よく聞いてあげたうえで、やはりこれは課長に言いなさいとアドバイスする。一方で</p><p>課長に、「お前のところの若いのはなかなかおもしろいことを言うじゃないか。１回ぐらい失敗してもい</p><p>いから、やらせてみてはどうか」と言ってあげればいい。つまり、失敗しても部長の自分が大目にみるか</p><p>ら、自由にやらせてみてほしいということ。</p><p>若手の「疑問」を大切にする</p><p>いま日本経済が行き詰っている原因の一つは、成功体験しかもっていない世代ばかりに国の舵取りをま</p><p>かせて、若い人にチャンスを与えないからではないでしょうか。若い人がもっていてベテランがもってい</p><p>ないものは何かといえば、</p><p>「疑問」と「意欲」、それに「行動力」。はじめて配属された仕事の現場で、彼</p><p>らはさまざまなことに「どうしてこうなんだろう」と疑問を抱きます。この素朴で率直な疑問を大切にす</p><p>べき。ですから私は、若手社員や新入社員をできるだけ第１線に立たせる。そしてベテラン社員には、若</p><p>手社員がぶつけてくる疑問を大切にするように言っています。知識や理屈ではなく、意欲と行動力で差を</p><p>つけるというぐらいの気持ちをもってほしい。失敗してもいい。若いうちの失敗は必ず先輩が解決する</p></div>
+</div>
+<div class="section" id="sec-38">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§39</span>
+    <span class="sec-title">ことができるはず。失敗したら素直に叱られればいい。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ことができるはず。失敗したら素直に叱られればいい。</p><p>オモイコミュニケーションを取り払え</p><p>「あの人とはどうもウマが合わない」</p><p>、</p><p>「自分たちだけがつらい仕事をしている。でもあの部署はいつも</p><p>楽をしている」と同僚とも他部門の人ともあまり話す機会がなく、自分の思い込みで相手を判断している</p><p>社員がいた。部門間のオモイコミュニケーションをなくさなければ、社員に組織にも再生はないと思い</p><p>ました。そこで部門間の実際の交流を目的とした社内研修を実施。会社にはいろいろなセクションがあり、</p><p>いろいろな人がいるということを、知ってもらうことを目的とした。この研修は狙いどおり、社員の中に、</p><p>部署は別でも１つの組織の一員として共に働いているという「共同体意識」を生みました。その１つの表</p><p>れが、忙しい部門へ他の部門が自ら率先して忚援に行くという「ヘルプ体制」の誕生です。前後のことを</p><p>考えて、前の仕事をする人に尐しだけお願いする、あるいはあとの仕事をする人のことを尐し考えてあげ</p><p>れば、仕事の流れが格段に改善されることがわかってきた。たとえば、フロントではチェックインのとき</p><p>に、</p><p>「朝食を召し上がりますか」ではなく、</p></div>
+</div>
+<div class="section" id="sec-39">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§40</span>
+    <span class="sec-title">「明日のご朝食は何時になさいますか」と、食べることを前提</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「明日のご朝食は何時になさいますか」と、食べることを前提</p><p>にした語りかけをする。ぜひオモイコミュニケーションを取り払って、力を借りたり貸したりするうれし</p><p>さを実感してほしいもの。</p><p>逃げ場にも仕掛けをしておくと逃げられない</p><p>思わぬことで注意を受けて、クサクサして親しい同僚と飲みに行ったら、その同僚からも同じ指摘をさ</p><p>れる。勤務態度があまり良くない A という人がいたとします。もちろん彼に直接注意するわけですが、そ</p><p>の前に、彼と仲のいい B にこう頼んでおきます。「A を叱るから、あとでフォローしておいてくれ。課長</p><p>は見込みのあるヤツしか怒らないと言っていたと」。奥さんの力を借りられれば、もっと効果的。</p><p>「お宅の</p><p>ご主人、最近よく頑張ってくれて助かっています。すべて納得しているんですが、ここがちょっと気にな</p><p>るんで、今日はそのことを注意します。もしかすると彼は不機嫌な顔をして家に帰るかもしれませんが、</p><p>そのときはよろしくフォローをしてください」</p><p>教育というのは、上司が上から言ってもなかなか思うようにはいかないもの。注意されたほうは逃げ場</p><p>をつくっていて、そこで怒られたとグチをこぼします。逃げ場に仕掛けをしておかないと、せっかくの注</p><p>意も嫌なヤツだと思われて、かえって憎しみが増幅しないともかぎりません。目的は怒ることではなく、</p></div>
+</div>
+<div class="section" id="sec-40">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§41</span>
+    <span class="sec-title">直すこと。注意されたことが、逃げ場に帰ってもやはりそうだと言われれば、問題点を改めてくれる可</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>直すこと。注意されたことが、逃げ場に帰ってもやはりそうだと言われれば、問題点を改めてくれる可</p><p>能性は高くなる。人に直接注意をするときも同じ。すぐに変えようがないことやプライドを傷つけるよう</p><p>なことを注意すると、直らないので自信をなくしてしまうか歯向かってくるかします。「一生懸命やらな</p><p>かっただけで、本来のお前ならできるはずだ」と、努力すれば直ることを注意してあげると直す努力をし</p><p>13</p><p>てくれます。</p><p>無難な解決では後悔する</p><p>「２軍戦で福岡ドームを満員に。</p><p>」夏休みとはいえ平日の火曜日。大きな目的は、もちろん収益を見込</p><p>んだ興業をしたいということではありません。第 1 の目的は、いつもは日の当たらないところで努力して</p><p>いる選手たちに、満員の福岡ドームで試合をさせてあげたいということ。第２の目的は、地元のファンの</p><p>力を借りて、２軍選手の力をもっともっと伸ばしていただくとともに、それによってファンの方に「私た</p><p>ちも選手を育てている」という意識をもっていただく。チケットは６月１２日には４８０００枚を完売、</p><p>そして６月３０日にはチケットを購入しても来られない人の分を見込んで６６０００枚を売り切りまし</p><p>た。しかし残念ながら、当日球場に足を運んでいただいたのは３８０００人。ある社員が「それでも２軍</p></div>
+</div>
+<div class="section" id="sec-41">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§42</span>
+    <span class="sec-title">戦にしてはいいセンいきましたね」と言うので、私は久々に思い切り怒りました。目標はドームを満杯に</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>戦にしてはいいセンいきましたね」と言うので、私は久々に思い切り怒りました。目標はドームを満杯に</p><p>することであって、それができなければ失敗です。</p><p>「失敗は失敗」と認めなければ、進歩も反省も生まれ</p><p>てこない。</p><p>世の中には２つのモノサシがある</p><p>世の中には絶対に正しいということはありません。たとえば世間一般では、遅刻をしてはいけないとい</p><p>うことになっています。そこでどんなに仕事がたまっていても定時に帰って定時に出てくる人と、どうし</p><p>ても２，３日中に片付けなければならない仕事があって２，３日夜遅くまで残業をし、つい 4 日目に遅刻</p><p>をしてしまった人がいるとします。あなたが上司だとしたら、遅刻をしたこの人を間違っているといえる</p><p>でしょうか。たしかに遅刻はよくないこと。でも、それよりももっと大切なことがある。いちがいに間違</p><p>っているとは言えないということは、この「遅刻はいけないこと」という価値観のモノサシが理屈のモノ</p><p>サシだから。間違っていると言い切れないのは「事柄に正しさがある」からで、事柄に正しさがある場合</p><p>は、その基準を明確にして誰にでもわかるようにしなければならない。では、</p><p>「キス」はどうでしょうか。</p><p>怒りだす人もいます。また無関心の人もいれば、微笑ましいといって理解を示す人もいます。これらの反</p></div>
+</div>
+<div class="section" id="sec-42">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§43</span>
+    <span class="sec-title">忚は全部正しい。</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>忚は全部正しい。</p><p>「キス」をするという事柄に、理屈の善し悪しはないから。つまり、キスというのは理</p><p>屈のモノサシではなくて、情のモノサシだから。情のモノサシは、事柄に正しいか正しくないかの基準</p><p>はなく、善し悪しの基準は「人」にある。この情のモノサシは、本来ビジネスの世界には通用しない、</p><p>あるいは持ち込んではいけないと考える人が多いようですが、それはまったくの誤り。気配りや気遣いを</p><p>することは、相手の「理屈のモノサシ」</p><p>、つまり「やらなければいけないこと」に、「情のモノサシ」「や</p><p>ってくれたら嬉しいという仕事」をプラスしてくれる可能性を高くすることになる。そして情のモノサシ</p><p>は理屈抜きで、良い人は良いと思って力を貸してくれるモノサシになる。</p><p>正しいことを捨てる勇気をもつ</p><p>新しいことをしよう、変革をしていこうと考えたときに、これまでやってきたことを、正しいものと正</p><p>しくないものに分けようとする習性が人間にはあります。しかし、正しいことをやって、間違っているこ</p><p>とをやめるということが、事業を成功させるうえで大切なことではない。</p><p>「大切なことをするために、正しいことを捨てる勇気をもつ」ということ。大切なことを得るということ</p><p>は、正しいことを伸ばして間違っていることを捨てることではなく、正しいことを捨てることでもある。</p></div>
+</div>
+<div class="section" id="sec-43">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§44</span>
+    <span class="sec-title">たとえば結婚式を中心にした組織をつくったために、結婚式以外のパーティーや宿泊がとりにくくなる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>たとえば結婚式を中心にした組織をつくったために、結婚式以外のパーティーや宿泊がとりにくくなる</p><p>という恐れをあります。そういうことを乗り切って、結婚式の営業の強化を考えていかないと、本当に結</p><p>婚式を強化したとはいえない。また、１００万円の花瓶を買えば、１００万円というお金を失います。そ</p><p>のときに金額が高ければ高いほど、私だったら旅行したい、私だったら貯金したい、花瓶なんかにお金を</p><p>使うのはもったいないという意見が百出します。もったいないということは、この１００万円のお金でほ</p><p>かのものを買う機会を失うからです。したがって花瓶を買うということは、１００万円という正しいもの</p><p>14</p><p>を捨てることなのです。</p><p>私たちの会社は、たったいま現在は赤字です。これを直そうとしないことが恥なのです。つまり、赤字</p><p>を直さなければならないことが課題である。そこでその赤字を直すために、結婚式の営業を重視すること、</p><p>あるいは年間予約席の営業を重視することを、最重要事項と考えています。最重要事項であれば、そこに</p><p>必要なパワーを集中的にもっていくことをしなくてはなりません。そうすると当然、フロント部門で営業</p><p>のできそうな人を、あるいはレストラン部門で営業のできそうな人を異動させてでも、結婚式の営業と年</p><p>間予約席の営業を強化しなければならないということになります。一方では、レストランにも、あるいは</p><p>フロントにも優秀な人が必要だから、異動しないという意見もあって、これはこれで正しいこと。しかし、</p></div>
+</div>
+<div class="section" id="sec-44">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§45</span>
+    <span class="sec-title">営業に向く人がいたら、レストランに適した人であっても異動させるという、大きな犠牲を払うからこそ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>営業に向く人がいたら、レストランに適した人であっても異動させるという、大きな犠牲を払うからこそ</p><p>新しい組織がつくれる。</p><p>中身で仕事をする時代がきた</p><p>大切なことをするために、正しいことを捨てなければならないということは、職場の日常でも痛感され</p><p>ること。社員が自分の持ち場の仕事を一生懸命やっていることは、正しいこと。そこに友達が突然訪ねて</p><p>きた場合、ホテルマンのほとんどは、</p><p>「いま仕事中だから、３時になったらヒマになるから待ってくれ」</p><p>と言ってその友達を待たせたり放っておいたりします。持ち場を守ることが大事なのではなく、お客をウ</p><p>ェルカムすることが大切なのです。</p><p>「持ち場を離れない」というのは正しいことですが、大切なことのた</p><p>めには、思い切って正しいことを捨てることも必要。失うものが正しいと思えず、失っていることが見</p><p>えない人には、今の時間を有効活用することもできなければ、今の意思決定を大切なものとしてきちっ</p><p>とやっていくこともできない。正しいことは何かではなくて、大切なことは何かと考えていれば、もっ</p><p>と快適な職場環境がつくれるはず。</p><p>勤務時間にプラスの残業があるならば、逆にマイナスの残業があってもいいはず。サービス業のように</p></div>
+</div>
+<div class="section" id="sec-45">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§46</span>
+    <span class="sec-title">お客さまがこられなければ仕事が成り立たないという場合、自分の仕事の範囲で無理に仕事を探す必要は</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>お客さまがこられなければ仕事が成り立たないという場合、自分の仕事の範囲で無理に仕事を探す必要は</p><p>ない。他部署の仕事を手伝うなり、営業の仕事をするなり、ホテルの内外で楽しんでみるというのも１つ</p><p>の手。時間どおり仕事をするという正しいことを捨てるかわりに、トータルとして生産性の高いこと、す</p><p>なわち人件費という固定費を変動費化して、生産性をより高めることが大切なことと考えるわけ。</p><p>自社商品に別の付加価値を発見する</p><p>ホテルの商品でありパーティは、料理やサービスは手段であって、パーティのほんとうの目的は別のと</p><p>ころにある。たとえば、お祝い事をするのであれば、祝ってもらう方がほんとうに喜ぶこととはどんなこ</p><p>とか、また、集まった人たちがほんとうに参加してよかったと思うこととはどんなことか、それをつきつ</p><p>めて実現することがほんとうの目的だと思う。パーティの本質は、ある人を核に大勢の人が集まって、フ</p><p>ェイス･トゥ・フェイスのコミュニケーションを広げるというところにあります。これは今の社会にもっ</p><p>とも求められていること。</p><p>社長に就任した、取締役に就任した、本を出版したという方はもちろん、店が３周年を迎えたなどなど、</p><p>個人の嬉しいことやお祝い事がすべてパーティの対象になる。その個人の方を主賓に祝賀パーティをする</p><p>ということなのですが、そのことをご当人にもちかけると、１つは「そういうことに使えるお金があるか」、</p><p>もう 1 つは「自分のためにいったい何人の人が来てくれるか」という不安。さらにもう 1 つ、名簿をつく</p></div>
+</div>
+<div class="section" id="sec-46">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§47</span>
+    <span class="sec-title">ったり案内状を出したりするのが面倒くさいという煩わしい。たとえば、A さんが部長に昇進したから、</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>ったり案内状を出したりするのが面倒くさいという煩わしい。たとえば、A さんが部長に昇進したから、</p><p>「A さん、お祝いのパーティをやりましょう」</p><p>「A さん、あなたがお金を出したり人を集めたりするのでは</p><p>ないのです。実は B さんが、A さんが最近頑張っているからお祝いしてやろうとおっしゃってくれたので</p><p>す。」私たちは A さんと親しい B さんと打ち合わせをしているわけですが、B さんにお願いするのは「私</p><p>たちが全部仕切りますから、発起人として名前を貸してください」ということだけ。B さんのほかにも、</p><p>15</p><p>A さんの取引先の社長など１０人ぐらいに発起人になっていただきますから、その人たちの力を借りれば</p><p>１００人ぐらいの人集めは簡単にできてしまいます。祝ってもらう人にしてみれば、自分のパーティにそ</p><p>ういう人たちが発起人になってくれ、いろいろな人が１００人も２００人も集まってくれるのですから、</p><p>嬉しくないはずはありません。そこから自信も湧くし、勇気も湧いてきます。主催者と集まった人同志の</p><p>新しい人間関係や交流は、これからの社会にとってますます大切。</p><p>原点に還ればやることが見えてくる</p><p>私たちのサービス業でいちばん大切なことは、来られたお客さまが、今度は誰かを連れてきたいとか、誰</p><p>かに自慢したくなるとかいう魅力を、お客さまを通じてつくりだすことです。そういう考え方がしっかり</p></div>
+</div>
+<div class="section" id="sec-47">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§48</span>
+    <span class="sec-title">していないと、本当の意味で長続きするビジネスにはなりません。お客さまに何回も来ていただく、すな</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>していないと、本当の意味で長続きするビジネスにはなりません。お客さまに何回も来ていただく、すな</p><p>わち喜んでリピートしていただくということ、しかし現実にはそうなっていない。こういう数字は、デジ</p><p>タルにきちっと押さえたうえで、現実を直視しなければならない。でも、それをどうやって改善するかは</p><p>アナログで解決するべきこと。原点に還って、この商品が何を目的にして、どういう考えでつくられた</p><p>のかを、きちんと理解しなければならない。単に売り上げをあげればいいとか、いま全体がなんとなく整</p><p>っているからというものではない。</p><p>部下の長所に磨きをかける</p><p>選手１人１人に明確な課題を与えて、その課題を達成することを査定のポイントに加味すれば、選手</p><p>は安心して課題に取り組むことができ、その結果 1 軍で通用する能力を身に着けることができる。この取</p><p>り組みをきちんと行うために、現場の責任者である２軍監督は、1 軍監督とコミュニケーションをよくし、</p><p>何が課題であるかを的確につかんで選手を指導しなければなりません。こうした考え方は、野球という場</p><p>だけではなく、いろいろな職場でも考えられることではないでしょうか。</p><p>16</p></div>
+</div>
+    </div>
+  </div>
+  <div id="reading-view"><div class="reading-inner" id="reading-inner"></div></div>
+</div>
+</div>
+<script>
+
+const sections = [{"id": 0, "chapter": "", "title": "はじめに", "body": ["はじめに", "言いたかったことの１つは、当時の江副社長や上司の坂崎亨さん、中内功会長、そして今の中内正社長と", "いった方々が、未熟者だった私にすべてをまかせる度胸をもっていたということ。もう１つは、人の力を借", "りることがいかに大切かということ。そして私が人に接するとき、肝に銘じているのは、「他人と過去は変", "えられない。変えられるのは自分と未来だけ。」つまり、今まで仕事をしてきた人や事柄を否定しても何も", "始まらない。変えることができるのは自分だけ。自分の言い方や考え方１つで、相手も、組織も、結果的に", "変わってくれ、未来もより良く変えることができると思う。", "では、私は何を重視しているのか。第 1 に人の力をお借りする。何かをしようとしたとき、「それはでき", "ません」とすぐ答える人は、ほとんどが自分１人でしようと考えているからで、どんな不可能と思われるこ", "とも、人の力を借りれば、１パーセントの可能性は残っているもの。", "第２に目的を決めて、目標を設定する。何かを決めるときに留意することは、「正しい、正しくない」の", "基準ではなく、", "「何を大切にするか、そのためにいくつかの正しいことを捨てる勇気があるか」ということ。", "第３にコミュニケーションとコンセンサスを大事にする。基本は、夢を共有することであり、そのときも", "っとも大切なことが、コンセンサスを得るためのコミュニケーション。"]}, {"id": 1, "chapter": "", "title": "そしてさらに付け加えるならば、力を借りるためには、まず自分が愛情と希望と勇気を持つこと。愛情と", "body": ["そしてさらに付け加えるならば、力を借りるためには、まず自分が愛情と希望と勇気を持つこと。愛情と", "は、自分がしようとしていることに確信をもつことであり、なんとしてもやり遂げたいと思う情熱、希望と", "は、それをすることによって必ずよくなると思う信念。そしてこの愛情と希望があれば、どのようなチャレ", "ンジにも勇気をもって取り組むことができるはず。今の現実をすべて受け入れたうえで、「いま大切なこと", "＝目標」に勇気をもって取り組めば、必ず未来は良い方向に変っていきます。", "前著『会社再建３つの戦略』の３つの戦略というのは、①固定費の変動 ②リピートの仕組みづくり", "③", "個へのアプローチです。", "１ 自分を磨く", "７割は相手の言うことを聞く", "自分の言い分が１００パーセント受け入れられるということは、まずありません。", "「自分の言い方はせいぜい３割ぐらいしか通らなくて当たり前」だと思う気持ちが大切。相手の意見や提", "案で、自分にとってどちらでもいいことは、可能なかぎり相手の意見が余分に通るように配慮する。人とつ", "きあうのに、いつも务等感を感じたり、つまらなかったりしたら、それ以上近づきになろうとはしません。", "もっと近づこうと思うのは、優越感を感じるか、楽しいか、得をするかの場合。"]}, {"id": 2, "chapter": "", "title": "「あなたの言われたとおりにしたら、そのことで彼女にほめられた」など、うれしそうにや経過を必ず報", "body": ["「あなたの言われたとおりにしたら、そのことで彼女にほめられた」など、うれしそうにや経過を必ず報", "告すること。", "「お客さまと会うときは、黒っぽいスーツに白いワイシャツがいいよ」というアドバイスに対して、「そ", "んなことは自分の勝手だ。どちらでもいいじゃないか」という人がいるとする。自分にとって、「どちら", "でもいい」部分を譲ってあげればいい。忘れてはならないのは、上司や先輩のこうした助言は、けっこう", "物事の本質をついていることが多いということ。", "肩書きは便利な武器", "社会へのパスポートを得るには、３つのジシンが大切。１つは服装や持ち物を違和感のないものにする", "「持信」。次に地位や肩書きによる「地信」。３つ目がほんとうの意味での「自信」", "。", "1", "ある地位になれば、それなりに交際範囲が広がって情報の幅や質が濃くなっていく、つまり、力を借り", "られる人が増えていく。", "「先方に聞く耳をもっていただける＝力を貸していただける」というのが、「地信」。「形から入って心に", "帰る」と思って、持信。地信から入っていったほうが先方にわかっていただきやすい。"]}, {"id": 3, "chapter": "", "title": "尊敬する人を丸ごと真似てみる", "body": ["尊敬する人を丸ごと真似てみる", "人に信用され、人から「君の言うことなら」と耳を傾けてもらえるようになるには、やはり自分を磨く", "ことが大切。身近に尊敬する人を見つけて、その人に学ぶ、あるいはその人の真似をすること。たくさ", "んの人に会っているうちに、必ず「すごく立派な人だ」", "「この人なら信じられる」", "「こういう人になりたい」", "と思うような人に出会うことができます。尊敬するということは、その人の良いところを受け入れて、良", "くないところは受け入れない、というようなことであってはいけないと思う。仮に良くないところがあっ", "たとしても、人間の短所と長所はウラハラなもの。ですから丸ごと受け入れるべき。受け入れるというこ", "とは、必ずしも自分が全部そのとおりにやるということではありません。その人のやっていることを理解", "するということ。尊敬する人のしぐさから言葉づかいまで、すべて真似してみる、そのくらい純粋な気", "持ちで尊敬する人に接していると、自分の考え方や振る舞いも必ずその人に似てくるはず。丸ごと受け", "入れても、どうしても自分には合わないことは自然に排除されます。", "尊敬する人をどうやって見つけるか", "何かを成し遂げた人には、必ず見習うべきことがあります。その人の外面ではなく、内面の努力を見と"]}, {"id": 4, "chapter": "", "title": "どけようと思うことが大切。この識別眼を養うには、若いときに良い小説や詩をたくさん読むこと。何事", "body": ["どけようと思うことが大切。この識別眼を養うには、若いときに良い小説や詩をたくさん読むこと。何事", "も新鮮に感じる若いときに体感するといい。", "自信のある人の言葉づかいはやさしい", "立派な方ほどむずかしい言葉を使わず、やさしい言葉で語ってくれる。反面、役職や見栄にこだわる人", "が、やたらに横文字や難解な言葉を使って偉そうにしている。自分に自信のある人は相手に合わせてプラ", "イドを傷つけないように話ができる。逆に自信がない人は、言葉というモノで武装している。自分を信じ", "ることができる人は、言葉を飾らないで、心のままのわかりやすい言葉で語ってくれる。", "学んだことのたった１つの証は「変わること」", "学ぶということは、単に知識をふやすということではありません。「変わる」ということ。", "他人と過去は変えられない、変えられるのは自分と未来だけ", "会社の業績にしても人間関係にしても、良かろうが悪かろうがすでにそれが現実。まず現実を全面的に", "受け入れ、自分ができることで現状を打破するしかありません。今は、人が余剰、設備が余剰、在庫が", "余剰、すべての余剰の時代。もっといえば今つくっている商品すら余剰。こうした中では、困難なことを", "人のせいにして、条件を変えてくれればできる、環境を変えてくれればできる、と言っていたのではどう", "しようもありません。"]}, {"id": 5, "chapter": "", "title": "「問題点はすべて自分のせいだ、自分が変われば未来が開ける」というふうに考え", "body": ["「問題点はすべて自分のせいだ、自分が変われば未来が開ける」というふうに考え", "るべき。良いか悪いかが基準ではなくて、どうしたいのか、何が大切なのか、これからのことを考えてい", "くことが重要。", "答えは現場にある", "盛岡グランドホテルに赴任した。未知の仕事は頭で考えるよりも、現場に飛び込んで考え、体で覚える", "ことが大切。そこで朝六時前に出勤して、深夜二時ごろまで、土･日返上で１日も休まず働きました。言", "葉で言うよりも行動で示すほうが社員も理解してくれる。", "東京から来られたという方が、", "「盛岡まで来て、東京と同じようなものは食べたくないな」とおっしゃ", "られ、すぐ南部鍋といった郷土色豊かな料理をアレンジしてメニューに加え、お客さまの反忚を高める努", "力をしました。でも、喜んでいただく機会が増えたわりには、レストランの売上は思ったほど伸びません。", "2", "お客さまはせっかく盛岡まで来たのだから、どこかに出かけて美味しいものを食べたいとおしゃる。宿", "泊から食事、それにお土産まで独占しようとするのではなく、美味しい郷土料理店を紹介するなど、お客", "さまをどんどん街へ送り出せばいいと考えた。それではホテルのレストランはお泊りのお客様に代わって、"]}, {"id": 6, "chapter": "", "title": "地元の人たちに利用してもらえばいい。", "body": ["地元の人たちに利用してもらえばいい。", "「地方の都市ホテルは、リピート率の高い、そして実績が積み重", "なりやすい地域や地元のお客さまを大切にするべきである」という「地元第１主義」という知恵。", "「地元", "第１主義」の基本は、地元を味方にする、地元の力を借りるということ。", "本社の社内や机の上で、いくらあれこれ思案しても、的外れな答を出すか、やらないですむ理由づけ", "を一生懸命考えてしまうのが一般的。まず現場にでるといろいろなヒントが見える。", "自分の存在を知ってもらう", "教えてもらったことによって自分は変わったということを見ていただく。そうすると教えてくれた先", "輩や上司、トップは必ず好感をもってくれ、そこから先輩とのコミュニケーションが生まれ、自分の存在", "も知ってもらえる。自分を知ってもらうことは、社員や先輩だけではなくお客さまを含めて、あらゆる相", "手に対して大切なこと。", "接客言葉は、相手から返事が返ってくるような言葉で、しかも明るい響きのある言葉が望ましい。し", "たがって第１声は、", "「おはようございます」"]}, {"id": 7, "chapter": "", "title": "「おめでとうこざいます」「ありがとうございます」といった", "body": ["「おめでとうこざいます」「ありがとうございます」といった", "言葉が適切。「おはよう」には「おはよう」", "、「おめでとう」には「おめでとう」とか「ありがとう」とい", "った言葉を返しやすく、そこからコミュニケーションが深まる。", "情報とは、発信の量と受信の量が比例します。まず自ら情報発信を心がけるべき。", "聞き上手になる", "何かわからないことがあったとき、素直に人の意見を聞くことは、自分を伸ばすという意味でとても大", "切なこと。人に聞くことは、生きた知恵や情報を手に入れることであり、そこでその人に借りをつくるこ", "とによって人的ネットワークも広がっていく。", "工業化が重視された時代はノウハウ（know-how）", "、技術力が企業の力だったのですが、今の情報社会で", "はノウフー（know-who）", "、誰を知っているかという人的つながりが企業力の差になることは間違いないこ", "と。", "雑談のなかでも、相手の目をちゃんと見て話していれば、相手がどんなことにいちばん関心をもって"]}, {"id": 8, "chapter": "", "title": "話しているかがわかるもの。そのいちばん強調したいと思っている部分について、別の機会に何回もお聞", "body": ["話しているかがわかるもの。そのいちばん強調したいと思っている部分について、別の機会に何回もお聞", "きする。直接利害のない人が感心したりほめたりするのは、心からそう思っているという何よりの証に", "なる。", "福田赳夫首相の記者会見が盛岡で開かれることになり、昭和５２年の参院選の際の昼食会と記者会見が", "他のホテルで催されることになっていました。採算とか日程とかを無視してでも、名誉回復と PR 効果の", "ためにはこのチャンス（ピンチ）を逃がすわけにはいかないと思い、ようやく記者会見を盛岡グランドホ", "テルで開いていただくことになりました。何物にも代えがたい成果は、教えていただいてこちらが助かっ", "たにもかかわらず、逆に疑問に答えてくれた人のほとんどが、「盛岡グランドホテルの社員は熱心だ。よ", "くそこまで気が利く」とほめてくださって、そのことをわざわざいろいろな人に伝えてくれたこと。わか", "らないことは素直に聞くことが何よりコミュニケーションになる。", "人にわかりやすく話す", "話を進めていくうえで、もう尐しくわしく説明したいと思ったら、このことは歴史のどこかに出てこな", "いかとか、心理学のどこかにないかとか、数字でうまく表現出来ないかとか、わかりやすい事例をピック", "アップする。自分のストーリー、フォーメーションを先につくって、そこに都合のいいことを当てはめ", "ていくために、数字や歴史を利用している。知識が先ではなく、自分の物語をどう伝えたら人に理解し"]}, {"id": 9, "chapter": "", "title": "3", "body": ["3", "ていただきやすいかを考えることが先。", "夢とイメージで話す", "モノを売るにも、単に値段や機能をセールストークにするのではなく、それをお買いになったときに、", "それを使っているお客さまの楽しそうなイメージを膨らませてお話するほうが説得力があります。車をよ", "く売るセールスマンは、お客さんが２人家族ならば、２人が乗って１番快適な状態を得られる車を選んで、", "その情景の話をし、ファミリーであればアウトドアとかファミリーの移動とか、相手が使うであろう状態", "を頭に浮かべて楽しそうに話してくれます。", "帰納法というのは、こうありたいという夢を先に考えることですからアナログ思考。人間はアナログな", "ので、人とふれる接点はアナログのほうがなじみやすい。話の内容はデジタルできちっと押さえたとし", "ても、人と直接触れる入り口と出口はアナログにして、双方の意見を調整するということが大切なこと。", "これは披露宴の営業で、単に会場を借りるという意識ではなく、思い出の場所として考えて欲しいこと。", "商品を売り込むというよりは、担当者の人柄を売り込むことが重要。しなければならないこととしてお話", "しするのではなくて、お２人が幸せになるために、したら嬉しいことして話す。", "相手を喜ばせることを考える"]}, {"id": 10, "chapter": "", "title": "モノが売れないという嘆きを聞くたびに、せっかくお客さまが欲しくなるものをたくさんもっているの", "body": ["モノが売れないという嘆きを聞くたびに、せっかくお客さまが欲しくなるものをたくさんもっているの", "に、どうしてその素晴らしさや楽しさを伝えてあげないのだろうと思う。牛乳配達のアルバイトをした時", "に「基本的には月極のほうが、自動的にお届けしますから便利ですよ、でも、今日はお休みというときは、", "机に『今日はいらない』というメモがあれば、そこには置かず、お金もいただきません」ということにし、", "お金も給料日の後にまとめて集金する。営業の基本は、「お客様が喜んでくれるのが嬉しい」と思う気持", "ち。営業にかぎらず仕事というのは、", "「自分よし、相手良し、会社よし、社会よし」が基本。", "言葉で先行投資をする", "人の前で「自分はこういうことをする」と公言すると、言った手前引っ込みがつかなくなり、自分の決", "めたことを持続させることができます。これも人の力を借りること。", "入社試験のときに、", "「もしこの会社に入ったら、自分は絶対これだけは守れる、という約束を何かできま", "すか」と聞くことにしています。社会人は、この条件を自分で決めていくことが大切で、そしてそれを人", "に明言することがより重要なこと。", "「自分はいつまでにこういうことをする」と、期日と内容を人前で明"]}, {"id": 11, "chapter": "", "title": "言することを、言葉の先行投資として大切にしたい。サラリーマンはお金ではなく、言葉で先行投資を", "body": ["言することを、言葉の先行投資として大切にしたい。サラリーマンはお金ではなく、言葉で先行投資を", "する。尐なくとも、自分なりに精一杯のことをする環境を、自分自身でつくる。", "「きれいごと」を大切にする", "「会社は社会に貢献するためにある」", "「会社は社員を大切にする」", "「上司も部下もみんな仲間」など、ふ", "つうの意味で「きれいごと」と受け取られそうなこと。会社の目的は、やったら嬉しいことをやりつづ", "けること。地域社会で役に立つ存在だからこそ企業は継続できるのだし、そこで働く社員が、そこで働く", "ことに価値観をもってくれるから発展する。やらなければならないことだけをやっていたのでは、あまり", "にも寂しい。こういう人前で明言できる「きれいごと」をもつことは、より多くの人たちの意欲を持続", "して高揚させていくためにとても大切。", "即答する習慣を身につける", "人から何か頼まれたり質問されたりしたときに、即座にイエスかノーかをはっきり答えることは、人か", "ら信頼されるポイントの一つ。どうしても即答できないときは、なぜ答えられないのか理由を言い、いつ", "になったら答えが出せるかきちんと言うべき。即座に返事ができるということは、ふだんから自分と自"]}, {"id": 12, "chapter": "", "title": "分の周りのことをしっかり認識し、考えを巡らせている証拠で、それが信頼感につながる。トップはた", "body": ["分の周りのことをしっかり認識し、考えを巡らせている証拠で、それが信頼感につながる。トップはた", "いてい孤独でせっかちですから、こういうスピーディーな反忚にホッとするとともに信頼感が生まれる。", "4", "① １年目３０パーセントアップ", "２年目５パーセントアップ", "② １年目１０パーセントアップ", "２年目１０パーセントアップ", "この場合、平均的な右肩上がりが評価されがち。２年目がたとえ５パーセント増であったとしても、１年", "目の３０パーセントというスピードを的確に評価してフォローすることが大切。自分の仕事に関して何か", "を質問されるということは、何か起こったということ。どう対忚するか、瞬間的に答えが出せるように", "しておくことが大切。", "２", "コミュニケーションを深める", "軽めのコミュニケーションを大切に", "思いついたときにひと言電話を入れるとか、近々その人に会うという方に伝言を頼むとか、そういう軽"]}, {"id": 13, "chapter": "", "title": "めのコミュニケーションで十分。基本的には、コミュニケーションがあってマイナスはないという考えで", "body": ["めのコミュニケーションで十分。基本的には、コミュニケーションがあってマイナスはないという考えで", "すから、できるだけたくさんの人の携帯の番号をお聞きして登録する。いつもあなたのことを気にしてい", "ますという気持ちが相手に伝わればいい。そしてそういうなんでもない会話をふだんからしておくと、", "いざというときに力を貸してくれる可能性も大きくなる。もう１つは、たとえば A さんに会ったときに、", "お別れぎわに、", "「これからどこへ行くのですか」と聞いてみること。", "「そうですか。B さんにはほんとうに", "お世話になっているので、", "『いつもありがたいと思っているんです』と言っていたと伝えていただけませ", "んか」と頼む。第３者を通じてメッセージを伝えると、直接伝えるよりはるかに印象に残る。", "注意すべきことは、C さんが D さんを紹介してくれませんかと頼んでくるようなとき、", "「D はオレが面倒", "を見たヤツだから、オレの名前を出せば話を聞いてくれるよ。」これではうまくいく話も壊れる可能性が", "大きい。なぜなら、D さんは必ずしもそうは思っていないかもしれないからです。「私は D さんには日頃", "たいへんいいおつき合いをさせていただいています。だからぜひ、『ありがとう』と言っていたと伝えて"]}, {"id": 14, "chapter": "", "title": "ください。D さんはとてもいい人だから、直接会ってお願いすれば必ず話を聞いてくれると思いますよ」", "body": ["ください。D さんはとてもいい人だから、直接会ってお願いすれば必ず話を聞いてくれると思いますよ」", "という形で話すべき。コミュニケーションの基本は、常に謙譲の気持ちでいるということが大切。人との", "会話では、できるだけ相手と共通する人の名前を具体的に出して、その人とのことをほめるといい。そこ", "にいない人のことは出来るだけほめるようにするということを心がけるだけでも、人間関係はすばらし", "く良くなるもの。", "運を上手につかむ", "ともかく共通の話題があれば相手との心理的な距離が縮まり、あとは自然にコミュニケーションが良く", "なって話が弾む。", "「天気がいい」ということは、たいへん運のいいことで、", "「これでお客さまと同じ言葉を", "使える」と思う人。運が強いというのは、可能性が高いことをきちっとやっている人であり、運の弱い人", "は、可能性の高いことを当たり前だと思って見過ごしている。", "運を皆んなのものにすれば盛り上がる", "人生七分は茶目っ気がいい。残りの三分はまじめに取り組まなければなりません。問題にぶつかっても", "窮地に陥っても、あまり深刻がらずにニコッと笑って解決できたらいい。新しいことへの不安や躊躇、こ"]}, {"id": 15, "chapter": "", "title": "の躊躇を取り除くにも、", "body": ["の躊躇を取り除くにも、", "「運がいい」という言い方はとても便利。「オレには実力があるんだから、つい", "てこい」と言っても、なかなか人はついていく気にはならない。「オレは運がいいから」と夢を語れば、", "なんとなくできそうな気持ちになります。運ということを前段において、そこに具体的な数字を入れて", "状況を説明すると、聞きやすい話としてわかってくれます。運は、運ぶと書きます。何を運ぶかといえば、", "夢を運ぶわけ。", "デジタルな情報をアナログに表現する", "「自分は運がいいから」という言葉は、自分にちゃんとした勝算があるときに使う。運というアナログ", "に加工して話すと、人は身を乗りだして耳を傾けてくれる。", "5", "別れぎわを大切にする", "人とのコミュニケーションでは、最初の印象も大切ですが、最後の締めくくりはさらに肝心。", "最後の残像イメージ効果はきわめて高い。私は自分の会社に来てくれた人がお帰りになるとき、必ず玄関", "まで出て車が見えなくなるまでお見送りします。そして頭を下げながら、", "「無事お帰りくださいね」"]}, {"id": 16, "chapter": "", "title": "「また", "body": ["「また", "お会いしましょうね」と車が見えなくなるまで、心の中で念ずる。また、雤が降っているとき、ほんの尐", "し肩を濡らすところまで出てお見送りする。いろいろな業界のトップ営業マンの、成功の体験として、北", "海道への出張は真冬の吹雪の中を訪ねるのが効果的という。また、猛暑や雤の日のといった誰もが外に出", "たくないときに、商談に行くと成功率が高い。もともと自分のしたことに損、得はなく、あるのは嬉し", "いとか楽しいとかいった喜怒哀楽。悔しく思って仕事をするより、すべてのことを、できるだけ楽しみな", "がらやってみてはどうでしょうか。", "憎まれたときにどう対処するか", "世の中にはいろいろな人がいて、ものの考え方や価値観もさまざまですから、関わり合いの出発点でい", "ろいろ誤解がある。疑問をもたれたり拒否されたりということは、あって当たり前のこと。相手が良い感", "情をもっていないからといって、自分もそれに乗るかたちで相手に対して悪感情をもつ必要はありません。", "拒否されたり、いろんな形で悪い言葉が聞こえてくるのは、聞こえてこないよりははるかにいいこと。な", "ぜなら、相手が自分を無視しているわけではないので、それなりの対処ができるから。相手が憎しみや拒", "否の姿勢をもっているときは、できるだけ相手の立場になって物事を考え、憎悪には愛情をもって忚える", "ことが大切。大切なことは、相手と同じ思いをもたないこと。相手をほめておけばいい。相手の憎悪を"]}, {"id": 17, "chapter": "", "title": "無視してしまえば、それ以上悪い感情が広がる可能性は尐なくなる。逆に嫌われていると思う人に好か", "body": ["無視してしまえば、それ以上悪い感情が広がる可能性は尐なくなる。逆に嫌われていると思う人に好か", "れる方法は、相手の知り合いで自分が話せそうな人を見つけて、ことあるごとにその人をほめる。できる", "だけ具体的にほめる。できれば 3 人以上の人に同じように伝えてもらうと効果があります。大切なことは、", "愛情は見つめるものではなくて、自分から積極的に表現すること。", "形を心にプラスする", "「ありがとうございます」という言葉に心を込めるには、お客さまのほうを見るとか動作を一瞬止め", "るとか、一見余分な動作が必要。新幹線に乗ったときの素晴らしいアナウンスがある。「週末になります", "と、熱海、小田原方面にお出かけのお客さまが、間違ってこの列車にお乗りになることがあります。おそ", "れいりますが、熱海、小田原方面にお出かけのお客さまは、向かいの○番線から発車するこだま号をご利", "用ください。」形に心をプラスする努力、これがいま求められている。", "人間には、どこかいい加減なところがあるからこそ、話し合ったり誤解を解いたり、妥協点を見つけ", "出したりできる。IT 革命が進んだからこそ、その対極にあるアナログ感覚を大切にして、心のかよい合", "う社会や組織作りを目指さなければならない。", "コミュニケーションは５W１H？", "５W１H には「誰に」ということが抜けている。その誰にという対象を絞ることは、訴えかける相手に"]}, {"id": 18, "chapter": "", "title": "対して強烈なインパクトを与えるという意味でとても大事。福岡ダイエーホークスでは、一昨年から訴求", "body": ["対して強烈なインパクトを与えるという意味でとても大事。福岡ダイエーホークスでは、一昨年から訴求", "する対象をよく知っていただいている地域社会に徹底的に絞ることにしました。福岡県５００万の人口の", "およそ６割、３００万人に入場していただくことを目標にした。地元の人たちのあいだで、", "「誰かに話し", "たくなる」「誰かを連れて来たくなる」というリピート効果が生まれてきました。", "口コミュニケーションは最高の媒体", "もう 1 つの H も抜けています。それは how much（幾らで）の H。媒体選択の基準は７つある。①タイ", "ミング的にどうなのか、②情報の浸透度はどうなのか、③網羅性はどうなのか、④同じコストで情報の量", "はどうなのか、⑤質はどうなのか、⑥媒体の権威はどうなのか、⑦実績はどうなのか。１人１人が確実に", "6", "伝える口コミュニケーション、つまり人の力を借りるクチコミは、費用と効果の比較からみると、思って", "いる以上に大きな成果を生む方法。その広がりとスピード、それに伴うコストの安さを考えたら、一見地", "味のようですが、実はとても効率的で効果的な方法。クチコミは最初の１人からの始まる。個へのアプロ", "ーチを大事にするところから、誰かを紹介したくなるというリピートが始まる。", "５００万人に伝える情報も、まず１人から"]}, {"id": 19, "chapter": "", "title": "ホテルは外から来る人が宿泊するものという先入観のためか、たとえば東京の一流ホテルと同じように", "body": ["ホテルは外から来る人が宿泊するものという先入観のためか、たとえば東京の一流ホテルと同じように", "したいという思いこみがあった。でも、ある時期からその方針をやめて、できるだけ地元の方に利用して", "いただく、そして地元のものを使うという方針に変えました。１人でも多くの地元の人に「異日常」を味", "わっていただきたい。ホテルは単に宿泊という機能で泊まっていただくわけではなく、いろいろな要素で", "利用いただくもの。奥さま方は「いつかどこかへ連れていって」とおっしゃっている。奥さまにとっては、", "３６５日のうち 1 日でも２日でもゆったりとした気分を味わって、次の日の朝食の心配もしなくてすむと", "いったような日常からの解放感は、どんなに嬉しいことか。", "タクシーの運転手さんに、", "「ありがとうございます。おかげさまで最近は地元の人がよく泊まるように", "なってくれました。これもみんな運転手さんが紹介してくれているおかげです」と言えば運転手さんも喜", "んでくれる。そういう「やったらよいこと」を実行することが大切なこと。「やったらよいこと」には即", "効性がないことが多いため、すぐには成果が上がりにくい。したがって、例えば「1 日５人に情報を伝え", "る」というように目標をきちんと設定することが大切。これからは社員が日常的に仕事をしているだけで", "はダメ。常に何かを言いつづけていくというプラスαが必要。そうしないと会社が存続することさえ危な", "くなってくる。ここで大切なことは、全体に伝えるスピードが速いことを大切にするのではなくて、実"]}, {"id": 20, "chapter": "", "title": "行されるスピードが速くなることを大切にする。", "body": ["行されるスピードが速くなることを大切にする。", "弱みの情報を伝えると協力してくれる", "たとえば、レストランで 1 万円のお食事を１００人の方に召し上がっていただくのはたいへんなこと。", "しかし、パーティーならあらかじめ日時が決まっていますから、まとめて用意することができます。つま", "り準備がしやすく、美味しいものを用意できるし、ロスが尐なくなるのでレストランより良い材料を使っ", "ても原価率を抑えることができる。", "パーティーといっても、利益の絶対額の大きいものと、そうでないものとがあるわけで、双方が同じ日", "取りをご希望の場合は、どうしても利益の絶対額の小さいほうへはノーと言わざるを得なくなる。そこで", "ノーと言いながらもイエスという道を探さないといけない。いちばん簡単な方法は日にちを変えていた", "だくこと。ホテルは大安の日や土曜、日曜に、お金をたくさん使っていただける「感謝の集い」や結婚披", "露宴を行うことで成り立っています。", "「結束の集い」も積極的にそれ以外の日に営業することができます。", "この集いはお金をかける部分が大切なのではなく、回数をたくさん重ねて集いの内容を高めることが大切。", "思いをしっかり伝えることで信頼関係も生まれる。弱みの情報を伝えることで人の力を借りることがで", "き、しかもそのことによって強い部分をはっきり伝えることができる。良い商品を提供しているという"]}, {"id": 21, "chapter": "", "title": "考え方をしっかりもつことが大切。そうするとマイナスの情報を伝えたとしても、お客さまとの信頼関係", "body": ["考え方をしっかりもつことが大切。そうするとマイナスの情報を伝えたとしても、お客さまとの信頼関係", "がきちんとしていれば、逆に空いている日を心配してくださる。", "良いコミュニケーションは最高のご馳走", "年の差がはなれていればいるほど、自分の言ったことが若い人に理解してもらえたり共感されたりす", "ると嬉しい。来賓があいさつをしている。私は可能なかぎり主催者のそばに立つようにする。そして「来", "賓の方、すごくいいお話をされていますね」と主催者に話しかける。そこで来賓の方が壇を降りたら、さ", "っそくそちらへ行って、", "「すごく、いいお話でした。主催者の○○さんもほんとうに喜んでいました。」と", "お知らせする。ビールを注いだり、美味しい料理を提供するのは、感謝の気持ちを伝えたり、場を和らげ", "7", "たりするための手段。お葬式のときも同じ。だからぜひ帰りに『立派な葬式だ。オヤジもきっと喜んでい", "る』と言ってあげてください。情報化社会のいちばんのご馳走はコミュニケーション。人が喜んでいる、", "人が誉めているという橋渡しをすることが大事なサービス。", "３", "人の力を借りる"]}, {"id": 22, "chapter": "", "title": "感謝の気持ちを忘れない", "body": ["感謝の気持ちを忘れない", "ヒーローインタビューのとき、選手が「ファンの皆さんの声援の力で勝てました」と言うと、お客さま", "の歓声が一段と高くなります。私は真実には２つの真実があって、１つは事実という真実、もう 1 つは", "実感という真実。", "とくに困難なことをやろうとするときは、自分の言いたいことや考えていることを、わかってくれる人", "が一人でもいることはありがたいこと。1 パーセントの人にわかってもらえたら、ありがたいと思うべき。", "良くしてもらったことだけに感謝するのが感謝ではありません。たとえば会社という組織や上司、あるい", "はトップに感謝することも大切。なぜなら人や会社というのは、その仕事を通じて自己実現する場であり、", "自分の存在意義を具体化してくれる道具でもあり、人であるから。", "相手の負担にならない借りをつくる", "ねぎらいの言葉は、", "「助かるよ」とか「ありがとう」という言葉を使うべき。まず第 1 に、取り組んで", "いる仕事が誰のためになっているか、第 2 にこれは感謝の言葉でありお礼の言葉なので、言われたほうに", "優越感が生まれ、言ったほうが借りをつくる形になるわけで、実はそこに良好な人間関係が生まれる。貸", "すよりは借りるほうがコミュニケーションが良くなり、ネットワークも広がっていく。それは借りるこ"]}, {"id": 23, "chapter": "", "title": "とによって相手に優越感が生まれるから。", "body": ["とによって相手に優越感が生まれるから。", "一般的には、自分を上におくほうが気分がいいわけですから、借りをつくらないで貸しをつくろうとし", "ている。お金を借りている、自分が病気したなど、不幸ははっきりした形で定義ができ、しかも長続きし", "ますが、幸せというのは瞬間的で定義もはっきりしません。お金とか労力とか、先方に大きな負担がかか", "るものを借りなさいと言っているわけではありません。先方に負担にならないことを借りる。たとえば、", "知識や経験、知恵といったものを話していただくことも借りることの 1 つ。何よりも大切なことは、報告", "することによって相手が幸せな気分になれるといこと。", "わかってくれる人の力を借りる", "リーダーが何かを意思決定しても、全員がほんとうにそれを理解してくれることはまずありません。大", "切なことは、伝えることではなく、やってもらうこと。人は自分なりに納得しなくてはいい仕事をしてく", "れません。ですから納得してくれるまで多尐時間がかかることはやむを得ない。はじめから全員にやって", "もらおうと考えるからイライラしてしまう。仕事というのは多数決で物事を決めてはいけない。何か新", "しいことをはじめる場合、全員が即座に賛成することはあり得ないこと。仕事も同じことで、たとえ１０", "人中９人が反対しても、自分が大切にしたいと思うことであれば、やればいい。新しいことを実現するに", "は、はじめの段階で成功事例が必要。成功事例をつくることによって、急速に考え方ややり方が浸透す"]}, {"id": 24, "chapter": "", "title": "るから。そのためには、成功しそうな人を選ぶこと。期待している人、やれる人、やれそうな人にチャン", "body": ["るから。そのためには、成功しそうな人を選ぶこと。期待している人、やれる人、やれそうな人にチャン", "スを与えることが大切。そして結果が出たら堂々と評価してあげればいい。チャンスが欲しい人がいれば、", "どんどん手を挙げられる体制にしておく。", "「俺がしてやったんだ」と言わせる", "売り上げを上げることも人を集めることも、基本はお客さまや社員の拡張自我の力を借りて実現する。", "つまり、お客さま自身や社員それぞれに、", "「オレがやったんだ」という気持ちを持っていただく。オレの", "おかげでダイエーホークスが強くなった、オレのおかげでシーホークホテルが良くなったという意識をも", "っていただく。", "8", "通称 ST は盛岡の自動車学校である。指導員は、", "「免許を取りたい人がいたら、私に言ってくれれば手続", "きも指導もちゃんとしてあげるよ」と生徒さんに名刺を渡します。これも「私が」生徒獲得に一役買って", "いるという指導員の拡張自我。免許を取った人たちは、その名刺を友達に見せて、", "「ST の先生はすごくい"]}, {"id": 25, "chapter": "", "title": "い。オレが紹介してあげれば、この先生がちゃんとやってくれるよ」。", "body": ["い。オレが紹介してあげれば、この先生がちゃんとやってくれるよ」。", "これからは会社のためだからという帰属心で人が動く時代ではありません。何によって動くかといえば、", "「オレがやったんだ」という拡張自我であるから、自分のことのように頑張る。", "「君にはかなわない」のひと言", "「やってみせ", "言ってきかせて", "させてみせ ほめてやらねば 人は動かじ」。これは山本五十六の人", "を動かす有名な言葉。今の時代、ほんとうにこのとおりで人は動くのでしょうか？残念ながらそうは思い", "ません。率先垂範したつもりでやって見せても、", "「あなたならできて当たり前」と思われてしまったり、", "仮にできなかった場合には「あなたでもできなかったのだから、自分にはできっこない」と、やらないこ", "との口実にしてしまう人のほうが多い。したがって目に見える形で相手を評価すること。それには心から", "相手を敬う気持ちが必要であるとともに、不可欠感を相手に感じとってもらうことが大切。「君にはかな", "わない」「君がいなくなったらどうするんだ」「君しかやれる人がいないじゃないか」「君の力を借りたい", "んだ」と言う気持ちをきちんと相手に伝えること。相手を信じて本気でやってもらおう、そのためのリ"]}, {"id": 26, "chapter": "", "title": "スクは自分で背負うと言う気持ちを相手に伝えること。できていないことを嘆いていたのでは、誰も本", "body": ["スクは自分で背負うと言う気持ちを相手に伝えること。できていないことを嘆いていたのでは、誰も本", "気になってやってくれません。重箱の隅をつつくような感じであら探しをしたのでは、その場では「わか", "りました」と言ってくれても、誰も本気で取り組んではくれない。基本はやはりほめてあげること。", "他人のネットワークを利用させてもらう", "モノをたくさん売るコツは、人のネットワークを利用させていただくこと。１００人の人に買っていた", "だくために、白紙の状態からニーズのある人１００人を見つけ、１００回交渉するというのはなかなかた", "いへん。ですから、なにかを売ろうとしたり受注しようとするときは、まず１人の人に対して一生懸命", "にあたって成功させることが大切。１人のお客さまのネットワークを利用させていただく。ほんとうの", "リピートとは、やってくれた人が誰かを紹介したくなるようにすること。", "目先のお金よりも人の協力を", "目先のお金にこだわったために、あとあと損をしたり人間関係がうまくいかなくなったりという経験、", "あるいは逆に目先の損得を度外視して協力した結果、その後の人間関係がスムーズになって、交友関係や", "仕事の幅が広がったという経験がある。福岡ドームでは、キャラクターマークやロゴマークなどのロイヤ", "リティ収入が５億円ありました。ダイエーホークスはこのロイヤリティ収入を開放しました。つまり、キ", "ャラクターやロゴを無償で自由に使っていただくことにした。タダにしたというのは、地域の皆さんと思"]}, {"id": 27, "chapter": "", "title": "いを一緒にしたい、一緒に盛り上がりたいという願いがあったから。つまり、いろいろなお店でキャラク", "body": ["いを一緒にしたい、一緒に盛り上がりたいという願いがあったから。つまり、いろいろなお店でキャラク", "ターマークやロゴマークをどんどん使っていただいて、商売の足しにしていただいたら、心から喜んでい", "ただけると思った。そうするとダイエーホークスの勝ち負けが、野球に関心のない一般の人にも気になっ", "てくる。そういう地域ぐるみでの盛り上がりを大切にしたかった。こういう街ぐるみのお祭り気分、お祝", "い気分の盛り上がりには集客力がある。", "それ以上に嬉しかったことは、ほんとうにダイエーホークスを身近に感じていただけるようになったお", "客さまが、テレビを見たり新聞を読んだりしてダイエーホークスのことを話題にしてくれるようになった。", "つまり、目先のことだけを考えるのではなく、大きな展望をもつことによってビジネスチャンスは広が", "る。そして人の協力も得やすくなる。", "４", "組織はこうして変った", "目標をはっきりさせれば、力を貸してくれる", "9", "昭和５２年５月末ですが、前年度（昭和５１年）の売上高は３億５７００万円あまりで、当期損失は４", "６００万円弱、私は 1 週間ほど過去の数字を検討して、1 年間の売上目標は５億５０００万円だと発表し"]}, {"id": 28, "chapter": "", "title": "た。しかし、目標というのは、これならなんとかできそうだという数字を示したのでは意味がありません。", "body": ["た。しかし、目標というのは、これならなんとかできそうだという数字を示したのでは意味がありません。", "大切なのはマクロで考えて「やらなければならない数字」を設定すること。前年比、１０パーセント増と", "いった常識的な目標では赤字のまま。自分たちがいま何をしなければならないかということを明確にした", "目標、まずそれを皆が認識し、同じ思いをもってスタートしなければならない。経営内容をガラス張りに", "し、皆んなが物質的にも精神的にも豊かになるためには、どうしても目標の達成が必要なことをわかっ", "てもらうこと。社員の意識を、目標を達成させるという方向に向けていく。", "① 赤字を直そうとしないことは恥である。だから何がなんでも赤字体質を直さなければならない。", "② 社員がこの会社、仕事に就いていることにプライドをもてる会社でありたい。", "③ 私たちを取り囲んでいる社会から感謝や感激したということを言われ続けられるような会社であ", "りたい。", "ベクトルを同じにする", "ランナー１塁のときにヒット２本でホームへ帰すのと、盗塁１つとヒット１本でホームへ帰すのとでは、", "どちらが確立が高いか。 「盗塁は５割以上成功したら、企画した数全部を評価する。」これによって選", "手はより果敢に盗塁を企てるようになり、スピード感のある野球が誕生。要するに、力を発揮した人が損", "をしないような評価とフォローが大切。選手にも観客動員に協力してもらいます。ヒーローインタビュー"]}, {"id": 29, "chapter": "", "title": "のときに、「皆さんのおかげ打てた」と言ってくださいと頼む。勝ったら嬉しい、負けたら悔しいと言う", "body": ["のときに、「皆さんのおかげ打てた」と言ってくださいと頼む。勝ったら嬉しい、負けたら悔しいと言う", "ことになり、見てあげることが最高の教育、見られることが最高の学習。", "覚えやすいフレーズでコンセンサスをつくる", "仲間というのは同じ思いをもって、同じ言葉を使うことから出発する。", "「打倒西武」もその一例。その", "ほか「４万人以上入れば７割以上の勝率」とか「千葉のかたきは福岡で」", "。経営の場でもわかりやすく覚", "えやすいフレーズを工夫。", "「リスクをクスリにする」など。そうすると、むずかしい話でも相手は笑って", "聞いてくれますし、親しみをもってくれる。", "信長の２つのコンセンサス手法", "信長の魅力はいろいろありますが、コンセンサスづくりに力を注いで成功したにも関わらず、その得", "意なコンセンサスを忘れたために滅んでしまったということ。信長が今川義元の首を取れた最大の理由", "は、部下に裏切りがなかったこと。いま相手側に走る者がいるなら、むしろ走ってもらったほうがいい。", "そして残った軍勢で戦うことを考えた。心を１つにして戦う尐数がむしろ精鋭をつくるのだという考え方。"]}, {"id": 30, "chapter": "", "title": "コンセンサスの手法は２つ。１つは怖がられる、もう１つはこれまでの固定概念を破って新たに仲間にな", "body": ["コンセンサスの手法は２つ。１つは怖がられる、もう１つはこれまでの固定概念を破って新たに仲間にな", "った人でも実績を上げればどんどん重用するということ。信長がコンセンサスをもつことを忘れてしまっ", "たために、光秀は信長に対して不信感や脅威感をもってしまい、それが爆発したのが本能寺の変。", "説得には忍耐が必要", "負けたときは、帰るお客さまに「ありがとうございました」と言うのではなく、「負けてしまってすみ", "ません。今度は必ず勝ちますから、こりずにまた来てください」という。何事もはじめは一進一退するも", "ので、ここを通り越せば、言ってくれる人の割合が１割から２割、３割になり、ある程度浸透すれば一", "挙に徹底するもの。ですからトップには忍耐が必要。同じようなことは、ほかにもたくさんある。婚礼の", "担当者に披露宴に出席している独身の方に、", "「あなたもぜひここで結婚式を」とアプローチしてほしいと", "思っている。営業担当者は、こういう不確かなアプローチよりは、申し込みに来るお客さまをクロージン", "グしたほうが実績を上げやすいと思ってしまう。やらなければいけない仕事は、やってくれますが、やっ", "たらよいことはなかなか続けてやってくれない。新しいことを浸透させるには、まず誰かにやってもらっ", "10", "てその事実を見せ、他の人にも納得してもらうという手順を踏むことが大切。自ら実践させるために、あ"]}, {"id": 31, "chapter": "", "title": "る一定の期間、手を代える品を代えてくり返しお願いする。", "body": ["る一定の期間、手を代える品を代えてくり返しお願いする。", "仕事をしたくなる環境５つのポイント", "新しい部署に就いたときは、", "「やれていない」というところから入るのではなく、これだけの人材がい", "るのに「やらないのはもったいない」という発想から入るべき。働いている人は、いま以上に働いてもし", "ょうがないと思っている。しかし、人というのは嬉しいことなら、多尐の犠牲はいといません。仕事も嬉", "しいことであれば、かなりきついことであっても勇んでやってくれるもの。能力があるのに「もったいな", "い」と思われる部分を、どのようにしたら「嬉しい」と言うベクトルに変えられるか、仲間の意欲を高め、", "仕事を「嬉しいこと」にするためには、次の５つのポイントが大切。", "① 採用＝どんな人を必要としているかはっきり訴える。自分は良い会社に入ったのだというプライド", "をもたせる。", "② 社員教育＝何を考えている会社か明確に伝える。お互いにディスカッションすることによって、や", "り方ではなく考え方をすり合わせる。", "③ 異動＝ゼネラリストを育てると同時に、他のセクションのことや人を知ってもらう。", "④ 小集団活動＝異動するよりは、目的に合わせて各部署から人をピックアップし、新しい組織をクイ"]}, {"id": 32, "chapter": "", "title": "ックにつくれる。それによって全社に考えを浸透させることができるし、それぞれの人のバックに", "body": ["ックにつくれる。それによって全社に考えを浸透させることができるし、それぞれの人のバックに", "ある組織も使える。", "⑤ イベント＝お祭り騒ぎ、意識の高揚、楽しみながら仕事をする。", "社員それぞれに、やらなければならない仕事という意識から、やったら「嬉しい」", "「楽しい」", "「お", "もしろい」という意識に変えていく。それをしないで、ただ正しいことだからやれと言ってもなかなかや", "ってくれません。会社が世間から注目されている、いい会社で働いているねと言われる、そういうことが", "社員の自信と意欲につながってくるから。会社では経営資料を含めて情報を開示していますから、会社の", "ことは知ろうと思えばいくらでも知ることができます。もっと働けとかもっと意欲をもてとか言うのでは", "なく、働きたくなる環境をつくってあげることがリーダーのもっとも大切な仕事。既得権を大切にして", "いる人や働かないで地位を得ている人、必要以上に給料が高い人が、新しい流れには必ず不満をもつこと。", "やる気のある人にはやりがいを感じてもらい、やる気のない人が不満を言う、そういう組織が理想的。", "失敗しても部下に責任をとらせるな", "民間企業で責任をとるということは、失敗した穴埋めを全部するということですが、これは個人にでき"]}, {"id": 33, "chapter": "", "title": "るわけはありません。したがって責任をとるなどということは軽々しく言えないこと。ですから、仕事に", "body": ["るわけはありません。したがって責任をとるなどということは軽々しく言えないこと。ですから、仕事に", "取り組むときは、成功するんだというつもりはあっても、責任をとるつもりがあってはいけないと思う。", "仕事をさせるということは、まず目標設定があるはず。その目標には、目標通りいかなかったときの予備", "がなくてはなりません。失敗したらすべてダメになるというようなことは計画してはいけない。どんなに", "事業計画が立派でも、資金繰りのメドがつかないことはやってはいけません。ですから余剰の中でしか新", "しいことはできない。新しいビジネスを考えるときには目標を立てますが、最終的な目標が１００だとす", "れば最初は１２０ぐらいに余裕を持たせ、失敗してもあきらめてすむようにしなければならない。余裕は", "なにも、今あるのでなくても、つくりだしていけるもので構いません。例えば、今はギリギリで資金が回", "っているとします。その中から新規事業に１０００万円を使わなければならないとしたら、今儲かってい", "ない仕事１０００万円分切り捨てる。そうすれば失敗しても大丈夫です。失敗したらどうしようというビ", "ジネスはダメで、失敗したらしょうがないと思える範囲でやるべき。上司は部下の重圧をといてあげるの", "が仕事。それは簡単なことで、", "「オレがついているから安心してやってみろ」というひと言でいい。上司", "は常に、「お前が好きなようにやってこい。何かあっても心配するな、オレが全部フォローしてやる」と", "11"]}, {"id": 34, "chapter": "", "title": "いうぐらいの気持ちを伝えておくことが大切。", "body": ["いうぐらいの気持ちを伝えておくことが大切。", "部下を守ってあげれば万事スムーズにいく", "会社での失敗とか問題というのは、ほんとうに人を傷つけたり、社会的に制裁を加えられたりするよう", "な悪いことはめったにない。冷静に分析してみればたいした問題ではないことが多い。それなのに最近は、", "重箱の隅をつつくようなあら探しが風潮で、なにかあれば責任をとらされる社会。しかも誰も守ってくれ", "る人がいない。一般的にいって、何かあったときに守ってくれるのは誰かといえば、家族や仲間、それに", "親しい友人ぐらいしかありません。本来、会社の人間は仲間なのですから、上司は部下を、部下は上司を", "守るという関係でありたいもの。", "「努力した結果の失敗は怒らない、過去にさかのぼる失敗は怒らない、叱ることは未来に向かって直", "してもらいたいことを叱る」 仲間に対して、叱るのはいいですが怒ってはダメ。叱るということは、将", "来直してもらいたいこととか教育的な指導とか、目的があって注意することで、感情的な怒りになっては", "ならない。「失敗しても安心しろ、俺が怒ってやるから」といっておけばいい。部下を叱ったり、仲間内", "で言いたいことを言うときは、多尐言葉が乱暴になってもいい。大原則というか軸足をしっかりもってい", "れば、相手も必ずわかってくれるもの。軸足とは、", "「相手は仲間だ、仲間だから怒っている」ということ。"]}, {"id": 35, "chapter": "", "title": "己の周りを味方にして敵に臨めば百戦危うからず。", "body": ["己の周りを味方にして敵に臨めば百戦危うからず。", "まず小さな成功体験をさせる", "盛岡グランドホテルの改革に手をつけたころ、最上階（４階）にある小さなバーに着目した。年間の売", "上は８６５万円、１日の平均は約２万４０００円という小さなバー。そこで年間で１０００万円を突破、", "伸び率は１４０パーセントぐらいの数字、これは「やればできる」という成功体験をもたせるための絶好", "のサンプル。私はある社員をバーの責任者に選びました。", "「君が店長だ。すべて自分で決定し、好きなようにやればいい」", "。選んだ担当者は、", "「セカンドドリンク無", "料サービス」「水割り１杯サービス」というサービス券を、フロントに頼んでチェックインのときに渡し", "てもらう。パーティや宴会でも、二次会用にサービス券を配る。大きな宴会のあるときは昼間でもバーを", "開いて、「４階でもコーヒーが飲めます」という案内板をたてる。担当者のやる事に規制がないという環", "境をつくったからできたこと。いくらいい考えをもった社員が居ても、アレコレと規制をしたのでは何も", "できません。一般のお客さまにも評判が高まり、売上高も急伸して目標額を大きく上まわった。", "はじめは小さな成功でいい、その成功体験が大きな成功をもたらす。私はいろいろ提案をしてくれる"]}, {"id": 36, "chapter": "", "title": "人は大好きです。自分がやりたいことを提案するのがほんとうの提案。そういう人には可能なかぎり提案", "body": ["人は大好きです。自分がやりたいことを提案するのがほんとうの提案。そういう人には可能なかぎり提案", "してきたことをやらせてあげるようにしています。もちろん単なる意見ではなく、きちんとした数字の裏", "づけをもっている意見にたいしてです。", "同じ提案でも新鮮に受けとめる", "まず、提言や提案は 1 回で諦めてはいけません。ですから提案に信念があれば、二度目は、もっとわ", "かりやすく正確に期して提案してみること。それでもダメならもう一度だけ念を押す。こうして３回くり", "返してもノーであれば、一忚諦めます。もちろん上司の方も、同じ提案でも部下の提案の真意を新鮮に受", "け止めてやることも必要です。提案を受け入れられなかったといって、がっかりすることはありません。", "やる気と意欲は十分に相手に伝わったはずですし、３回も言っておけば覚えていてくれます。", "もう 1 つ「トイレ作戦」", "。リラックスできる場所で部長なり社長なりに会ったとき、非公式に「最近こ", "んなことを思っているんですけど」と言ってみる。仮に部長が「それはおもしろそうだね」と言ってくれ", "れば、課長にやんわりそれを伝えて再検討してもらうことができます。", "ところで、問題は部長の", "対忚の仕方。一般に部長以上になると社員の言うことが新鮮に聞こえるのか、よく社員の話を聞きたがり"]}, {"id": 37, "chapter": "", "title": "ます。そしてきちんとした検討もなしに課長をとがめる人が多い。もし、社員が課長を飛び越えて何かを", "body": ["ます。そしてきちんとした検討もなしに課長をとがめる人が多い。もし、社員が課長を飛び越えて何かを", "12", "言ってきたときは、よく聞いてあげたうえで、やはりこれは課長に言いなさいとアドバイスする。一方で", "課長に、「お前のところの若いのはなかなかおもしろいことを言うじゃないか。１回ぐらい失敗してもい", "いから、やらせてみてはどうか」と言ってあげればいい。つまり、失敗しても部長の自分が大目にみるか", "ら、自由にやらせてみてほしいということ。", "若手の「疑問」を大切にする", "いま日本経済が行き詰っている原因の一つは、成功体験しかもっていない世代ばかりに国の舵取りをま", "かせて、若い人にチャンスを与えないからではないでしょうか。若い人がもっていてベテランがもってい", "ないものは何かといえば、", "「疑問」と「意欲」、それに「行動力」。はじめて配属された仕事の現場で、彼", "らはさまざまなことに「どうしてこうなんだろう」と疑問を抱きます。この素朴で率直な疑問を大切にす", "べき。ですから私は、若手社員や新入社員をできるだけ第１線に立たせる。そしてベテラン社員には、若", "手社員がぶつけてくる疑問を大切にするように言っています。知識や理屈ではなく、意欲と行動力で差を", "つけるというぐらいの気持ちをもってほしい。失敗してもいい。若いうちの失敗は必ず先輩が解決する"]}, {"id": 38, "chapter": "", "title": "ことができるはず。失敗したら素直に叱られればいい。", "body": ["ことができるはず。失敗したら素直に叱られればいい。", "オモイコミュニケーションを取り払え", "「あの人とはどうもウマが合わない」", "、", "「自分たちだけがつらい仕事をしている。でもあの部署はいつも", "楽をしている」と同僚とも他部門の人ともあまり話す機会がなく、自分の思い込みで相手を判断している", "社員がいた。部門間のオモイコミュニケーションをなくさなければ、社員に組織にも再生はないと思い", "ました。そこで部門間の実際の交流を目的とした社内研修を実施。会社にはいろいろなセクションがあり、", "いろいろな人がいるということを、知ってもらうことを目的とした。この研修は狙いどおり、社員の中に、", "部署は別でも１つの組織の一員として共に働いているという「共同体意識」を生みました。その１つの表", "れが、忙しい部門へ他の部門が自ら率先して忚援に行くという「ヘルプ体制」の誕生です。前後のことを", "考えて、前の仕事をする人に尐しだけお願いする、あるいはあとの仕事をする人のことを尐し考えてあげ", "れば、仕事の流れが格段に改善されることがわかってきた。たとえば、フロントではチェックインのとき", "に、", "「朝食を召し上がりますか」ではなく、"]}, {"id": 39, "chapter": "", "title": "「明日のご朝食は何時になさいますか」と、食べることを前提", "body": ["「明日のご朝食は何時になさいますか」と、食べることを前提", "にした語りかけをする。ぜひオモイコミュニケーションを取り払って、力を借りたり貸したりするうれし", "さを実感してほしいもの。", "逃げ場にも仕掛けをしておくと逃げられない", "思わぬことで注意を受けて、クサクサして親しい同僚と飲みに行ったら、その同僚からも同じ指摘をさ", "れる。勤務態度があまり良くない A という人がいたとします。もちろん彼に直接注意するわけですが、そ", "の前に、彼と仲のいい B にこう頼んでおきます。「A を叱るから、あとでフォローしておいてくれ。課長", "は見込みのあるヤツしか怒らないと言っていたと」。奥さんの力を借りられれば、もっと効果的。", "「お宅の", "ご主人、最近よく頑張ってくれて助かっています。すべて納得しているんですが、ここがちょっと気にな", "るんで、今日はそのことを注意します。もしかすると彼は不機嫌な顔をして家に帰るかもしれませんが、", "そのときはよろしくフォローをしてください」", "教育というのは、上司が上から言ってもなかなか思うようにはいかないもの。注意されたほうは逃げ場", "をつくっていて、そこで怒られたとグチをこぼします。逃げ場に仕掛けをしておかないと、せっかくの注", "意も嫌なヤツだと思われて、かえって憎しみが増幅しないともかぎりません。目的は怒ることではなく、"]}, {"id": 40, "chapter": "", "title": "直すこと。注意されたことが、逃げ場に帰ってもやはりそうだと言われれば、問題点を改めてくれる可", "body": ["直すこと。注意されたことが、逃げ場に帰ってもやはりそうだと言われれば、問題点を改めてくれる可", "能性は高くなる。人に直接注意をするときも同じ。すぐに変えようがないことやプライドを傷つけるよう", "なことを注意すると、直らないので自信をなくしてしまうか歯向かってくるかします。「一生懸命やらな", "かっただけで、本来のお前ならできるはずだ」と、努力すれば直ることを注意してあげると直す努力をし", "13", "てくれます。", "無難な解決では後悔する", "「２軍戦で福岡ドームを満員に。", "」夏休みとはいえ平日の火曜日。大きな目的は、もちろん収益を見込", "んだ興業をしたいということではありません。第 1 の目的は、いつもは日の当たらないところで努力して", "いる選手たちに、満員の福岡ドームで試合をさせてあげたいということ。第２の目的は、地元のファンの", "力を借りて、２軍選手の力をもっともっと伸ばしていただくとともに、それによってファンの方に「私た", "ちも選手を育てている」という意識をもっていただく。チケットは６月１２日には４８０００枚を完売、", "そして６月３０日にはチケットを購入しても来られない人の分を見込んで６６０００枚を売り切りまし", "た。しかし残念ながら、当日球場に足を運んでいただいたのは３８０００人。ある社員が「それでも２軍"]}, {"id": 41, "chapter": "", "title": "戦にしてはいいセンいきましたね」と言うので、私は久々に思い切り怒りました。目標はドームを満杯に", "body": ["戦にしてはいいセンいきましたね」と言うので、私は久々に思い切り怒りました。目標はドームを満杯に", "することであって、それができなければ失敗です。", "「失敗は失敗」と認めなければ、進歩も反省も生まれ", "てこない。", "世の中には２つのモノサシがある", "世の中には絶対に正しいということはありません。たとえば世間一般では、遅刻をしてはいけないとい", "うことになっています。そこでどんなに仕事がたまっていても定時に帰って定時に出てくる人と、どうし", "ても２，３日中に片付けなければならない仕事があって２，３日夜遅くまで残業をし、つい 4 日目に遅刻", "をしてしまった人がいるとします。あなたが上司だとしたら、遅刻をしたこの人を間違っているといえる", "でしょうか。たしかに遅刻はよくないこと。でも、それよりももっと大切なことがある。いちがいに間違", "っているとは言えないということは、この「遅刻はいけないこと」という価値観のモノサシが理屈のモノ", "サシだから。間違っていると言い切れないのは「事柄に正しさがある」からで、事柄に正しさがある場合", "は、その基準を明確にして誰にでもわかるようにしなければならない。では、", "「キス」はどうでしょうか。", "怒りだす人もいます。また無関心の人もいれば、微笑ましいといって理解を示す人もいます。これらの反"]}, {"id": 42, "chapter": "", "title": "忚は全部正しい。", "body": ["忚は全部正しい。", "「キス」をするという事柄に、理屈の善し悪しはないから。つまり、キスというのは理", "屈のモノサシではなくて、情のモノサシだから。情のモノサシは、事柄に正しいか正しくないかの基準", "はなく、善し悪しの基準は「人」にある。この情のモノサシは、本来ビジネスの世界には通用しない、", "あるいは持ち込んではいけないと考える人が多いようですが、それはまったくの誤り。気配りや気遣いを", "することは、相手の「理屈のモノサシ」", "、つまり「やらなければいけないこと」に、「情のモノサシ」「や", "ってくれたら嬉しいという仕事」をプラスしてくれる可能性を高くすることになる。そして情のモノサシ", "は理屈抜きで、良い人は良いと思って力を貸してくれるモノサシになる。", "正しいことを捨てる勇気をもつ", "新しいことをしよう、変革をしていこうと考えたときに、これまでやってきたことを、正しいものと正", "しくないものに分けようとする習性が人間にはあります。しかし、正しいことをやって、間違っているこ", "とをやめるということが、事業を成功させるうえで大切なことではない。", "「大切なことをするために、正しいことを捨てる勇気をもつ」ということ。大切なことを得るということ", "は、正しいことを伸ばして間違っていることを捨てることではなく、正しいことを捨てることでもある。"]}, {"id": 43, "chapter": "", "title": "たとえば結婚式を中心にした組織をつくったために、結婚式以外のパーティーや宿泊がとりにくくなる", "body": ["たとえば結婚式を中心にした組織をつくったために、結婚式以外のパーティーや宿泊がとりにくくなる", "という恐れをあります。そういうことを乗り切って、結婚式の営業の強化を考えていかないと、本当に結", "婚式を強化したとはいえない。また、１００万円の花瓶を買えば、１００万円というお金を失います。そ", "のときに金額が高ければ高いほど、私だったら旅行したい、私だったら貯金したい、花瓶なんかにお金を", "使うのはもったいないという意見が百出します。もったいないということは、この１００万円のお金でほ", "かのものを買う機会を失うからです。したがって花瓶を買うということは、１００万円という正しいもの", "14", "を捨てることなのです。", "私たちの会社は、たったいま現在は赤字です。これを直そうとしないことが恥なのです。つまり、赤字", "を直さなければならないことが課題である。そこでその赤字を直すために、結婚式の営業を重視すること、", "あるいは年間予約席の営業を重視することを、最重要事項と考えています。最重要事項であれば、そこに", "必要なパワーを集中的にもっていくことをしなくてはなりません。そうすると当然、フロント部門で営業", "のできそうな人を、あるいはレストラン部門で営業のできそうな人を異動させてでも、結婚式の営業と年", "間予約席の営業を強化しなければならないということになります。一方では、レストランにも、あるいは", "フロントにも優秀な人が必要だから、異動しないという意見もあって、これはこれで正しいこと。しかし、"]}, {"id": 44, "chapter": "", "title": "営業に向く人がいたら、レストランに適した人であっても異動させるという、大きな犠牲を払うからこそ", "body": ["営業に向く人がいたら、レストランに適した人であっても異動させるという、大きな犠牲を払うからこそ", "新しい組織がつくれる。", "中身で仕事をする時代がきた", "大切なことをするために、正しいことを捨てなければならないということは、職場の日常でも痛感され", "ること。社員が自分の持ち場の仕事を一生懸命やっていることは、正しいこと。そこに友達が突然訪ねて", "きた場合、ホテルマンのほとんどは、", "「いま仕事中だから、３時になったらヒマになるから待ってくれ」", "と言ってその友達を待たせたり放っておいたりします。持ち場を守ることが大事なのではなく、お客をウ", "ェルカムすることが大切なのです。", "「持ち場を離れない」というのは正しいことですが、大切なことのた", "めには、思い切って正しいことを捨てることも必要。失うものが正しいと思えず、失っていることが見", "えない人には、今の時間を有効活用することもできなければ、今の意思決定を大切なものとしてきちっ", "とやっていくこともできない。正しいことは何かではなくて、大切なことは何かと考えていれば、もっ", "と快適な職場環境がつくれるはず。", "勤務時間にプラスの残業があるならば、逆にマイナスの残業があってもいいはず。サービス業のように"]}, {"id": 45, "chapter": "", "title": "お客さまがこられなければ仕事が成り立たないという場合、自分の仕事の範囲で無理に仕事を探す必要は", "body": ["お客さまがこられなければ仕事が成り立たないという場合、自分の仕事の範囲で無理に仕事を探す必要は", "ない。他部署の仕事を手伝うなり、営業の仕事をするなり、ホテルの内外で楽しんでみるというのも１つ", "の手。時間どおり仕事をするという正しいことを捨てるかわりに、トータルとして生産性の高いこと、す", "なわち人件費という固定費を変動費化して、生産性をより高めることが大切なことと考えるわけ。", "自社商品に別の付加価値を発見する", "ホテルの商品でありパーティは、料理やサービスは手段であって、パーティのほんとうの目的は別のと", "ころにある。たとえば、お祝い事をするのであれば、祝ってもらう方がほんとうに喜ぶこととはどんなこ", "とか、また、集まった人たちがほんとうに参加してよかったと思うこととはどんなことか、それをつきつ", "めて実現することがほんとうの目的だと思う。パーティの本質は、ある人を核に大勢の人が集まって、フ", "ェイス･トゥ・フェイスのコミュニケーションを広げるというところにあります。これは今の社会にもっ", "とも求められていること。", "社長に就任した、取締役に就任した、本を出版したという方はもちろん、店が３周年を迎えたなどなど、", "個人の嬉しいことやお祝い事がすべてパーティの対象になる。その個人の方を主賓に祝賀パーティをする", "ということなのですが、そのことをご当人にもちかけると、１つは「そういうことに使えるお金があるか」、", "もう 1 つは「自分のためにいったい何人の人が来てくれるか」という不安。さらにもう 1 つ、名簿をつく"]}, {"id": 46, "chapter": "", "title": "ったり案内状を出したりするのが面倒くさいという煩わしい。たとえば、A さんが部長に昇進したから、", "body": ["ったり案内状を出したりするのが面倒くさいという煩わしい。たとえば、A さんが部長に昇進したから、", "「A さん、お祝いのパーティをやりましょう」", "「A さん、あなたがお金を出したり人を集めたりするのでは", "ないのです。実は B さんが、A さんが最近頑張っているからお祝いしてやろうとおっしゃってくれたので", "す。」私たちは A さんと親しい B さんと打ち合わせをしているわけですが、B さんにお願いするのは「私", "たちが全部仕切りますから、発起人として名前を貸してください」ということだけ。B さんのほかにも、", "15", "A さんの取引先の社長など１０人ぐらいに発起人になっていただきますから、その人たちの力を借りれば", "１００人ぐらいの人集めは簡単にできてしまいます。祝ってもらう人にしてみれば、自分のパーティにそ", "ういう人たちが発起人になってくれ、いろいろな人が１００人も２００人も集まってくれるのですから、", "嬉しくないはずはありません。そこから自信も湧くし、勇気も湧いてきます。主催者と集まった人同志の", "新しい人間関係や交流は、これからの社会にとってますます大切。", "原点に還ればやることが見えてくる", "私たちのサービス業でいちばん大切なことは、来られたお客さまが、今度は誰かを連れてきたいとか、誰", "かに自慢したくなるとかいう魅力を、お客さまを通じてつくりだすことです。そういう考え方がしっかり"]}, {"id": 47, "chapter": "", "title": "していないと、本当の意味で長続きするビジネスにはなりません。お客さまに何回も来ていただく、すな", "body": ["していないと、本当の意味で長続きするビジネスにはなりません。お客さまに何回も来ていただく、すな", "わち喜んでリピートしていただくということ、しかし現実にはそうなっていない。こういう数字は、デジ", "タルにきちっと押さえたうえで、現実を直視しなければならない。でも、それをどうやって改善するかは", "アナログで解決するべきこと。原点に還って、この商品が何を目的にして、どういう考えでつくられた", "のかを、きちんと理解しなければならない。単に売り上げをあげればいいとか、いま全体がなんとなく整", "っているからというものではない。", "部下の長所に磨きをかける", "選手１人１人に明確な課題を与えて、その課題を達成することを査定のポイントに加味すれば、選手", "は安心して課題に取り組むことができ、その結果 1 軍で通用する能力を身に着けることができる。この取", "り組みをきちんと行うために、現場の責任者である２軍監督は、1 軍監督とコミュニケーションをよくし、", "何が課題であるかを的確につかんで選手を指導しなければなりません。こうした考え方は、野球という場", "だけではなく、いろいろな職場でも考えられることではないでしょうか。", "16"]}];
+function startReading(){document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');}
+function showTab(tab){
+  document.getElementById('btn-index').classList.toggle('active',tab==='index');
+  document.getElementById('btn-read').classList.toggle('active',tab==='read');
+  const ip=document.getElementById('index-panel-scroll');const rv=document.getElementById('reading-view');
+  if(tab==='index'){ip.classList.remove('hidden');rv.classList.remove('active');}
+  else{ip.classList.add('hidden');buildReadingView();rv.classList.add('active');}
+}
+function buildReadingView(){
+  const inner=document.getElementById('reading-inner');let h='';let lc='';
+  sections.forEach(s=>{
+    const ch=s.chapter||'';
+    if(ch!==lc){lc=ch;if(ch)h+='<div class="reading-chapter">'+esc(ch)+'</div>';}
+    const bh=s.body.map(p=>'<p>'+esc(p)+'</p>').join('');
+    h+='<div class="reading-section"><h3><span class="rnum">\u00a7'+(s.id+1)+'</span>'+esc(s.title)+'</h3>'+bh+'</div>';
+  });
+  inner.innerHTML=h;
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toggleSection(header){header.parentElement.classList.toggle('open');}
+function goSec(id){
+  document.getElementById('btn-index').classList.add('active');document.getElementById('btn-read').classList.remove('active');
+  document.getElementById('index-panel-scroll').classList.remove('hidden');document.getElementById('reading-view').classList.remove('active');
+  document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');
+  const el=document.getElementById('sec-'+id);if(!el)return;
+  setTimeout(()=>{el.scrollIntoView({behavior:'smooth',block:'start'});},50);
+  if(!el.classList.contains('open'))el.classList.add('open');
+  document.querySelectorAll('.nav-item').forEach(item=>item.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(item=>{if(item.getAttribute('onclick')==='goSec('+id+')')item.classList.add('active');});
+  document.getElementById('sidebar').classList.remove('open');
+}
+function expandAll(){document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');document.querySelectorAll('.section').forEach(s=>s.classList.add('open'));}
+function collapseAll(){document.querySelectorAll('.section').forEach(s=>s.classList.remove('open'));}
+function filterNav(q){const l=q.toLowerCase();document.querySelectorAll('.nav-item').forEach(item=>{item.style.display=(!q||item.textContent.toLowerCase().includes(l))?'':'none';});}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
+document.getElementById('index-panel-scroll').addEventListener('click',()=>{if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('open');});
+document.getElementById('reading-view').addEventListener('click',()=>{if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('open');});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>銀座ママが教える「できる男」「できない男」の見分け方 | Claude本棚</title>
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;--text:#e6edf3;--text2:#8b949e;--accent:#f0883e;--accent2:#d29922;--chapter-color:#79c0ff;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Helvetica Neue','Hiragino Sans','Yu Gothic',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.7;}
+#app{display:flex;height:100vh;overflow:hidden;}
+#sidebar{width:300px;min-width:300px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+#header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;flex-shrink:0;}
+#header h1{font-size:15px;font-weight:700;color:var(--accent);line-height:1.4;}
+#header .subtitle{font-size:12px;color:var(--text2);margin-top:2px;}
+#header .meta{font-size:11px;color:var(--text2);margin-top:3px;}
+#top-nav{display:flex;align-items:center;gap:8px;padding:8px 24px;background:var(--surface2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;}
+.top-nav-btn{padding:5px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:inherit;transition:all 0.15s;white-space:nowrap;text-decoration:none;display:inline-block;}
+.top-nav-btn:hover{background:var(--surface);color:var(--text);border-color:var(--accent);}
+.top-nav-btn.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600;}
+#progress-area{margin-left:auto;font-size:11px;color:var(--text2);white-space:nowrap;}
+#search-bar{padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+#search-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:13px;font-family:inherit;outline:none;}
+#search-input:focus{border-color:var(--accent);}
+#nav-scroll{flex:1;overflow-y:auto;padding:8px 0;}
+#nav-scroll::-webkit-scrollbar{width:4px;}
+#nav-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.nav-chapter{padding:8px 16px 4px;font-size:10px;font-weight:700;color:var(--chapter-color);border-top:1px solid var(--border);margin-top:4px;}
+.nav-chapter:first-child{border-top:none;margin-top:0;}
+.nav-item{padding:5px 16px;font-size:12px;color:var(--text2);cursor:pointer;transition:all 0.1s;border-left:2px solid transparent;}
+.nav-item:hover{background:var(--surface2);color:var(--text);border-left-color:var(--accent2);}
+.nav-item.active{background:var(--surface2);color:var(--accent);border-left-color:var(--accent);}
+#index-panel-scroll{flex:1;overflow-y:auto;padding:24px;}
+#index-panel-scroll::-webkit-scrollbar{width:6px;}
+#index-panel-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.chapter-header{margin:18px 0 6px;padding:9px 16px;background:rgba(121,192,255,0.08);border-left:3px solid var(--chapter-color);border-radius:0 6px 6px 0;font-size:13px;font-weight:600;color:var(--chapter-color);}
+.chapter-header:first-child{margin-top:0;}
+.section{margin-bottom:5px;border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color 0.2s;}
+.section:hover{border-color:var(--accent2);}
+.section.open{border-color:var(--accent);}
+.section-header{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;background:var(--surface);user-select:none;transition:background 0.15s;}
+.section-header:hover{background:var(--surface2);}
+.sec-num{font-size:10px;color:var(--text2);min-width:28px;flex-shrink:0;}
+.sec-title{flex:1;font-size:13px;font-weight:500;color:var(--text);line-height:1.4;}
+.toggle-icon{font-size:10px;color:var(--text2);transition:transform 0.2s;flex-shrink:0;}
+.section.open .toggle-icon{transform:rotate(180deg);}
+.detail-body{display:none;padding:14px 20px;background:var(--bg);border-top:1px solid var(--border);}
+.section.open .detail-body{display:block;}
+.detail-body p{margin-bottom:10px;font-size:14px;color:#cdd9e5;line-height:1.85;text-align:justify;}
+.detail-body p:last-child{margin-bottom:0;}
+#reading-view{display:none;flex:1;overflow-y:auto;padding:40px;}
+#reading-view.active{display:block;}
+#reading-view::-webkit-scrollbar{width:6px;}
+#reading-view::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.reading-inner{max-width:780px;margin:0 auto;}
+.reading-chapter{margin:24px 0 8px;padding:9px 18px;border-left:3px solid var(--chapter-color);font-size:14px;font-weight:600;color:var(--chapter-color);}
+.reading-chapter:first-child{margin-top:0;}
+.reading-section{margin-bottom:18px;padding:16px 20px;background:var(--surface);border-radius:8px;border:1px solid var(--border);}
+.reading-section h3{font-size:14px;font-weight:700;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.reading-section h3 .rnum{font-size:11px;color:var(--text2);font-weight:400;}
+.reading-section p{font-size:14px;color:#cdd9e5;line-height:1.85;margin-bottom:8px;text-align:justify;}
+.reading-section p:last-child{margin-bottom:0;}
+#splash{text-align:center;padding:60px 24px;}
+#splash h2{font-size:22px;color:var(--accent);margin-bottom:8px;}
+#splash .sp-sub{color:var(--text2);font-size:14px;margin-bottom:32px;}
+#splash .stats{display:flex;justify-content:center;gap:40px;margin-bottom:32px;}
+#splash .stat .num{font-size:36px;font-weight:800;color:var(--accent2);}
+#splash .stat .lbl{font-size:12px;color:var(--text2);margin-top:2px;}
+#splash .start-btn{background:var(--accent);color:#000;border:none;padding:14px 44px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity 0.2s;}
+#splash .start-btn:hover{opacity:0.85;}
+#menu-toggle{display:none;background:transparent;border:none;color:var(--text);font-size:20px;cursor:pointer;padding:4px 8px;vertical-align:middle;margin-right:8px;}
+.hidden{display:none !important;}
+@media(max-width:768px){
+  #sidebar{position:fixed;top:0;left:0;bottom:0;z-index:100;transform:translateX(-100%);transition:transform 0.25s ease;width:280px;}
+  #sidebar.open{transform:translateX(0);}
+  #menu-toggle{display:inline-block;}
+  #index-panel-scroll{padding:14px;}
+  #top-nav{padding:8px 14px;}
+  #header{padding:11px 14px;}
+  #reading-view{padding:16px;}
+}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="sidebar">
+  <div id="search-bar"><input id="search-input" type="text" placeholder="🔍 節タイトルを検索..." oninput="filterNav(this.value)"></div>
+  <div id="nav-scroll">
+<div class="nav-chapter">第１章 「できる男」の外見はここが違う</div>
+<div class="nav-item" onclick="goSec(0)">法則１ 目に力がある</div>
+<div class="nav-item" onclick="goSec(1)">法則２ ときどき少年になる</div>
+<div class="nav-item" onclick="goSec(2)">法則３ 服は目立たないものが、一番目立つ</div>
+<div class="nav-item" onclick="goSec(3)">法則４ 服で知性を語る</div>
+<div class="nav-item" onclick="goSec(4)">法則５ 緊張がゆるむ時に気配りできる</div>
+<div class="nav-item" onclick="goSec(5)">法則６ 見えないところほど見られていることを知る</div>
+<div class="nav-item" onclick="goSec(6)">法則７ 夕方に微香性の香水をつける</div>
+<div class="nav-item" onclick="goSec(7)">法則８ かわいい嘘をつく</div>
+<div class="nav-item" onclick="goSec(8)">法則９ 色のある服を着るだけで色気が出る</div>
+  </div>
+</div>
+<div id="main">
+  <div id="header">
+    <button id="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <h1>銀座ママが教える「できる男」「できない男」の見分け方</h1>
+    <div class="subtitle">人間的な器量を鋭く観察した成功者論</div>
+    <div class="meta">ますいさくら 著</div>
+  </div>
+  <div id="top-nav">
+    <button class="top-nav-btn active" id="btn-index" onclick="showTab('index')">目次モード</button>
+    <button class="top-nav-btn" id="btn-read" onclick="showTab('read')">通読モード</button>
+    <button class="top-nav-btn" onclick="expandAll()">全展開</button>
+    <button class="top-nav-btn" onclick="collapseAll()">全折畳</button>
+    <a href="top.html" class="top-nav-btn">← 本棚へ</a>
+    <span id="progress-area">9節</span>
+  </div>
+  <div id="index-panel-scroll">
+    <div id="splash">
+      <h2>銀座ママが教える「できる男」「できない男」の見分け方</h2>
+      <p class="sp-sub">人間的な器量を鋭く観察した成功者論</p>
+      <div class="stats"><div class="stat"><div class="num">9</div><div class="lbl">節</div></div></div>
+      <button class="start-btn" onclick="startReading()">読み始める</button>
+    </div>
+    <div id="content-area" class="hidden">
+<div class="chapter-header">第１章 「できる男」の外見はここが違う</div>
+<div class="section" id="sec-0">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§1</span>
+    <span class="sec-title">法則１ 目に力がある</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「できる男は」童心を忘れない</p><p>東京から離れた地方に、幼児教育関連の会社を興した社長さん。売り上げの一部を地元に還元して、劇場や図書館、</p><p>森林公園、キャンプ場などを積極的につくっています。「僕が小さいころは、この辺りには何もなくて。映画館やコ</p><p>ンサート会場なんかがあったらいいなってずっと思っていた。」おかげで、その周辺は教育地区になりつつあり、彼</p><p>の会社の教材は地方から火がつき、東京に飛び火してロングヒット。</p></div>
+</div>
+<div class="section" id="sec-1">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§2</span>
+    <span class="sec-title">法則２ ときどき少年になる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「できる男」は、商談内容と相手に洋服を合わせる</p><p>「できる男」とは、必ずしもアルマーニやベルサーチ、エルメスといった値段の高いブランド物の洋服を着ている</p><p>人ではありません。高級なブランド物を着こなすのは、とても難しい。とくに本場のフランスやイタリアなどで、出</p><p>張帰りに買ってきたスーツやシャツは、現地の西洋人の体系を基本パターンとしてつくられている。そのため、丈は</p><p>合っているのに、なぜか、スーツのなかで体が泳いでいるなんてことになりやすい。</p><p>「できる男」の条件のひとつに、商談内容に合わせた着こなしができること。合わせるものには、相手の年齢や取</p><p>引先の会社の社風まで含んでいます。相手の会社のカジュアルデーに、１人だけ堅い紺のスーツを着てのこのこと商</p><p>談に行っても、浮いてしまう。ハワイに出かけたとき、支店長はもちろん、ハワイの第 1 正装ともいえるアロハシャ</p><p>ツを着ていらっしゃいました。郷に入ったら郷に従え。赴任先の土地柄や取引先の社風に、服装を合わせていくこと</p><p>は「できる男」を演出。</p></div>
+</div>
+<div class="section" id="sec-2">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§3</span>
+    <span class="sec-title">法則３ 服は目立たないものが、一番目立つ</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>服装は、最大のプレゼンテーション</p><p>服装は、その人の心を語ります。何を着るかで周囲への影響力が異なってきます。身につけるものに「気を遣う」</p><p>は「着を遣う」こと。</p></div>
+</div>
+<div class="section" id="sec-3">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§4</span>
+    <span class="sec-title">法則４ 服で知性を語る</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>脱ぎ方で差が出る</p><p>たとえば、夏場のジャケットには、薄い色のものも多い。麻綿混紡の涼しげな色には、気品が漂います。脱ぐ際に、</p><p>本当にいい洋服を大事に着ている人は、脱いだ上着を裏返しにして半分にたたみます。全部を裏返すわけではなく、</p><p>裏が表になるように半分に折るわけ。そんな何気ない脱ぎ方を見ているだけで、とても洋服を大事にしていることが</p><p>わかります。洋服を大切にする人は物を大切に扱い、物を大切にする人は人も大切にします。</p><p>また、洋服を脱ぐ瞬間は、それまでの緊張がゆるむ瞬間ですから、そうしたときのささいなふるまいに、その人の</p><p>生活スタイルが表れる。ですから、そうしたふるまいがだらしなくならないことと、嫌味になるほど気取らないよう</p><p>にすることが肝心。お店で上着を預かるときには、貴重品の問題もあり、かなり緊張しますので、気遣いをさせない</p><p>程度に、ちょっと裏返してぱっと置いてしまう人は、ステキ。</p></div>
+</div>
+<div class="section" id="sec-4">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§5</span>
+    <span class="sec-title">法則５ 緊張がゆるむ時に気配りできる</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>裏生地ほど表の性格を語る</p><p>一番館風の仕立てのいいスーツなのに、裏生地には、エルメスのスカーフの生地を張りつけていらっしゃる方。本</p><p>物のエルメスならまだ許せる範囲ですが、なんちゃってエルメス柄や、なかには歌麿の春画のプリントとか、くんず</p><p>ほぐれつの男女の絵も。本人が気がつかない間に、実はすべての人望を一瞬でなくしている。服装はふだん見えない</p><p>ところにまで気を遣うのが基本。</p></div>
+</div>
+<div class="section" id="sec-5">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§6</span>
+    <span class="sec-title">法則６ 見えないところほど見られていることを知る</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>1/9</p><p>お金は下着にかける</p><p>服装で一番お金をかけてほしいのは下着。アンダーシャツは、上着を脱いでワイシャツ姿になったときに透けてみ</p><p>えるもの。アンダーシャツを身につけない方もたまにいますが、多かれ少なかれシャツににじんだ汗がにおいだすも</p><p>の。夏場は、汗を吸い取る素材の下着や、通気性のよい下着をつけるのが常識。夕方から、少しだけオードトワレな</p><p>どの微香性の香水をつけるのもいい。ランニングなどは白さが決め手。脇のまわりが黄色かったり、何度も選択して</p><p>ほころびていたりすると、なんだかみじめさを感じさせてしまいます。</p></div>
+</div>
+<div class="section" id="sec-6">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§7</span>
+    <span class="sec-title">法則７ 夕方に微香性の香水をつける</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>「できる男」はマイナスを武器にする</p><p>部長さん、20 歳も年が離れている 25 歳のアルバイトホステスとおつきあい。彼女と会うときは汚れていないまで</p><p>もくたびれた下着、クリーニングのタグがついたままのワイシャツ、穴の開いた靴下と、徹底してダメ男。「おまえ</p><p>だけだよ、大事にしてくれるのは･･･」嘘だとわかっていても、女にはうれしいひと言。</p></div>
+</div>
+<div class="section" id="sec-7">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§8</span>
+    <span class="sec-title">法則８ かわいい嘘をつく</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>明るい色を着こなす男がいい</p><p>クリントン。合衆国大統領選キャンペーンのときは、スタイリストまでつけて、ときには地元の野球チームの帽子</p><p>をかぶって、集まった人たちの前でその土地へのフレンドリーさを。それに比べ日本の政治家は、ねずみ男みたいな</p><p>灰色系か、お決まりの紺スーツなど、没個性の人が多い。男の色気は明るめの色の洋服を着ると引き立ちます。女性</p><p>が明るい色の洋服を着るとかわいく見えるように、男性もやはりきれいな色や明るい色の洋服を着ると若々しく見え</p><p>る。</p></div>
+</div>
+<div class="section" id="sec-8">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="sec-num">§9</span>
+    <span class="sec-title">法則９ 色のある服を着るだけで色気が出る</span>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="detail-body"><p>銀座で会った「できない男」のマフラー</p><p>一緒にいたお客様が、コートのポケットから取り出して、私の首もとにかけてくれたマフラー。見ると、フランス</p><p>の有名メーカーのもの。あまりに長く、何重にも巻きつけられるので、首を絞められているのかと思うほど。</p><p>法則 10 高価なものを効果的に使う</p><p>おもいやりという芳香をまとう</p><p>「もしかして、私のためにおしゃれをしてきてくれたのかな」と、相手に思ってもらうのは、とても大切なこと。</p><p>男性が女性のためにおしゃれをしようと頑張っている姿は、女性の心を動かすもの。銀座に出るんだからいい洋服を</p><p>着ようとか、銀座に出るときのために、遊び心のあるしゃれた洋服を仕立てておこうとか、そういう気持ちがある人</p><p>は、決して老けません。常に人に見られているという意識をもちつづけること、それが身についている人が「できる</p><p>男」</p><p>。</p><p>法則 11 人の注目を浴びる</p><p>メガネはディタイム、ナイトタイムで使い分ける</p><p>老眼鏡をかけずに見る人よりも、しゃれたケースからサッとメガネを出して、「店が暗いねぇ、最近目が悪くなっ</p><p>ちゃって」なんて言える人のほうが、ステキ。老いを無理に隠そうとするのではなく、当たり前のこととして受け止</p><p>め、その年齢に合った身のこなしをするほうがスマート。メガネなどの小物遣いひとつで、その人の性格が見える。</p><p>とくにメガネは、センスの差が出やすい小物。たとえば、昼間は透明なレンズのメガネをかけていても、夕方になっ</p><p>たら少し飴色がかったレンズのように少し色がついているのもいい。また、仕事が終わったあとの気持ちの切り替え</p><p>のために、メガネをかけ替えたり、サングラスで遊んでみたりする方は、ケジメのある生活を送っているせいか、と</p><p>てもさわやかな印象。</p><p>法則 12 老いを隠さないほど若々しい</p><p>できる男はこんなメガネをかけている</p><p>メガネだってビジネス用とカジュアル用くらいの使い分けは、</p><p>「できる男」の身だしなみ。</p><p>法則 13 ビジネス用とカジュアル用でメガネを使い分ける</p><p>見えないアクセサリーほど見られている</p><p>男性は基本的にアクセサリーはつけないほうが、堅気に見えます。ボタンカフス、ネクタイピンなどには、さして</p><p>注意が行き届かないものですが、そんなところにまで気を遣い、素敵なものをつけられているとドキッ。</p><p>「できる男」</p><p>は、上質のアクセサリーをさりげなく身につけて、光りものをさらに光り輝かせられる。</p><p>法則 14 アクセサリーは控え目にする</p><p>時計にクロコダイルの革バンドをつける</p><p>時計は、ブランド物かそうでないかということよりも、バンドの革が傷んでいたりしないかのほうが気になります。</p><p>なんとなくにおうなんて、最悪。いつも時計ケースを携帯していて、夜に会社のパーティがあるときには、ブルガリ</p><p>やカルティエなどのファッションウォッチに替えるのも素敵。高級な時計をするなら絶対に約束の会議には遅れない</p><p>ように。</p><p>法則 15 時計がきれいだと人生も光る</p><p>2/9</p><p>車にも TPO がある</p><p>TPO をわきまえるのは「男の知性」</p><p>。成功したことを自分だけで享受するのではなく、社会に還元することも大切。</p><p>アメリカでは、どんなチャリティーやボランティア活動にかかわっているかも、その人個人の評価を決める材料にな</p><p>るくらい。ビル・ゲイツ氏の奥様、メリンダさんのボランティア活動は有名。コンピューターの寄贈だけではなく、</p><p>技術的なサポートなども積極的。</p><p>法則 16 成功者ほど成功を他者と分かち合う</p><p>「できる男」の顔には自信と書いてある</p><p>自分に自信があるからすぐに怒ったりはしませんし、泰然と構えているもの。ささいなことですぐ怒鳴りつける人</p><p>は、たとえば、家で奥様からいつもお小言を言われ、愚痴ばかり聞かされている人は、そのストレスをどこかで発散</p><p>しようとするもの。蓄積されたもの、温めているもの、自分のなかにそういうものをもっている人の魅力は、ちょっ</p><p>とやそっとのことでは剥がれ落ちないもの。</p><p>法則 17 ささいなことで怒鳴らない</p><p>「できる男」は子どもみたいな表情をもつ</p><p>「できる男」は色っぽい表情をもちあわせた人が多い。怖がることを知らない子ども心、まっすぐ人をとらえる瞳。</p><p>子どもでありつづけることも、</p><p>「錆びない男」の条件。また、さまざまな知識をもっていて、嫌味にならない程度に</p><p>いろんなことを教えてくださる方。子ども心をそのままぶつける人、大人のなかに子どものような純粋さを見せてく</p><p>れる人、どちらも銀座の夜を飾る男たち。</p><p>法則 18 やんちゃぽくふるまう</p><p>靴は第 2 の男の顔</p><p>靴はいつもきちんと磨いてください。毎日、同じ靴を履かないで、馬と同じで騎乗したら少し休ませること。夏場</p><p>は、除菌や湿気を取る中敶きや消臭スプレーなどで、防臭対策をとることも大切。</p><p>法則 19 消臭・除菌スプレーを靴にかける</p><p>ネクタイの結び目にはベストポジションがある</p><p>男性のネクタイは、女性がスカーフをするような感覚で選ぶといい。きれいな色やかわいい色、女性に対して好感</p><p>をもたれるようなネクタイをスカーフ感覚でしている人はおしゃれ。秋だからワインレッド、夏だから水色と一色だ</p><p>けで季節感をだすのではなく、日本の着物の絵羽模様のように、四季に会わせた果物や花・草などの柄ものも、評価</p><p>が高い。ネクタイは、唯一、男性のおしゃれを表現できる部分だと思いますから、個性を出して選んでほしい。</p><p>法則 20 女性がスカーフをするようにネクタイを結ぶ</p><p>「できる男」は喪服でおしゃれをする</p><p>告別式に着る喪服だけは、すこしお金がかかってもあつらえておきたいもの。喪に服するという厳粛な気持ちを表</p><p>すような喪服の選び方ができる人であってほしい。カシミヤは上等なものほど生地に艶がありますから、すぐに値段</p><p>がわかります。ある男の人に「素敵でした」と話したら、「カシミヤのコートは何着も買えないし、オールマイティ</p><p>ーで使えるから黒にしたんだよ」</p><p>。</p><p>法則 21 黒の着こなしで差が出る</p><p>モーニング、タキシードを鮮やかに着こなす</p><p>「パーティ用のタキシードなんて一着あれば十分」と考えているかたが多いかもしれませんが、タキシードにも流</p><p>行があります。年末を家族サービスで、一流のホテルで過ごされる男性は、パートナーの女性の服装にさりげなく合</p><p>わせた装い。たとえば、奥様のカメオのネックレスに合わせて、ご主人もカメオのカフス。それは値段の高いもので</p><p>なくてもいい。大切なのは、二人のオリジナリティーが感じられること。</p><p>法則 22 オリジナリティーを身につける</p></div>
+</div>
+    </div>
+  </div>
+  <div id="reading-view"><div class="reading-inner" id="reading-inner"></div></div>
+</div>
+</div>
+<script>
+
+const sections = [{"id": 0, "chapter": "第１章 「できる男」の外見はここが違う", "title": "法則１ 目に力がある", "body": ["「できる男は」童心を忘れない", "東京から離れた地方に、幼児教育関連の会社を興した社長さん。売り上げの一部を地元に還元して、劇場や図書館、", "森林公園、キャンプ場などを積極的につくっています。「僕が小さいころは、この辺りには何もなくて。映画館やコ", "ンサート会場なんかがあったらいいなってずっと思っていた。」おかげで、その周辺は教育地区になりつつあり、彼", "の会社の教材は地方から火がつき、東京に飛び火してロングヒット。"]}, {"id": 1, "chapter": "第１章 「できる男」の外見はここが違う", "title": "法則２ ときどき少年になる", "body": ["「できる男」は、商談内容と相手に洋服を合わせる", "「できる男」とは、必ずしもアルマーニやベルサーチ、エルメスといった値段の高いブランド物の洋服を着ている", "人ではありません。高級なブランド物を着こなすのは、とても難しい。とくに本場のフランスやイタリアなどで、出", "張帰りに買ってきたスーツやシャツは、現地の西洋人の体系を基本パターンとしてつくられている。そのため、丈は", "合っているのに、なぜか、スーツのなかで体が泳いでいるなんてことになりやすい。", "「できる男」の条件のひとつに、商談内容に合わせた着こなしができること。合わせるものには、相手の年齢や取", "引先の会社の社風まで含んでいます。相手の会社のカジュアルデーに、１人だけ堅い紺のスーツを着てのこのこと商", "談に行っても、浮いてしまう。ハワイに出かけたとき、支店長はもちろん、ハワイの第 1 正装ともいえるアロハシャ", "ツを着ていらっしゃいました。郷に入ったら郷に従え。赴任先の土地柄や取引先の社風に、服装を合わせていくこと", "は「できる男」を演出。"]}, {"id": 2, "chapter": "第１章 「できる男」の外見はここが違う", "title": "法則３ 服は目立たないものが、一番目立つ", "body": ["服装は、最大のプレゼンテーション", "服装は、その人の心を語ります。何を着るかで周囲への影響力が異なってきます。身につけるものに「気を遣う」", "は「着を遣う」こと。"]}, {"id": 3, "chapter": "第１章 「できる男」の外見はここが違う", "title": "法則４ 服で知性を語る", "body": ["脱ぎ方で差が出る", "たとえば、夏場のジャケットには、薄い色のものも多い。麻綿混紡の涼しげな色には、気品が漂います。脱ぐ際に、", "本当にいい洋服を大事に着ている人は、脱いだ上着を裏返しにして半分にたたみます。全部を裏返すわけではなく、", "裏が表になるように半分に折るわけ。そんな何気ない脱ぎ方を見ているだけで、とても洋服を大事にしていることが", "わかります。洋服を大切にする人は物を大切に扱い、物を大切にする人は人も大切にします。", "また、洋服を脱ぐ瞬間は、それまでの緊張がゆるむ瞬間ですから、そうしたときのささいなふるまいに、その人の", "生活スタイルが表れる。ですから、そうしたふるまいがだらしなくならないことと、嫌味になるほど気取らないよう", "にすることが肝心。お店で上着を預かるときには、貴重品の問題もあり、かなり緊張しますので、気遣いをさせない", "程度に、ちょっと裏返してぱっと置いてしまう人は、ステキ。"]}, {"id": 4, "chapter": "第１章 「できる男」の外見はここが違う", "title": "法則５ 緊張がゆるむ時に気配りできる", "body": ["裏生地ほど表の性格を語る", "一番館風の仕立てのいいスーツなのに、裏生地には、エルメスのスカーフの生地を張りつけていらっしゃる方。本", "物のエルメスならまだ許せる範囲ですが、なんちゃってエルメス柄や、なかには歌麿の春画のプリントとか、くんず", "ほぐれつの男女の絵も。本人が気がつかない間に、実はすべての人望を一瞬でなくしている。服装はふだん見えない", "ところにまで気を遣うのが基本。"]}, {"id": 5, "chapter": "第１章 「できる男」の外見はここが違う", "title": "法則６ 見えないところほど見られていることを知る", "body": ["1/9", "お金は下着にかける", "服装で一番お金をかけてほしいのは下着。アンダーシャツは、上着を脱いでワイシャツ姿になったときに透けてみ", "えるもの。アンダーシャツを身につけない方もたまにいますが、多かれ少なかれシャツににじんだ汗がにおいだすも", "の。夏場は、汗を吸い取る素材の下着や、通気性のよい下着をつけるのが常識。夕方から、少しだけオードトワレな", "どの微香性の香水をつけるのもいい。ランニングなどは白さが決め手。脇のまわりが黄色かったり、何度も選択して", "ほころびていたりすると、なんだかみじめさを感じさせてしまいます。"]}, {"id": 6, "chapter": "第１章 「できる男」の外見はここが違う", "title": "法則７ 夕方に微香性の香水をつける", "body": ["「できる男」はマイナスを武器にする", "部長さん、20 歳も年が離れている 25 歳のアルバイトホステスとおつきあい。彼女と会うときは汚れていないまで", "もくたびれた下着、クリーニングのタグがついたままのワイシャツ、穴の開いた靴下と、徹底してダメ男。「おまえ", "だけだよ、大事にしてくれるのは･･･」嘘だとわかっていても、女にはうれしいひと言。"]}, {"id": 7, "chapter": "第１章 「できる男」の外見はここが違う", "title": "法則８ かわいい嘘をつく", "body": ["明るい色を着こなす男がいい", "クリントン。合衆国大統領選キャンペーンのときは、スタイリストまでつけて、ときには地元の野球チームの帽子", "をかぶって、集まった人たちの前でその土地へのフレンドリーさを。それに比べ日本の政治家は、ねずみ男みたいな", "灰色系か、お決まりの紺スーツなど、没個性の人が多い。男の色気は明るめの色の洋服を着ると引き立ちます。女性", "が明るい色の洋服を着るとかわいく見えるように、男性もやはりきれいな色や明るい色の洋服を着ると若々しく見え", "る。"]}, {"id": 8, "chapter": "第１章 「できる男」の外見はここが違う", "title": "法則９ 色のある服を着るだけで色気が出る", "body": ["銀座で会った「できない男」のマフラー", "一緒にいたお客様が、コートのポケットから取り出して、私の首もとにかけてくれたマフラー。見ると、フランス", "の有名メーカーのもの。あまりに長く、何重にも巻きつけられるので、首を絞められているのかと思うほど。", "法則 10 高価なものを効果的に使う", "おもいやりという芳香をまとう", "「もしかして、私のためにおしゃれをしてきてくれたのかな」と、相手に思ってもらうのは、とても大切なこと。", "男性が女性のためにおしゃれをしようと頑張っている姿は、女性の心を動かすもの。銀座に出るんだからいい洋服を", "着ようとか、銀座に出るときのために、遊び心のあるしゃれた洋服を仕立てておこうとか、そういう気持ちがある人", "は、決して老けません。常に人に見られているという意識をもちつづけること、それが身についている人が「できる", "男」", "。", "法則 11 人の注目を浴びる", "メガネはディタイム、ナイトタイムで使い分ける", "老眼鏡をかけずに見る人よりも、しゃれたケースからサッとメガネを出して、「店が暗いねぇ、最近目が悪くなっ", "ちゃって」なんて言える人のほうが、ステキ。老いを無理に隠そうとするのではなく、当たり前のこととして受け止", "め、その年齢に合った身のこなしをするほうがスマート。メガネなどの小物遣いひとつで、その人の性格が見える。", "とくにメガネは、センスの差が出やすい小物。たとえば、昼間は透明なレンズのメガネをかけていても、夕方になっ", "たら少し飴色がかったレンズのように少し色がついているのもいい。また、仕事が終わったあとの気持ちの切り替え", "のために、メガネをかけ替えたり、サングラスで遊んでみたりする方は、ケジメのある生活を送っているせいか、と", "てもさわやかな印象。", "法則 12 老いを隠さないほど若々しい", "できる男はこんなメガネをかけている", "メガネだってビジネス用とカジュアル用くらいの使い分けは、", "「できる男」の身だしなみ。", "法則 13 ビジネス用とカジュアル用でメガネを使い分ける", "見えないアクセサリーほど見られている", "男性は基本的にアクセサリーはつけないほうが、堅気に見えます。ボタンカフス、ネクタイピンなどには、さして", "注意が行き届かないものですが、そんなところにまで気を遣い、素敵なものをつけられているとドキッ。", "「できる男」", "は、上質のアクセサリーをさりげなく身につけて、光りものをさらに光り輝かせられる。", "法則 14 アクセサリーは控え目にする", "時計にクロコダイルの革バンドをつける", "時計は、ブランド物かそうでないかということよりも、バンドの革が傷んでいたりしないかのほうが気になります。", "なんとなくにおうなんて、最悪。いつも時計ケースを携帯していて、夜に会社のパーティがあるときには、ブルガリ", "やカルティエなどのファッションウォッチに替えるのも素敵。高級な時計をするなら絶対に約束の会議には遅れない", "ように。", "法則 15 時計がきれいだと人生も光る", "2/9", "車にも TPO がある", "TPO をわきまえるのは「男の知性」", "。成功したことを自分だけで享受するのではなく、社会に還元することも大切。", "アメリカでは、どんなチャリティーやボランティア活動にかかわっているかも、その人個人の評価を決める材料にな", "るくらい。ビル・ゲイツ氏の奥様、メリンダさんのボランティア活動は有名。コンピューターの寄贈だけではなく、", "技術的なサポートなども積極的。", "法則 16 成功者ほど成功を他者と分かち合う", "「できる男」の顔には自信と書いてある", "自分に自信があるからすぐに怒ったりはしませんし、泰然と構えているもの。ささいなことですぐ怒鳴りつける人", "は、たとえば、家で奥様からいつもお小言を言われ、愚痴ばかり聞かされている人は、そのストレスをどこかで発散", "しようとするもの。蓄積されたもの、温めているもの、自分のなかにそういうものをもっている人の魅力は、ちょっ", "とやそっとのことでは剥がれ落ちないもの。", "法則 17 ささいなことで怒鳴らない", "「できる男」は子どもみたいな表情をもつ", "「できる男」は色っぽい表情をもちあわせた人が多い。怖がることを知らない子ども心、まっすぐ人をとらえる瞳。", "子どもでありつづけることも、", "「錆びない男」の条件。また、さまざまな知識をもっていて、嫌味にならない程度に", "いろんなことを教えてくださる方。子ども心をそのままぶつける人、大人のなかに子どものような純粋さを見せてく", "れる人、どちらも銀座の夜を飾る男たち。", "法則 18 やんちゃぽくふるまう", "靴は第 2 の男の顔", "靴はいつもきちんと磨いてください。毎日、同じ靴を履かないで、馬と同じで騎乗したら少し休ませること。夏場", "は、除菌や湿気を取る中敶きや消臭スプレーなどで、防臭対策をとることも大切。", "法則 19 消臭・除菌スプレーを靴にかける", "ネクタイの結び目にはベストポジションがある", "男性のネクタイは、女性がスカーフをするような感覚で選ぶといい。きれいな色やかわいい色、女性に対して好感", "をもたれるようなネクタイをスカーフ感覚でしている人はおしゃれ。秋だからワインレッド、夏だから水色と一色だ", "けで季節感をだすのではなく、日本の着物の絵羽模様のように、四季に会わせた果物や花・草などの柄ものも、評価", "が高い。ネクタイは、唯一、男性のおしゃれを表現できる部分だと思いますから、個性を出して選んでほしい。", "法則 20 女性がスカーフをするようにネクタイを結ぶ", "「できる男」は喪服でおしゃれをする", "告別式に着る喪服だけは、すこしお金がかかってもあつらえておきたいもの。喪に服するという厳粛な気持ちを表", "すような喪服の選び方ができる人であってほしい。カシミヤは上等なものほど生地に艶がありますから、すぐに値段", "がわかります。ある男の人に「素敵でした」と話したら、「カシミヤのコートは何着も買えないし、オールマイティ", "ーで使えるから黒にしたんだよ」", "。", "法則 21 黒の着こなしで差が出る", "モーニング、タキシードを鮮やかに着こなす", "「パーティ用のタキシードなんて一着あれば十分」と考えているかたが多いかもしれませんが、タキシードにも流", "行があります。年末を家族サービスで、一流のホテルで過ごされる男性は、パートナーの女性の服装にさりげなく合", "わせた装い。たとえば、奥様のカメオのネックレスに合わせて、ご主人もカメオのカフス。それは値段の高いもので", "なくてもいい。大切なのは、二人のオリジナリティーが感じられること。", "法則 22 オリジナリティーを身につける"]}];
+function startReading(){document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');}
+function showTab(tab){
+  document.getElementById('btn-index').classList.toggle('active',tab==='index');
+  document.getElementById('btn-read').classList.toggle('active',tab==='read');
+  const ip=document.getElementById('index-panel-scroll');const rv=document.getElementById('reading-view');
+  if(tab==='index'){ip.classList.remove('hidden');rv.classList.remove('active');}
+  else{ip.classList.add('hidden');buildReadingView();rv.classList.add('active');}
+}
+function buildReadingView(){
+  const inner=document.getElementById('reading-inner');let h='';let lc='';
+  sections.forEach(s=>{
+    const ch=s.chapter||'';
+    if(ch!==lc){lc=ch;if(ch)h+='<div class="reading-chapter">'+esc(ch)+'</div>';}
+    const bh=s.body.map(p=>'<p>'+esc(p)+'</p>').join('');
+    h+='<div class="reading-section"><h3><span class="rnum">\u00a7'+(s.id+1)+'</span>'+esc(s.title)+'</h3>'+bh+'</div>';
+  });
+  inner.innerHTML=h;
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toggleSection(header){header.parentElement.classList.toggle('open');}
+function goSec(id){
+  document.getElementById('btn-index').classList.add('active');document.getElementById('btn-read').classList.remove('active');
+  document.getElementById('index-panel-scroll').classList.remove('hidden');document.getElementById('reading-view').classList.remove('active');
+  document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');
+  const el=document.getElementById('sec-'+id);if(!el)return;
+  setTimeout(()=>{el.scrollIntoView({behavior:'smooth',block:'start'});},50);
+  if(!el.classList.contains('open'))el.classList.add('open');
+  document.querySelectorAll('.nav-item').forEach(item=>item.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(item=>{if(item.getAttribute('onclick')==='goSec('+id+')')item.classList.add('active');});
+  document.getElementById('sidebar').classList.remove('open');
+}
+function expandAll(){document.getElementById('splash').classList.add('hidden');document.getElementById('content-area').classList.remove('hidden');document.querySelectorAll('.section').forEach(s=>s.classList.add('open'));}
+function collapseAll(){document.querySelectorAll('.section').forEach(s=>s.classList.remove('open'));}
+function filterNav(q){const l=q.toLowerCase();document.querySelectorAll('.nav-item').forEach(item=>{item.style.display=(!q||item.textContent.toLowerCase().includes(l))?'':'none';});}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
+document.getElementById('index-panel-scroll').addEventListener('click',()=>{if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('open');});
+document.getElementById('reading-view').addEventListener('click',()=>{if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('open');});
+
+</script>
+</body>
+</html>

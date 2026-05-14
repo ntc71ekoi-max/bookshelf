@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>奈良高専野球部 60年史 1966-1975</title>
+<style>
+:root {
+  --navy: #1a2744;
+  --gold: #c8a846;
+  --light-gold: #f5ecc0;
+  --bg: #f5f2eb;
+  --white: #ffffff;
+  --gray: #888;
+  --border: #d0c8b0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  background: var(--bg);
+  color: #222;
+}
+.header {
+  background: var(--navy);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+.header h1 { font-size: 15px; color: var(--gold); letter-spacing: 1px; }
+.header p  { font-size: 11px; color: #aab; margin-top: 2px; }
+
+#index-panel {
+  background: var(--navy);
+  padding: 16px 20px 20px;
+  border-bottom: 3px solid var(--gold);
+}
+#index-panel h2 {
+  color: var(--gold);
+  font-size: 12px;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+.index-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.idx-btn {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(200,168,70,0.35);
+  border-radius: 6px;
+  color: #ccc;
+  font-family: inherit;
+  padding: 8px 14px;
+  cursor: pointer;
+  text-align: left;
+  min-width: 88px;
+  transition: all 0.15s;
+}
+.idx-btn:hover { background: rgba(200,168,70,0.2); border-color: var(--gold); }
+.idx-btn .yr  { font-size: 16px; font-weight: bold; display: block; color: var(--gold); }
+.idx-btn .era { font-size: 10px; color: #888; }
+
+.content { padding: 0 0 80px; }
+
+.year-section {
+  border-bottom: 1px solid var(--border);
+  scroll-margin-top: 62px;
+}
+.year-title {
+  background: var(--navy);
+  padding: 10px 20px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.year-title h2 { font-size: 20px; color: var(--gold); }
+.year-title span { font-size: 12px; color: #aab; }
+
+.summary-block {
+  background: var(--white);
+  border-left: 4px solid var(--gold);
+  padding: 14px 16px 16px;
+}
+.summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  gap: 8px;
+}
+.summary-label {
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--gray);
+  letter-spacing: 1px;
+  flex-shrink: 0;
+}
+.btn-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.tts-btn {
+  background: var(--navy);
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.tts-btn:hover { background: var(--gold); color: var(--navy); }
+.tts-btn.playing { background: #8b1a1a; color: #fff; border-color: #8b1a1a; }
+.pdf-link {
+  display: inline-block;
+  background: #e8f0e0;
+  color: #2a5a1a;
+  border: 1px solid #8ab870;
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-family: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.pdf-link:hover { background: #2a5a1a; color: #fff; }
+
+.summary-text {
+  font-size: 13px;
+  line-height: 1.9;
+  color: #333;
+  margin-bottom: 10px;
+}
+.meta-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.meta-chip {
+  background: var(--light-gold);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 9px;
+  font-size: 11px;
+  color: var(--navy);
+}
+.no-article {
+  background: #f8f5ee;
+  border-left: 4px solid #ccc;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: var(--gray);
+}
+
+.back-top {
+  display: block;
+  width: 100%;
+  padding: 9px;
+  background: #f0ece0;
+  color: var(--gray);
+  font-size: 12px;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: center;
+  border-top: 1px solid var(--border);
+}
+.back-top:hover { background: var(--light-gold); color: var(--navy); }
+
+.back-to-top {
+  display: inline-block;
+  background: rgba(200,168,70,0.15);
+  border: 1px solid rgba(200,168,70,0.5);
+  border-radius: 16px;
+  color: var(--gold);
+  font-size: 11px;
+  font-family: inherit;
+  padding: 4px 12px;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.back-to-top:hover { background: var(--gold); color: var(--navy); }
+
+.scroll-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--navy);
+  color: var(--gold);
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 999;
+  text-decoration: none;
+}
+.scroll-top.visible { opacity: 1; }
+.scroll-top:hover { background: var(--gold); color: var(--navy); }
+</style>
+<script>
+// =============================================
+// ★ PDF リンク設定 — Google Drive の URL に書き換えてください
+// Google Drive の共有リンク例:
+//   https://drive.google.com/file/d/＜ファイルID＞/view
+// =============================================
+var PDF_LINKS = {
+  "1966": "https://drive.google.com/file/d/1SHz11qE5W3z4AbqevTJXIZSOm0h9Z5aw/view",
+  "1967": "https://drive.google.com/file/d/160BYaguoGIerx8FCdG9w7Pk_Z6OowH8Q/view",
+  "1968": "https://drive.google.com/file/d/1-Gnx8WjUhMGfov2-1GyaHU5VqLxMQBfQ/view",
+  "1969": "https://drive.google.com/file/d/1d3xObWxFQM_q2dk6u1su9h17hThP7qJu/view",
+  "1970": "https://drive.google.com/file/d/17PT_WtWsz53jvY-lXwsD22t3k5jKP7WR/view",
+  "1971": "https://drive.google.com/file/d/18HDgICz2VXlT7kTGpzxqNF4XBCvQfxwC/view",
+  "1972": "https://drive.google.com/file/d/1SDzUyHlkqM-oI0xLw2uUXdVWx2P9eNP5/view",
+  "1973": "https://drive.google.com/file/d/1dqaaZUk3AAWsznt1wupSF67BIGY2zImv/view",
+  "1974": "https://drive.google.com/file/d/1hccex7FA2fnjy5UG1T2uSf3-RfCs4dv2/view",
+  "1975": "https://drive.google.com/file/d/1xn_ETka_zudN8JmCNrXRsdO8lJACfmCf/view",
+};
+// =============================================
+</script>
+
+</head>
+<body>
+
+<div class="header">
+  <a class="back-to-top" href="nenshi_index.html">&#9664; 60年史トップ</a>
+  <div>
+    <h1>&#9918; 奈良高専野球部 60年史</h1>
+    <p>夏季選手権奈良大会 1966〜1975（創部期）</p>
+  </div>
+</div>
+
+<div id="index-panel">
+  <h2>&#9654; INDEX — 年度を選ぶ</h2>
+  <div class="index-grid">
+    <button class="idx-btn" onclick="jumpTo('1966')"><span class="yr">1966</span><span class="era">昭和41年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1967')"><span class="yr">1967</span><span class="era">昭和42年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1968')"><span class="yr">1968</span><span class="era">昭和43年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1969')"><span class="yr">1969</span><span class="era">昭和44年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1970')"><span class="yr">1970</span><span class="era">昭和45年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1971')"><span class="yr">1971</span><span class="era">昭和46年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1972')"><span class="yr">1972</span><span class="era">昭和47年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1973')"><span class="yr">1973</span><span class="era">昭和48年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1974')"><span class="yr">1974</span><span class="era">昭和49年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1975')"><span class="yr">1975</span><span class="era">昭和50年</span></button>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- 1966 -->
+  <div class="year-section" id="yr-1966">
+    <div class="year-title"><h2>1966年</h2><span>昭和41年 ／ 創部・初出場</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1966',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1966');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1966">「高校生はもちろん、高専生が長年の念願であった野球部」として学校あげての期待を背負って初陣。一・二年生合わせて21名。全体に荒削りながら、毎日の練習でチームがまとまりつつある。打撃では一番・久谷、三番・中村、四番・久保田に長打力がある。塩田部長・松井監督のもと、専用グラウンドを新調して夏の大会に臨んだ。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：塩田治雄</span>
+        <span class="meta-chip">監督：松井広陵</span>
+        <span class="meta-chip">部員21名</span>
+        <span class="meta-chip">初出場</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <!-- 1967 -->
+  <div class="year-section" id="yr-1967">
+    <div class="year-title"><h2>1967年</h2><span>昭和42年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1967',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1967');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1967">結成2年目。1年間の努力が実り「三つも星をあげている」と記事に記された成長の年。主戦・森本は重い球が武器の本格派で制球力マスターに連日350球を投げ込む。控えの親木は変化球でコーナーを突く技巧派。野手も森岡・竹井を中心に安定してきた。塩田部長・高岡監督体制。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：塩田治雄</span>
+        <span class="meta-chip">監督：高岡光男</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <!-- 1968 -->
+  <div class="year-section" id="yr-1968">
+    <div class="year-title"><h2>1968年</h2><span>昭和43年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1968',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1968');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1968">創部4年目にして春の大会で大付・御所にコールド勝ちするなど「これまでにない充実ぶり」と報じられた飛躍の年。主戦・来山は威力ある直球にカーブ・シュートを組み合わせる。捕手・富野、二塁・久谷、遊撃・紙中のセンターラインが安定し、打線も一番久谷から五番富野まで破壊力がある。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：太田順康</span>
+        <span class="meta-chip">監督：高岡光男</span>
+        <span class="meta-chip">春 大付・御所にコールド勝ち</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <!-- 1969 -->
+  <div class="year-section" id="yr-1969">
+    <div class="year-title"><h2>1969年</h2><span>昭和44年</span></div>
+    <div class="no-article">記事の文字起こしデータなし。新聞原紙をご確認ください。</div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">新聞記事</span>
+        <div class="btn-row">
+          <a class="pdf-link" href="#" onclick="openPDF('1969');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <!-- 1970 -->
+  <div class="year-section" id="yr-1970">
+    <div class="year-title"><h2>1970年</h2><span>昭和45年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1970',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1970');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1970">開校と同時に野球部を創り夏の大会に参加して4年。毎年畝傍・高田商・田原本農・郡山など強豪ばかりに当たり、まだ一勝もできていない。授業が毎日8時間あり練習時間はごくわずか。陸上・ハンドボール・サッカーと共用するグラウンドで地道に汗を流す。エースで主将の安川（三年生）ひとりが上級生、あとは一・二年生の若いチームで「宿願の一勝」を狙う。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部員13名</span>
+        <span class="meta-chip">創部5年 未勝利</span>
+        <span class="meta-chip">エース主将：安川</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <!-- 1971 -->
+  <div class="year-section" id="yr-1971">
+    <div class="year-title"><h2>1971年</h2><span>昭和46年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1971',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1971');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1971">部創設5周年の節目の年。練習不足はつきまとうものの、攻守ともによくまとまった「こじんまり」したチーム。三番西口・四番西塔・五番奥田のクリーンアップに一年生の真弓らが好調。西口主将を中心に「根性の野球でキャリア不足を補う」と記事に綴られた。念願の一勝が射程圏内に入ってきた年。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：塩田治雄</span>
+        <span class="meta-chip">監督：川口茂明</span>
+        <span class="meta-chip">創部5周年</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <!-- 1972 -->
+  <div class="year-section" id="yr-1972">
+    <div class="year-title"><h2>1972年</h2><span>昭和47年</span></div>
+    <div class="no-article">記事の文字起こしデータなし。新聞原紙をご確認ください。</div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">新聞記事</span>
+        <div class="btn-row">
+          <a class="pdf-link" href="#" onclick="openPDF('1972');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <!-- 1973 -->
+  <div class="year-section" id="yr-1973">
+    <div class="year-title"><h2>1973年</h2><span>昭和48年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1973',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1973');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1973">昭和40年の創部以来、夏の大会は郡山・田原本農・天理といった強豪に7回連続1回戦敗退。しかしこの年は部員も17名に増え「近年にない充実ぶり」と評された。主将・真弓を中心に春からの練習試合で4勝2敗と好成績。奈良工・女大付・奈良・御所工に勝利して自信をつけた。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：塩田治雄</span>
+        <span class="meta-chip">部員17名</span>
+        <span class="meta-chip">春季 4勝2敗</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <!-- 1974 -->
+  <div class="year-section" id="yr-1974">
+    <div class="year-title"><h2>1974年</h2><span>昭和49年</span></div>
+    <div class="no-article">記事の文字起こしデータなし。新聞原紙をご確認ください。</div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">新聞記事</span>
+        <div class="btn-row">
+          <a class="pdf-link" href="#" onclick="openPDF('1974');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <!-- 1975 -->
+  <div class="year-section" id="yr-1975">
+    <div class="year-title"><h2>1975年</h2><span>昭和50年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1975',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1975');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1975">チームの実は投手力に頼るスタイルながら、この年は将来が楽しみな一年生が多く積極的に起用した。二・三年生中心でまとまりは良く、打撃は上位から下位まで安定してコンスタントに打てる。前年秋にベスト4入りしたメンバーがそのまま残っており、「大きなエラーが出なければベスト4も夢ではない」と意気込みを見せた。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：塩田治雄</span>
+        <span class="meta-chip">監督：土岐進</span>
+        <span class="meta-chip">前年秋 ベスト4</span>
+        <span class="meta-chip">目標：ベスト4</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+</div>
+
+<script>
+
+
+
+
+
+function openPDF(year) {
+  var url = PDF_LINKS[year];
+  if (url) window.open(url, '_blank');
+}
+
+window.addEventListener('scroll', function() {
+  var btn = document.getElementById('scrollTopBtn');
+  if (btn) btn.classList.toggle('visible', window.scrollY > 200);
+});
+
+function jumpTo(year) {
+  var el = document.getElementById('yr-' + year);
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
+function jumpToTop() {
+  document.getElementById('index-panel').scrollIntoView({ behavior: 'smooth' });
+}
+var currentBtn = null;
+function speak(year, btn) {
+  if (speechSynthesis.speaking) {
+    speechSynthesis.cancel();
+    if (currentBtn) { currentBtn.innerHTML = '&#9654; 読み上げ'; currentBtn.classList.remove('playing'); }
+    if (currentBtn === btn) { currentBtn = null; return; }
+  }
+  var text = document.getElementById('txt-' + year).textContent;
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ja-JP'; u.rate = 0.9;
+  u.onend = function() { btn.innerHTML = '&#9654; 読み上げ'; btn.classList.remove('playing'); currentBtn = null; };
+  currentBtn = btn;
+  btn.innerHTML = '&#9632; 停止';
+  btn.classList.add('playing');
+  speechSynthesis.speak(u);
+}
+</script>
+
+<a class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" href="#">&#9650;</a>
+
+</body>
+</html>

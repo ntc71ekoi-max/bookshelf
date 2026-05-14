@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>奈良高専野球部 60年史 2016-2024</title>
+<style>
+:root {
+  --navy: #1a2744; --gold: #c8a846; --light-gold: #f5ecc0;
+  --bg: #f5f2eb; --white: #ffffff; --gray: #888; --border: #d0c8b0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; background: var(--bg); color: #222; }
+.header { background: var(--navy); padding: 14px 20px; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 200; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+.header h1 { font-size: 15px; color: var(--gold); letter-spacing: 1px; }
+.header p  { font-size: 11px; color: #aab; margin-top: 2px; }
+#index-panel { background: var(--navy); padding: 16px 20px 20px; border-bottom: 3px solid var(--gold); }
+#index-panel h2 { color: var(--gold); font-size: 12px; letter-spacing: 2px; margin-bottom: 12px; }
+.index-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.idx-btn { background: rgba(255,255,255,0.07); border: 1px solid rgba(200,168,70,0.35); border-radius: 6px; color: #ccc; font-family: inherit; padding: 8px 14px; cursor: pointer; text-align: left; min-width: 88px; transition: all 0.15s; }
+.idx-btn:hover { background: rgba(200,168,70,0.2); border-color: var(--gold); }
+.idx-btn .yr  { font-size: 16px; font-weight: bold; display: block; color: var(--gold); }
+.idx-btn .era { font-size: 10px; color: #888; }
+.idx-btn.covid .yr { color: #aaa; }
+.content { padding: 0 0 80px; }
+.year-section { border-bottom: 1px solid var(--border); scroll-margin-top: 62px; }
+.year-title { background: var(--navy); padding: 10px 20px; display: flex; align-items: baseline; gap: 10px; }
+.year-title h2 { font-size: 20px; color: var(--gold); }
+.year-title span { font-size: 12px; color: #aab; }
+.summary-block { background: var(--white); border-left: 4px solid var(--gold); padding: 14px 16px 16px; }
+.summary-block.covid-block { border-left-color: #999; background: #f8f6f2; }
+.summary-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; gap: 8px; }
+.summary-label { font-size: 11px; font-weight: bold; color: var(--gray); letter-spacing: 1px; flex-shrink: 0; }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.tts-btn { background: var(--navy); color: var(--gold); border: 1px solid var(--gold); border-radius: 20px; padding: 5px 14px; font-size: 12px; font-family: inherit; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.tts-btn:hover { background: var(--gold); color: var(--navy); }
+.tts-btn.playing { background: #8b1a1a; color: #fff; border-color: #8b1a1a; }
+.pdf-link { display: inline-block; background: #e8f0e0; color: #2a5a1a; border: 1px solid #8ab870; border-radius: 20px; padding: 5px 14px; font-size: 12px; font-family: inherit; text-decoration: none; white-space: nowrap; }
+.pdf-link:hover { background: #2a5a1a; color: #fff; }
+.summary-text { font-size: 13px; line-height: 1.9; color: #333; margin-bottom: 10px; }
+.covid-text { font-size: 13px; line-height: 1.9; color: #666; margin-bottom: 10px; font-style: italic; }
+.meta-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.meta-chip { background: var(--light-gold); border: 1px solid var(--border); border-radius: 4px; padding: 3px 9px; font-size: 11px; color: var(--navy); }
+.meta-chip.covid { background: #eee; color: #666; border-color: #ccc; }
+.back-top { display: block; width: 100%; padding: 9px; background: #f0ece0; color: var(--gray); font-size: 12px; border: none; font-family: inherit; cursor: pointer; text-align: center; border-top: 1px solid var(--border); }
+.back-top:hover { background: var(--light-gold); color: var(--navy); }
+
+.back-to-top {
+  display: inline-block;
+  background: rgba(200,168,70,0.15);
+  border: 1px solid rgba(200,168,70,0.5);
+  border-radius: 16px;
+  color: var(--gold);
+  font-size: 11px;
+  font-family: inherit;
+  padding: 4px 12px;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.back-to-top:hover { background: var(--gold); color: var(--navy); }
+
+.scroll-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--navy);
+  color: var(--gold);
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 999;
+  text-decoration: none;
+}
+.scroll-top.visible { opacity: 1; }
+.scroll-top:hover { background: var(--gold); color: var(--navy); }
+</style>
+<script>
+// =============================================
+// ★ PDF リンク設定 — Google Drive の URL に書き換えてください
+// Google Drive の共有リンク例:
+//   https://drive.google.com/file/d/＜ファイルID＞/view
+// =============================================
+var PDF_LINKS = {
+  "2016": "https://drive.google.com/file/d/1-Lxm8K64wG6AXzfgxn1hLDLg4kEP67pt/view",
+  "2017": "https://drive.google.com/file/d/1F-UeXD9Y7A1bIvQ5_SILVyW0lIMTDgbX/view",
+  "2018": "https://drive.google.com/file/d/1KABCO37eo_IQpbts4mmhy0nfSOWXVSra/view",
+  "2019": "https://drive.google.com/file/d/1Qr_63IIjtDdoNXqwJkidDxEuTzYh-CuT/view",
+  "2020": "https://drive.google.com/file/d/1LHDZbLQL9_7fqsCw_H6eik5N3UmsOHwF/view",
+  "2021": "https://drive.google.com/file/d/1AnvKIIeHAGNYjC2E1aMJmS3bC-f3GsAI/view",
+  "2022": "https://drive.google.com/file/d/1IPHWcb1BADlIA_b4VjJo_8OmTdGeNmmB/view",
+  "2023": "https://drive.google.com/file/d/1NomdKo1jDfsCDUDYzWs--ew9ZNAGE5OT/view",
+  "2024": "https://drive.google.com/file/d/15zc4c0YWKq13jmcp3N2soGqfRRvGuXk4/view",
+};
+// =============================================
+</script>
+
+</head>
+<body>
+
+<div class="header">
+  <a class="back-to-top" href="nenshi_index.html">&#9664; 60年史トップ</a>
+  <div>
+    <h1>&#9918; 奈良高専野球部 60年史</h1>
+    <p>夏季選手権奈良大会 2016〜2024（西前監督時代・現代）</p>
+  </div>
+</div>
+
+<div id="index-panel">
+  <h2>&#9654; INDEX — 年度を選ぶ</h2>
+  <div class="index-grid">
+    <button class="idx-btn" onclick="jumpTo('2016')"><span class="yr">2016</span><span class="era">平成28年</span></button>
+    <button class="idx-btn" onclick="jumpTo('2017')"><span class="yr">2017</span><span class="era">平成29年</span></button>
+    <button class="idx-btn" onclick="jumpTo('2018')"><span class="yr">2018</span><span class="era">平成30年</span></button>
+    <button class="idx-btn" onclick="jumpTo('2019')"><span class="yr">2019</span><span class="era">令和元年</span></button>
+    <button class="idx-btn covid" onclick="jumpTo('2020')"><span class="yr">2020</span><span class="era">大会中止</span></button>
+    <button class="idx-btn" onclick="jumpTo('2021')"><span class="yr">2021</span><span class="era">令和3年</span></button>
+    <button class="idx-btn" onclick="jumpTo('2022')"><span class="yr">2022</span><span class="era">令和4年</span></button>
+    <button class="idx-btn" onclick="jumpTo('2023')"><span class="yr">2023</span><span class="era">令和5年</span></button>
+    <button class="idx-btn" onclick="jumpTo('2024')"><span class="yr">2024</span><span class="era">令和6年</span></button>
+  </div>
+</div>
+
+<div class="content">
+
+  <div class="year-section" id="yr-2016">
+    <div class="year-title"><h2>2016年</h2><span>平成28年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('2016',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('2016');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-2016">制球力の谷山と直球重視の松田による継投が投手の柱。一番・坂本の出塁からクリーンアップの竹内・光田・福野の長打力で得点するパターン。俊足ぞろいの外野陣が守備範囲の広さを発揮する。堅守から攻めのリズムをつくるスタイルで夏に臨んだ。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：内田真司</span>
+        <span class="meta-chip">監督：西前竜一</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-2017">
+    <div class="year-title"><h2>2017年</h2><span>平成29年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('2017',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('2017');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-2017">エース村田はカーブ・スライダー・チェンジアップ・フォークと多彩な変化球で的を絞らせない丁寧な投球が武器。中谷はストレートの勢いが光る。長打力には欠けるがバント・エンドランを駆使した機動力野球で好機をつくる。守備は最少失点に抑える意識をナイン全員で共有する。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：内田真司</span>
+        <span class="meta-chip">監督：西前竜一</span>
+        <span class="meta-chip">機動力野球</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-2018">
+    <div class="year-title"><h2>2018年</h2><span>平成30年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('2018',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('2018');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-2018">前年秋の秋季近畿地区大会県予選で準々決勝まで勝ち進み自信をつけた。昨夏2勝のエース村田と扇谷の先発継投体制。三年生は始発で登校し打撃練習を重ねてきた努力の年。俊足の奥田を一番に起用し機動力で得点をつくる。捕手・増田を軸にセンターラインが守りのリズムをつくる。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：内田真司</span>
+        <span class="meta-chip">監督：西前竜一</span>
+        <span class="meta-chip">秋 県予選準々決勝進出</span>
+        <span class="meta-chip">始発登校で打撃強化</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-2019">
+    <div class="year-title"><h2>2019年</h2><span>令和元年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('2019',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('2019');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-2019">春の県大会で同校史上初のベスト4進出を果たし、勢いに乗った記念すべき年。制球力のエース扇谷・重い球質の坂本・速球派の宝持という三本柱が投手陣を支える。四番・高橋、五番・堀、六番・宝持に長打力があり、ボールの見極めが良くつなぐ打線が持ち味。捕手・堀の頭脳的なリードが光る。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：内田真司</span>
+        <span class="meta-chip">監督：西前竜一</span>
+        <span class="meta-chip">春 史上初ベスト4</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-2020">
+    <div class="year-title"><h2>2020年</h2><span>令和2年</span></div>
+    <div class="summary-block covid-block">
+      <div class="summary-row">
+        <span class="summary-label">記録</span>
+        <div class="btn-row">
+          <a class="pdf-link" href="#" onclick="openPDF('2020');return false;" target="_blank">&#128240; 資料を開く</a>
+        </div>
+      </div>
+      <p class="covid-text">新型コロナウイルス感染拡大の影響により、夏季選手権奈良大会は中止。三年生にとって最後の夏の大会が失われた年として60年史に刻まれる。</p>
+      <div class="meta-row">
+        <span class="meta-chip covid">大会中止（COVID-19）</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-2021">
+    <div class="year-title"><h2>2021年</h2><span>令和3年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('2021',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('2021');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-2021">コロナ禍を経て再開した大会に臨んだ年。右腕の小西を中心に森下・武部・松田と豊富な投手陣が継投で失点を防ぐ。一番・高力と二番・奥田が出塁して中軸の松田・井上で返す攻撃スタイル。主将・松田を中心に守り勝つ野球を目指した。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：内田真司</span>
+        <span class="meta-chip">監督：西前竜一</span>
+        <span class="meta-chip">大会再開</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-2022">
+    <div class="year-title"><h2>2022年</h2><span>令和4年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('2022',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('2022');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-2022">2020年の大会不出場の悔しさを抱えた三年生が初戦突破への強い思いで挑んだ年。エース小西と春に自信をつけた加美の継投体制。高力・田中の出塁からつなぐ攻撃で得点を狙う。武部・田中・藤田を中心とした攻めの守備で臨んだ。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：内田真司</span>
+        <span class="meta-chip">監督：西前竜一</span>
+        <span class="meta-chip">2020年不出場組の雪辱の年</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-2023">
+    <div class="year-title"><h2>2023年</h2><span>令和5年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('2023',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('2023');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-2023">野村・雨堤・上林らが継投し捕手・松本との呼吸が合う投手陣が持ち味。俊足の一番・岡村と二番・田中が出塁して主軸の岩永・高橋・堀で返す攻撃スタイル。遊撃・中井を中心とした内外野の連係で最少失点に抑えるリズム重視の野球を志向した。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：内田真司</span>
+        <span class="meta-chip">監督：西前竜一</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-2024">
+    <div class="year-title"><h2>2024年</h2><span>令和6年 ／ 60年史最終年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('2024',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('2024');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-2024">60年史の締めを飾る年。制球力に自信を持つエース井ノ上を左腕の坂本・光谷が支える継投体制。バントや盗塁など小技を絡めて1点を着実に取りに行く攻撃スタイル。四番・高田と五番・石井のパンチ力が得点源。捕手・坂本を中心にセンターラインの守りが堅い、守り勝つ野球で夏に挑んだ。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：内田真司</span>
+        <span class="meta-chip">監督：西前竜一</span>
+        <span class="meta-chip">60年史最終年</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+</div>
+
+<script>
+
+
+
+
+
+function openPDF(year) {
+  var url = PDF_LINKS[year];
+  if (url) window.open(url, '_blank');
+}
+
+window.addEventListener('scroll', function() {
+  var btn = document.getElementById('scrollTopBtn');
+  if (btn) btn.classList.toggle('visible', window.scrollY > 200);
+});
+
+function jumpTo(year) {
+  var el = document.getElementById('yr-' + year);
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
+function jumpToTop() {
+  document.getElementById('index-panel').scrollIntoView({ behavior: 'smooth' });
+}
+var currentBtn = null;
+function speak(year, btn) {
+  if (speechSynthesis.speaking) {
+    speechSynthesis.cancel();
+    if (currentBtn) { currentBtn.innerHTML = '&#9654; 読み上げ'; currentBtn.classList.remove('playing'); }
+    if (currentBtn === btn) { currentBtn = null; return; }
+  }
+  var text = document.getElementById('txt-' + year).textContent;
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ja-JP'; u.rate = 0.9;
+  u.onend = function() { btn.innerHTML = '&#9654; 読み上げ'; btn.classList.remove('playing'); currentBtn = null; };
+  currentBtn = btn;
+  btn.innerHTML = '&#9632; 停止';
+  btn.classList.add('playing');
+  speechSynthesis.speak(u);
+}
+</script>
+
+<a class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" href="#">&#9650;</a>
+
+</body>
+</html>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>奈良高専野球部 創部60年史</title>
+<style>
+:root {
+  --navy: #1a2744;
+  --navy2: #243058;
+  --gold: #c8a846;
+  --light-gold: #f5ecc0;
+  --bg: #f5f2eb;
+  --white: #ffffff;
+  --gray: #888;
+  --border: #d0c8b0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  background: var(--bg);
+  color: #222;
+  min-height: 100vh;
+}
+
+/* ヒーロー */
+.hero {
+  background: var(--navy);
+  padding: 40px 24px 36px;
+  text-align: center;
+  border-bottom: 4px solid var(--gold);
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    45deg, transparent, transparent 40px,
+    rgba(200,168,70,0.04) 40px, rgba(200,168,70,0.04) 80px
+  );
+}
+.hero-icon { font-size: 52px; display: block; margin-bottom: 14px; position: relative; }
+.hero h1 {
+  font-size: 24px;
+  color: var(--gold);
+  letter-spacing: 3px;
+  margin-bottom: 6px;
+  position: relative;
+}
+.hero h2 {
+  font-size: 14px;
+  color: #aab0c0;
+  font-weight: normal;
+  letter-spacing: 2px;
+  position: relative;
+}
+.hero-period {
+  display: inline-block;
+  margin-top: 16px;
+  background: rgba(200,168,70,0.15);
+  border: 1px solid rgba(200,168,70,0.4);
+  border-radius: 20px;
+  padding: 6px 20px;
+  font-size: 12px;
+  color: var(--gold);
+  letter-spacing: 1px;
+  position: relative;
+}
+
+/* 概要 */
+.overview {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 20px 0;
+  font-size: 13px;
+  line-height: 1.9;
+  color: #444;
+}
+.stats-strip {
+  display: flex;
+  border-top: 1px solid var(--border);
+  margin-top: 16px;
+}
+.stat-item {
+  flex: 1;
+  text-align: center;
+  padding: 12px 4px;
+  border-right: 1px solid var(--border);
+}
+.stat-item:last-child { border-right: none; }
+.stat-num { font-size: 20px; font-weight: bold; color: var(--navy); display: block; }
+.stat-label { font-size: 10px; color: var(--gray); margin-top: 2px; }
+
+/* セクションタイトル */
+.section-title {
+  background: var(--navy);
+  color: var(--gold);
+  font-size: 12px;
+  letter-spacing: 2px;
+  padding: 10px 20px;
+  border-bottom: 2px solid var(--gold);
+}
+
+/* 年代カード */
+.era-list { padding: 12px 16px 24px; display: flex; flex-direction: column; gap: 10px; }
+
+.era-card {
+  display: block;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  transition: all 0.15s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.era-card:hover {
+  border-color: var(--gold);
+  box-shadow: 0 3px 12px rgba(200,168,70,0.25);
+  transform: translateY(-1px);
+}
+.era-card-inner { display: flex; align-items: stretch; }
+.era-badge {
+  background: var(--navy);
+  width: 76px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 8px;
+  gap: 4px;
+}
+.era-badge .years { font-size: 12px; color: var(--gold); font-weight: bold; text-align: center; line-height: 1.4; }
+.era-badge .count { font-size: 10px; color: #778; margin-top: 2px; }
+.era-body { flex: 1; padding: 12px 14px; }
+.era-title { font-size: 15px; font-weight: bold; color: var(--navy); margin-bottom: 3px; }
+.era-sub { font-size: 11px; color: var(--gray); margin-bottom: 8px; }
+.era-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.era-tag {
+  background: var(--light-gold);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 2px 8px;
+  font-size: 11px;
+  color: var(--navy);
+}
+.era-tag.highlight {
+  background: var(--navy);
+  color: var(--gold);
+  border-color: var(--navy);
+}
+.era-arrow {
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  color: var(--gold);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+/* フッター */
+.footer {
+  background: var(--navy);
+  color: #667;
+  font-size: 11px;
+  text-align: center;
+  padding: 24px 20px;
+  margin-top: 8px;
+  line-height: 2;
+}
+.footer strong { color: var(--gold); }
+.footer .private-notice {
+  display: inline-block;
+  margin-top: 8px;
+  background: rgba(200,168,70,0.1);
+  border: 1px solid rgba(200,168,70,0.3);
+  border-radius: 4px;
+  padding: 4px 12px;
+  color: #aab;
+  font-size: 10px;
+}
+
+/* スクロールトップ */
+.scroll-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--navy);
+  color: var(--gold);
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 999;
+  text-decoration: none;
+}
+.scroll-top.visible { opacity: 1; }
+.scroll-top:hover { background: var(--gold); color: var(--navy); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="hero-icon">&#9918;</span>
+  <h1>奈良高専野球部</h1>
+  <h2>創 部 60 年 史</h2>
+  <span class="hero-period">1966（昭和41年）― 2024（令和6年）</span>
+</div>
+
+<div class="overview">
+  昭和40年の創部以来、五年制の高専という独自の環境の中で野球部は歩み続けてきた。授業8時間・グラウンド共用という制約の中で、毎年新たな選手たちが夏の奈良県選手権に挑んだ59年間の記録。
+  <div class="stats-strip">
+    <div class="stat-item"><span class="stat-num">59</span><span class="stat-label">出場回数</span></div>
+    <div class="stat-item"><span class="stat-num">1966</span><span class="stat-label">創部年</span></div>
+    <div class="stat-item"><span class="stat-num">2019</span><span class="stat-label">春ベスト4</span></div>
+    <div class="stat-item"><span class="stat-num">2014</span><span class="stat-label">夏3回戦</span></div>
+  </div>
+</div>
+
+<div class="section-title">&#9654; 年代別記録を開く</div>
+
+<div class="era-list">
+
+  <a class="era-card" href="nenshi_1966_1975.html">
+    <div class="era-card-inner">
+      <div class="era-badge">
+        <span class="years">1966<br>〜<br>1975</span>
+        <span class="count">10年</span>
+      </div>
+      <div class="era-body">
+        <div class="era-title">創部期</div>
+        <div class="era-sub">昭和41年 〜 昭和50年</div>
+        <div class="era-tags">
+          <span class="era-tag">塩田部長時代</span>
+          <span class="era-tag">初出場・初勝利への道</span>
+          <span class="era-tag highlight">1975年 秋ベスト4</span>
+        </div>
+      </div>
+      <div class="era-arrow">&#8250;</div>
+    </div>
+  </a>
+
+  <a class="era-card" href="nenshi_1976_1985.html">
+    <div class="era-card-inner">
+      <div class="era-badge">
+        <span class="years">1976<br>〜<br>1985</span>
+        <span class="count">10年</span>
+      </div>
+      <div class="era-body">
+        <div class="era-title">発展期</div>
+        <div class="era-sub">昭和51年 〜 昭和60年</div>
+        <div class="era-tags">
+          <span class="era-tag">土岐・藤井・村田監督</span>
+          <span class="era-tag highlight">1985年 春20勝</span>
+          <span class="era-tag">打率3割7名</span>
+        </div>
+      </div>
+      <div class="era-arrow">&#8250;</div>
+    </div>
+  </a>
+
+  <a class="era-card" href="nenshi_1986_1995.html">
+    <div class="era-card-inner">
+      <div class="era-badge">
+        <span class="years">1986<br>〜<br>1995</span>
+        <span class="count">10年</span>
+      </div>
+      <div class="era-body">
+        <div class="era-title">充実期</div>
+        <div class="era-sub">昭和61年 〜 平成7年</div>
+        <div class="era-tags">
+          <span class="era-tag">若手監督時代</span>
+          <span class="era-tag highlight">1991年 打率.325</span>
+          <span class="era-tag">盗塁35連続成功</span>
+        </div>
+      </div>
+      <div class="era-arrow">&#8250;</div>
+    </div>
+  </a>
+
+  <a class="era-card" href="nenshi_1996_2005.html">
+    <div class="era-card-inner">
+      <div class="era-badge">
+        <span class="years">1996<br>〜<br>2005</span>
+        <span class="count">10年</span>
+      </div>
+      <div class="era-body">
+        <div class="era-title">野々垣監督時代</div>
+        <div class="era-sub">平成8年 〜 平成17年</div>
+        <div class="era-tags">
+          <span class="era-tag">野々垣監督9年間</span>
+          <span class="era-tag highlight">1998年 春初戦突破</span>
+          <span class="era-tag">守備強化路線</span>
+        </div>
+      </div>
+      <div class="era-arrow">&#8250;</div>
+    </div>
+  </a>
+
+  <a class="era-card" href="nenshi_2006_2015.html">
+    <div class="era-card-inner">
+      <div class="era-badge">
+        <span class="years">2006<br>〜<br>2015</span>
+        <span class="count">10年</span>
+      </div>
+      <div class="era-body">
+        <div class="era-title">西前・松尾監督時代</div>
+        <div class="era-sub">平成18年 〜 平成27年</div>
+        <div class="era-tags">
+          <span class="era-tag">創部最多部員数</span>
+          <span class="era-tag highlight">2014年 夏3回戦進出</span>
+          <span class="era-tag">2015年 サヨナラ惜敗</span>
+        </div>
+      </div>
+      <div class="era-arrow">&#8250;</div>
+    </div>
+  </a>
+
+  <a class="era-card" href="nenshi_2016_2024.html">
+    <div class="era-card-inner">
+      <div class="era-badge">
+        <span class="years">2016<br>〜<br>2024</span>
+        <span class="count">9年</span>
+      </div>
+      <div class="era-body">
+        <div class="era-title">現代（西前監督体制）</div>
+        <div class="era-sub">平成28年 〜 令和6年</div>
+        <div class="era-tags">
+          <span class="era-tag highlight">2019年 春史上初ベスト4</span>
+          <span class="era-tag">2020年 大会中止</span>
+          <span class="era-tag">令和の奈良高専野球</span>
+        </div>
+      </div>
+      <div class="era-arrow">&#8250;</div>
+    </div>
+  </a>
+
+</div>
+
+<div class="footer">
+  <strong>奈良高専野球部 OB会</strong><br>
+  記事引用：奈良新聞・大和タイムス 各年夏季選手権奈良大会<br>
+  <span class="private-notice">&#128274; 本資料はOB会員限定の非公開資料です</span>
+</div>
+
+<a class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" href="#">&#9650;</a>
+
+<script>
+window.addEventListener('scroll', function() {
+  var btn = document.getElementById('scrollTopBtn');
+  if (btn) btn.classList.toggle('visible', window.scrollY > 200);
+});
+</script>
+</body>
+</html>

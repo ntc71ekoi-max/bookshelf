@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>奈良高専野球部 60年史 1996-2005</title>
+<style>
+:root {
+  --navy: #1a2744; --gold: #c8a846; --light-gold: #f5ecc0;
+  --bg: #f5f2eb; --white: #ffffff; --gray: #888; --border: #d0c8b0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; background: var(--bg); color: #222; }
+.header { background: var(--navy); padding: 14px 20px; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 200; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+.header h1 { font-size: 15px; color: var(--gold); letter-spacing: 1px; }
+.header p  { font-size: 11px; color: #aab; margin-top: 2px; }
+#index-panel { background: var(--navy); padding: 16px 20px 20px; border-bottom: 3px solid var(--gold); }
+#index-panel h2 { color: var(--gold); font-size: 12px; letter-spacing: 2px; margin-bottom: 12px; }
+.index-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.idx-btn { background: rgba(255,255,255,0.07); border: 1px solid rgba(200,168,70,0.35); border-radius: 6px; color: #ccc; font-family: inherit; padding: 8px 14px; cursor: pointer; text-align: left; min-width: 88px; transition: all 0.15s; }
+.idx-btn:hover { background: rgba(200,168,70,0.2); border-color: var(--gold); }
+.idx-btn .yr  { font-size: 16px; font-weight: bold; display: block; color: var(--gold); }
+.idx-btn .era { font-size: 10px; color: #888; }
+.content { padding: 0 0 80px; }
+.year-section { border-bottom: 1px solid var(--border); scroll-margin-top: 62px; }
+.year-title { background: var(--navy); padding: 10px 20px; display: flex; align-items: baseline; gap: 10px; }
+.year-title h2 { font-size: 20px; color: var(--gold); }
+.year-title span { font-size: 12px; color: #aab; }
+.summary-block { background: var(--white); border-left: 4px solid var(--gold); padding: 14px 16px 16px; }
+.summary-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; gap: 8px; }
+.summary-label { font-size: 11px; font-weight: bold; color: var(--gray); letter-spacing: 1px; flex-shrink: 0; }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.tts-btn { background: var(--navy); color: var(--gold); border: 1px solid var(--gold); border-radius: 20px; padding: 5px 14px; font-size: 12px; font-family: inherit; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.tts-btn:hover { background: var(--gold); color: var(--navy); }
+.tts-btn.playing { background: #8b1a1a; color: #fff; border-color: #8b1a1a; }
+.pdf-link { display: inline-block; background: #e8f0e0; color: #2a5a1a; border: 1px solid #8ab870; border-radius: 20px; padding: 5px 14px; font-size: 12px; font-family: inherit; text-decoration: none; white-space: nowrap; }
+.pdf-link:hover { background: #2a5a1a; color: #fff; }
+.summary-text { font-size: 13px; line-height: 1.9; color: #333; margin-bottom: 10px; }
+.meta-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.meta-chip { background: var(--light-gold); border: 1px solid var(--border); border-radius: 4px; padding: 3px 9px; font-size: 11px; color: var(--navy); }
+.back-top { display: block; width: 100%; padding: 9px; background: #f0ece0; color: var(--gray); font-size: 12px; border: none; font-family: inherit; cursor: pointer; text-align: center; border-top: 1px solid var(--border); }
+.back-top:hover { background: var(--light-gold); color: var(--navy); }
+
+.back-to-top {
+  display: inline-block;
+  background: rgba(200,168,70,0.15);
+  border: 1px solid rgba(200,168,70,0.5);
+  border-radius: 16px;
+  color: var(--gold);
+  font-size: 11px;
+  font-family: inherit;
+  padding: 4px 12px;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.back-to-top:hover { background: var(--gold); color: var(--navy); }
+
+.scroll-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--navy);
+  color: var(--gold);
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 999;
+  text-decoration: none;
+}
+.scroll-top.visible { opacity: 1; }
+.scroll-top:hover { background: var(--gold); color: var(--navy); }
+</style>
+<script>
+// =============================================
+// ★ PDF リンク設定 — Google Drive の URL に書き換えてください
+// Google Drive の共有リンク例:
+//   https://drive.google.com/file/d/＜ファイルID＞/view
+// =============================================
+var PDF_LINKS = {
+  "1996": "https://drive.google.com/file/d/1p3w2eCT57vMiB_1SUV3NNFtpLXMVuRx3/view",
+  "1997": "https://drive.google.com/file/d/1nrwjePH8F69qR6yOZdaA2cYWul0mthBo/view",
+  "1998": "https://drive.google.com/file/d/1PH7vgVJhMy1DCzkWGsOySWzLmCDa8Nkw/view",
+  "1999": "https://drive.google.com/file/d/1FLrNMCXpIabcfhg96mvPCFIKRL2iQ2oM/view",
+  "2000": "https://drive.google.com/file/d/1Infcxz478tAG7kOi1XgRep5TZh26h-7b/view",
+  "2001": "https://drive.google.com/file/d/1DNVPHIIFXJXwLog44xsfYu6bZcOb5yLC/view",
+  "2002": "https://drive.google.com/file/d/1wxLZ-XQXhvoafQqsMZj9L_oZIzJ4R2L6/view",
+  "2003": "https://drive.google.com/file/d/19R5UnuW0rTU3Ms6LHXFzQgCFb5sn_tCT/view",
+  "2004": "https://drive.google.com/file/d/1CuHSs9dx9FFZBZlnAGnNG6CLGvWPcv_E/view",
+  "2005": "https://drive.google.com/file/d/1eRtFyZxiH0JMC05315yQArsrJcegXCvK/view",
+};
+// =============================================
+</script>
+
+</head>
+<body>
+
+<div class="header">
+  <a class="back-to-top" href="nenshi_index.html">&#9664; 60年史トップ</a>
+  <div>
+    <h1>&#9918; 奈良高専野球部 60年史</h1>
+    <p>夏季選手権奈良大会 1996〜2005（野々垣監督時代）</p>
+  </div>
+</div>
+
+<div id="index-panel">
+  <h2>&#9654; INDEX — 年度を選ぶ</h2>
+  <div class="index-grid">
+    <button class="idx-btn" onclick="jumpTo('1996')"><span class="yr">1996</span><span class="era">平成8年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1997')"><span class="yr">1997</span><span class="era">平成9年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1998')"><span class="yr">1998</span><span class="era">平成10年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1999')"><span class="yr">1999</span><span class="era">平成11年</span></button>
+    <button class="idx-btn" onclick="jumpTo('2000')"><span class="yr">2000</span><span class="era">平成12年</span></button>
+    <button class="idx-btn" onclick="jumpTo('2001')"><span class="yr">2001</span><span class="era">平成13年</span></button>
+    <button class="idx-btn" onclick="jumpTo('2002')"><span class="yr">2002</span><span class="era">平成14年</span></button>
+    <button class="idx-btn" onclick="jumpTo('2003')"><span class="yr">2003</span><span class="era">平成15年</span></button>
+    <button class="idx-btn" onclick="jumpTo('2004')"><span class="yr">2004</span><span class="era">平成16年</span></button>
+    <button class="idx-btn" onclick="jumpTo('2005')"><span class="yr">2005</span><span class="era">平成17年</span></button>
+  </div>
+</div>
+
+<div class="content">
+
+  <div class="year-section" id="yr-1996">
+    <div class="year-title"><h2>1996年</h2><span>平成8年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1996',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1996');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1996">部員が少ない分チームワークは抜群で、雰囲気も明るい。「将来も続けられる楽しい野球」で初戦突破を目指す。全学年同じメニューで練習し、健康管理にも気を配りストレッチを欠かさない。土岐監督のもと、のびのびと夏の大会に臨んだ。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：岸下晴亮</span>
+        <span class="meta-chip">監督：土岐進</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-1997">
+    <div class="year-title"><h2>1997年</h2><span>平成9年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1997',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1997');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1997">一・二年生主体の若いチームで、冬の練習で徹底的に鍛えた守備が自慢。練習には常に工夫をこらしている。主戦・森井にリリーフ役の西畑・志村が控える。打線は機動力の竹内、長打力の中野・東が中軸を形成。野々垣監督体制の初年度。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：土岐進</span>
+        <span class="meta-chip">監督：野々垣稔（初年度）</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-1998">
+    <div class="year-title"><h2>1998年</h2><span>平成10年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1998',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1998');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1998">初心者が多く基礎の徹底が練習の大半を占めるが、春の県大会で初戦突破を果たし着実に力をつけてきた。エース志村は冬を越して変化球に磨きをかけ、連係プレーが得意な内野守備をバックに打たせてとるピッチングを展開。守備力の安定が今年の強みだ。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：岸下晴亮</span>
+        <span class="meta-chip">監督：野々垣稔</span>
+        <span class="meta-chip">春 初戦突破</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-1999">
+    <div class="year-title"><h2>1999年</h2><span>平成11年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1999',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1999');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1999">公式戦ではまだ勝ち星がないが着実に力をつけており、勢いに乗れば力以上のものを出せるチーム。主戦・川畑（二年）を中心とした「頼もしい投手陣」が記事に取り上げられた。少ないチャンスをいかにものにするかが課題とされた年。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：桐川修</span>
+        <span class="meta-chip">監督：野々垣稔</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-2000">
+    <div class="year-title"><h2>2000年</h2><span>平成12年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('2000',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('2000');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-2000">前年11月から3月にかけて本格的な冬練習を実施。練習試合でレギュラー8名に本塁打が飛び出すなど成果は上々。右の本格派・小峠を軸にタイプの違う3投手を継投で使う投手陣。上位打線に破壊力があり、機動力も加えた攻撃でチャンスをつくる。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：桐川修</span>
+        <span class="meta-chip">監督：野々垣稔</span>
+        <span class="meta-chip">冬練習で打力向上</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-2001">
+    <div class="year-title"><h2>2001年</h2><span>平成13年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('2001',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('2001');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-2001">一・二年生主体の若いチーム。一年生の森川・西・中村はすでにレギュラークラスと評された。主戦・中西は右横手投げで連打を許さない安定感。控えの中村は長身から投げ下ろす速球が武器。一番・渡辺と二番・中野の出塁率が高く、クリーンアップの出来がポイント。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：桐川修</span>
+        <span class="meta-chip">監督：野々垣稔</span>
+        <span class="meta-chip">1年生がレギュラー入り</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-2002">
+    <div class="year-title"><h2>2002年</h2><span>平成14年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('2002',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('2002');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-2002">一・二年生中心の若いチームが大会ごとに成長を重ねた。制球力の中西と球威の中村による継投が投手の柱。打線は一番・渡辺と三番・中村ら上位の長打に期待。接戦に持ち込んで勝機を見出す戦い方を目指した。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：桐川修</span>
+        <span class="meta-chip">監督：野々垣稔</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-2003">
+    <div class="year-title"><h2>2003年</h2><span>平成15年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('2003',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('2003');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-2003">バッテリーを中心に守り抜いてリズムをつくる野球が身上。エース中村は長身から投げ下ろす直球と切れのある変化球が武器で、制球が決まれば大量失点の心配がない。捕手主将・西が頭脳的なリードで試合を組み立てる。一番・中井と二番・西の出塁次第でチャンスが生まれる。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：桐川修</span>
+        <span class="meta-chip">監督：野々垣稔</span>
+        <span class="meta-chip">主将：西祐司（捕手）</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-2004">
+    <div class="year-title"><h2>2004年</h2><span>平成16年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('2004',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('2004');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-2004">制球力の松本と速球派の向田の二枚看板が投手陣を支える。打線は俊足の一番・山本が出塁し、クリーンアップの木村・大麻で返す得点パターン。守備は経験豊富な遊撃・平田を中心に全員一丸で初戦突破を目指した。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：桐川修</span>
+        <span class="meta-chip">監督：野々垣稔</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-2005">
+    <div class="year-title"><h2>2005年</h2><span>平成17年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('2005',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('2005');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-2005">主戦・松本のコントロールと、カーブが武器で県大会ほぼ無失点の正捕手・猪原の継投が軸。俊足の一番・山本が出塁してクリーンアップにつなぐ攻撃スタイル。四番・木村はチーム一の長距離打者で五番・大麻も強打を誇る。野々垣監督体制の集大成の年。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：酒井史敏</span>
+        <span class="meta-chip">監督：野々垣稔</span>
+        <span class="meta-chip">野々垣監督体制最終年</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+</div>
+
+<script>
+
+
+
+
+
+function openPDF(year) {
+  var url = PDF_LINKS[year];
+  if (url) window.open(url, '_blank');
+}
+
+window.addEventListener('scroll', function() {
+  var btn = document.getElementById('scrollTopBtn');
+  if (btn) btn.classList.toggle('visible', window.scrollY > 200);
+});
+
+function jumpTo(year) {
+  var el = document.getElementById('yr-' + year);
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
+function jumpToTop() {
+  document.getElementById('index-panel').scrollIntoView({ behavior: 'smooth' });
+}
+var currentBtn = null;
+function speak(year, btn) {
+  if (speechSynthesis.speaking) {
+    speechSynthesis.cancel();
+    if (currentBtn) { currentBtn.innerHTML = '&#9654; 読み上げ'; currentBtn.classList.remove('playing'); }
+    if (currentBtn === btn) { currentBtn = null; return; }
+  }
+  var text = document.getElementById('txt-' + year).textContent;
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ja-JP'; u.rate = 0.9;
+  u.onend = function() { btn.innerHTML = '&#9654; 読み上げ'; btn.classList.remove('playing'); currentBtn = null; };
+  currentBtn = btn;
+  btn.innerHTML = '&#9632; 停止';
+  btn.classList.add('playing');
+  speechSynthesis.speak(u);
+}
+</script>
+
+<a class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" href="#">&#9650;</a>
+
+</body>
+</html>

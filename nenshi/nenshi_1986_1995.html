@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>奈良高専野球部 60年史 1986-1995</title>
+<style>
+:root {
+  --navy: #1a2744;
+  --gold: #c8a846;
+  --light-gold: #f5ecc0;
+  --bg: #f5f2eb;
+  --white: #ffffff;
+  --gray: #888;
+  --border: #d0c8b0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  background: var(--bg);
+  color: #222;
+}
+
+/* ヘッダー */
+.header {
+  background: var(--navy);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+.header h1 { font-size: 15px; color: var(--gold); letter-spacing: 1px; }
+.header p  { font-size: 11px; color: #aab; margin-top: 2px; }
+
+/* INDEX */
+#index-panel {
+  background: var(--navy);
+  padding: 16px 20px 20px;
+  border-bottom: 3px solid var(--gold);
+}
+#index-panel h2 {
+  color: var(--gold);
+  font-size: 12px;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+.index-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.idx-btn {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(200,168,70,0.35);
+  border-radius: 6px;
+  color: #ccc;
+  font-family: inherit;
+  padding: 8px 14px;
+  cursor: pointer;
+  text-align: left;
+  min-width: 88px;
+  transition: all 0.15s;
+}
+.idx-btn:hover { background: rgba(200,168,70,0.2); border-color: var(--gold); }
+.idx-btn .yr  { font-size: 16px; font-weight: bold; display: block; color: var(--gold); }
+.idx-btn .era { font-size: 10px; color: #888; }
+
+/* コンテンツ */
+.content { padding: 0 0 80px; }
+
+/* 年度セクション */
+.year-section {
+  border-bottom: 1px solid var(--border);
+  scroll-margin-top: 62px;
+}
+
+.year-title {
+  background: var(--navy);
+  padding: 10px 20px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.year-title h2 { font-size: 20px; color: var(--gold); }
+.year-title span { font-size: 12px; color: #aab; }
+
+/* 要約ブロック */
+.summary-block {
+  background: var(--white);
+  border-left: 4px solid var(--gold);
+  padding: 14px 16px 16px;
+}
+.summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  gap: 8px;
+}
+.summary-label {
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--gray);
+  letter-spacing: 1px;
+  flex-shrink: 0;
+}
+.btn-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.tts-btn {
+  background: var(--navy);
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.tts-btn:hover { background: var(--gold); color: var(--navy); }
+.tts-btn.playing { background: #8b1a1a; color: #fff; border-color: #8b1a1a; }
+
+/* 新聞記事リンクボタン */
+.pdf-link {
+  display: inline-block;
+  background: #e8f0e0;
+  color: #2a5a1a;
+  border: 1px solid #8ab870;
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-family: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.pdf-link:hover { background: #2a5a1a; color: #fff; }
+
+.summary-text {
+  font-size: 13px;
+  line-height: 1.9;
+  color: #333;
+  margin-bottom: 10px;
+}
+.meta-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.meta-chip {
+  background: var(--light-gold);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 9px;
+  font-size: 11px;
+  color: var(--navy);
+}
+
+.back-top {
+  display: block;
+  width: 100%;
+  padding: 9px;
+  background: #f0ece0;
+  color: var(--gray);
+  font-size: 12px;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: center;
+  border-top: 1px solid var(--border);
+}
+.back-top:hover { background: var(--light-gold); color: var(--navy); }
+
+.back-to-top {
+  display: inline-block;
+  background: rgba(200,168,70,0.15);
+  border: 1px solid rgba(200,168,70,0.5);
+  border-radius: 16px;
+  color: var(--gold);
+  font-size: 11px;
+  font-family: inherit;
+  padding: 4px 12px;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.back-to-top:hover { background: var(--gold); color: var(--navy); }
+
+.scroll-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--navy);
+  color: var(--gold);
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 999;
+  text-decoration: none;
+}
+.scroll-top.visible { opacity: 1; }
+.scroll-top:hover { background: var(--gold); color: var(--navy); }
+</style>
+<script>
+// =============================================
+// ★ PDF リンク設定 — Google Drive の URL に書き換えてください
+// Google Drive の共有リンク例:
+//   https://drive.google.com/file/d/＜ファイルID＞/view
+// =============================================
+var PDF_LINKS = {
+  "1986": "https://drive.google.com/file/d/1h1TUVG990BgIM_2jXIudpISxvUlmOgEr/view",
+  "1987": "https://drive.google.com/file/d/1FdN98cs8ALrw4Rar0N2iZ9s37wWRcPng/view",
+  "1988": "https://drive.google.com/file/d/1ol7FaBKdwwAi8O37M8ULNEjBDx9zuF8H/view",
+  "1989": "https://drive.google.com/file/d/1afCfUUTMHsLl8ipz4qFurSQGeHpiYS1V/view",
+  "1990": "https://drive.google.com/file/d/1hUL1rI914CIHl5_2fXGnqSer9ce1UGvS/view",
+  "1991": "https://drive.google.com/file/d/1To5ns5qi82Yhyih9rXmzYNx6BvzSpudt/view",
+  "1992": "https://drive.google.com/file/d/1jNFR5qhzkjBgYT1i_3ShBtya_CjVJ_yd/view",
+  "1993": "https://drive.google.com/file/d/15ztKeFfI6_JGZyv3qfGJsgVd9Ia8yzpV/view",
+  "1994": "https://drive.google.com/file/d/1HQqp-J3__mp1AqUB9ifHfFZZdwF8s09Y/view",
+  "1995": "https://drive.google.com/file/d/19trbtkyMprW3oAQJevKvbSMfP9cd1KOk/view",
+};
+// =============================================
+</script>
+
+</head>
+<body>
+
+<div class="header">
+  <a class="back-to-top" href="nenshi_index.html">&#9664; 60年史トップ</a>
+  <div>
+    <h1>&#9918; 奈良高専野球部 60年史</h1>
+    <p>夏季選手権奈良大会 1986〜1995</p>
+  </div>
+</div>
+
+<div id="index-panel">
+  <h2>&#9654; INDEX — 年度を選ぶ</h2>
+  <div class="index-grid">
+    <button class="idx-btn" onclick="jumpTo('1986')"><span class="yr">1986</span><span class="era">昭和61年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1987')"><span class="yr">1987</span><span class="era">昭和62年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1988')"><span class="yr">1988</span><span class="era">昭和63年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1989')"><span class="yr">1989</span><span class="era">平成元年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1990')"><span class="yr">1990</span><span class="era">平成2年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1991')"><span class="yr">1991</span><span class="era">平成3年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1992')"><span class="yr">1992</span><span class="era">平成4年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1993')"><span class="yr">1993</span><span class="era">平成5年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1994')"><span class="yr">1994</span><span class="era">平成6年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1995')"><span class="yr">1995</span><span class="era">平成7年</span></button>
+  </div>
+</div>
+
+<div class="content">
+
+  <div class="year-section" id="yr-1986">
+    <div class="year-title"><h2>1986年</h2><span>昭和61年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1986',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1986');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1986">部員31名のうち一年生が20名という若いチーム。リベラルな雰囲気の中でのびのびと成長した。エース稲場の直球とカーブ、捕手主将・徳本のリードが軸。打線は機動力と長打の二段構えで、19歳の柚留木監督のもと夏に挑んだ。1回戦で西大和学園に16対0で快勝するも、2回戦で奈良工に3対6で惜敗。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：松岡一起</span>
+        <span class="meta-chip">監督：柚留木弘（19歳）</span>
+        <span class="meta-chip">部員31名</span>
+        <span class="meta-chip">2回戦敗退</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-1987">
+    <div class="year-title"><h2>1987年</h2><span>昭和62年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1987',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1987');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1987">二年生主体のまとまったチーム。秋季大会ベスト8の実績を持ち、甲子園出場を悲願とする。技巧派エース森口のスリークオーターからのシュートが威力を発揮。主砲・稲場はチーム創設以来の最強打者と評された。2回戦で斑鳩と対戦し2対4で惜敗。森口は133球を投げ抜いた。</p>
+      <div class="meta-row">
+        <span class="meta-chip">2回戦敗退（対斑鳩）</span>
+        <span class="meta-chip">投手：森口章弘（23期）</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-1988">
+    <div class="year-title"><h2>1988年</h2><span>昭和63年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1988',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1988');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1988">三年生14名と豊富な経験者を擁しベスト8進出を目標に掲げた。左腕エース片岡と前年エース森口のダブルエース体制。一年からレギュラーの中岡はチーム随一の好打者。20歳の徳本監督が若い力を率いた。2回戦で斑鳩に0対7の7回コールドで完敗した。</p>
+      <div class="meta-row">
+        <span class="meta-chip">監督：徳本武司（20歳）</span>
+        <span class="meta-chip">2回戦敗退（対斑鳩）</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-1989">
+    <div class="year-title"><h2>1989年</h2><span>平成元年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1989',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1989');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1989">エース村上の安定感が光る年。防御率2点台、130キロの速球とシュート・カーブ・フォークを投げ分け完投能力も十分。打線は四割打者2名・三割打者3名と強力。1回戦で奈良女子大付に7対0の7回コールド勝ち。村上が10奪三振完封した。</p>
+      <div class="meta-row">
+        <span class="meta-chip">1回戦突破</span>
+        <span class="meta-chip">投手：村上浩一（24期）完封</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-1990">
+    <div class="year-title"><h2>1990年</h2><span>平成2年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1990',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1990');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1990">上下関係を排したノビノビ野球が信条。兄貴格の羽田監督のもと「まず1勝」を目指した。多彩な変化球を持つ井上と速球派西原の二枚看板。機動力を生かした「つなぐ野球」で挑んだが、1回戦で智弁学園に2対10の7回コールド負け。智弁・三並の満塁本塁打が痛かった。</p>
+      <div class="meta-row">
+        <span class="meta-chip">監督：羽田監督</span>
+        <span class="meta-chip">1回戦敗退（対智弁学園）</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-1991">
+    <div class="year-title"><h2>1991年</h2><span>平成3年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1991',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1991');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1991">例年になく攻撃力の高いチーム。チーム打率3割2分5厘、1番から5番まで全員4割超え。1番・日浦は盗塁死なしの連続35盗塁という驚異の記録を持つ。八強入りを目標に掲げたが、1回戦で耳成と激闘。一時10対4とリードするも8回に一挙7失点、まさかの逆転負けで10対11の惜敗となった。</p>
+      <div class="meta-row">
+        <span class="meta-chip">チーム打率.325</span>
+        <span class="meta-chip">1回戦敗退（対耳成）逆転負け</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-1992">
+    <div class="year-title"><h2>1992年</h2><span>平成4年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1992',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1992');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1992">前年秋のベスト8入りを糧にシード校撃破・八強入りを目標とした。エース水野は130キロ近い直球と二種類のカーブが武器。1回戦で山辺に12安打8盗塁の猛攻、6回に一挙9点を奪って11対1の6回コールド勝ち。2回戦では惜しくも敗退した。</p>
+      <div class="meta-row">
+        <span class="meta-chip">1回戦突破（対山辺 コールド勝ち）</span>
+        <span class="meta-chip">投手：水野征次（26期）</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-1993">
+    <div class="year-title"><h2>1993年</h2><span>平成5年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1993',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1993');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1993">チームワークと打線の破壊力を強みに全員野球を掲げたシーズン。西原・山本の二投手体制で臨んだが継投が課題。1回戦で強豪・正強と対戦。序盤は粘りを見せたものの中盤以降に突き放され1対10の7回コールド負けとなった。</p>
+      <div class="meta-row">
+        <span class="meta-chip">1回戦敗退（対正強）</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-1994">
+    <div class="year-title"><h2>1994年</h2><span>平成6年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1994',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1994');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1994">前年まで続いた学生監督体制から正式監督を迎えた新体制での初陣。速球派エース谷村はピンチに動じない精神的強さが持ち味。機動力を生かした上位打線が得点源。1回戦で御所工に1対12と敗れたが、初回に先制点を挙げるなど意地を見せた。</p>
+      <div class="meta-row">
+        <span class="meta-chip">正式監督就任初年度</span>
+        <span class="meta-chip">1回戦敗退（対御所工）</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-1995">
+    <div class="year-title"><h2>1995年</h2><span>平成7年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1995',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1995');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1995">攻守にまとまりのあるチームワークが売りのチーム。左腕エース伊藤のコントロールが安定し右の本格派西澤がリリーフを務める。1番左向・2番中谷・4番秋口を中心とした機動力野球で挑んだ。1回戦で登美ケ丘に3対10で敗退。5回のスクイズ失点が痛かった。</p>
+      <div class="meta-row">
+        <span class="meta-chip">1回戦敗退（対登美ケ丘）</span>
+        <span class="meta-chip">投手：伊藤陽平（30期）・西澤慎二（29期）</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+</div>
+
+<script>
+
+
+
+
+
+function openPDF(year) {
+  var url = PDF_LINKS[year];
+  if (url) window.open(url, '_blank');
+}
+
+window.addEventListener('scroll', function() {
+  var btn = document.getElementById('scrollTopBtn');
+  if (btn) btn.classList.toggle('visible', window.scrollY > 200);
+});
+
+function jumpTo(year) {
+  var el = document.getElementById('yr-' + year);
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
+function jumpToTop() {
+  document.getElementById('index-panel').scrollIntoView({ behavior: 'smooth' });
+}
+var currentBtn = null;
+function speak(year, btn) {
+  if (speechSynthesis.speaking) {
+    speechSynthesis.cancel();
+    if (currentBtn) { currentBtn.innerHTML = '&#9654; 読み上げ'; currentBtn.classList.remove('playing'); }
+    if (currentBtn === btn) { currentBtn = null; return; }
+  }
+  var text = document.getElementById('txt-' + year).textContent;
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ja-JP'; u.rate = 0.9;
+  u.onend = function() { btn.innerHTML = '&#9654; 読み上げ'; btn.classList.remove('playing'); currentBtn = null; };
+  currentBtn = btn;
+  btn.innerHTML = '&#9632; 停止';
+  btn.classList.add('playing');
+  speechSynthesis.speak(u);
+}
+</script>
+
+<a class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" href="#">&#9650;</a>
+
+</body>
+</html>

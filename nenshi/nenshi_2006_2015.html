@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>奈良高専野球部 60年史 2006-2015</title>
+<style>
+:root {
+  --navy: #1a2744; --gold: #c8a846; --light-gold: #f5ecc0;
+  --bg: #f5f2eb; --white: #ffffff; --gray: #888; --border: #d0c8b0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; background: var(--bg); color: #222; }
+.header { background: var(--navy); padding: 14px 20px; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 200; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+.header h1 { font-size: 15px; color: var(--gold); letter-spacing: 1px; }
+.header p  { font-size: 11px; color: #aab; margin-top: 2px; }
+#index-panel { background: var(--navy); padding: 16px 20px 20px; border-bottom: 3px solid var(--gold); }
+#index-panel h2 { color: var(--gold); font-size: 12px; letter-spacing: 2px; margin-bottom: 12px; }
+.index-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.idx-btn { background: rgba(255,255,255,0.07); border: 1px solid rgba(200,168,70,0.35); border-radius: 6px; color: #ccc; font-family: inherit; padding: 8px 14px; cursor: pointer; text-align: left; min-width: 88px; transition: all 0.15s; }
+.idx-btn:hover { background: rgba(200,168,70,0.2); border-color: var(--gold); }
+.idx-btn .yr  { font-size: 16px; font-weight: bold; display: block; color: var(--gold); }
+.idx-btn .era { font-size: 10px; color: #888; }
+.content { padding: 0 0 80px; }
+.year-section { border-bottom: 1px solid var(--border); scroll-margin-top: 62px; }
+.year-title { background: var(--navy); padding: 10px 20px; display: flex; align-items: baseline; gap: 10px; }
+.year-title h2 { font-size: 20px; color: var(--gold); }
+.year-title span { font-size: 12px; color: #aab; }
+.summary-block { background: var(--white); border-left: 4px solid var(--gold); padding: 14px 16px 16px; }
+.summary-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; gap: 8px; }
+.summary-label { font-size: 11px; font-weight: bold; color: var(--gray); letter-spacing: 1px; flex-shrink: 0; }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.tts-btn { background: var(--navy); color: var(--gold); border: 1px solid var(--gold); border-radius: 20px; padding: 5px 14px; font-size: 12px; font-family: inherit; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.tts-btn:hover { background: var(--gold); color: var(--navy); }
+.tts-btn.playing { background: #8b1a1a; color: #fff; border-color: #8b1a1a; }
+.pdf-link { display: inline-block; background: #e8f0e0; color: #2a5a1a; border: 1px solid #8ab870; border-radius: 20px; padding: 5px 14px; font-size: 12px; font-family: inherit; text-decoration: none; white-space: nowrap; }
+.pdf-link:hover { background: #2a5a1a; color: #fff; }
+.summary-text { font-size: 13px; line-height: 1.9; color: #333; margin-bottom: 10px; }
+.meta-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.meta-chip { background: var(--light-gold); border: 1px solid var(--border); border-radius: 4px; padding: 3px 9px; font-size: 11px; color: var(--navy); }
+.back-top { display: block; width: 100%; padding: 9px; background: #f0ece0; color: var(--gray); font-size: 12px; border: none; font-family: inherit; cursor: pointer; text-align: center; border-top: 1px solid var(--border); }
+.back-top:hover { background: var(--light-gold); color: var(--navy); }
+
+.back-to-top {
+  display: inline-block;
+  background: rgba(200,168,70,0.15);
+  border: 1px solid rgba(200,168,70,0.5);
+  border-radius: 16px;
+  color: var(--gold);
+  font-size: 11px;
+  font-family: inherit;
+  padding: 4px 12px;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.back-to-top:hover { background: var(--gold); color: var(--navy); }
+
+.scroll-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--navy);
+  color: var(--gold);
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 999;
+  text-decoration: none;
+}
+.scroll-top.visible { opacity: 1; }
+.scroll-top:hover { background: var(--gold); color: var(--navy); }
+</style>
+<script>
+// =============================================
+// ★ PDF リンク設定 — Google Drive の URL に書き換えてください
+// Google Drive の共有リンク例:
+//   https://drive.google.com/file/d/＜ファイルID＞/view
+// =============================================
+var PDF_LINKS = {
+  "2006": "https://drive.google.com/file/d/1ZaYfTRiU9scVEIxblUystEWABnuF7vU-/view",
+  "2007": "https://drive.google.com/file/d/1gfs4yQyJ-gbUCYPS48_TWsHiW3hAC_4q/view",
+  "2008": "https://drive.google.com/file/d/1wIWzpBIiNTiRPNx0vdPrfTHw29G3gHep/view",
+  "2009": "https://drive.google.com/file/d/1WwcOFjUtNEM3tIHCMo64EUvYQxfZWQDf/view",
+  "2010": "https://drive.google.com/file/d/1hUH5SgXS6ucOqFiT0etW6MKxtFodRm8h/view",
+  "2011": "https://drive.google.com/file/d/1us0N4DJ8rPQi8cSgZWCIweR3gPIsRSzx/view",
+  "2012": "https://drive.google.com/file/d/1s6nyMl0TV3U8u8A_AuIBByNfvw2LgzRT/view",
+  "2013": "https://drive.google.com/file/d/1a1zcnS6NEDXSZmdo2haLlQDAX6wytqGk/view",
+  "2014": "https://drive.google.com/file/d/1_JAyGWW506DL-4YY1VGtrZbZIXe-4jae/view",
+  "2015": "https://drive.google.com/file/d/1lUoNwpEEXvY7jfV2Gi7bOdCTf72nshws/view",
+};
+// =============================================
+</script>
+
+</head>
+<body>
+
+<div class="header">
+  <a class="back-to-top" href="nenshi_index.html">&#9664; 60年史トップ</a>
+  <div>
+    <h1>&#9918; 奈良高専野球部 60年史</h1>
+    <p>夏季選手権奈良大会 2006〜2015（西前・松尾監督時代）</p>
+  </div>
+</div>
+
+<div id="index-panel">
+  <h2>&#9654; INDEX — 年度を選ぶ</h2>
+  <div class="index-grid">
+    <button class="idx-btn" onclick="jumpTo('2006')"><span class="yr">2006</span><span class="era">平成18年</span></button>
+    <button class="idx-btn" onclick="jumpTo('2007')"><span class="yr">2007</span><span class="era">平成19年</span></button>
+    <button class="idx-btn" onclick="jumpTo('2008')"><span class="yr">2008</span><span class="era">平成20年</span></button>
+    <button class="idx-btn" onclick="jumpTo('2009')"><span class="yr">2009</span><span class="era">平成21年</span></button>
+    <button class="idx-btn" onclick="jumpTo('2010')"><span class="yr">2010</span><span class="era">平成22年</span></button>
+    <button class="idx-btn" onclick="jumpTo('2011')"><span class="yr">2011</span><span class="era">平成23年</span></button>
+    <button class="idx-btn" onclick="jumpTo('2012')"><span class="yr">2012</span><span class="era">平成24年</span></button>
+    <button class="idx-btn" onclick="jumpTo('2013')"><span class="yr">2013</span><span class="era">平成25年</span></button>
+    <button class="idx-btn" onclick="jumpTo('2014')"><span class="yr">2014</span><span class="era">平成26年</span></button>
+    <button class="idx-btn" onclick="jumpTo('2015')"><span class="yr">2015</span><span class="era">平成27年</span></button>
+  </div>
+</div>
+
+<div class="content">
+
+  <div class="year-section" id="yr-2006">
+    <div class="year-title"><h2>2006年</h2><span>平成18年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('2006',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('2006');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-2006">「一戦必勝でまずは初戦突破」と意気込んだ年。速球とスライダーが武器の主戦・山本に制球力の中西が控える。打線は俊足の一番・山本の出塁が鍵で、三番・西村、四番・中口、五番・石橋のクリーンアップが勝負強い。野々垣監督最終年、2回戦で天理に0対19の7回コールド負け。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：酒井史敏</span>
+        <span class="meta-chip">監督：野々垣稔</span>
+        <span class="meta-chip">2回戦敗退（対天理）</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-2007">
+    <div class="year-title"><h2>2007年</h2><span>平成19年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('2007',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('2007');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-2007">チームワーク抜群で互いに思いやる雰囲気が印象的な年。本格派の石橋宏・制球重視の布村・横手投げの中橋という個性豊かな3投手を継投で使える強みがある。攻撃は九番・菊川や一番・中西の出塁から主軸につなぐスタイル。西前監督体制の初年度。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：内田真司</span>
+        <span class="meta-chip">監督：西前竜一（初年度）</span>
+        <span class="meta-chip">3投手継投体制</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-2008">
+    <div class="year-title"><h2>2008年</h2><span>平成20年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('2008',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('2008');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-2008">一試合ごとに着実に力をつけてきた成長の年。主戦・石橋宏は昨年からの経験で安定感が増し、布村が丁寧に控える。四番・中西を中心に主軸前にランナーを出す攻撃スタイル。捕手主将・櫃田が内外野の連係を支える。2回戦で奈良工朱雀に0対7の7回コールド負け。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：内田真司</span>
+        <span class="meta-chip">監督：西前竜一</span>
+        <span class="meta-chip">2回戦敗退（対奈良工朱雀）</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-2009">
+    <div class="year-title"><h2>2009年</h2><span>平成21年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('2009',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('2009');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-2009">吉田・三木・井上・石田と完投能力を持つ投手が充実し守備も安定。明るく仲の良い雰囲気でのびのびと活動するチームが印象的。一・二番の出塁から主軸につなぐオーソドックスな攻撃で、下位打線も力をつけてきた。2回戦で高田商に0対11の5回コールド負け。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：松尾朋己</span>
+        <span class="meta-chip">監督：西前竜一</span>
+        <span class="meta-chip">2回戦敗退（対高田商）</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-2010">
+    <div class="year-title"><h2>2010年</h2><span>平成22年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('2010',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('2010');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-2010">野村・山下ら投手陣が互いに競争意識を高め切磋琢磨する年。捕手主将・井上がナインを引き締める。一番から九番まで切れ目のない打線で主軸前に走者を溜めて一気に畳みかける攻撃スタイル。三塁・黒田と遊撃・吉田の三遊間が堅実。2回戦で香芝に7対13で敗退。14安打を放ちながら及ばなかった。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：松尾朋己</span>
+        <span class="meta-chip">監督：西前竜一</span>
+        <span class="meta-chip">2回戦敗退（対香芝）14安打</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-2011">
+    <div class="year-title"><h2>2011年</h2><span>平成23年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('2011',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('2011');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-2011">練習試合での大敗を契機に走塁とバットスイングを強化。守備からリズムをつくる野球を目指した。大黒柱の高木と横手投げの光好による投手陣。冷静な桜本捕手がリードし、南谷・外山の主軸に期待する打線。松尾監督の初陣となった1回戦で一条に9対10の逆転負けを喫した惜敗。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：西前竜一</span>
+        <span class="meta-chip">監督：松尾朋己（初年度）</span>
+        <span class="meta-chip">1回戦敗退（対一条）逆転負け</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-2012">
+    <div class="year-title"><h2>2012年</h2><span>平成24年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('2012',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('2012');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-2012">「正しく強く」を信条に全員野球に徹するチーム。スリークオーターの南尾とオーバースローの松本の二枚看板が投手陣を支える。バント・エンドランを絡めたしぶとい攻撃で主軸の南谷・外山・桜本につなぐスタイル。体を張った守備でリズムをつくる。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：小村泰三</span>
+        <span class="meta-chip">監督：松尾朋己</span>
+        <span class="meta-chip">「正しく強く」</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-2013">
+    <div class="year-title"><h2>2013年</h2><span>平成25年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('2013',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('2013');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-2013">創部以来最多の部員数を誇った年。50名を超える大所帯となり、新入部員も20名超え。主戦・松本の力強い直球と桜本捕手がチームを牽引。機動力と小技で1点ずつ積み重ねるスタイル。遊撃・内本と中堅・東本が守備の中心。1回戦で奈良朱雀に1対4で敗退した。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：小村泰三</span>
+        <span class="meta-chip">監督：松尾朋己</span>
+        <span class="meta-chip">創部以来最多部員数</span>
+        <span class="meta-chip">1回戦敗退（対奈良朱雀）</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-2014">
+    <div class="year-title"><h2>2014年</h2><span>平成26年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('2014',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('2014');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-2014">右横手の片岡・右上手の杉田・左上手の長岡という個性豊かな三投手がいずれもエースの自覚を持つ。バント・エンドランを駆使した機動力野球で少ないチャンスをものにする。守り抜く我慢強さを鍛えた成果が実り、3回戦まで勝ち進む健闘を見せた。3回戦で智弁学園に1対6で敗退。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：岩名輝</span>
+        <span class="meta-chip">監督：西前竜一</span>
+        <span class="meta-chip">3回戦進出</span>
+        <span class="meta-chip">3回戦敗退（対智弁学園）</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-2015">
+    <div class="year-title"><h2>2015年</h2><span>平成27年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('2015',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('2015');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-2015">バント主体でチャンスを広げて確実に得点する攻撃スタイル。奥野・岸田・出村のセンターラインが非常に良く穴のない守備が持ち味。エース右腕・岩名が変化球を低めに集め打たせてとる。1回戦で平城と接戦となり九町・吉田の安打で一時同点に追いつく粘りを見せたが、9回裏サヨナラ打を浴びて4対5で惜敗した。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：岩名輝</span>
+        <span class="meta-chip">監督：西前竜一</span>
+        <span class="meta-chip">1回戦敗退（対平城）サヨナラ負け</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+</div>
+
+<script>
+
+
+
+
+
+function openPDF(year) {
+  var url = PDF_LINKS[year];
+  if (url) window.open(url, '_blank');
+}
+
+window.addEventListener('scroll', function() {
+  var btn = document.getElementById('scrollTopBtn');
+  if (btn) btn.classList.toggle('visible', window.scrollY > 200);
+});
+
+function jumpTo(year) {
+  var el = document.getElementById('yr-' + year);
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
+function jumpToTop() {
+  document.getElementById('index-panel').scrollIntoView({ behavior: 'smooth' });
+}
+var currentBtn = null;
+function speak(year, btn) {
+  if (speechSynthesis.speaking) {
+    speechSynthesis.cancel();
+    if (currentBtn) { currentBtn.innerHTML = '&#9654; 読み上げ'; currentBtn.classList.remove('playing'); }
+    if (currentBtn === btn) { currentBtn = null; return; }
+  }
+  var text = document.getElementById('txt-' + year).textContent;
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ja-JP'; u.rate = 0.9;
+  u.onend = function() { btn.innerHTML = '&#9654; 読み上げ'; btn.classList.remove('playing'); currentBtn = null; };
+  currentBtn = btn;
+  btn.innerHTML = '&#9632; 停止';
+  btn.classList.add('playing');
+  speechSynthesis.speak(u);
+}
+</script>
+
+<a class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" href="#">&#9650;</a>
+
+</body>
+</html>

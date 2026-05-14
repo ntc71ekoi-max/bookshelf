@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>奈良高専野球部 60年史 1976-1985</title>
+<style>
+:root {
+  --navy: #1a2744;
+  --gold: #c8a846;
+  --light-gold: #f5ecc0;
+  --bg: #f5f2eb;
+  --white: #ffffff;
+  --gray: #888;
+  --border: #d0c8b0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; background: var(--bg); color: #222; }
+.header { background: var(--navy); padding: 14px 20px; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 200; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+.header h1 { font-size: 15px; color: var(--gold); letter-spacing: 1px; }
+.header p  { font-size: 11px; color: #aab; margin-top: 2px; }
+#index-panel { background: var(--navy); padding: 16px 20px 20px; border-bottom: 3px solid var(--gold); }
+#index-panel h2 { color: var(--gold); font-size: 12px; letter-spacing: 2px; margin-bottom: 12px; }
+.index-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.idx-btn { background: rgba(255,255,255,0.07); border: 1px solid rgba(200,168,70,0.35); border-radius: 6px; color: #ccc; font-family: inherit; padding: 8px 14px; cursor: pointer; text-align: left; min-width: 88px; transition: all 0.15s; }
+.idx-btn:hover { background: rgba(200,168,70,0.2); border-color: var(--gold); }
+.idx-btn .yr  { font-size: 16px; font-weight: bold; display: block; color: var(--gold); }
+.idx-btn .era { font-size: 10px; color: #888; }
+.content { padding: 0 0 80px; }
+.year-section { border-bottom: 1px solid var(--border); scroll-margin-top: 62px; }
+.year-title { background: var(--navy); padding: 10px 20px; display: flex; align-items: baseline; gap: 10px; }
+.year-title h2 { font-size: 20px; color: var(--gold); }
+.year-title span { font-size: 12px; color: #aab; }
+.summary-block { background: var(--white); border-left: 4px solid var(--gold); padding: 14px 16px 16px; }
+.summary-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; gap: 8px; }
+.summary-label { font-size: 11px; font-weight: bold; color: var(--gray); letter-spacing: 1px; flex-shrink: 0; }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.tts-btn { background: var(--navy); color: var(--gold); border: 1px solid var(--gold); border-radius: 20px; padding: 5px 14px; font-size: 12px; font-family: inherit; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.tts-btn:hover { background: var(--gold); color: var(--navy); }
+.tts-btn.playing { background: #8b1a1a; color: #fff; border-color: #8b1a1a; }
+.pdf-link { display: inline-block; background: #e8f0e0; color: #2a5a1a; border: 1px solid #8ab870; border-radius: 20px; padding: 5px 14px; font-size: 12px; font-family: inherit; text-decoration: none; white-space: nowrap; }
+.pdf-link:hover { background: #2a5a1a; color: #fff; }
+.summary-text { font-size: 13px; line-height: 1.9; color: #333; margin-bottom: 10px; }
+.meta-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.meta-chip { background: var(--light-gold); border: 1px solid var(--border); border-radius: 4px; padding: 3px 9px; font-size: 11px; color: var(--navy); }
+.back-top { display: block; width: 100%; padding: 9px; background: #f0ece0; color: var(--gray); font-size: 12px; border: none; font-family: inherit; cursor: pointer; text-align: center; border-top: 1px solid var(--border); }
+.back-top:hover { background: var(--light-gold); color: var(--navy); }
+
+.back-to-top {
+  display: inline-block;
+  background: rgba(200,168,70,0.15);
+  border: 1px solid rgba(200,168,70,0.5);
+  border-radius: 16px;
+  color: var(--gold);
+  font-size: 11px;
+  font-family: inherit;
+  padding: 4px 12px;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.back-to-top:hover { background: var(--gold); color: var(--navy); }
+
+.scroll-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--navy);
+  color: var(--gold);
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 999;
+  text-decoration: none;
+}
+.scroll-top.visible { opacity: 1; }
+.scroll-top:hover { background: var(--gold); color: var(--navy); }
+</style>
+<script>
+// =============================================
+// ★ PDF リンク設定 — Google Drive の URL に書き換えてください
+// Google Drive の共有リンク例:
+//   https://drive.google.com/file/d/＜ファイルID＞/view
+// =============================================
+var PDF_LINKS = {
+  "1976": "https://drive.google.com/file/d/1kbkgj5FKpsG3S8icVvrOqcvAaBMLYPT_/view",
+  "1977": "https://drive.google.com/file/d/1qqGQCyx04aPF92MYiZfH8qOMqAOyJP9F/view",
+  "1978": "https://drive.google.com/file/d/1hNMrdIZmhtA-t74TJC65_ld6lRyYOK7E/view",
+  "1979": "https://drive.google.com/file/d/1KZXX7sReYI_vJpRgDsNSiDB9bmnbgFTf/view",
+  "1980": "https://drive.google.com/file/d/1NGWDUMstTHgHGpusQFg3KV-d-7EW8GkX/view",
+  "1981": "https://drive.google.com/file/d/1ETr3-AQNPEkqpC3fpShF_NqVlDSHpMXo/view",
+  "1982": "https://drive.google.com/file/d/1Y3qDOVEjWKV6Q84QRQoS0BQ_kpqu00jR/view",
+  "1983": "https://drive.google.com/file/d/1roE4tZU2QdxCRzqDHzHIzhUF7-C6QWh8/view",
+  "1984": "https://drive.google.com/file/d/1qk1Br1j9bzItnC3Qw-RO2iW7h6BeEdwP/view",
+  "1985": "https://drive.google.com/file/d/1UeYYmrtANeP8VQ_IXe-n3mvDT7T3E2rn/view",
+};
+// =============================================
+</script>
+
+</head>
+<body>
+
+<div class="header">
+  <a class="back-to-top" href="nenshi_index.html">&#9664; 60年史トップ</a>
+  <div>
+    <h1>&#9918; 奈良高専野球部 60年史</h1>
+    <p>夏季選手権奈良大会 1976〜1985（塩田・村田監督時代）</p>
+  </div>
+</div>
+
+<div id="index-panel">
+  <h2>&#9654; INDEX — 年度を選ぶ</h2>
+  <div class="index-grid">
+    <button class="idx-btn" onclick="jumpTo('1976')"><span class="yr">1976</span><span class="era">昭和51年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1977')"><span class="yr">1977</span><span class="era">昭和52年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1978')"><span class="yr">1978</span><span class="era">昭和53年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1979')"><span class="yr">1979</span><span class="era">昭和54年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1980')"><span class="yr">1980</span><span class="era">昭和55年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1981')"><span class="yr">1981</span><span class="era">昭和56年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1982')"><span class="yr">1982</span><span class="era">昭和57年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1983')"><span class="yr">1983</span><span class="era">昭和58年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1984')"><span class="yr">1984</span><span class="era">昭和59年</span></button>
+    <button class="idx-btn" onclick="jumpTo('1985')"><span class="yr">1985</span><span class="era">昭和60年</span></button>
+  </div>
+</div>
+
+<div class="content">
+
+  <div class="year-section" id="yr-1976">
+    <div class="year-title"><h2>1976年</h2><span>昭和51年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1976',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1976');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1976">新入生8名が加わり、弱かった投手力と内野守備が強化された。打撃の調子が良く、波に乗ると破壊力が出る。「精神的なもろさを克服したい」と梶尾主将を中心に一回戦突破に全力を注いだ。春の成績は2勝12敗と厳しいながら、チームは着実に成長を続けた。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：塩田治雄</span>
+        <span class="meta-chip">監督：土岐進</span>
+        <span class="meta-chip">春季 2勝12敗</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-1977">
+    <div class="year-title"><h2>1977年</h2><span>昭和52年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1977',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1977');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1977">「粘り強さが身上」のチーム。左腕エース伊藤のコントロール重視のピッチングに西澤・中尾が控え、投手層が厚い。打線は一番・左向から五番・西澤まで長打力があり、どこからでもチャンスをつくれる。二遊間の芳本・竹村が守備の中心。春の成績は3勝11敗。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：世古忠</span>
+        <span class="meta-chip">監督：土岐進</span>
+        <span class="meta-chip">春季 3勝11敗</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-1978">
+    <div class="year-title"><h2>1978年</h2><span>昭和53年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1978',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1978');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1978">春の大会でベスト8進出を果たし、チームが活気づいた年。主戦・増田は速球派で球威十分。打線は一番・石川、三番・中西、四番・増田に長打力がある。三遊間の中西・石川が守備のかなめ。春の成績は7勝6敗と好成績で、目標はベスト4入りに掲げた。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：世古忠</span>
+        <span class="meta-chip">監督：土岐進</span>
+        <span class="meta-chip">春季 7勝6敗</span>
+        <span class="meta-chip">春 ベスト8進出</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-1979">
+    <div class="year-title"><h2>1979年</h2><span>昭和54年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1979',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1979');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1979">前年の主将・藤井俊幸が監督に就任した新体制。新入部員8名は中学経験者ばかりで層が厚くなった。主戦・増田の速球が武器だがコントロールに不安。三番・西田、四番・増田、五番・北田のクリーンアップに破壊力がある。細かいプレーに磨きをかけ一戦必勝を誓った。春の成績は4勝8敗。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：世古忠</span>
+        <span class="meta-chip">監督：藤井俊幸（前年主将）</span>
+        <span class="meta-chip">春季 4勝8敗</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-1980">
+    <div class="year-title"><h2>1980年</h2><span>昭和55年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1980',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1980');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1980">「一回戦ボーイの汚名返上」を目標に掲げた年。主戦・増田はゆっくりとしたモーションから伸びのある速球と大きなカーブが武器で、制球力も向上。控えの溝口（二年生）も安定している。打線は山中・西田が中心で確実なミート打法。堅実な守備が光るチーム。春の成績は5勝10敗。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：桐川修</span>
+        <span class="meta-chip">監督：藤井俊幸</span>
+        <span class="meta-chip">春季 5勝10敗</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-1981">
+    <div class="year-title"><h2>1981年</h2><span>昭和56年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1981',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1981');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1981">「なにがなんでもベスト4に入りたい」と意欲満々。突出した選手はいないが、チーム全体がよくまとまっている。主戦・溝口のコントロールが身上で、打たせてとるリズムが生まれてきた。遊撃・和家を中心に守備の安定感が増し、練習試合での終盤の粘り強さが際立つ。春の成績は6勝8敗。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：武田新太郎</span>
+        <span class="meta-chip">監督：姫嶋久夫</span>
+        <span class="meta-chip">春季 6勝8敗</span>
+        <span class="meta-chip">目標：ベスト4</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-1982">
+    <div class="year-title"><h2>1982年</h2><span>昭和57年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1982',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1982');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1982">初めて一年生から三年生まで全学年がそろった年。前年のレギュラーがそのまま残り大会経験が強み。主戦・原田は中学からのベテランで、オーバースローの速球とカーブで安定した投球を見せる。内野は小走・石井が中心でまとまっている。一番・河野の出塁がチームの得点力向上のカギ。春の成績は4勝10敗。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：小走健</span>
+        <span class="meta-chip">監督：姫嶋久夫</span>
+        <span class="meta-chip">春季 4勝10敗</span>
+        <span class="meta-chip">全学年初めて揃う</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-1983">
+    <div class="year-title"><h2>1983年</h2><span>昭和58年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1983',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1983');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1983">前年は部員不足で大会を辞退したが、今春8名の一年生が入部し復活した。小柄ながら制球重視のエース・田中が投手の柱。三塁・樋口が内野のかなめで、一年生の辻内・久保の成長がチームのポイント。コンパクトなチームバッティングが身上で、四番・田中はチーム一の長打力を持つ。春の成績は3勝9敗。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：桐川修</span>
+        <span class="meta-chip">監督：土岐進</span>
+        <span class="meta-chip">春季 3勝9敗</span>
+        <span class="meta-chip">部員不足から復活</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-1984">
+    <div class="year-title"><h2>1984年</h2><span>昭和59年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1984',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1984');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1984">冬場の苦しい練習を乗り越えたチームが「勝負への執着」を実らせた年。一・二番が足でかき回し、クリーンアップが長打力を発揮する攻撃スタイル。主戦・光好を山下・鍵谷が支える投手陣。遊撃・吉田、中堅・北崎ら堅実な守備が持ち味。春の成績は8勝11敗2分けと向上傾向を示した。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：松岡一起</span>
+        <span class="meta-chip">監督：村田政和</span>
+        <span class="meta-chip">春季 8勝11敗2分</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+  <div class="year-section" id="yr-1985">
+    <div class="year-title"><h2>1985年</h2><span>昭和60年</span></div>
+    <div class="summary-block">
+      <div class="summary-row">
+        <span class="summary-label">要約</span>
+        <div class="btn-row">
+          <button class="tts-btn" onclick="speak('1985',this)">&#9654; 読み上げ</button>
+          <a class="pdf-link" href="#" onclick="openPDF('1985');return false;" target="_blank">&#128240; 新聞記事を開く</a>
+        </div>
+      </div>
+      <p class="summary-text" id="txt-1985">「打率3割が7人」という強打の年。現役時代に主将を務めた村田監督が5年目を迎え、部員との息もぴったり。光好・小田・鍵谷の三本柱が投手陣を支え、4月以降10試合で完封負けなしという安定した仕上がり。クリーンアップの光好・小田・西岡が長打力を秘め、春の成績は20勝12敗4分けと充実ぶりを示した。</p>
+      <div class="meta-row">
+        <span class="meta-chip">部長：松岡一起</span>
+        <span class="meta-chip">監督：村田政和（5年目）</span>
+        <span class="meta-chip">春季 20勝12敗4分</span>
+        <span class="meta-chip">打率3割 7名</span>
+      </div>
+    </div>
+    <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
+  </div>
+
+</div>
+
+<script>
+
+
+
+
+
+function openPDF(year) {
+  var url = PDF_LINKS[year];
+  if (url) window.open(url, '_blank');
+}
+
+window.addEventListener('scroll', function() {
+  var btn = document.getElementById('scrollTopBtn');
+  if (btn) btn.classList.toggle('visible', window.scrollY > 200);
+});
+
+function jumpTo(year) {
+  var el = document.getElementById('yr-' + year);
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
+function jumpToTop() {
+  document.getElementById('index-panel').scrollIntoView({ behavior: 'smooth' });
+}
+var currentBtn = null;
+function speak(year, btn) {
+  if (speechSynthesis.speaking) {
+    speechSynthesis.cancel();
+    if (currentBtn) { currentBtn.innerHTML = '&#9654; 読み上げ'; currentBtn.classList.remove('playing'); }
+    if (currentBtn === btn) { currentBtn = null; return; }
+  }
+  var text = document.getElementById('txt-' + year).textContent;
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ja-JP'; u.rate = 0.9;
+  u.onend = function() { btn.innerHTML = '&#9654; 読み上げ'; btn.classList.remove('playing'); currentBtn = null; };
+  currentBtn = btn;
+  btn.innerHTML = '&#9632; 停止';
+  btn.classList.add('playing');
+  speechSynthesis.speak(u);
+}
+</script>
+
+<a class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" href="#">&#9650;</a>
+
+</body>
+</html>

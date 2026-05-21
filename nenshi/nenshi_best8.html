@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>奈良高専野球部 60年史 — 奈良県大会ベスト8分析</title>
+<style>
+:root {
+  --navy: #1a2744;
+  --navy2: #243058;
+  --gold: #c8a846;
+  --light-gold: #f5ecc0;
+  --bg: #f5f2eb;
+  --white: #ffffff;
+  --gray: #888;
+  --border: #d0c8b0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  background: var(--bg);
+  color: #222;
+  min-height: 100vh;
+}
+.hero {
+  background: var(--navy);
+  padding: 36px 24px 30px;
+  text-align: center;
+  border-bottom: 4px solid var(--gold);
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(200,168,70,0.04) 40px, rgba(200,168,70,0.04) 80px);
+}
+.hero-icon { font-size: 40px; display: block; margin-bottom: 12px; position: relative; }
+.hero h1 { font-size: 20px; color: var(--gold); letter-spacing: 3px; margin-bottom: 6px; position: relative; }
+.hero h2 { font-size: 13px; color: #aab0c0; font-weight: normal; letter-spacing: 2px; position: relative; }
+.back-link {
+  display: flex; align-items: center; gap: 6px;
+  padding: 12px 20px; font-size: 13px; color: var(--navy);
+  text-decoration: none; background: var(--white);
+  border-bottom: 1px solid var(--border);
+}
+.back-link:hover { color: var(--gold); }
+.section-title {
+  background: var(--navy); color: var(--gold);
+  font-size: 12px; letter-spacing: 2px;
+  padding: 10px 20px; border-bottom: 2px solid var(--gold);
+}
+.content { padding: 16px 16px 32px; }
+
+/* リード文 */
+.lead {
+  background: var(--white);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  padding: 16px 18px;
+  font-size: 13px;
+  line-height: 1.9;
+  color: #444;
+  margin-bottom: 20px;
+}
+
+/* 累積ポイント棒グラフ */
+.chart-wrap {
+  background: var(--white);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+.chart-title {
+  background: var(--navy);
+  color: var(--gold);
+  font-size: 12px;
+  letter-spacing: 1px;
+  padding: 8px 14px;
+}
+.chart-body { padding: 16px 14px; }
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.bar-label {
+  width: 80px;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: right;
+  flex-shrink: 0;
+  color: var(--navy);
+}
+.bar-label.highlight { color: #c00; }
+.bar-label.kosen { color: var(--gold); }
+.bar-outer {
+  flex: 1;
+  background: #ede9db;
+  border-radius: 4px;
+  height: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.bar-inner {
+  height: 100%;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding-left: 8px;
+  font-size: 11px;
+  font-weight: bold;
+  color: white;
+  transition: width 0.8s ease;
+}
+.bar-tenri  { background: #c00; }
+.bar-chiben { background: #1a4a8a; }
+.bar-koriyama { background: #2a7a2a; }
+.bar-others { background: #888; }
+.bar-kosen  { background: var(--gold); color: var(--navy); }
+.bar-score {
+  margin-left: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #444;
+  flex-shrink: 0;
+}
+
+/* 解説ボックス */
+.note-box {
+  background: var(--light-gold);
+  border-left: 4px solid var(--gold);
+  border-radius: 0 6px 6px 0;
+  padding: 12px 16px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--navy);
+  margin-bottom: 20px;
+}
+.note-box strong { color: #8a0000; }
+
+/* 年代別推移表 */
+.era-table-wrap {
+  background: var(--white);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.era-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.era-table th {
+  background: var(--navy);
+  color: var(--gold);
+  padding: 8px 10px;
+  text-align: center;
+  font-size: 11px;
+}
+.era-table td {
+  padding: 8px 10px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+.era-table tr:last-child td { border-bottom: none; }
+.era-table .era-name { text-align: left; font-weight: bold; color: var(--navy); }
+.tenri-cell { color: #c00; font-weight: bold; }
+.chiben-cell { color: #1a4a8a; font-weight: bold; }
+.koriyama-cell { color: #2a7a2a; font-weight: bold; }
+.kosen-cell { color: #8a6a00; font-weight: bold; }
+
+/* 採点基準 */
+.scoring {
+  background: var(--white);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  padding: 14px 16px;
+  font-size: 12px;
+  color: #555;
+  margin-bottom: 20px;
+  line-height: 1.8;
+}
+.scoring strong { color: var(--navy); }
+
+.footer {
+  background: var(--navy); color: #667;
+  font-size: 11px; text-align: center;
+  padding: 24px 20px; line-height: 2;
+}
+.footer strong { color: var(--gold); }
+.scroll-top {
+  position: fixed; bottom: 20px; right: 20px;
+  background: var(--navy); color: var(--gold);
+  border: 2px solid var(--gold); border-radius: 50%;
+  width: 44px; height: 44px; font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  opacity: 0; transition: opacity 0.2s; z-index: 999; text-decoration: none;
+}
+.scroll-top.visible { opacity: 1; }
+.scroll-top:hover { background: var(--gold); color: var(--navy); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="hero-icon">📊</span>
+  <h1>奈良高専野球部</h1>
+  <h2>創 部 60 年 史 ― 奈 良 県 大 会 ベ ス ト 8 分 析</h2>
+</div>
+
+<a class="back-link" href="index.html">&#8592; 60年史トップへ戻る</a>
+
+<div class="section-title">▶ 60年間の力関係を数字で見る</div>
+
+<div class="content">
+
+  <div class="lead">
+    昭和41年（1966年）から令和6年（2024年）までの59回の夏の奈良県大会。ベスト8進出に優勝8点・準優勝4点・ベスト4で2点・ベスト8で1点を付与した累積ポイントで、奈良県高校野球の勢力図を見てみる。
+  </div>
+
+  <!-- 累積ポイント棒グラフ -->
+  <div class="chart-wrap">
+    <div class="chart-title">▶ 累積ベスト8ポイント（1966〜2024年）上位校</div>
+    <div class="chart-body">
+
+      <div class="bar-row">
+        <div class="bar-label highlight">天理</div>
+        <div class="bar-outer">
+          <div class="bar-inner bar-tenri" style="width:100%">172点</div>
+        </div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label highlight">智弁学園</div>
+        <div class="bar-outer">
+          <div class="bar-inner bar-chiben" style="width:76%">131点</div>
+        </div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label">郡山</div>
+        <div class="bar-outer">
+          <div class="bar-inner bar-koriyama" style="width:52%">89点</div>
+        </div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label">高田商</div>
+        <div class="bar-outer">
+          <div class="bar-inner bar-others" style="width:27%">47点</div>
+        </div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label">奈良大附</div>
+        <div class="bar-outer">
+          <div class="bar-inner bar-others" style="width:21%">36点</div>
+        </div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label">畝傍</div>
+        <div class="bar-outer">
+          <div class="bar-inner bar-others" style="width:19%">33点</div>
+        </div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label kosen">奈良高専</div>
+        <div class="bar-outer">
+          <div class="bar-inner bar-kosen" style="width:1.2%"></div>
+          <span style="position:absolute;left:8px;top:4px;font-size:11px;color:#8a6a00;font-weight:bold;">2点</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="note-box">
+    <strong>天理172点・智弁学園131点</strong>に対し、奈良高専は<strong>2点（ベスト8進出1回）</strong>。この数字が示すのは単純な強弱の差ではなく、専用寮・全国スカウト・専任コーチ体制という<strong>構造的な環境の差</strong>である。
+  </div>
+
+  <!-- 年代別推移表 -->
+  <div class="era-table-wrap">
+    <div class="chart-title">▶ 年代別ベスト8ポイント推移（3強と奈良高専）</div>
+    <table class="era-table">
+      <thead>
+        <tr>
+          <th>年代</th>
+          <th style="color:#ffaaaa">天理</th>
+          <th style="color:#aaccff">智弁</th>
+          <th style="color:#aaffaa">郡山</th>
+          <th style="color:#ffe066">奈良高専</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="era-name">創部期<br><span style="font-size:10px;color:#888">1966〜1975</span></td>
+          <td class="tenri-cell">24</td>
+          <td class="chiben-cell">8</td>
+          <td class="koriyama-cell">36</td>
+          <td class="kosen-cell">1</td>
+        </tr>
+        <tr>
+          <td class="era-name">発展期<br><span style="font-size:10px;color:#888">1976〜1985</span></td>
+          <td class="tenri-cell">46</td>
+          <td class="chiben-cell">48</td>
+          <td class="koriyama-cell">15</td>
+          <td class="kosen-cell">1</td>
+        </tr>
+        <tr>
+          <td class="era-name">充実期<br><span style="font-size:10px;color:#888">1986〜1995</span></td>
+          <td class="tenri-cell">60</td>
+          <td class="chiben-cell">51</td>
+          <td class="koriyama-cell">22</td>
+          <td class="kosen-cell">0</td>
+        </tr>
+        <tr>
+          <td class="era-name">転換期<br><span style="font-size:10px;color:#888">1996〜2005</span></td>
+          <td class="tenri-cell">20</td>
+          <td class="chiben-cell">60</td>
+          <td class="koriyama-cell">20</td>
+          <td class="kosen-cell">0</td>
+        </tr>
+        <tr>
+          <td class="era-name">現代前期<br><span style="font-size:10px;color:#888">2006〜2015</span></td>
+          <td class="tenri-cell">14</td>
+          <td class="chiben-cell">28</td>
+          <td class="koriyama-cell">10</td>
+          <td class="kosen-cell">0</td>
+        </tr>
+        <tr>
+          <td class="era-name">現代後期<br><span style="font-size:10px;color:#888">2016〜2024</span></td>
+          <td class="tenri-cell">8</td>
+          <td class="chiben-cell">20</td>
+          <td class="koriyama-cell">4</td>
+          <td class="kosen-cell">0</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="scoring">
+    <strong>採点基準：</strong>優勝＝8点、準優勝＝4点、ベスト4＝2点、ベスト8＝1点<br>
+    <strong>出典：</strong>奈良県高等学校野球連盟 公式記録をもとに集計
+  </div>
+
+</div>
+
+<div class="footer">
+  <strong>奈良高専野球部 OB会</strong><br>
+  奈良工業高等専門学校 硬式野球部 創部60周年記念誌<br>
+  <span style="font-size:10px;color:#aab;">本資料はOB会員限定の非公開資料です</span>
+</div>
+
+<a class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" href="#">&#9650;</a>
+
+<script>
+window.addEventListener('scroll', function() {
+  var btn = document.getElementById('scrollTopBtn');
+  if (btn) btn.classList.toggle('visible', window.scrollY > 200);
+});
+</script>
+</body>
+</html>

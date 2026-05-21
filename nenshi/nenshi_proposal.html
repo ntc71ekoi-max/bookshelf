@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>奈良高専野球部 60年史 — 現状と次の60年へ</title>
+<style>
+:root {
+  --navy: #1a2744; --navy2: #243058; --gold: #c8a846;
+  --light-gold: #f5ecc0; --bg: #f5f2eb; --white: #ffffff;
+  --gray: #888; --border: #d0c8b0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Hiragino Kaku Gothic ProN','Meiryo',sans-serif; background:var(--bg); color:#222; min-height:100vh; }
+.hero { background:var(--navy); padding:36px 24px 30px; text-align:center; border-bottom:4px solid var(--gold); position:relative; overflow:hidden; }
+.hero::before { content:''; position:absolute; inset:0; background:repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(200,168,70,0.04) 40px,rgba(200,168,70,0.04) 80px); }
+.hero-icon { font-size:40px; display:block; margin-bottom:12px; position:relative; }
+.hero h1 { font-size:20px; color:var(--gold); letter-spacing:3px; margin-bottom:6px; position:relative; }
+.hero h2 { font-size:13px; color:#aab0c0; font-weight:normal; letter-spacing:2px; position:relative; }
+.back-link { display:flex; align-items:center; gap:6px; padding:12px 20px; font-size:13px; color:var(--navy); text-decoration:none; background:var(--white); border-bottom:1px solid var(--border); }
+.back-link:hover { color:var(--gold); }
+.section-title { background:var(--navy); color:var(--gold); font-size:12px; letter-spacing:2px; padding:10px 20px; border-bottom:2px solid var(--gold); margin-bottom:0; }
+.content { padding:16px 16px 32px; display:flex; flex-direction:column; gap:18px; }
+
+.card { background:var(--white); border-radius:8px; border:1px solid var(--border); overflow:hidden; box-shadow:0 2px 6px rgba(0,0,0,0.06); }
+.card-head { background:var(--navy2); color:var(--gold); font-size:13px; font-weight:bold; padding:10px 16px; letter-spacing:1px; }
+.card-body { padding:16px; font-size:13px; line-height:2.0; color:#333; }
+.card-body p { margin-bottom:1em; }
+.card-body p:last-child { margin-bottom:0; }
+
+/* データ表 */
+.data-table { width:100%; border-collapse:collapse; font-size:12px; margin:10px 0; }
+.data-table th { background:var(--navy); color:var(--gold); padding:7px 10px; text-align:center; font-size:11px; }
+.data-table td { padding:7px 10px; text-align:center; border-bottom:1px solid var(--border); }
+.data-table tr:last-child td { border-bottom:none; }
+.era-name { text-align:left !important; font-weight:bold; color:var(--navy); }
+.up { color:#2a7a2a; font-weight:bold; }
+.down { color:#c00; font-weight:bold; }
+.highlight-row { background:var(--light-gold); }
+
+/* 引用ボックス */
+.quote-box { background:var(--light-gold); border-left:4px solid var(--gold); border-radius:0 6px 6px 0; padding:12px 16px; font-size:13px; line-height:1.8; color:var(--navy); margin:12px 0; font-style:italic; }
+
+/* ポイントリスト */
+.point-list { list-style:none; padding:0; margin:10px 0; }
+.point-list li { padding:8px 0 8px 24px; border-bottom:1px solid #ede9db; font-size:13px; line-height:1.7; position:relative; }
+.point-list li:last-child { border-bottom:none; }
+.point-list li::before { content:'▶'; color:var(--gold); position:absolute; left:0; font-size:11px; top:10px; }
+
+/* 未来へ */
+.future-box { background:var(--navy); border-radius:8px; padding:20px 18px; color:var(--light-gold); font-size:13px; line-height:2.0; }
+.future-box h3 { color:var(--gold); font-size:15px; margin-bottom:12px; letter-spacing:1px; }
+.future-box p { margin-bottom:0.8em; }
+.future-box p:last-child { margin-bottom:0; }
+
+.footer { background:var(--navy); color:#667; font-size:11px; text-align:center; padding:24px 20px; line-height:2; }
+.footer strong { color:var(--gold); }
+.scroll-top { position:fixed; bottom:20px; right:20px; background:var(--navy); color:var(--gold); border:2px solid var(--gold); border-radius:50%; width:44px; height:44px; font-size:18px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.3); opacity:0; transition:opacity 0.2s; z-index:999; text-decoration:none; }
+.scroll-top.visible { opacity:1; }
+.scroll-top:hover { background:var(--gold); color:var(--navy); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="hero-icon">⚾</span>
+  <h1>奈良高専野球部</h1>
+  <h2>創 部 60 年 史 ― 現 状 と 次 の 60 年 へ</h2>
+</div>
+
+<a class="back-link" href="index.html">&#8592; 60年史トップへ戻る</a>
+
+<div class="section-title">▶ 60年の歩みを振り返り、これからを考える</div>
+
+<div class="content">
+
+  <!-- 勝率データ -->
+  <div class="card">
+    <div class="card-head">① 60年間の勝率推移</div>
+    <div class="card-body">
+      <p>春・夏・秋の3大会を通じた勝率を前期・中期・後期に分けて見ると、興味深い傾向が浮かび上がる。</p>
+      <table class="data-table">
+        <thead>
+          <tr><th>期間</th><th>夏勝率</th><th>秋春勝率</th><th>指導体制の特徴</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="era-name">前期<br><span style="font-size:10px;color:#888">1966〜1985</span></td>
+            <td class="up">約41%</td><td>約47%</td>
+            <td style="font-size:11px;text-align:left;">自主性重視型</td>
+          </tr>
+          <tr>
+            <td class="era-name">中期<br><span style="font-size:10px;color:#888">1986〜2000</span></td>
+            <td>約42%</td><td class="down">約24%</td>
+            <td style="font-size:11px;text-align:left;">技術力重視型</td>
+          </tr>
+          <tr class="highlight-row">
+            <td class="era-name">後期<br><span style="font-size:10px;color:#888">2001〜2024</span></td>
+            <td class="down">約17%</td><td class="up">約53%</td>
+            <td style="font-size:11px;text-align:left;">専任監督・熱心指導</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>注目すべきは後期の<strong>「秋春53%・夏17%」という乖離</strong>である。西前監督就任以降、秋春の勝率は大幅に向上した。それにもかかわらず夏の勝率が低い背景には、いくつかの要因が考えられる。</p>
+      <ul class="point-list">
+        <li>夏の予選では強豪校とのシード対戦が早い段階で組まれやすい</li>
+        <li>3年生にとって最後の大会という精神的プレッシャーの大きさ</li>
+        <li>4・5年次の学業・卒研負担による主力離脱</li>
+        <li>中学軟式から硬式への移行ギャップ</li>
+        <li>文科省指針による練習時間制約（週2日休み・平日2時間以内）</li>
+      </ul>
+      <div class="quote-box">「昔は"野球もやる技術屋"が多かったが、いまは"研究者志向の学生"が中心になった。」——OB談</div>
+      <p>これは奈良高専に限らず、全国の高専野球部が直面している共通の構造的課題でもある。</p>
+    </div>
+  </div>
+
+  <!-- 環境の差 -->
+  <div class="card">
+    <div class="card-head">② 公立校としての立ち位置</div>
+    <div class="card-body">
+      <p>奈良県大会では、全国から有望選手を集める体制を持つ強豪私学との差が長年の課題となっている。専用寮・食事管理・専任スタッフ体制を整えた学校と、地元出身の学生が授業の合間に練習する高専とでは、環境面でのハンデがあることは否めない。</p>
+      <p>しかし視点を変えると、同様の環境制約の中で好成績を残している公立校も存在する。県立岐阜商業はその好例であり、そのチームづくりには学ぶべき点が多い。</p>
+      <ul class="point-list">
+        <li>OB・地元企業・学校が一体となった支援体制の構築</li>
+        <li>「型」より「思考」を重視する主体的な練習スタイル</li>
+        <li>練習内容のデータ化・数値による自己分析</li>
+        <li>「地元代表」としての誇りとモチベーション</li>
+      </ul>
+      <p>こうした取り組みは、奈良高専の理工系という特性と非常に相性がよい。データ分析・映像解析・AI活用といった分野で、高専生自身がツールを作り実践する「高専らしい野球」への可能性は十分にある。</p>
+    </div>
+  </div>
+
+  <!-- 応援文化 -->
+  <div class="card">
+    <div class="card-head">③ 高校野球の応援文化について</div>
+    <div class="card-body">
+      <p>近年の奈良県大会では、応援の在り方について感じることがある。大人数の補欠部員が太鼓とともに大声で応援するスタイルは、相手チームの集中に影響を与えることもある。</p>
+      <p>高校野球は教育の一環であり、勝利を目指しながらも相互尊重・フェアプレーの精神を大切にしてきた文化がある。応援もその延長線上にあるべきではないかと、個人的には感じている。</p>
+      <div class="quote-box">応援は選手を鼓舞する大切な文化。それが相手への敬意と共存することで、高校野球の品格が保たれるのではないだろうか。</div>
+    </div>
+  </div>
+
+  <!-- 次の60年へ -->
+  <div class="future-box">
+    <h3>⚾ 次の60年に向けて——OB会からのメッセージ</h3>
+    <p>60年の歴史を持つ奈良高専野球部は、単なる競技集団ではない。技術者の心・継続の精神・仲間との絆を育む場として、世代を超えて受け継がれてきた。</p>
+    <p>夏の甲子園という高い目標はある。しかしその道のりで積み重ねた経験こそが、選手たちの人生を豊かにする。OB会は引き続き、練習環境の整備・資金面での支援・精神的な後押しを続けていきたいと考えている。</p>
+    <p>理工系高専だからこそできる「知能野球」——データと技術を味方につけた新しい戦い方に、次の60年の可能性を感じている。</p>
+  </div>
+
+</div>
+
+<div class="footer">
+  <strong>奈良高専野球部 OB会</strong><br>
+  奈良工業高等専門学校 硬式野球部 創部60周年記念誌<br>
+  <span style="font-size:10px;color:#aab;">本資料はOB会員限定の非公開資料です</span>
+</div>
+
+<a class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" href="#">&#9650;</a>
+<script>
+window.addEventListener('scroll',function(){
+  var btn=document.getElementById('scrollTopBtn');
+  if(btn) btn.classList.toggle('visible',window.scrollY>200);
+});
+</script>
+</body>
+</html>

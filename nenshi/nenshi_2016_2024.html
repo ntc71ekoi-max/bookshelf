@@ -84,6 +84,32 @@ body { font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; backgroun
 }
 .scroll-top.visible { opacity: 1; }
 .scroll-top:hover { background: var(--gold); color: var(--navy); }
+
+/* 戦績テーブル */
+.result-table-wrap { margin:10px 0 4px; border-radius:6px; overflow:hidden; border:1px solid var(--border); }
+.result-table-title { background:var(--navy2,#243058); color:var(--gold); font-size:11px; letter-spacing:1px; padding:6px 12px; }
+.result-table { width:100%; border-collapse:collapse; font-size:12px; }
+.result-table thead tr { background:#eae6da; }
+.result-table th { padding:5px 8px; text-align:center; color:var(--navy); font-size:11px; border-bottom:1px solid var(--border); }
+.result-table td { padding:5px 8px; border-bottom:1px solid #ede9db; text-align:center; }
+.result-table tr:last-child td { border-bottom:none; }
+.r-win { background:#f0f8f0; } .r-loss { background:#fff8f8; } .r-cancel { background:#f5f5f5; color:#888; }
+.s-col { font-weight:bold; color:var(--navy); width:52px; font-size:11px; }
+.round-col { color:var(--gray); width:40px; font-size:11px; }
+.opp-col { text-align:left; }
+.score-col { font-family:monospace; width:52px; }
+.res-col { width:28px; font-size:16px; }
+span.r-win  { color:#000; font-weight:bold; font-size:16px; }
+span.r-loss { color:#000; font-weight:bold; font-size:16px; }
+
+
+/* 夏（選手権）強調 */
+.r-summer { background: #f5c842 !important; border-left: 4px solid #a07800; }
+.r-summer td { color: #1a2744 !important; border-bottom: 1px solid #d4a820 !important; font-weight: bold; }
+.r-summer .s-col { color: #5a3a00 !important; font-weight: bold; }
+.r-summer span.r-win  { color: #1a5a1a !important; font-size: 16px; }
+.r-summer span.r-loss { color: #8a0000 !important; font-size: 16px; }
+
 </style>
 <script>
 // =============================================
@@ -137,18 +163,23 @@ var PDF_LINKS = {
     <div class="year-title"><h2>2016年</h2><span>平成28年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('2016',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('2016');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-2016">制球力の谷山と直球重視の松田による継投が投手の柱。一番・坂本の出塁からクリーンアップの竹内・光田・福野の長打力で得点するパターン。俊足ぞろいの外野陣が守備範囲の広さを発揮する。堅守から攻めのリズムをつくるスタイルで夏に臨んだ。</p>
       <div class="meta-row">
         <span class="meta-chip">部長：内田真司</span>
         <span class="meta-chip">監督：西前竜一</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-win" style="opacity:0.65"><td class="s-col">2015年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 十津川</td><td class="score-col"><strong>9-1</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">2015年秋</td><td class="round-col">2回戦</td><td class="opp-col">vs 奈良大附</td><td class="score-col">1-4</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-win"><td class="s-col">2016年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 帝塚山</td><td class="score-col"><strong>9-1</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss"><td class="s-col">2016年春</td><td class="round-col">2回戦</td><td class="opp-col">vs 高田</td><td class="score-col">2-9</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">2016年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 奈良</td><td class="score-col">3-10</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -156,19 +187,24 @@ var PDF_LINKS = {
     <div class="year-title"><h2>2017年</h2><span>平成29年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('2017',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('2017');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-2017">エース村田はカーブ・スライダー・チェンジアップ・フォークと多彩な変化球で的を絞らせない丁寧な投球が武器。中谷はストレートの勢いが光る。長打力には欠けるがバント・エンドランを駆使した機動力野球で好機をつくる。守備は最少失点に抑える意識をナイン全員で共有する。</p>
       <div class="meta-row">
         <span class="meta-chip">部長：内田真司</span>
         <span class="meta-chip">監督：西前竜一</span>
         <span class="meta-chip">機動力野球</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">2016年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 平城</td><td class="score-col">2-9</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss"><td class="s-col">2017年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 王寺工業</td><td class="score-col">2-4</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-win r-summer"><td class="s-col">2017年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 平城</td><td class="score-col"><strong>4-3</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-win r-summer"><td class="s-col">2017年夏</td><td class="round-col">2回戦</td><td class="opp-col">vs 青翔・二階堂・吉野</td><td class="score-col"><strong>12-0</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">2017年夏</td><td class="round-col">3回戦</td><td class="opp-col">vs 高円</td><td class="score-col">2-6</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -176,13 +212,10 @@ var PDF_LINKS = {
     <div class="year-title"><h2>2018年</h2><span>平成30年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('2018',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('2018');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-2018">前年秋の秋季近畿地区大会県予選で準々決勝まで勝ち進み自信をつけた。昨夏2勝のエース村田と扇谷の先発継投体制。三年生は始発で登校し打撃練習を重ねてきた努力の年。俊足の奥田を一番に起用し機動力で得点をつくる。捕手・増田を軸にセンターラインが守りのリズムをつくる。</p>
       <div class="meta-row">
         <span class="meta-chip">部長：内田真司</span>
         <span class="meta-chip">監督：西前竜一</span>
@@ -190,6 +223,14 @@ var PDF_LINKS = {
         <span class="meta-chip">始発登校で打撃強化</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-win" style="opacity:0.65"><td class="s-col">2017年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 高取国際</td><td class="score-col"><strong>3-1</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-win" style="opacity:0.65"><td class="s-col">2017年秋</td><td class="round-col">2回戦</td><td class="opp-col">vs 生駒</td><td class="score-col"><strong>6-4</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">2017年秋</td><td class="round-col">3回戦</td><td class="opp-col">vs 智辯学園</td><td class="score-col">1-11</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss"><td class="s-col">2018年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 五條</td><td class="score-col">0-3</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">2018年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 橿原</td><td class="score-col">1-8</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -197,19 +238,26 @@ var PDF_LINKS = {
     <div class="year-title"><h2>2019年</h2><span>令和元年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('2019',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('2019');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-2019">春の県大会で同校史上初のベスト4進出を果たし、勢いに乗った記念すべき年。制球力のエース扇谷・重い球質の坂本・速球派の宝持という三本柱が投手陣を支える。四番・高橋、五番・堀、六番・宝持に長打力があり、ボールの見極めが良くつなぐ打線が持ち味。捕手・堀の頭脳的なリードが光る。</p>
       <div class="meta-row">
         <span class="meta-chip">部長：内田真司</span>
         <span class="meta-chip">監督：西前竜一</span>
         <span class="meta-chip">春 史上初ベスト4</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">2018年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 平城</td><td class="score-col">4-11</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-win"><td class="s-col">2019年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 大宇陀</td><td class="score-col"><strong>14-13</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-win"><td class="s-col">2019年春</td><td class="round-col">2回戦</td><td class="opp-col">vs 奈良北</td><td class="score-col"><strong>4-3</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-win"><td class="s-col">2019年春</td><td class="round-col">3回戦</td><td class="opp-col">vs 添上</td><td class="score-col"><strong>4-3</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss"><td class="s-col">2019年春</td><td class="round-col">4回戦</td><td class="opp-col">vs 郡山</td><td class="score-col">3-7</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss"><td class="s-col">2019年春</td><td class="round-col">5回戦</td><td class="opp-col">vs 高田</td><td class="score-col">3-7</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">2019年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 高田商</td><td class="score-col">4-6</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -227,6 +275,12 @@ var PDF_LINKS = {
         <span class="meta-chip covid">大会中止（COVID-19）</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">2019年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 郡山</td><td class="score-col">6-9</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-cancel"><td class="s-col">2020年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 中止</td><td class="score-col"><span style="color:#888">—</span></td><td class="res-col"><span style="color:#888">—</span></td></tr>
+      <tr class="r-cancel"><td class="s-col">2020年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 出場辞退</td><td class="score-col"><span style="color:#888">—</span></td><td class="res-col"><span style="color:#888">—</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -234,19 +288,22 @@ var PDF_LINKS = {
     <div class="year-title"><h2>2021年</h2><span>令和3年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('2021',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('2021');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-2021">コロナ禍を経て再開した大会に臨んだ年。右腕の小西を中心に森下・武部・松田と豊富な投手陣が継投で失点を防ぐ。一番・高力と二番・奥田が出塁して中軸の松田・井上で返す攻撃スタイル。主将・松田を中心に守り勝つ野球を目指した。</p>
       <div class="meta-row">
         <span class="meta-chip">部長：内田真司</span>
         <span class="meta-chip">監督：西前竜一</span>
         <span class="meta-chip">大会再開</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">2020年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 高田</td><td class="score-col">0-4</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss"><td class="s-col">2021年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 法隆寺国際</td><td class="score-col">0-9</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">2021年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 橿原</td><td class="score-col">8-12</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -254,19 +311,24 @@ var PDF_LINKS = {
     <div class="year-title"><h2>2022年</h2><span>令和4年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('2022',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('2022');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-2022">2020年の大会不出場の悔しさを抱えた三年生が初戦突破への強い思いで挑んだ年。エース小西と春に自信をつけた加美の継投体制。高力・田中の出塁からつなぐ攻撃で得点を狙う。武部・田中・藤田を中心とした攻めの守備で臨んだ。</p>
       <div class="meta-row">
         <span class="meta-chip">部長：内田真司</span>
         <span class="meta-chip">監督：西前竜一</span>
         <span class="meta-chip">2020年不出場組の雪辱の年</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-win" style="opacity:0.65"><td class="s-col">2021年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 添上</td><td class="score-col"><strong>12-1</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">2021年秋</td><td class="round-col">2回戦</td><td class="opp-col">vs 天理</td><td class="score-col">0-11</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-win"><td class="s-col">2022年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 合同A</td><td class="score-col"><strong>20-2</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss"><td class="s-col">2022年春</td><td class="round-col">2回戦</td><td class="opp-col">vs 奈良大附</td><td class="score-col">2-3</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">2022年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 王寺工業</td><td class="score-col">0-10</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -274,18 +336,21 @@ var PDF_LINKS = {
     <div class="year-title"><h2>2023年</h2><span>令和5年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('2023',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('2023');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-2023">野村・雨堤・上林らが継投し捕手・松本との呼吸が合う投手陣が持ち味。俊足の一番・岡村と二番・田中が出塁して主軸の岩永・高橋・堀で返す攻撃スタイル。遊撃・中井を中心とした内外野の連係で最少失点に抑えるリズム重視の野球を志向した。</p>
       <div class="meta-row">
         <span class="meta-chip">部長：内田真司</span>
         <span class="meta-chip">監督：西前竜一</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">2022年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 畝傍</td><td class="score-col">3-10</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss"><td class="s-col">2023年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 磯城野</td><td class="score-col">3-10</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">2023年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 生駒</td><td class="score-col">2-6</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -293,19 +358,23 @@ var PDF_LINKS = {
     <div class="year-title"><h2>2024年</h2><span>令和6年 ／ 60年史最終年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('2024',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('2024');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-2024">60年史の締めを飾る年。制球力に自信を持つエース井ノ上を左腕の坂本・光谷が支える継投体制。バントや盗塁など小技を絡めて1点を着実に取りに行く攻撃スタイル。四番・高田と五番・石井のパンチ力が得点源。捕手・坂本を中心にセンターラインの守りが堅い、守り勝つ野球で夏に挑んだ。</p>
       <div class="meta-row">
         <span class="meta-chip">部長：内田真司</span>
         <span class="meta-chip">監督：西前竜一</span>
         <span class="meta-chip">60年史最終年</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-win" style="opacity:0.65"><td class="s-col">2023年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 宇陀</td><td class="score-col"><strong>25-3</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">2023年秋</td><td class="round-col">2回戦</td><td class="opp-col">vs 橿原学院</td><td class="score-col">1-11</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss"><td class="s-col">2024年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 奈女大附</td><td class="score-col">5-10</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">2024年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 奈良大附</td><td class="score-col">7-0</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -335,21 +404,6 @@ function jumpToTop() {
   document.getElementById('index-panel').scrollIntoView({ behavior: 'smooth' });
 }
 var currentBtn = null;
-function speak(year, btn) {
-  if (speechSynthesis.speaking) {
-    speechSynthesis.cancel();
-    if (currentBtn) { currentBtn.innerHTML = '&#9654; 読み上げ'; currentBtn.classList.remove('playing'); }
-    if (currentBtn === btn) { currentBtn = null; return; }
-  }
-  var text = document.getElementById('txt-' + year).textContent;
-  var u = new SpeechSynthesisUtterance(text);
-  u.lang = 'ja-JP'; u.rate = 0.9;
-  u.onend = function() { btn.innerHTML = '&#9654; 読み上げ'; btn.classList.remove('playing'); currentBtn = null; };
-  currentBtn = btn;
-  btn.innerHTML = '&#9632; 停止';
-  btn.classList.add('playing');
-  speechSynthesis.speak(u);
-}
 </script>
 
 <a class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" href="#">&#9650;</a>

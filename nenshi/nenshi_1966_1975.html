@@ -216,6 +216,32 @@ body {
 }
 .scroll-top.visible { opacity: 1; }
 .scroll-top:hover { background: var(--gold); color: var(--navy); }
+
+/* 戦績テーブル */
+.result-table-wrap { margin:10px 0 4px; border-radius:6px; overflow:hidden; border:1px solid var(--border); }
+.result-table-title { background:var(--navy2,#243058); color:var(--gold); font-size:11px; letter-spacing:1px; padding:6px 12px; }
+.result-table { width:100%; border-collapse:collapse; font-size:12px; }
+.result-table thead tr { background:#eae6da; }
+.result-table th { padding:5px 8px; text-align:center; color:var(--navy); font-size:11px; border-bottom:1px solid var(--border); }
+.result-table td { padding:5px 8px; border-bottom:1px solid #ede9db; text-align:center; }
+.result-table tr:last-child td { border-bottom:none; }
+.r-win { background:#f0f8f0; } .r-loss { background:#fff8f8; } .r-cancel { background:#f5f5f5; color:#888; }
+.s-col { font-weight:bold; color:var(--navy); width:52px; font-size:11px; }
+.round-col { color:var(--gray); width:40px; font-size:11px; }
+.opp-col { text-align:left; }
+.score-col { font-family:monospace; width:52px; }
+.res-col { width:28px; font-size:16px; }
+span.r-win  { color:#000; font-weight:bold; font-size:16px; }
+span.r-loss { color:#000; font-weight:bold; font-size:16px; }
+
+
+/* 夏（選手権）強調 */
+.r-summer { background: #f5c842 !important; border-left: 4px solid #a07800; }
+.r-summer td { color: #1a2744 !important; border-bottom: 1px solid #d4a820 !important; font-weight: bold; }
+.r-summer .s-col { color: #5a3a00 !important; font-weight: bold; }
+.r-summer span.r-win  { color: #1a5a1a !important; font-size: 16px; }
+.r-summer span.r-loss { color: #8a0000 !important; font-size: 16px; }
+
 </style>
 <script>
 // =============================================
@@ -272,13 +298,10 @@ var PDF_LINKS = {
     <div class="year-title"><h2>1966年</h2><span>昭和41年 ／ 創部・初出場</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('1966',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('1966');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-1966">「高校生はもちろん、高専生が長年の念願であった野球部」として学校あげての期待を背負って初陣。一・二年生合わせて21名。全体に荒削りながら、毎日の練習でチームがまとまりつつある。打撃では一番・久谷、三番・中村、四番・久保田に長打力がある。塩田部長・松井監督のもと、専用グラウンドを新調して夏の大会に臨んだ。</p>
       <div class="meta-row">
         <span class="meta-chip">部長：塩田治雄</span>
         <span class="meta-chip">監督：松井広陵</span>
@@ -286,6 +309,11 @@ var PDF_LINKS = {
         <span class="meta-chip">初出場</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss"><td class="s-col">1966年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 御所農</td><td class="score-col">0-10</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">1966年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 畝傍</td><td class="score-col">0-4</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -294,18 +322,21 @@ var PDF_LINKS = {
     <div class="year-title"><h2>1967年</h2><span>昭和42年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('1967',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('1967');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-1967">結成2年目。1年間の努力が実り「三つも星をあげている」と記事に記された成長の年。主戦・森本は重い球が武器の本格派で制球力マスターに連日350球を投げ込む。控えの親木は変化球でコーナーを突く技巧派。野手も森岡・竹井を中心に安定してきた。塩田部長・高岡監督体制。</p>
       <div class="meta-row">
         <span class="meta-chip">部長：塩田治雄</span>
         <span class="meta-chip">監督：高岡光男</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">1966年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 桜井商</td><td class="score-col">0-7</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss"><td class="s-col">1967年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 五条</td><td class="score-col">1-2</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">1967年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 田原本農</td><td class="score-col">0-12</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -314,25 +345,38 @@ var PDF_LINKS = {
     <div class="year-title"><h2>1968年</h2><span>昭和43年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('1968',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('1968');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-1968">創部4年目にして春の大会で大付・御所にコールド勝ちするなど「これまでにない充実ぶり」と報じられた飛躍の年。主戦・来山は威力ある直球にカーブ・シュートを組み合わせる。捕手・富野、二塁・久谷、遊撃・紙中のセンターラインが安定し、打線も一番久谷から五番富野まで破壊力がある。</p>
       <div class="meta-row">
         <span class="meta-chip">部長：太田順康</span>
         <span class="meta-chip">監督：高岡光男</span>
         <span class="meta-chip">春 大付・御所にコールド勝ち</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">1967年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 正強</td><td class="score-col">1-8</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-win"><td class="s-col">1968年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 女大付</td><td class="score-col"><strong>7-0</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-win"><td class="s-col">1968年春</td><td class="round-col">2回戦</td><td class="opp-col">vs 御所農</td><td class="score-col"><strong>9-2</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss"><td class="s-col">1968年春</td><td class="round-col">3回戦</td><td class="opp-col">vs 天理</td><td class="score-col">10-0</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">1968年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 高田商</td><td class="score-col">0-5</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
   <!-- 1969 -->
   <div class="year-section" id="yr-1969">
-    <div class="year-title"><h2>1969年</h2><span>昭和44年</span></div>
+    <div class="year-title"><h2>1969年</h2><span>昭和44年 ／ 高専球技大会 近畿初優勝</span></div>
+    <div style="margin:8px 0 4px;background:#1a2744;border-left:4px solid #c8a846;border-radius:0 6px 6px 0;padding:10px 14px;">
+      <span style="color:#c8a846;font-size:12px;font-weight:bold;">&#9733; 特記事項</span>
+      <p style="color:#f5ecc0;font-size:13px;line-height:1.8;margin-top:4px;">
+        高専体育大会（球技）近畿大会にて優勝。これは野球部のみならず、<strong style="color:#c8a846;">本校球技種目全競技を通じて初めての近畿制覇</strong>という歴史的快挙であった。
+        八浜校長より直接お褒めの言葉をいただいた。当時のトロフィーは60年を経た今も部室に大切に飾られている。
+        創部わずか4年目にして成し遂げた、奈良高専スポーツ史に刻まれる快挙である。
+      </p>
+    </div>
     <div class="no-article">記事の文字起こしデータなし。新聞原紙をご確認ください。</div>
     <div class="summary-block">
       <div class="summary-row">
@@ -342,6 +386,12 @@ var PDF_LINKS = {
         </div>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">1968年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 奈良工</td><td class="score-col">2-10</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss"><td class="s-col">1969年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 吉野工</td><td class="score-col">0-4</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">1969年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 郡山</td><td class="score-col">0-13</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -350,19 +400,23 @@ var PDF_LINKS = {
     <div class="year-title"><h2>1970年</h2><span>昭和45年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('1970',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('1970');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-1970">開校と同時に野球部を創り夏の大会に参加して4年。毎年畝傍・高田商・田原本農・郡山など強豪ばかりに当たり、まだ一勝もできていない。授業が毎日8時間あり練習時間はごくわずか。陸上・ハンドボール・サッカーと共用するグラウンドで地道に汗を流す。エースで主将の安川（三年生）ひとりが上級生、あとは一・二年生の若いチームで「宿願の一勝」を狙う。</p>
       <div class="meta-row">
         <span class="meta-chip">部員13名</span>
         <span class="meta-chip">創部5年 未勝利</span>
         <span class="meta-chip">エース主将：安川</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-win" style="opacity:0.65"><td class="s-col">1969年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 一条</td><td class="score-col"><strong>4-0</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">1969年秋</td><td class="round-col">2回戦</td><td class="opp-col">vs 正強</td><td class="score-col">6-12</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss"><td class="s-col">1970年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 御所工</td><td class="score-col">1-5</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">1970年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 桜井商</td><td class="score-col">1-4</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -371,19 +425,22 @@ var PDF_LINKS = {
     <div class="year-title"><h2>1971年</h2><span>昭和46年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('1971',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('1971');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-1971">部創設5周年の節目の年。練習不足はつきまとうものの、攻守ともによくまとまった「こじんまり」したチーム。三番西口・四番西塔・五番奥田のクリーンアップに一年生の真弓らが好調。西口主将を中心に「根性の野球でキャリア不足を補う」と記事に綴られた。念願の一勝が射程圏内に入ってきた年。</p>
       <div class="meta-row">
         <span class="meta-chip">部長：塩田治雄</span>
         <span class="meta-chip">監督：川口茂明</span>
         <span class="meta-chip">創部5周年</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">1970年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 吉野工</td><td class="score-col">2-3</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss"><td class="s-col">1971年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 智弁学園</td><td class="score-col">0-7</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">1971年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 榛原</td><td class="score-col">2-3</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -399,6 +456,12 @@ var PDF_LINKS = {
         </div>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">1971年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 郡山農</td><td class="score-col">1-11</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss"><td class="s-col">1972年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 天理</td><td class="score-col">0-9</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">1972年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 正強</td><td class="score-col">0-10</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -407,19 +470,23 @@ var PDF_LINKS = {
     <div class="year-title"><h2>1973年</h2><span>昭和48年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('1973',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('1973');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-1973">昭和40年の創部以来、夏の大会は郡山・田原本農・天理といった強豪に7回連続1回戦敗退。しかしこの年は部員も17名に増え「近年にない充実ぶり」と評された。主将・真弓を中心に春からの練習試合で4勝2敗と好成績。奈良工・女大付・奈良・御所工に勝利して自信をつけた。</p>
       <div class="meta-row">
         <span class="meta-chip">部長：塩田治雄</span>
         <span class="meta-chip">部員17名</span>
         <span class="meta-chip">春季 4勝2敗</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-win" style="opacity:0.65"><td class="s-col">1972年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 帝塚山</td><td class="score-col"><strong>3-2</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">1972年秋</td><td class="round-col">2回戦</td><td class="opp-col">vs 天理</td><td class="score-col">0-11</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss"><td class="s-col">1973年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 吉野工</td><td class="score-col">0-7</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">1973年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 奈良商</td><td class="score-col">5-7</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -435,6 +502,14 @@ var PDF_LINKS = {
         </div>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">1973年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 畝傍</td><td class="score-col">2-5</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-win"><td class="s-col">1974年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 五条</td><td class="score-col"><strong>2-1</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss"><td class="s-col">1974年春</td><td class="round-col">2回戦</td><td class="opp-col">vs 女大付</td><td class="score-col">2-5</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-win r-summer"><td class="s-col">1974年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 高田商</td><td class="score-col"><strong>12-5</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">1974年夏</td><td class="round-col">2回戦</td><td class="opp-col">vs 奈良工</td><td class="score-col">0-8</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -443,13 +518,10 @@ var PDF_LINKS = {
     <div class="year-title"><h2>1975年</h2><span>昭和50年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('1975',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('1975');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-1975">チームの実は投手力に頼るスタイルながら、この年は将来が楽しみな一年生が多く積極的に起用した。二・三年生中心でまとまりは良く、打撃は上位から下位まで安定してコンスタントに打てる。前年秋にベスト4入りしたメンバーがそのまま残っており、「大きなエラーが出なければベスト4も夢ではない」と意気込みを見せた。</p>
       <div class="meta-row">
         <span class="meta-chip">部長：塩田治雄</span>
         <span class="meta-chip">監督：土岐進</span>
@@ -457,6 +529,17 @@ var PDF_LINKS = {
         <span class="meta-chip">目標：ベスト4</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-win" style="opacity:0.65"><td class="s-col">1974年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 女大付</td><td class="score-col"><strong>3-2</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-win" style="opacity:0.65"><td class="s-col">1974年秋</td><td class="round-col">2回戦</td><td class="opp-col">vs 高田商</td><td class="score-col"><strong>9-1</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-win" style="opacity:0.65"><td class="s-col">1974年秋</td><td class="round-col">3回戦</td><td class="opp-col">vs 奈良工</td><td class="score-col"><strong>1-0</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">1974年秋</td><td class="round-col">4回戦</td><td class="opp-col">vs 御所工</td><td class="score-col">0-4</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss"><td class="s-col">1975年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 奈良工</td><td class="score-col">0-9</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-win r-summer"><td class="s-col">1975年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 橿原学院</td><td class="score-col"><strong>7-2</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-win r-summer"><td class="s-col">1975年夏</td><td class="round-col">2回戦</td><td class="opp-col">vs 帝塚山</td><td class="score-col"><strong>7-0</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">1975年夏</td><td class="round-col">3回戦</td><td class="opp-col">vs 添上</td><td class="score-col">1-2</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -486,21 +569,6 @@ function jumpToTop() {
   document.getElementById('index-panel').scrollIntoView({ behavior: 'smooth' });
 }
 var currentBtn = null;
-function speak(year, btn) {
-  if (speechSynthesis.speaking) {
-    speechSynthesis.cancel();
-    if (currentBtn) { currentBtn.innerHTML = '&#9654; 読み上げ'; currentBtn.classList.remove('playing'); }
-    if (currentBtn === btn) { currentBtn = null; return; }
-  }
-  var text = document.getElementById('txt-' + year).textContent;
-  var u = new SpeechSynthesisUtterance(text);
-  u.lang = 'ja-JP'; u.rate = 0.9;
-  u.onend = function() { btn.innerHTML = '&#9654; 読み上げ'; btn.classList.remove('playing'); currentBtn = null; };
-  currentBtn = btn;
-  btn.innerHTML = '&#9632; 停止';
-  btn.classList.add('playing');
-  speechSynthesis.speak(u);
-}
 </script>
 
 <a class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" href="#">&#9650;</a>

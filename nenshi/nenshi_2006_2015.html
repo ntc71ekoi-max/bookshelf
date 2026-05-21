@@ -80,6 +80,32 @@ body { font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; backgroun
 }
 .scroll-top.visible { opacity: 1; }
 .scroll-top:hover { background: var(--gold); color: var(--navy); }
+
+/* 戦績テーブル */
+.result-table-wrap { margin:10px 0 4px; border-radius:6px; overflow:hidden; border:1px solid var(--border); }
+.result-table-title { background:var(--navy2,#243058); color:var(--gold); font-size:11px; letter-spacing:1px; padding:6px 12px; }
+.result-table { width:100%; border-collapse:collapse; font-size:12px; }
+.result-table thead tr { background:#eae6da; }
+.result-table th { padding:5px 8px; text-align:center; color:var(--navy); font-size:11px; border-bottom:1px solid var(--border); }
+.result-table td { padding:5px 8px; border-bottom:1px solid #ede9db; text-align:center; }
+.result-table tr:last-child td { border-bottom:none; }
+.r-win { background:#f0f8f0; } .r-loss { background:#fff8f8; } .r-cancel { background:#f5f5f5; color:#888; }
+.s-col { font-weight:bold; color:var(--navy); width:52px; font-size:11px; }
+.round-col { color:var(--gray); width:40px; font-size:11px; }
+.opp-col { text-align:left; }
+.score-col { font-family:monospace; width:52px; }
+.res-col { width:28px; font-size:16px; }
+span.r-win  { color:#000; font-weight:bold; font-size:16px; }
+span.r-loss { color:#000; font-weight:bold; font-size:16px; }
+
+
+/* 夏（選手権）強調 */
+.r-summer { background: #f5c842 !important; border-left: 4px solid #a07800; }
+.r-summer td { color: #1a2744 !important; border-bottom: 1px solid #d4a820 !important; font-weight: bold; }
+.r-summer .s-col { color: #5a3a00 !important; font-weight: bold; }
+.r-summer span.r-win  { color: #1a5a1a !important; font-size: 16px; }
+.r-summer span.r-loss { color: #8a0000 !important; font-size: 16px; }
+
 </style>
 <script>
 // =============================================
@@ -135,19 +161,22 @@ var PDF_LINKS = {
     <div class="year-title"><h2>2006年</h2><span>平成18年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('2006',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('2006');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-2006">「一戦必勝でまずは初戦突破」と意気込んだ年。速球とスライダーが武器の主戦・山本に制球力の中西が控える。打線は俊足の一番・山本の出塁が鍵で、三番・西村、四番・中口、五番・石橋のクリーンアップが勝負強い。野々垣監督最終年、2回戦で天理に0対19の7回コールド負け。</p>
       <div class="meta-row">
         <span class="meta-chip">部長：酒井史敏</span>
         <span class="meta-chip">監督：野々垣稔</span>
         <span class="meta-chip">2回戦敗退（対天理）</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">2005年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 天理</td><td class="score-col">0-19</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss"><td class="s-col">2006年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 橿原</td><td class="score-col">1-11</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">2006年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 天理</td><td class="score-col">0-23</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -155,19 +184,23 @@ var PDF_LINKS = {
     <div class="year-title"><h2>2007年</h2><span>平成19年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('2007',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('2007');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-2007">チームワーク抜群で互いに思いやる雰囲気が印象的な年。本格派の石橋宏・制球重視の布村・横手投げの中橋という個性豊かな3投手を継投で使える強みがある。攻撃は九番・菊川や一番・中西の出塁から主軸につなぐスタイル。西前監督体制の初年度。</p>
       <div class="meta-row">
         <span class="meta-chip">部長：内田真司</span>
         <span class="meta-chip">監督：西前竜一（初年度）</span>
         <span class="meta-chip">3投手継投体制</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-win" style="opacity:0.65"><td class="s-col">2006年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 青翔</td><td class="score-col"><strong>3-2</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">2006年秋</td><td class="round-col">2回戦</td><td class="opp-col">vs 添上</td><td class="score-col">5-6</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss"><td class="s-col">2007年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 香芝</td><td class="score-col">3-4</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">2007年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 登美ヶ丘</td><td class="score-col">2-12</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -175,19 +208,23 @@ var PDF_LINKS = {
     <div class="year-title"><h2>2008年</h2><span>平成20年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('2008',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('2008');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-2008">一試合ごとに着実に力をつけてきた成長の年。主戦・石橋宏は昨年からの経験で安定感が増し、布村が丁寧に控える。四番・中西を中心に主軸前にランナーを出す攻撃スタイル。捕手主将・櫃田が内外野の連係を支える。2回戦で奈良工朱雀に0対7の7回コールド負け。</p>
       <div class="meta-row">
         <span class="meta-chip">部長：内田真司</span>
         <span class="meta-chip">監督：西前竜一</span>
         <span class="meta-chip">2回戦敗退（対奈良工朱雀）</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">2007年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 大和広陵</td><td class="score-col">0-7</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-win"><td class="s-col">2008年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 西大和</td><td class="score-col"><strong>9-3</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss"><td class="s-col">2008年春</td><td class="round-col">2回戦</td><td class="opp-col">vs 王寺工</td><td class="score-col">4-9</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">2008年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 奈工・朱雀</td><td class="score-col">0-9</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -195,19 +232,22 @@ var PDF_LINKS = {
     <div class="year-title"><h2>2009年</h2><span>平成21年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('2009',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('2009');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-2009">吉田・三木・井上・石田と完投能力を持つ投手が充実し守備も安定。明るく仲の良い雰囲気でのびのびと活動するチームが印象的。一・二番の出塁から主軸につなぐオーソドックスな攻撃で、下位打線も力をつけてきた。2回戦で高田商に0対11の5回コールド負け。</p>
       <div class="meta-row">
         <span class="meta-chip">部長：松尾朋己</span>
         <span class="meta-chip">監督：西前竜一</span>
         <span class="meta-chip">2回戦敗退（対高田商）</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">2008年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 奈工・朱雀</td><td class="score-col">0-9</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss"><td class="s-col">2009年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 西和清陵</td><td class="score-col">1-7</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">2009年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 高田商業</td><td class="score-col">0-11</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -215,19 +255,23 @@ var PDF_LINKS = {
     <div class="year-title"><h2>2010年</h2><span>平成22年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('2010',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('2010');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-2010">野村・山下ら投手陣が互いに競争意識を高め切磋琢磨する年。捕手主将・井上がナインを引き締める。一番から九番まで切れ目のない打線で主軸前に走者を溜めて一気に畳みかける攻撃スタイル。三塁・黒田と遊撃・吉田の三遊間が堅実。2回戦で香芝に7対13で敗退。14安打を放ちながら及ばなかった。</p>
       <div class="meta-row">
         <span class="meta-chip">部長：松尾朋己</span>
         <span class="meta-chip">監督：西前竜一</span>
         <span class="meta-chip">2回戦敗退（対香芝）14安打</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">2009年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 関西中央</td><td class="score-col">2-14</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-win"><td class="s-col">2010年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 榛生昇陽</td><td class="score-col"><strong>不戦勝</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss"><td class="s-col">2010年春</td><td class="round-col">2回戦</td><td class="opp-col">vs 天理</td><td class="score-col">1-11</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">2010年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 香芝</td><td class="score-col">7-14</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -235,19 +279,23 @@ var PDF_LINKS = {
     <div class="year-title"><h2>2011年</h2><span>平成23年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('2011',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('2011');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-2011">練習試合での大敗を契機に走塁とバットスイングを強化。守備からリズムをつくる野球を目指した。大黒柱の高木と横手投げの光好による投手陣。冷静な桜本捕手がリードし、南谷・外山の主軸に期待する打線。松尾監督の初陣となった1回戦で一条に9対10の逆転負けを喫した惜敗。</p>
       <div class="meta-row">
         <span class="meta-chip">部長：西前竜一</span>
         <span class="meta-chip">監督：松尾朋己（初年度）</span>
         <span class="meta-chip">1回戦敗退（対一条）逆転負け</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">2010年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 五條</td><td class="score-col">0-11</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss"><td class="s-col">2011年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 青翔</td><td class="score-col">3-11</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-win r-summer"><td class="s-col">2011年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 吉野</td><td class="score-col"><strong>15-0</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">2011年夏</td><td class="round-col">2回戦</td><td class="opp-col">vs 関西中央</td><td class="score-col">0-7</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -255,19 +303,23 @@ var PDF_LINKS = {
     <div class="year-title"><h2>2012年</h2><span>平成24年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('2012',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('2012');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-2012">「正しく強く」を信条に全員野球に徹するチーム。スリークオーターの南尾とオーバースローの松本の二枚看板が投手陣を支える。バント・エンドランを絡めたしぶとい攻撃で主軸の南谷・外山・桜本につなぐスタイル。体を張った守備でリズムをつくる。</p>
       <div class="meta-row">
         <span class="meta-chip">部長：小村泰三</span>
         <span class="meta-chip">監督：松尾朋己</span>
         <span class="meta-chip">「正しく強く」</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-win" style="opacity:0.65"><td class="s-col">2011年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 奈女大附</td><td class="score-col"><strong>10-0</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">2011年秋</td><td class="round-col">2回戦</td><td class="opp-col">vs 登美ヶ丘</td><td class="score-col">3-10</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss"><td class="s-col">2012年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 生駒</td><td class="score-col">6-8</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">2012年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 磯城野</td><td class="score-col">1-3</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -275,13 +327,10 @@ var PDF_LINKS = {
     <div class="year-title"><h2>2013年</h2><span>平成25年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('2013',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('2013');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-2013">創部以来最多の部員数を誇った年。50名を超える大所帯となり、新入部員も20名超え。主戦・松本の力強い直球と桜本捕手がチームを牽引。機動力と小技で1点ずつ積み重ねるスタイル。遊撃・内本と中堅・東本が守備の中心。1回戦で奈良朱雀に1対4で敗退した。</p>
       <div class="meta-row">
         <span class="meta-chip">部長：小村泰三</span>
         <span class="meta-chip">監督：松尾朋己</span>
@@ -289,6 +338,12 @@ var PDF_LINKS = {
         <span class="meta-chip">1回戦敗退（対奈良朱雀）</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">2012年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 香芝</td><td class="score-col">1-11</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss"><td class="s-col">2013年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 郡山</td><td class="score-col">2-14</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">2013年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 奈良朱雀</td><td class="score-col">1-4</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -296,13 +351,10 @@ var PDF_LINKS = {
     <div class="year-title"><h2>2014年</h2><span>平成26年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('2014',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('2014');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-2014">右横手の片岡・右上手の杉田・左上手の長岡という個性豊かな三投手がいずれもエースの自覚を持つ。バント・エンドランを駆使した機動力野球で少ないチャンスをものにする。守り抜く我慢強さを鍛えた成果が実り、3回戦まで勝ち進む健闘を見せた。3回戦で智弁学園に1対6で敗退。</p>
       <div class="meta-row">
         <span class="meta-chip">部長：岩名輝</span>
         <span class="meta-chip">監督：西前竜一</span>
@@ -310,6 +362,16 @@ var PDF_LINKS = {
         <span class="meta-chip">3回戦敗退（対智弁学園）</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-win" style="opacity:0.65"><td class="s-col">2013年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 十津川</td><td class="score-col"><strong>9-1</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-win" style="opacity:0.65"><td class="s-col">2013年秋</td><td class="round-col">2回戦</td><td class="opp-col">vs 奈情商</td><td class="score-col"><strong>10-8</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">2013年秋</td><td class="round-col">3回戦</td><td class="opp-col">vs 智辯学園</td><td class="score-col">0-7</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-win"><td class="s-col">2014年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 二階堂</td><td class="score-col"><strong>8-5</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss"><td class="s-col">2014年春</td><td class="round-col">2回戦</td><td class="opp-col">vs 智辯学園</td><td class="score-col">0-10</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-win r-summer"><td class="s-col">2014年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 王寺工業</td><td class="score-col"><strong>4-3</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">2014年夏</td><td class="round-col">2回戦</td><td class="opp-col">vs 智辯学園</td><td class="score-col">1-6</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -317,19 +379,23 @@ var PDF_LINKS = {
     <div class="year-title"><h2>2015年</h2><span>平成27年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('2015',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('2015');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-2015">バント主体でチャンスを広げて確実に得点する攻撃スタイル。奥野・岸田・出村のセンターラインが非常に良く穴のない守備が持ち味。エース右腕・岩名が変化球を低めに集め打たせてとる。1回戦で平城と接戦となり九町・吉田の安打で一時同点に追いつく粘りを見せたが、9回裏サヨナラ打を浴びて4対5で惜敗した。</p>
       <div class="meta-row">
         <span class="meta-chip">部長：岩名輝</span>
         <span class="meta-chip">監督：西前竜一</span>
         <span class="meta-chip">1回戦敗退（対平城）サヨナラ負け</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">2014年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 奈良大附</td><td class="score-col">0-10</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-win"><td class="s-col">2015年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 西和清陵</td><td class="score-col"><strong>7-5</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss"><td class="s-col">2015年春</td><td class="round-col">2回戦</td><td class="opp-col">vs 一条</td><td class="score-col">0-7</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">2015年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 平城</td><td class="score-col">4-5</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -359,21 +425,6 @@ function jumpToTop() {
   document.getElementById('index-panel').scrollIntoView({ behavior: 'smooth' });
 }
 var currentBtn = null;
-function speak(year, btn) {
-  if (speechSynthesis.speaking) {
-    speechSynthesis.cancel();
-    if (currentBtn) { currentBtn.innerHTML = '&#9654; 読み上げ'; currentBtn.classList.remove('playing'); }
-    if (currentBtn === btn) { currentBtn = null; return; }
-  }
-  var text = document.getElementById('txt-' + year).textContent;
-  var u = new SpeechSynthesisUtterance(text);
-  u.lang = 'ja-JP'; u.rate = 0.9;
-  u.onend = function() { btn.innerHTML = '&#9654; 読み上げ'; btn.classList.remove('playing'); currentBtn = null; };
-  currentBtn = btn;
-  btn.innerHTML = '&#9632; 停止';
-  btn.classList.add('playing');
-  speechSynthesis.speak(u);
-}
 </script>
 
 <a class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" href="#">&#9650;</a>

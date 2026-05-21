@@ -220,6 +220,32 @@ body {
 }
 .scroll-top.visible { opacity: 1; }
 .scroll-top:hover { background: var(--gold); color: var(--navy); }
+
+/* 戦績テーブル */
+.result-table-wrap { margin:10px 0 4px; border-radius:6px; overflow:hidden; border:1px solid var(--border); }
+.result-table-title { background:var(--navy2,#243058); color:var(--gold); font-size:11px; letter-spacing:1px; padding:6px 12px; }
+.result-table { width:100%; border-collapse:collapse; font-size:12px; }
+.result-table thead tr { background:#eae6da; }
+.result-table th { padding:5px 8px; text-align:center; color:var(--navy); font-size:11px; border-bottom:1px solid var(--border); }
+.result-table td { padding:5px 8px; border-bottom:1px solid #ede9db; text-align:center; }
+.result-table tr:last-child td { border-bottom:none; }
+.r-win { background:#f0f8f0; } .r-loss { background:#fff8f8; } .r-cancel { background:#f5f5f5; color:#888; }
+.s-col { font-weight:bold; color:var(--navy); width:52px; font-size:11px; }
+.round-col { color:var(--gray); width:40px; font-size:11px; }
+.opp-col { text-align:left; }
+.score-col { font-family:monospace; width:52px; }
+.res-col { width:28px; font-size:16px; }
+span.r-win  { color:#000; font-weight:bold; font-size:16px; }
+span.r-loss { color:#000; font-weight:bold; font-size:16px; }
+
+
+/* 夏（選手権）強調 */
+.r-summer { background: #f5c842 !important; border-left: 4px solid #a07800; }
+.r-summer td { color: #1a2744 !important; border-bottom: 1px solid #d4a820 !important; font-weight: bold; }
+.r-summer .s-col { color: #5a3a00 !important; font-weight: bold; }
+.r-summer span.r-win  { color: #1a5a1a !important; font-size: 16px; }
+.r-summer span.r-loss { color: #8a0000 !important; font-size: 16px; }
+
 </style>
 <script>
 // =============================================
@@ -275,13 +301,10 @@ var PDF_LINKS = {
     <div class="year-title"><h2>1986年</h2><span>昭和61年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('1986',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('1986');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-1986">部員31名のうち一年生が20名という若いチーム。リベラルな雰囲気の中でのびのびと成長した。エース稲場の直球とカーブ、捕手主将・徳本のリードが軸。打線は機動力と長打の二段構えで、19歳の柚留木監督のもと夏に挑んだ。1回戦で西大和学園に16対0で快勝するも、2回戦で奈良工に3対6で惜敗。</p>
       <div class="meta-row">
         <span class="meta-chip">部長：松岡一起</span>
         <span class="meta-chip">監督：柚留木弘（19歳）</span>
@@ -289,6 +312,13 @@ var PDF_LINKS = {
         <span class="meta-chip">2回戦敗退</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">1985年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 奈良商</td><td class="score-col">1-5</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss"><td class="s-col">1986年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 二階堂</td><td class="score-col">1-2</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-win r-summer"><td class="s-col">1986年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 西大和学園</td><td class="score-col"><strong>16-0</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">1986年夏</td><td class="round-col">2回戦</td><td class="opp-col">vs 奈良工</td><td class="score-col">3-6</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -296,18 +326,23 @@ var PDF_LINKS = {
     <div class="year-title"><h2>1987年</h2><span>昭和62年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('1987',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('1987');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-1987">二年生主体のまとまったチーム。秋季大会ベスト8の実績を持ち、甲子園出場を悲願とする。技巧派エース森口のスリークオーターからのシュートが威力を発揮。主砲・稲場はチーム創設以来の最強打者と評された。2回戦で斑鳩と対戦し2対4で惜敗。森口は133球を投げ抜いた。</p>
       <div class="meta-row">
         <span class="meta-chip">2回戦敗退（対斑鳩）</span>
         <span class="meta-chip">投手：森口章弘（23期）</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">1986年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 橿原</td><td class="score-col">1-8</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-win"><td class="s-col">1987年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 高取</td><td class="score-col"><strong>4-3</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss"><td class="s-col">1987年春</td><td class="round-col">2回戦</td><td class="opp-col">vs 吉野</td><td class="score-col">0-7</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-win r-summer"><td class="s-col">1987年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 奈良女大付</td><td class="score-col"><strong>13-3</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">1987年夏</td><td class="round-col">2回戦</td><td class="opp-col">vs 斑鳩</td><td class="score-col">2-4</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -315,18 +350,21 @@ var PDF_LINKS = {
     <div class="year-title"><h2>1988年</h2><span>昭和63年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('1988',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('1988');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-1988">三年生14名と豊富な経験者を擁しベスト8進出を目標に掲げた。左腕エース片岡と前年エース森口のダブルエース体制。一年からレギュラーの中岡はチーム随一の好打者。20歳の徳本監督が若い力を率いた。2回戦で斑鳩に0対7の7回コールドで完敗した。</p>
       <div class="meta-row">
         <span class="meta-chip">監督：徳本武司（20歳）</span>
         <span class="meta-chip">2回戦敗退（対斑鳩）</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">1987年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 畝傍</td><td class="score-col">0-3</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss"><td class="s-col">1988年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 高取</td><td class="score-col">2-9</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">1988年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 橿原</td><td class="score-col">1-4</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -334,18 +372,22 @@ var PDF_LINKS = {
     <div class="year-title"><h2>1989年</h2><span>平成元年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('1989',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('1989');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-1989">エース村上の安定感が光る年。防御率2点台、130キロの速球とシュート・カーブ・フォークを投げ分け完投能力も十分。打線は四割打者2名・三割打者3名と強力。1回戦で奈良女子大付に7対0の7回コールド勝ち。村上が10奪三振完封した。</p>
       <div class="meta-row">
         <span class="meta-chip">1回戦突破</span>
         <span class="meta-chip">投手：村上浩一（24期）完封</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss"><td class="s-col">1989年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 天理</td><td class="score-col">0-9</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-win r-summer"><td class="s-col">1989年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 奈良女大付</td><td class="score-col"><strong>7-0</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-win r-summer"><td class="s-col">1989年夏</td><td class="round-col">2回戦</td><td class="opp-col">vs 五條</td><td class="score-col"><strong>2-0</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">1989年夏</td><td class="round-col">3回戦</td><td class="opp-col">vs 天理</td><td class="score-col">1-9</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -353,18 +395,22 @@ var PDF_LINKS = {
     <div class="year-title"><h2>1990年</h2><span>平成2年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('1990',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('1990');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-1990">上下関係を排したノビノビ野球が信条。兄貴格の羽田監督のもと「まず1勝」を目指した。多彩な変化球を持つ井上と速球派西原の二枚看板。機動力を生かした「つなぐ野球」で挑んだが、1回戦で智弁学園に2対10の7回コールド負け。智弁・三並の満塁本塁打が痛かった。</p>
       <div class="meta-row">
         <span class="meta-chip">監督：羽田監督</span>
         <span class="meta-chip">1回戦敗退（対智弁学園）</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-win" style="opacity:0.65"><td class="s-col">1989年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 富雄</td><td class="score-col"><strong>3-0</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">1989年秋</td><td class="round-col">2回戦</td><td class="opp-col">vs 上牧</td><td class="score-col">1-9</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss"><td class="s-col">1990年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 正強</td><td class="score-col">0-7</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">1990年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 智弁学園</td><td class="score-col">2-10</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -372,18 +418,23 @@ var PDF_LINKS = {
     <div class="year-title"><h2>1991年</h2><span>平成3年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('1991',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('1991');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-1991">例年になく攻撃力の高いチーム。チーム打率3割2分5厘、1番から5番まで全員4割超え。1番・日浦は盗塁死なしの連続35盗塁という驚異の記録を持つ。八強入りを目標に掲げたが、1回戦で耳成と激闘。一時10対4とリードするも8回に一挙7失点、まさかの逆転負けで10対11の惜敗となった。</p>
       <div class="meta-row">
         <span class="meta-chip">チーム打率.325</span>
         <span class="meta-chip">1回戦敗退（対耳成）逆転負け</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-win" style="opacity:0.65"><td class="s-col">1990年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 信貴ケ丘</td><td class="score-col"><strong>7-2</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">1990年秋</td><td class="round-col">2回戦</td><td class="opp-col">vs 天理</td><td class="score-col">1-11</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-win"><td class="s-col">1991年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 添上</td><td class="score-col"><strong>7-6</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss"><td class="s-col">1991年春</td><td class="round-col">2回戦</td><td class="opp-col">vs 広陵</td><td class="score-col">2-10</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">1991年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 耳成</td><td class="score-col">10-11</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -391,18 +442,25 @@ var PDF_LINKS = {
     <div class="year-title"><h2>1992年</h2><span>平成4年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('1992',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('1992');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-1992">前年秋のベスト8入りを糧にシード校撃破・八強入りを目標とした。エース水野は130キロ近い直球と二種類のカーブが武器。1回戦で山辺に12安打8盗塁の猛攻、6回に一挙9点を奪って11対1の6回コールド勝ち。2回戦では惜しくも敗退した。</p>
       <div class="meta-row">
         <span class="meta-chip">1回戦突破（対山辺 コールド勝ち）</span>
         <span class="meta-chip">投手：水野征次（26期）</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-win" style="opacity:0.65"><td class="s-col">1991年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 御所工業</td><td class="score-col"><strong>9-1</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-win" style="opacity:0.65"><td class="s-col">1991年秋</td><td class="round-col">2回戦</td><td class="opp-col">vs 御所</td><td class="score-col"><strong>5-2</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-win" style="opacity:0.65"><td class="s-col">1991年秋</td><td class="round-col">3回戦</td><td class="opp-col">vs 志貴</td><td class="score-col"><strong>6-1</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">1991年秋</td><td class="round-col">4回戦</td><td class="opp-col">vs 五條</td><td class="score-col">1-8</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss"><td class="s-col">1992年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 橿原</td><td class="score-col">1-8</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-win r-summer"><td class="s-col">1992年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 山辺</td><td class="score-col"><strong>11-1</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">1992年夏</td><td class="round-col">2回戦</td><td class="opp-col">vs 西ノ京</td><td class="score-col">7-8</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -410,17 +468,21 @@ var PDF_LINKS = {
     <div class="year-title"><h2>1993年</h2><span>平成5年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('1993',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('1993');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-1993">チームワークと打線の破壊力を強みに全員野球を掲げたシーズン。西原・山本の二投手体制で臨んだが継投が課題。1回戦で強豪・正強と対戦。序盤は粘りを見せたものの中盤以降に突き放され1対10の7回コールド負けとなった。</p>
       <div class="meta-row">
         <span class="meta-chip">1回戦敗退（対正強）</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">1992年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 桜井商</td><td class="score-col">1-11</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss"><td class="s-col">1993年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 五條</td><td class="score-col">1-9</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-win r-summer"><td class="s-col">1993年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 奈良女大付</td><td class="score-col"><strong>15-8</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">1993年夏</td><td class="round-col">2回戦</td><td class="opp-col">vs 高田</td><td class="score-col">0-7</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -428,18 +490,21 @@ var PDF_LINKS = {
     <div class="year-title"><h2>1994年</h2><span>平成6年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('1994',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('1994');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-1994">前年まで続いた学生監督体制から正式監督を迎えた新体制での初陣。速球派エース谷村はピンチに動じない精神的強さが持ち味。機動力を生かした上位打線が得点源。1回戦で御所工に1対12と敗れたが、初回に先制点を挙げるなど意地を見せた。</p>
       <div class="meta-row">
         <span class="meta-chip">正式監督就任初年度</span>
         <span class="meta-chip">1回戦敗退（対御所工）</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">1993年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 生駒</td><td class="score-col">2-4</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss"><td class="s-col">1994年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 畝傍</td><td class="score-col">7-9</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">1994年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 片桐</td><td class="score-col">3-8</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -447,18 +512,22 @@ var PDF_LINKS = {
     <div class="year-title"><h2>1995年</h2><span>平成7年</span></div>
     <div class="summary-block">
       <div class="summary-row">
-        <span class="summary-label">要約</span>
         <div class="btn-row">
-          <button class="tts-btn" onclick="speak('1995',this)">&#9654; 読み上げ</button>
           <a class="pdf-link" href="#" onclick="openPDF('1995');return false;" target="_blank">&#128240; 新聞記事を開く</a>
         </div>
       </div>
-      <p class="summary-text" id="txt-1995">攻守にまとまりのあるチームワークが売りのチーム。左腕エース伊藤のコントロールが安定し右の本格派西澤がリリーフを務める。1番左向・2番中谷・4番秋口を中心とした機動力野球で挑んだ。1回戦で登美ケ丘に3対10で敗退。5回のスクイズ失点が痛かった。</p>
       <div class="meta-row">
         <span class="meta-chip">1回戦敗退（対登美ケ丘）</span>
         <span class="meta-chip">投手：伊藤陽平（30期）・西澤慎二（29期）</span>
       </div>
     </div>
+
+    <div class="result-table-wrap"><div class="result-table-title">&#9654; 戦績（前年秋 → 当年春 → 当年夏）</div><table class="result-table"><thead><tr><th>大会</th><th>回戦</th><th>対戦相手</th><th>スコア</th><th>結果</th></tr></thead><tbody>
+      <tr class="r-loss" style="opacity:0.65"><td class="s-col">1994年秋</td><td class="round-col">1回戦</td><td class="opp-col">vs 片桐</td><td class="score-col">1-9</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-win"><td class="s-col">1995年春</td><td class="round-col">1回戦</td><td class="opp-col">vs 吉野</td><td class="score-col"><strong>不戦勝</strong></td><td class="res-col"><span class="r-win">○</span></td></tr>
+      <tr class="r-loss"><td class="s-col">1995年春</td><td class="round-col">2回戦</td><td class="opp-col">vs 高田商</td><td class="score-col">2-12</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      <tr class="r-loss r-summer"><td class="s-col">1995年夏</td><td class="round-col">1回戦</td><td class="opp-col">vs 登美ヶ丘</td><td class="score-col">4-11</td><td class="res-col"><span class="r-loss">●</span></td></tr>
+      </tbody></table></div>
     <button class="back-top" onclick="jumpToTop()">&#9650; INDEXへ戻る</button>
   </div>
 
@@ -488,21 +557,6 @@ function jumpToTop() {
   document.getElementById('index-panel').scrollIntoView({ behavior: 'smooth' });
 }
 var currentBtn = null;
-function speak(year, btn) {
-  if (speechSynthesis.speaking) {
-    speechSynthesis.cancel();
-    if (currentBtn) { currentBtn.innerHTML = '&#9654; 読み上げ'; currentBtn.classList.remove('playing'); }
-    if (currentBtn === btn) { currentBtn = null; return; }
-  }
-  var text = document.getElementById('txt-' + year).textContent;
-  var u = new SpeechSynthesisUtterance(text);
-  u.lang = 'ja-JP'; u.rate = 0.9;
-  u.onend = function() { btn.innerHTML = '&#9654; 読み上げ'; btn.classList.remove('playing'); currentBtn = null; };
-  currentBtn = btn;
-  btn.innerHTML = '&#9632; 停止';
-  btn.classList.add('playing');
-  speechSynthesis.speak(u);
-}
 </script>
 
 <a class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" href="#">&#9650;</a>

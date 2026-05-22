@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>奈良高専野球部 60年史 — 会長・副会長挨拶</title>
+<style>
+:root {
+  --navy: #1a2744;
+  --navy2: #243058;
+  --gold: #c8a846;
+  --light-gold: #f5ecc0;
+  --bg: #f5f2eb;
+  --white: #ffffff;
+  --gray: #888;
+  --border: #d0c8b0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  background: var(--bg);
+  color: #222;
+  min-height: 100vh;
+}
+
+/* ヒーロー */
+.hero {
+  background: var(--navy);
+  padding: 36px 24px 30px;
+  text-align: center;
+  border-bottom: 4px solid var(--gold);
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    45deg, transparent, transparent 40px,
+    rgba(200,168,70,0.04) 40px, rgba(200,168,70,0.04) 80px
+  );
+}
+.hero-icon { font-size: 40px; display: block; margin-bottom: 12px; position: relative; }
+.hero h1 {
+  font-size: 20px;
+  color: var(--gold);
+  letter-spacing: 3px;
+  margin-bottom: 6px;
+  position: relative;
+}
+.hero h2 {
+  font-size: 13px;
+  color: #aab0c0;
+  font-weight: normal;
+  letter-spacing: 2px;
+  position: relative;
+}
+
+/* 戻るリンク */
+.back-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 20px;
+  font-size: 13px;
+  color: var(--navy);
+  text-decoration: none;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+}
+.back-link:hover { color: var(--gold); }
+
+/* セクションタイトル */
+.section-title {
+  background: var(--navy);
+  color: var(--gold);
+  font-size: 12px;
+  letter-spacing: 2px;
+  padding: 10px 20px;
+  border-bottom: 2px solid var(--gold);
+}
+
+/* 挨拶カード */
+.greeting-wrap { padding: 16px 16px 32px; display: flex; flex-direction: column; gap: 20px; }
+
+.greeting-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+.greeting-header {
+  background: var(--navy);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.greeting-role {
+  background: rgba(200,168,70,0.2);
+  border: 1px solid rgba(200,168,70,0.5);
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+.greeting-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--white);
+  letter-spacing: 2px;
+}
+.greeting-klass {
+  font-size: 11px;
+  color: #aab0c0;
+  margin-top: 2px;
+}
+
+.greeting-body {
+  padding: 20px 20px 24px;
+  font-size: 14px;
+  line-height: 2.0;
+  color: #333;
+}
+.greeting-body p {
+  margin-bottom: 1.2em;
+  text-indent: 1em;
+}
+.greeting-body p:last-child { margin-bottom: 0; }
+
+.greeting-quote {
+  background: var(--light-gold);
+  border-left: 4px solid var(--gold);
+  border-radius: 0 6px 6px 0;
+  padding: 12px 16px;
+  margin: 16px 0;
+  font-size: 13px;
+  color: var(--navy);
+  font-style: italic;
+  line-height: 1.8;
+}
+
+.greeting-sig {
+  text-align: right;
+  font-size: 13px;
+  color: var(--gray);
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.greeting-sig strong {
+  display: block;
+  font-size: 15px;
+  color: var(--navy);
+  margin-top: 4px;
+}
+
+/* フッター */
+.footer {
+  background: var(--navy);
+  color: #667;
+  font-size: 11px;
+  text-align: center;
+  padding: 24px 20px;
+  margin-top: 8px;
+  line-height: 2;
+}
+.footer strong { color: var(--gold); }
+
+/* スクロールトップ */
+.scroll-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--navy);
+  color: var(--gold);
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 999;
+  text-decoration: none;
+}
+.scroll-top.visible { opacity: 1; }
+.scroll-top:hover { background: var(--gold); color: var(--navy); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="hero-icon">⚾</span>
+  <h1>奈良高専野球部</h1>
+  <h2>創 部 60 年 史 ― 巻 頭 挨 拶</h2>
+</div>
+
+<a class="back-link" href="index.html">&#8592; 60年史トップへ戻る</a>
+
+<div class="section-title">▶ 会長・副会長挨拶</div>
+
+<div class="greeting-wrap">
+
+  <!-- 会長挨拶 -->
+  <div class="greeting-card">
+    <div class="greeting-header">
+      <div>
+        <div class="greeting-role">OB会 会長</div>
+        <div class="greeting-name">楠原 喜太郎</div>
+        <div class="greeting-klass">69A（1期生）</div>
+      </div>
+    </div>
+    <div class="greeting-body">
+      <p>昭和41年（1966年）、奈良工業高等専門学校硬式野球部は産声を上げた。以来60年、時代の荒波に揉まれながらも部は脈々と命脈を保ち続け、今日ここに創部60周年を迎えることができた。</p>
+
+      <p>振り返れば、私たちの学生時代もグラウンドは荒れ、道具は乏しく、練習時間も決して十分ではなかった。それでも白球を追う情熱だけは誰にも負けなかった。</p>
+
+      <div class="greeting-quote">「不完全なものを世に出すな」——社会に出てから叩き込まれたその言葉は、野球においても同じである。手を抜いた守備、中途半端な一打席が試合を決する。</div>
+
+      <p>技術者として歩んだ半生で痛感した「妥協の代償」を、私はグラウンドでも幾度となく思い知った。</p>
+
+      <p>本誌は単なる記録集ではない。60年の歴史を振り返りながら、次の世代に何を手渡すかを問う書である。天理・智弁という高い壁がある。しかし奈良高専には、理工系の知性という誰も持っていない武器がある。その武器をどう使うか——それこそが次の60年への問いである。</p>
+
+      <p>在校生諸君の健闘を心より祈念し、OB一同が変わらぬ支援を続けることをここに誓う。</p>
+
+      <div class="greeting-sig">
+        奈良工業高等専門学校 野球部OB会<br>
+        <strong>会長　楠原 喜太郎</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- 副会長挨拶 -->
+  <div class="greeting-card">
+    <div class="greeting-header">
+      <div>
+        <div class="greeting-role">OB会 副会長</div>
+        <div class="greeting-name">髙木 眞敏</div>
+        <div class="greeting-klass">76C（8期生）</div>
+      </div>
+    </div>
+    <div class="greeting-body">
+      <p>会長の挨拶に続き、一言申し上げる。</p>
+
+      <p>私が奈良高専を卒業したのは昭和51年（1976年）、第1次オイルショック後の不景気の真っ只中であった。希望した大手企業には縁がなく、不遇のスタートと言わざるを得なかった。しかしそれが今となっては「人生塞翁が馬」——あの逆境があったからこそ、自分の足で立つ力が鍛えられた。</p>
+
+      <div class="greeting-quote">「やりきる執念がなければ、運と縁も活かせない。」</div>
+
+      <p>野球部で過ごした日々も同じである。負けた試合の数だけ強くなれた。あの経験が私の原点にある。これは野球でも人生でも変わらない真理だと今も思っている。</p>
+
+      <p>本誌の編纂にあたり、諸先輩から現役部員に至るまで多くの方々のご協力をいただいた。特に長年にわたり休日を返上して指導に当たってくださっている西前竜一監督、内田眞司部長をはじめとする指導者の皆様に、この場を借りて深く感謝申し上げる。</p>
+
+      <p>60年の歴史は重い。しかしその重さは誇りである。次の世代がその誇りを受け継ぎ、いつの日か夏の甲子園に奈良高専の名が刻まれる日を、OB一同心待ちにしている。</p>
+
+      <div class="greeting-sig">
+        奈良工業高等専門学校 野球部OB会<br>
+        <strong>副会長　髙木 眞敏</strong>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <strong>奈良高専野球部 OB会</strong><br>
+  奈良工業高等専門学校 硬式野球部 創部60周年記念誌<br>
+  <span style="font-size:10px;color:#aab;">本資料はOB会員限定の非公開資料です</span>
+</div>
+
+<a class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" href="#">&#9650;</a>
+
+<script>
+window.addEventListener('scroll', function() {
+  var btn = document.getElementById('scrollTopBtn');
+  if (btn) btn.classList.toggle('visible', window.scrollY > 200);
+});
+</script>
+</body>
+</html>

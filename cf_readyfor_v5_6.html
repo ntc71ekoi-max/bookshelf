@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>あなたの同期は今どこにいますか？｜奈良高専野球部OB再会・グラウンド整備プロジェクト</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1a3a5c;--accent:#e05a2b;--accent-light:#f07a4b;--gold:#c8a000;--bg:#f7f5f0;--gray:#666;--light-gray:#f0ede8;--border:#ddd8d0;--success:#2e7d32;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"Noto Sans JP",sans-serif;background:var(--bg);color:#222;line-height:1.7;font-size:15px;}
+.site-header{background:var(--navy);padding:12px 24px;display:flex;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+.logo{color:white;font-size:20px;font-weight:700;letter-spacing:2px;font-family:"Noto Serif JP",serif;}
+.logo span{color:#7ab3e0;}
+.draft-badge{margin-left:auto;background:#e05a2b;color:white;font-size:11px;font-weight:700;padding:4px 12px;border-radius:2px;}
+
+.hero{background:var(--navy);}
+.hero-img-wrap{width:100%;max-height:420px;overflow:hidden;position:relative;}
+.hero-img-wrap img{width:100%;height:420px;object-fit:cover;object-position:center top;display:block;filter:brightness(.6);}
+.overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(10,25,45,.95));padding:48px 32px 32px;}
+.category-tag{display:inline-block;background:var(--accent);color:white;font-size:11px;font-weight:700;padding:4px 12px;border-radius:2px;letter-spacing:1px;margin-bottom:16px;}
+.hero h1{font-family:"Noto Serif JP",serif;font-size:clamp(20px,4vw,32px);font-weight:700;line-height:1.5;margin-bottom:10px;text-shadow:0 2px 8px rgba(0,0,0,.5);color:white;}
+.hero h1 em{color:#7ab3e0;font-style:normal;}
+.hero-sub{font-size:14px;color:#a0c0e0;}
+
+.main-wrap{max-width:960px;margin:0 auto;padding:32px 24px;display:grid;grid-template-columns:1fr 300px;gap:32px;}
+@media(max-width:700px){.main-wrap{grid-template-columns:1fr;}}
+.content h2{font-family:"Noto Serif JP",serif;font-size:20px;font-weight:700;color:var(--navy);border-left:4px solid var(--accent);padding-left:14px;margin:40px 0 16px;}
+.content h2:first-child{margin-top:0;}
+.content p{margin-bottom:14px;color:#333;}
+
+.lead-box{background:white;border:2px solid var(--navy);border-radius:6px;padding:24px 28px;margin-bottom:32px;}
+.lead-box .lead-num{font-size:36px;font-weight:700;color:var(--accent);font-family:"Noto Serif JP",serif;line-height:1;}
+.lead-box .lead-unit{font-size:14px;color:var(--gray);margin-bottom:4px;}
+.lead-box .lead-text{font-family:"Noto Serif JP",serif;font-size:17px;color:var(--navy);font-weight:600;line-height:1.7;}
+.lead-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.lead-stat{background:var(--light-gray);border-radius:4px;padding:16px;text-align:center;}
+.lead-stat .n{font-size:32px;font-weight:700;color:var(--navy);font-family:"Noto Serif JP",serif;}
+.lead-stat .l{font-size:12px;color:var(--gray);margin-top:2px;}
+
+.call-box{background:linear-gradient(135deg,var(--navy),#2a5a8c);color:white;border-radius:8px;padding:24px 28px;margin:24px 0;}
+.call-box h3{font-family:"Noto Serif JP",serif;font-size:18px;font-weight:700;margin-bottom:14px;}
+.call-box ul{padding-left:0;list-style:none;}
+.call-box li{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.15);font-size:14px;display:flex;align-items:flex-start;gap:10px;}
+.call-box li:last-child{border-bottom:none;}
+.call-box li .icon{font-size:18px;flex-shrink:0;}
+
+.story-flow{display:grid;gap:0;margin:20px 0;}
+.story-step{display:flex;align-items:flex-start;gap:16px;padding:16px;background:white;border:1px solid var(--border);}
+.story-step:first-child{border-radius:6px 6px 0 0;}
+.story-step:last-child{border-radius:0 0 6px 6px;}
+.story-step .step-num{width:36px;height:36px;background:var(--navy);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;}
+.story-step .step-body strong{display:block;color:var(--navy);font-size:15px;margin-bottom:4px;}
+.story-step .step-body span{font-size:13px;color:#555;}
+.story-arrow{text-align:center;font-size:20px;color:var(--accent);padding:4px 0;background:white;border-left:1px solid var(--border);border-right:1px solid var(--border);}
+
+.photo-section-label{font-size:13px;font-weight:700;color:white;padding:6px 14px;border-radius:3px;display:inline-block;margin-bottom:10px;}
+.label-nara{background:#cc2200;}.label-koriyama{background:var(--success);}
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0 24px;}
+@media(max-width:600px){.photo-grid{grid-template-columns:repeat(2,1fr);}}
+.photo-item img{width:100%;height:150px;object-fit:cover;border-radius:3px;display:block;border:1px solid var(--border);}
+
+.compare-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px;}
+.compare-table th{background:var(--navy);color:white;padding:10px 14px;text-align:left;font-weight:700;}
+.compare-table td{padding:9px 14px;border-bottom:1px solid var(--border);}
+.compare-table tr:nth-child(even) td{background:#f5f2ed;}
+.bad{color:#cc2200;font-weight:700;}.good{color:var(--success);}
+
+.achievements{display:grid;gap:10px;margin:20px 0;}
+.achievement-item{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:white;border-radius:4px;border:1px solid var(--border);}
+.achievement-item .badge{font-size:20px;flex-shrink:0;}
+.achievement-item .text{font-size:14px;line-height:1.5;}
+.achievement-item .text strong{color:var(--navy);display:block;}
+
+/* 政治的後押しボックス */
+.political-box{background:#f0f7ff;border:2px solid #2a6496;border-radius:6px;padding:18px 20px;margin:20px 0;}
+.political-box .political-title{font-size:13px;font-weight:700;color:#2a6496;margin-bottom:8px;}
+.political-box p{font-size:13px;color:#333;margin:0;}
+
+.returns{display:grid;gap:12px;margin:20px 0;}
+.return-card{background:white;border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+.return-card.featured{border-color:var(--gold);}
+.return-card .return-header{background:var(--light-gray);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;}
+.return-card.featured .return-header{background:#fff8e1;}
+.return-price{font-size:18px;font-weight:700;color:var(--navy);font-family:"Noto Serif JP",serif;}
+.return-name{font-size:13px;font-weight:700;color:var(--accent);}
+.return-body{padding:12px 16px;font-size:13px;color:#444;line-height:1.6;}
+.featured-badge{background:var(--gold);color:white;font-size:11px;font-weight:700;padding:3px 8px;border-radius:2px;}
+
+.method-box{background:white;border:1px solid var(--border);border-radius:4px;padding:14px 16px;margin:10px 0;font-size:14px;}
+.method-box h4{color:var(--navy);margin-bottom:6px;}
+.tax-box{background:#fff8e1;border:1px solid var(--gold);border-radius:4px;padding:14px 16px;margin:16px 0;font-size:13px;}
+
+.message-box{background:white;border-left:4px solid var(--navy);padding:20px 24px;border-radius:0 6px 6px 0;}
+.message-box p{margin-bottom:12px;font-size:14px;line-height:1.8;}
+.message-box p:last-of-type{margin-bottom:16px;}
+.sign{font-weight:700;color:var(--navy);font-size:13px;}
+
+.pending-box{background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:16px 20px;margin:24px 0;}
+.pending-box h4{color:#856404;margin-bottom:10px;font-size:14px;}
+.pending-box ul{padding-left:20px;font-size:13px;color:#333;}
+.pending-box li{margin-bottom:4px;}
+
+/* サイドバー */
+.sidebar-card{background:white;border-radius:8px;border:1px solid var(--border);padding:20px;position:sticky;top:70px;}
+.progress-section{margin-bottom:20px;}
+.amount-label{font-size:12px;color:var(--gray);margin-bottom:4px;}
+.amount{font-size:28px;font-weight:700;color:var(--navy);font-family:"Noto Serif JP",serif;}
+.target{font-size:12px;color:var(--gray);margin:4px 0 10px;}
+.progress-bar-wrap{background:#eee;border-radius:3px;height:8px;margin-bottom:6px;}
+.progress-pct{font-size:13px;color:var(--gray);}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.stat{text-align:center;}
+.stat-num{font-size:22px;font-weight:700;color:var(--navy);}
+.stat-label{font-size:11px;color:var(--gray);}
+.support-btn{display:block;width:100%;background:var(--accent);color:white;border:none;padding:14px;border-radius:4px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:10px;font-family:"Noto Sans JP",sans-serif;}
+.contact-btn{display:block;width:100%;background:var(--navy);color:white;text-decoration:none;padding:12px;border-radius:4px;font-size:13px;font-weight:700;text-align:center;margin-bottom:16px;}
+.sidebar-meta{font-size:12px;color:var(--gray);margin-bottom:16px;}
+.sidebar-meta div{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);}
+.sidebar-meta .val{color:#333;font-weight:500;}
+.organizer{font-size:13px;}
+.org-label{font-size:11px;color:var(--gray);margin-bottom:4px;}
+.org-name{font-weight:700;color:var(--navy);}
+.org-sub{font-size:12px;color:var(--gray);}
+
+footer{background:var(--navy);color:#aaa;text-align:center;padding:20px;font-size:12px;margin-top:40px;}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo">奈良高専<span>野球部OB会</span></div>
+  <div class="draft-badge">確認用</div>
+</header>
+
+<div class="hero">
+  <div class="hero-img-wrap">
+    <img src="https://www.nara-k.ac.jp/slide/nnct-panorama.jpg" alt="奈良工業高等専門学校 全景" loading="lazy">
+    <div class="overlay">
+      <div class="category-tag">📣 OB再会 ＆ 野球場整備</div>
+      <h1>あなたの<em>同期</em>は今どこにいますか？<br>奈良高専野球部OB再会・グラウンド整備プロジェクト</h1>
+      <div class="hero-sub">消息不明のOBを探す旅と、老朽化したグラウンドを未来へつなぐ挑戦</div>
+    </div>
+  </div>
+</div>
+
+<div class="main-wrap">
+<main class="content">
+
+  <h2>あの仲間は今どこに？</h2>
+  <div class="lead-stats">
+    <div class="lead-stat">
+      <div class="n">創部<br>60年</div>
+      <div class="l">卒業生数百名の歴史</div>
+    </div>
+    <div class="lead-stat">
+      <div class="n">消息<br>不明者多数</div>
+      <div class="l">住所・連絡先が不明なOBが多い</div>
+    </div>
+  </div>
+  <p>奈良工業高等専門学校（大和郡山市矢田町）野球部は、創部以来60年の歴史を持ちます。しかし、OBの多くが現在どこにいるのかわかっていません。</p>
+  <p>このプロジェクトは、<strong>消息不明のOBを再び仲間とつなぎ直す</strong>ことを第一の目的としています。そしてもう一つ。OBたちが青春を燃やした<strong>グラウンドの老朽化</strong>という現実があります。</p>
+
+  <div class="call-box">
+    <h3>📣 このプロジェクトで実現したいこと</h3>
+    <ul>
+      <li><span class="icon">🔍</span><div>消息不明のOBを探し出し、連絡網を再構築する</div></li>
+      <li><span class="icon">🏟️</span><div>老朽化したバックネット・設備を整備し、現役学生に良い環境を届ける</div></li>
+      <li><span class="icon">🤝</span><div>60年の絆を未来につなぐ記念プロジェクトとして記録に残す</div></li>
+    </ul>
+  </div>
+
+  <h2>グラウンドの現状と格差</h2>
+  <p>現在のグラウンド設備は、周辺の公立高校と比べて大きな差があります。</p>
+
+  <table class="compare-table">
+    <tr><th>設備項目</th><th>奈良高専</th><th>郡山高校</th></tr>
+    <tr><td>バックネット</td><td class="bad">全面錆び・老朽化</td><td class="good">良好</td></tr>
+    <tr><td>投球練習場</td><td class="bad">なし</td><td class="good">鉄骨・照明付き</td></tr>
+    <tr><td>内野夜間照明</td><td class="bad">なし</td><td class="good">あり</td></tr>
+    <tr><td>部室</td><td class="bad">あるが狭い</td><td class="good">約100畳</td></tr>
+    <tr><td>観客ベンチ</td><td class="bad">なし</td><td class="good">整備済み</td></tr>
+  </table>
+  <p>郡山高校には後援会による継続的な資金の流れがあります。<strong>国立高専にはその仕組みがありません。</strong>これが60年間の格差を生んできた構造的な原因です。</p>
+
+  <h2>OB会はすでに動いています</h2>
+  <div class="achievements">
+    <div class="achievement-item"><div class="badge">✅</div><div class="text"><strong>ピッチングマシン修理費用 約150万円を達成（令和7年）</strong>特定寄付金制度を活用。OB会主導での初の実績。</div></div>
+    <div class="achievement-item"><div class="badge">✅</div><div class="text"><strong>トラクター調達・グラウンド整地を実施（令和8年）</strong>中古農業機械を調達しOB会主導でグラウンド整地。</div></div>
+    <div class="achievement-item"><div class="badge">✅</div><div class="text"><strong>創部60周年記念誌・技術者列伝を編纂中</strong>60年の歴史と先輩技術者の軌跡を記録。</div></div>
+    <div class="achievement-item"><div class="badge">🏛️</div><div class="text"><strong>政界からの後押しが始まりました（令和8年6月）</strong>元奈良県議会議長・中野雅史氏のご尽力により、文部科学省・小林茂樹副大臣への働きかけが始まりました。地域政界からも奈良高専の環境整備を支援する動きが広がっています。</div></div>
+  </div>
+
+  <h2>集まったお金の使い道</h2>
+  <p><strong style="font-size:18px;color:var(--navy);">目標金額：500,000円</p>
+  <p>内訳：消息不明OB探索活動費 ／ バックネット修繕 材料費・施工費 ／ 芳名板製作費 ／ READYFOR手数料・間接経費</p>
+
+  <h2>支援へのお礼（リターン）</h2>
+  <div class="returns">
+    <div class="return-card"><div class="return-header"><div><div class="return-price">1,000円〜</div><div class="return-name">感謝のご報告</div></div></div><div class="return-body">完成後、写真入り活動報告をお届けします。</div></div>
+    <div class="return-card"><div class="return-header"><div><div class="return-price">3,000円〜</div><div class="return-name">芳名板掲載</div></div></div><div class="return-body">バックネット横の芳名板にお名前を刻みます。</div></div>
+    <div class="return-card featured"><div class="return-header"><div><div class="return-price">10,000円〜</div><div class="return-name">記念三点セット贈呈</div></div><div class="featured-badge">おすすめ</div></div><div class="return-body">①列伝　②塩田先生自伝　③60年史（完成次第お届け）　※内容・方法は支援者のご希望に応じて対応いたします。</div></div>
+    <div class="return-card"><div class="return-header"><div><div class="return-price">30,000円〜</div><div class="return-name">特別感謝状＋芳名板</div></div></div><div class="return-body">OB会会長名の感謝状＋芳名板への特別掲載。</div></div>
+    <div class="return-card featured"><div class="return-header"><div><div class="return-price">100,000円〜</div><div class="return-name">【法人・企業向け】特別プラン</div></div><div class="featured-badge" style="background:#1a3a5c;">法人向け</div></div><div class="return-body">バックネットへの<strong>法人名掲載（ネーミングライツ協議）</strong><br>奈良工業高等専門学校への寄付として<strong>全額損金算入可</strong></div></div>
+  </div>
+
+  <h2>支援の方法は２通りあります</h2>
+  <div class="method-box"><h4>① このページから支援する（少額から・クレジットカード可）</h4><p>1,000円から支援いただけます。</p></div>
+  <div class="method-box"><h4>② 学校への特定寄付金として支援する（税制優遇あり）</h4><p>まとまった金額をご検討の方はこちらをご検討ください。</p></div>
+  <div class="tax-box"><strong>【特定寄付金について】</strong><br>奈良工業高等専門学校（独立行政法人）への寄付は、<strong>個人は確定申告により税額の約40%が控除、法人・企業は全額損金算入</strong>できます。詳細はOB会幹事（小泉）までお問い合わせください。</div>
+
+  <h2>OB会会長メッセージ</h2>
+  <div class="message-box">
+    <p>創部以来60年近く、先輩たちはこのボロボロのグラウンドで汗を流してきました。設備の貧しさを言い訳にせず戦ってきた歴史があります。</p>
+    <p>しかし今、私たちOBには恩返しができる手段があります。特定寄付金制度を通じてすでにピッチングマシンの修理を実現しました。次はバックネットです。</p>
+    <p>このクラウドファンディングは、奈良高専の存在を知らなかった方にも、60年の歴史と現役学生の奮闘を知っていただく機会でもあります。どうか一緒に、次の60年への第一歩を踏み出してください。</p>
+    <div class="sign">奈良工業高等専門学校 野球部OB会　会長　楠原 喜太郎（1期生）</div>
+  </div>
+
+  <div class="pending-box">
+    <h4>⚠️ 確認・未決定項目（メンバー確認用）</h4>
+    <ul>
+      <li>✅ 募集期間：令和8年8月1日〜令和9年1月31日（確定）</li>
+      <li>✅ OB情報の連絡先：Googleフォーム（情報提供フォーム）で対応（確定）</li>
+      <li>🔲 10,000円リターンの三点セット：提供形態（紙・PDF・Web）は後日確認</li>
+    </ul>
+  </div>
+</main>
+
+<aside>
+  <div class="sidebar-card">
+    <div class="progress-section">
+      <div class="amount-label">現在の支援総額</div>
+      <div class="amount">― <span style="font-size:14px;">円</span></div>
+      <div class="target">目標金額：500,000円</div>
+      <div class="progress-bar-wrap"></div>
+      <div class="progress-pct">― ％ 達成</div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-num">―</div><div class="stat-label">支援者数</div></div>
+      <div class="stat"><div class="stat-num">184</div><div class="stat-label">残り日数（予定）</div></div>
+    </div>
+    <a href="https://readyfor.jp" target="_blank" class="support-btn" style="text-decoration:none;display:block;text-align:center;">このプロジェクトを支援する　<span style="font-size:11px;font-weight:normal;opacity:0.8;">（準備中）</span></a>
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdnpIwObXvaUgw0cMWGLxnrrRJupwMmIWlXUnkCibzOnJSdYg/viewform?usp=header" target="_blank" class="contact-btn">📣 OBの情報を提供する</a>
+    <div class="sidebar-meta">
+      <div><span>公開期間</span><span class="val">令和8年8月1日〜令和9年1月31日</span></div>
+      <div><span>方式</span><span class="val">All-or-Nothing</span></div>
+    </div>
+    <div class="organizer">
+      <div class="org-label">実施者</div>
+      <div class="org-name">楠原 喜太郎</div>
+      <div class="org-sub">奈良高専野球部OB会　会長（1期生）</div>
+    </div>
+  </div>
+</aside>
+</div>
+
+<footer>
+  <p>※このページはメンバー確認用の模擬ページです。実際のREADYFORページではありません。</p>
+  <p style="margin-top:8px;">奈良工業高等専門学校 野球部OB会　幹事：小泉高伸</p>
+</footer>
+</body>
+</html>

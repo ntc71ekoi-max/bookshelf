@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>創成期技術者列伝　第一部「奈良高専とは何か」｜奈良高専野球部OB　小泉高伸</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;700;900&family=Shippori+Mincho:wght@500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2EFE7;
+    --paper-deep:#EAE5D8;
+    --ink:#1E2A24;
+    --ink-soft:#4A5750;
+    --navy:#1F3B33;
+    --navy-deep:#152722;
+    --seal:#A8402B;
+    --seal-soft:#c76a52;
+    --line:#c9c0a8;
+    --gold:#8a6d3b;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Noto Sans JP", sans-serif;
+    line-height:1.9;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+  }
+
+  .wrap{max-width:760px; margin:0 auto; padding:0 22px 80px;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    background:
+      radial-gradient(1200px 400px at 15% -10%, rgba(255,255,255,0.06), transparent 60%),
+      linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
+    color:#EDE8D8;
+    padding:56px 22px 46px;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute; inset:0;
+    background-image:
+      repeating-linear-gradient(90deg, rgba(237,232,216,0.035) 0 1px, transparent 1px 64px);
+    pointer-events:none;
+  }
+  .hero-inner{max-width:760px; margin:0 auto; position:relative;}
+  .eyebrow{
+    display:flex; align-items:center; gap:10px;
+    font-size:12px; letter-spacing:.18em; color:#C9BF9C;
+    font-weight:500; margin-bottom:22px; text-transform:uppercase;
+  }
+  .eyebrow .dot{width:5px;height:5px;background:var(--seal-soft);border-radius:50%;}
+  .hero h1{
+    font-family:"Shippori Mincho", serif;
+    font-weight:700;
+    font-size:clamp(26px, 6vw, 36px);
+    line-height:1.55;
+    margin:0 0 18px;
+    letter-spacing:.02em;
+  }
+  .hero h1 .accent{color:var(--seal-soft);}
+  .hero-sub{
+    font-size:14.5px; color:#B9C4B9; max-width:56ch; margin:0 0 30px; line-height:1.85;
+  }
+  .stat-row{
+    display:flex; gap:14px; flex-wrap:wrap;
+    border-top:1px solid rgba(237,232,216,0.18);
+    padding-top:24px;
+  }
+  .stat{flex:1; min-width:104px;}
+  .stat .n{
+    font-family:"Shippori Mincho", serif; font-weight:700;
+    font-size:clamp(22px,5vw,28px); color:#F2EFE7; display:block; line-height:1.2;
+  }
+  .stat .n small{font-size:13px; font-weight:500; color:#C9BF9C; margin-left:2px;}
+  .stat .l{font-size:11.5px; color:#9CAA9E; margin-top:4px; letter-spacing:.04em;}
+
+  /* ---------- SEAL BADGE ---------- */
+  .seal-badge{
+    position:absolute; top:46px; right:18px;
+    width:78px; height:78px; border-radius:50%;
+    border:2px solid var(--seal-soft);
+    display:flex; align-items:center; justify-content:center;
+    transform:rotate(-8deg);
+    color:var(--seal-soft);
+    font-family:"Shippori Mincho", serif;
+    font-size:11px; text-align:center; line-height:1.5; letter-spacing:.06em;
+    opacity:.85;
+  }
+
+  /* ---------- BODY ---------- */
+  article{padding-top:40px;}
+  .lede{
+    font-family:"Shippori Mincho", serif;
+    font-size:17px; line-height:2.05; color:var(--navy-deep);
+    padding:22px 20px; margin:0 0 40px;
+    background:var(--paper-deep);
+    border-left:3px solid var(--seal);
+  }
+  h2.section{
+    font-family:"Shippori Mincho", serif;
+    font-size:21px; font-weight:700; color:var(--navy);
+    margin:52px 0 20px; padding-bottom:12px;
+    border-bottom:1px solid var(--line);
+    display:flex; align-items:baseline; gap:12px;
+  }
+  h2.section .num{
+    font-size:13px; color:var(--seal); letter-spacing:.08em; font-weight:700;
+    font-family:"Noto Sans JP", sans-serif;
+  }
+  h3.sub{
+    font-size:15.5px; font-weight:700; color:var(--gold);
+    margin:30px 0 12px;
+    display:flex; align-items:center; gap:8px;
+  }
+  h3.sub::before{content:"■"; font-size:11px; color:var(--seal-soft);}
+  p{font-size:15.5px; color:var(--ink); margin:0 0 20px;}
+  p.note{
+    font-size:13px; color:var(--ink-soft); background:var(--paper-deep);
+    padding:14px 16px; border-radius:2px; margin:20px 0 28px;
+  }
+
+  /* closing question block */
+  .closing{
+    margin:44px 0 8px; padding:26px 22px;
+    background:var(--navy-deep); color:#E3DCC5;
+    border-radius:2px; position:relative;
+  }
+  .closing::before{
+    content:"問";
+    position:absolute; top:-14px; left:20px;
+    width:30px; height:30px; border-radius:50%;
+    background:var(--seal); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-family:"Shippori Mincho", serif; font-size:14px; font-weight:700;
+  }
+  .closing p{
+    color:#E3DCC5; font-family:"Shippori Mincho", serif;
+    font-size:15.5px; line-height:2.05; margin:0;
+  }
+
+  /* ---------- TABLE ---------- */
+  .table-scroll{
+    overflow-x:auto; margin:0 0 12px;
+    border:1px solid var(--line);
+    -webkit-overflow-scrolling:touch;
+  }
+  table{
+    border-collapse:collapse; width:100%; min-width:560px;
+    font-size:13.5px; background:#fff;
+  }
+  caption{
+    text-align:left; font-size:13px; font-weight:700; color:var(--navy);
+    padding:10px 12px; background:var(--paper-deep); caption-side:top;
+    border-bottom:1px solid var(--line);
+  }
+  th,td{
+    padding:9px 10px; text-align:center; border-bottom:1px solid #E5E0D0;
+    white-space:nowrap;
+  }
+  thead th{
+    background:var(--navy); color:#EDE8D8; font-weight:500; font-size:12.5px;
+    letter-spacing:.02em; position:sticky; top:0;
+  }
+  tbody tr:nth-child(even){background:#F8F6EF;}
+  tbody tr:last-child td{font-weight:700; background:var(--paper-deep);}
+  td.company{text-align:left; color:var(--ink-soft);}
+  .scroll-hint{
+    font-size:11.5px; color:var(--ink-soft); text-align:right; margin:6px 0 30px;
+  }
+
+  footer{
+    margin-top:60px; padding-top:26px; border-top:1px solid var(--line);
+    font-size:12.5px; color:var(--ink-soft); text-align:center;
+  }
+  footer .org{font-weight:700; color:var(--navy); font-size:13.5px; margin-bottom:6px;}
+
+  a{color:var(--seal); text-decoration:none; border-bottom:1px solid rgba(168,64,43,.35);}
+  a:hover{border-bottom-color:var(--seal);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="seal-badge">創成期<br>技術者<br>列伝</div>
+  <div class="hero-inner">
+    <div class="eyebrow"><span class="dot"></span>奈良高専野球部OB　小泉高伸</div>
+    <h1>なぜ、実績のない新設校に<br>優秀な中学生が集まったのか<br><span class="accent">——特許4,027件</span>が語るもの</h1>
+    <p class="hero-sub">創成期技術者列伝　第一部「奈良高専とは何か」抜粋版。1期〜4期卒業生241名の特許データが示す、開校わずか5〜8年後に社会へ出た技術者たちの実像。</p>
+    <div class="stat-row">
+      <div class="stat"><span class="n">4,027<small>件</small></span><div class="l">特許件数合計</div></div>
+      <div class="stat"><span class="n">241<small>名</small></span><div class="l">1期〜4期対象人数</div></div>
+      <div class="stat"><span class="n">27.8<small>件</small></span><div class="l">1人あたり平均</div></div>
+      <div class="stat"><span class="n">320<small>件</small></span><div class="l">最多件数</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+<article>
+
+  <p class="lede">昭和39年（1964年）に開校した奈良高専には、当然ながら卒業生ゼロ、進学実績も就職実績も皆無だった。にもかかわらず、初期の入学者には成績優秀な中学生が数多く含まれていたと言われている。実績のない学校に、なぜ優秀な生徒が集まったのか。</p>
+
+  <h2 class="section"><span class="num">01</span>当時の奈良高専</h2>
+  <p>高専制度は昭和36年（1961年）に法制化されたばかりの新しい仕組みだった。5年制・国立・低授業料。奈良高専は昭和39年に第1期生87名を迎え、寮を備え、県外からの入学者も受け入れた。「大学でも高校でもない、現場に即戦力として出られる技術者を育てる」という制度設計そのものが、まだ何の実績もない段階から一定の注目を集めていた可能性がある。</p>
+
+  <h2 class="section"><span class="num">02</span>初期生の記憶</h2>
+  <p>初期生への聞き取りからは、奈良県内では農家の子弟が多く、県外からは大阪・京都・滋賀・三重など、多様な家庭背景を持つ生徒が集まっていたことが分かっている。地元の農家の子弟から近隣府県の生徒まで、出自の異なる若者たちが同じ寮で5年間を過ごした。</p>
+
+  <h2 class="section"><span class="num">03</span>卒業後の成果</h2>
+  <p>その答え合わせとして、J-PlatPat（特許情報プラットフォーム）を用いて1期〜4期卒業生241名の特許保有状況を調査した。検索できた145名（検索率60%）だけで、特許件数は合計4,027件、1人あたり平均27.8件に達した。実績ゼロで入学した生徒たちが、数十年後にはこれだけの知的財産を産業界に残していたことになる。</p>
+
+  <div class="table-scroll">
+    <table>
+      <caption>期別特許件数サマリー</caption>
+      <thead>
+        <tr><th>期</th><th>総人数</th><th>検索済</th><th>検索率</th><th>特許合計</th><th>1人平均</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1期(69)</td><td>87名</td><td>43名</td><td>49%</td><td>981件</td><td>22.8件</td></tr>
+        <tr><td>2期(70)</td><td>73名</td><td>46名</td><td>63%</td><td>1,224件</td><td>26.6件</td></tr>
+        <tr><td>3期(71)</td><td>52名</td><td>27名</td><td>52%</td><td>1,040件</td><td>38.5件</td></tr>
+        <tr><td>4期(72)</td><td>29名</td><td>29名</td><td>100%</td><td>782件</td><td>27.0件</td></tr>
+        <tr><td>合計</td><td>241名</td><td>145名</td><td>60%</td><td>4,027件</td><td>27.8件</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="scroll-hint">→ 表は横にスクロールできます</p>
+
+  <h3 class="sub">トップが示す産業界への貢献</h3>
+  <p>特許件数上位を見ると、パナソニック・松下電工・日立製作所・住友電気工業という日本を代表する製造業が並ぶ。3期（71E）のC氏（パナソニック）が320件でトップ、2位は3期（71B）のE氏（松下電工）282件、3位は1期（69E）のA氏（日立製作所）229件である。上位以外にも、F氏（72B・オムロン）170件、K氏（71E・三菱電機）140件、L氏（69A・三菱電機）62件、M氏（69A・シャープ）60件など、高水準の特許を残した卒業生が複数存在し、創成期卒業生全体の技術力の厚みを物語っている。</p>
+
+  <div class="table-scroll">
+    <table>
+      <caption>特許件数上位（全期）</caption>
+      <thead>
+        <tr><th>順位</th><th>期</th><th>クラス</th><th>氏名</th><th>特許件数</th><th>勤務先</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>3期</td><td>71E</td><td>C氏</td><td>320件</td><td class="company">パナソニック</td></tr>
+        <tr><td>2</td><td>3期</td><td>71B</td><td>E氏</td><td>282件</td><td class="company">松下電工</td></tr>
+        <tr><td>3</td><td>1期</td><td>69E</td><td>A氏</td><td>229件</td><td class="company">日立製作所</td></tr>
+        <tr><td>4</td><td>4期</td><td>72B</td><td>D氏</td><td>185件</td><td class="company">—</td></tr>
+        <tr><td>5</td><td>4期</td><td>72B</td><td>F氏</td><td>170件</td><td class="company">オムロン</td></tr>
+        <tr><td>6</td><td>2期</td><td>70B</td><td>B氏</td><td>162件</td><td class="company">松下電器産業</td></tr>
+        <tr><td>7</td><td>1期</td><td>69E</td><td>G氏</td><td>124件</td><td class="company">住友電気工業</td></tr>
+        <tr><td>8</td><td>2期</td><td>70E</td><td>H氏</td><td>120件</td><td class="company">鐘淵化学工業</td></tr>
+        <tr><td>9</td><td>3期</td><td>71B</td><td>I氏</td><td>112件</td><td class="company">日立製作所</td></tr>
+        <tr><td>10</td><td>4期</td><td>72B</td><td>J氏</td><td>106件</td><td class="company">—</td></tr>
+        <tr><td>参考</td><td>3期</td><td>71E</td><td>K氏</td><td>140件</td><td class="company">三菱電機</td></tr>
+        <tr><td>参考</td><td>1期</td><td>69A</td><td>L氏</td><td>62件</td><td class="company">三菱電機</td></tr>
+        <tr><td>参考</td><td>1期</td><td>69A</td><td>M氏</td><td>60件</td><td class="company">シャープ</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="scroll-hint">→ 表は横にスクロールできます</p>
+  <p class="note">※ 出典：J-PlatPat（特許情報プラットフォーム）　集計日：2025年<br>※ 氏名は個人情報保護のため記号表記（A氏〜M氏）としています。</p>
+
+  <h3 class="sub">就職先が示す産業地図</h3>
+  <p>検索済145名の勤務先を分析すると、電機・電子産業（三菱電機・シャープ・パナソニック・日立・ソニー・オムロン等）が最多を占め、次いで自動車関連（トヨタ・ダイハツ・フタバ産業等）、化学・素材（住友化学・積水化成品等）、建設・土木（奥村組・竹中工務店等）と続く。特筆すべきは起業・独立の多さである。複数の起業家が輩出されており、「組織に縛られず技術で食う」という高専技術者の気質が、起業という形で結実した事例は少なくない。</p>
+
+  <h2 class="section"><span class="num">04</span>考察</h2>
+  <p>なぜ優秀層が集まったのか。断定はできない。しかし「高専」という新制度そのものへの社会的な期待、中学校側の進路指導のあり方、低い授業料という経済的な間口の広さ、高度経済成長期における技術者需要の高まり——これらが複合的に働き、実績のない新設校にもかかわらず一定の優秀層を引き寄せたのではないか。そして実際に、その人材はのちに高度な技術的成果を残すことになった。</p>
+
+  <div class="closing">
+    <p>初期奈良高専は、卒業生の実績によって評価を高めた学校ではなかった。むしろ、まだ何の実績もない新設校に、なぜか優秀な中学生が集まった。その答えは、当時の「高専」という制度そのものが持っていた魅力と、そこに集まった生徒たちのその後の技術的成果の中にあるのではないだろうか。</p>
+  </div>
+
+  <p style="margin-top:40px; font-size:13.5px; color:var(--ink-soft);">本稿は、奈良高専野球部OB　小泉高伸が編纂した『創成期技術者列伝』（1期〜5期の技術者を対象とした冊子）の第一部「奈良高専とは何か」を抜粋・再構成したものです。冊子全体には創成期卒業生27名の詳細な人物列伝も収録していますが、個人情報保護の観点から、これらは野球部OBの間で共有するにとどめています。</p>
+
+  <footer>
+    <div class="org">奈良高専野球部 OB　小泉高伸</div>
+    創成期技術者列伝　編纂委員会
+  </footer>
+
+</article>
+</div>
+
+</body>
+</html>
